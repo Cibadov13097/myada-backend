@@ -148,3 +148,4 @@ C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Serv
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Api\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Api\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Api\bin\Debug\net8.0\Keys\rsa.json
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Api\obj\Debug\net8.0\AuthService.Api.sourcelink.json

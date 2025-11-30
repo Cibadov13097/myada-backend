@@ -1,0 +1,138 @@
+# ============================
+# VISUAL STUDIO / C# / DOTNET
+# ============================
+
+## Ignore user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Ignore Visual Studio working folder
+.vs/
+.vscode/
+
+## Build results
+bin/
+obj/
+out/
+artifacts/
+Debug/
+Release/
+
+## ASP.NET publish output
+wwwroot/
+node_modules/
+dist/
+build/
+
+# ============================
+# ENVIRONMENT / SECURITY
+# ============================
+
+# Do NOT commit secrets
+*.env
+*.secret
+*.token
+appsettings.Development.json
+appsettings.Local.json
+*.pem
+Keys/
+**/Keys/
+
+# ============================
+# DOTNET TOOLS / AUTO GENERATED
+# ============================
+
+project.lock.json
+project.fragment.lock.json
+*.pidb
+*.svclog
+*.dbmdl
+*.dbproj.schemaview
+*.pdb
+*.mdb
+*.cache
+*.log
+
+# ============================
+# NUGET
+# ============================
+
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+.nuget/packages/
+
+# ============================
+# RESHARPER / RIDER
+# ============================
+
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.idea/
+
+# ============================
+# FRONTEND (React / Angular)
+# ============================
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+jspm_packages/
+bower_components/
+
+# Compiled output
+dist/
+build/
+tmp/
+temp/
+
+# ============================
+# MAC / WINDOWS JUNK FILES
+# ============================
+
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# ============================
+# DOCKER
+# ============================
+
+docker-compose.override.yml
+docker-compose-local.yml
+*.tar
+*.img
+
+# ============================
+# TEST / COVERAGE
+# ============================
+
+TestResults/
+coverage/
+coverage.json
+*.coverage
+*.coveragexml
+
+# ============================
+# AUTH SERVICE KEY FILES
+# ============================
+
+AuthService.Api/Keys/
+*.pem
+*.crt
+*.key
+
+# ============================
+# MICROSERVICES SPECIFIC
+# ============================
+
+**/Migrations/
+**/Generated/

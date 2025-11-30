@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9FD14FE0-6BDD-4AB1-8278-6D85177A7DA2}|Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backend projects\\freelance\\myada\\services\\authservice\\authservice.application\\dtos\\auth\\forgetpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FD14FE0-6BDD-4AB1-8278-6D85177A7DA2}|Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj|solutionrelative:services\\authservice\\authservice.application\\dtos\\auth\\forgetpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backend projects\\freelance\\myada\\services\\authservice\\authservice.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -15,16 +19,8 @@
       "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\keys\\rsa.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backend projects\\freelance\\myada\\services\\authservice\\authservice.api\\keys\\private.pem||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\keys\\private.pem||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backend projects\\freelance\\myada\\services\\authservice\\authservice.infrastructure\\persistence\\context\\myadadbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|solutionrelative:services\\authservice\\authservice.infrastructure\\persistence\\context\\myadadbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9FD14FE0-6BDD-4AB1-8278-6D85177A7DA2}|Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backend projects\\freelance\\myada\\services\\authservice\\authservice.application\\dtos\\auth\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FD14FE0-6BDD-4AB1-8278-6D85177A7DA2}|Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj|solutionrelative:services\\authservice\\authservice.application\\dtos\\auth\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backend projects\\freelance\\myada\\services\\authservice\\authservice.infrastructure\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -42,11 +38,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
+              "Title": "ForgetPasswordDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\ForgetPasswordDto.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\ForgetPasswordDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\ForgetPasswordDto.cs*",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\ForgetPasswordDto.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T19:51:10.918Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAwwDcAAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T21:03:29.815Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "rsa.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Keys\\rsa.json",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Keys\\rsa.json",
@@ -54,47 +84,7 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Keys\\rsa.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-29T21:36:44.88Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "private.pem",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Keys\\private.pem",
-              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Keys\\private.pem",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Keys\\private.pem",
-              "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Keys\\private.pem",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAQwBwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-29T21:30:23.598Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "RegisterDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\RegisterDto.cs",
-              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\RegisterDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\RegisterDto.cs",
-              "RelativeToolTip": "Services\\AuthService\\AuthService.Application\\DTOs\\Auth\\RegisterDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T21:24:15.154Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs*",
-              "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs*",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAYwCoAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T21:03:29.815Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-29T21:36:44.88Z"
             },
             {
               "$type": "Document",
@@ -106,12 +96,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContext.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAADwvxkAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T20:21:03.554Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-29T20:21:03.554Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Api\\Program.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Program.cs",
@@ -119,12 +108,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Program.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T20:37:09.506Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-29T20:37:09.506Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "TokenService.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\Services\\TokenService.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Services\\TokenService.cs",
@@ -132,12 +120,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Services\\TokenService.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAowBIAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T21:05:57.968Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-29T21:05:57.968Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 6,
               "Title": "ApplicationUser.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\Backend projects\\Freelance\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\Identity\\ApplicationUser.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Identity\\ApplicationUser.cs",
@@ -145,8 +132,7 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Identity\\ApplicationUser.cs",
               "ViewState": "AgIAAAsAAAAAAAAAAAAAwBEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T19:40:59.705Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-29T19:40:59.705Z"
             }
           ]
         }

@@ -13,3 +13,4 @@ C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Serv
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Application\obj\Debug\net8.0\refint\AuthService.Application.dll
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Application\obj\Debug\net8.0\AuthService.Application.pdb
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Application\obj\Debug\net8.0\ref\AuthService.Application.dll
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Application\obj\Debug\net8.0\AuthService.Application.sourcelink.json

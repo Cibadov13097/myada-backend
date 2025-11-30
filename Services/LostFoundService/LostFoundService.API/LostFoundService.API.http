@@ -1,0 +1,6 @@
+@LostFoundService.API_HostAddress = http://localhost:5096
+
+GET {{LostFoundService.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

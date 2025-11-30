@@ -17,3 +17,4 @@ C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Serv
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.pdb
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.genruntimeconfig.cache
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\ref\AuthService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.sourcelink.json
