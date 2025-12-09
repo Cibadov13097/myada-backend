@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace LostFoundService.Application.DTOs.LostItem
+{
+    public class AddLostItemDto
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+
+        public string Image { get; set; }
+
+    }
+}
