@@ -7,6 +7,7 @@ using LostFoundService.Domain.Exceptions;
 using LostFoundService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -26,15 +27,18 @@ namespace LostFoundService.Api.Controllers
             _mapper = mapper;
             _service = foundItemService;
         }
-        [HttpGet()]
+
+
+        [HttpGet]
         public async Task<IActionResult> GetFoundItems()
         {
-            var foundItems = await _service.GetAllFoundItemsAsync();
+            var resultDto = await _service.GetAllFoundItemsAsync();
 
-            var dto = _mapper.Map<List<GetFoundItemDto>>(foundItems);
+          
 
-            return Ok(dto);
+            return Ok(resultDto);
         }
+
 
         [Authorize]
         [HttpGet("users/me")]
@@ -46,80 +50,73 @@ namespace LostFoundService.Api.Controllers
                 throw new UnauthorizedException("User is not authenticated");
             }
 
-            var foundItems = await _service.GetMyFoundItemsAsync(userId);
+            var resultDto = await _service.GetMyFoundItemsAsync(userId);
 
-            var dto= _mapper.Map<List<GetFoundItemDto>>(foundItems);
-
-            return Ok(dto); 
+            return Ok(resultDto);
         }
+
 
         [Authorize]
         [HttpGet("users/me/{id}")]
         public async Task<IActionResult> GetMyFoundItemById(int id)
         {
-           var userId = User.GetUserId();
-            
+            var userId = User.GetUserId();
+
             if (userId == null)
             {
                 throw new UnauthorizedException("User is not authenticated");
             }
-            var foundItem=await _service.GetMyFoundItemByIdAsync(id,userId);
-           var dto= _mapper.Map<GetFoundItemDto>(foundItem);
+            var resultDto = await _service.GetMyFoundItemByIdAsync(id, userId);
+    
 
-            return Ok(dto);
+            return Ok(resultDto);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFoundItemById(int id)
         {
-            var foundItem = await _service.GetFoundItemByIdAsync(id);
-            if (foundItem == null) { throw new NotFoundException($"FoundItem does not exist with id {id}"); }
-            var dto = _mapper.Map<GetFoundItemDto>(foundItem);
-            return Ok(dto);
+            var resultDto = await _service.GetFoundItemByIdAsync(id);
+            if (resultDto == null) { throw new NotFoundException($"FoundItem does not exist with id {id}"); }
+         
+            return Ok(resultDto);
         }
 
-        [Authorize]
-        [HttpGet("debug")]
-        public IActionResult DebugAuth()
-        {
-            return Ok(new
-            {
-                IsAuthenticated = User.Identity?.IsAuthenticated,
-                Claims = User.Claims.Select(c => new { c.Type, c.Value })
-            });
-        }
+
+   
 
         [Authorize]
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto)
         {
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            var foundItem = _mapper.Map<FoundItem>(dto);
             var userId = User.GetUserId();
 
 
             if (string.IsNullOrWhiteSpace(userId))
                 throw new UnauthorizedException("User is not authenticated.");
 
-            await _service.AddFoundItemAsync(foundItem, userId);
-            return Ok();
+
+            var createdItem = await _service.AddFoundItemAsync(dto, userId);
+
+
+            var resultDto = _mapper.Map<GetFoundItemDto>(createdItem);
+
+            return CreatedAtAction(
+          nameof(GetFoundItemById),
+          new { id = createdItem.Id },
+          resultDto
+      );
+
         }
+
 
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromForm] UpdateFoundItemDto dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateFoundItemDto dto)
+        {   
 
-            var foundItem = _mapper.Map<FoundItem>(dto);
             var userId = User.GetUserId();
 
             if (string.IsNullOrWhiteSpace(userId))
@@ -127,23 +124,27 @@ namespace LostFoundService.Api.Controllers
                 throw new UnauthorizedException("User is not authenticated.");
             }
 
-            await _service.UpdateFoundItemAsync(foundItem, userId);
-            return Ok();
+         
+
+            var resultDto = await _service.UpdateFoundItemAsync(id, dto, userId);
+                
+            return Ok(resultDto);
         }
+
 
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-           
+
 
             var userId = User.GetUserId();
 
             if (string.IsNullOrWhiteSpace(userId)) { throw new UnauthorizedException("User is not authenticated."); }
 
-            await _service.RemoveFoundItemAsync(id, userId);
+            await _service.DeleteFoundItemAsync(id, userId);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

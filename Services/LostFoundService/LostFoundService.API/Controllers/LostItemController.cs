@@ -36,7 +36,7 @@ namespace LostFoundService.API.Controllers
             return Ok(dto);
         }
 
-        [HttpGet]
+ 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)

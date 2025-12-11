@@ -1,4 +1,5 @@
 using AutoMapper;
+using LostFoundService.Api.Middlewares;
 using LostFoundService.Api.Security;
 using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Application.Interfaces.Services;
@@ -123,6 +124,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

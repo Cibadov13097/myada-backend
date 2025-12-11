@@ -11,5 +11,9 @@ namespace LostFoundService.Application.Interfaces.Repositories
     {
         Task<List<FoundItem>> GetAllByUserIdAsync(string userId);
         Task<FoundItem> GetByIdForUserAsync(int id, string userId);
+
+        Task<FoundItem> GetByIdForAdminAsync(int id);
+
+        Task<List<FoundItem>> GetAllForAdminAsync(bool includeDeleted = true);
     }
 }

@@ -20,14 +20,34 @@ namespace LostFoundService.Infrastructure.Persistence.Repositories
         public async Task<List<FoundItem>> GetAllByUserIdAsync(string userId)
         {
             return await _context.FoundItems
-                .Where(x => x.FoundByUserId == userId)
+                .Where(x => x.FoundByUserId == userId && !x.IsDeleted)
                 .ToListAsync();
         }
 
         public async Task<FoundItem> GetByIdForUserAsync(int id, string userId)
         {
             return await _context.FoundItems
-                .FirstOrDefaultAsync(x => x.Id == id && x.FoundByUserId == userId);
+                .FirstOrDefaultAsync(x => x.Id == id && x.FoundByUserId == userId && !x.IsDeleted);
+        }
+
+
+        public async Task<FoundItem> GetByIdForAdminAsync(int id)
+        {
+            var query = _context.FoundItems.AsQueryable();
+
+            
+
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<List<FoundItem>> GetAllForAdminAsync( bool includeDeleted = true)
+        {
+            var query = _context.FoundItems.AsQueryable();
+
+            if (!includeDeleted)
+                query = query.Where(x => !x.IsDeleted);
+
+            return await query.ToListAsync() ;
         }
     }
 }

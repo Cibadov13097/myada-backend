@@ -131,7 +131,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -141,10 +142,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
                   "ImageUrl": {
                     "type": "string"
                   },
@@ -154,18 +151,12 @@
                   "LocationFound": {
                     "type": "string"
                   },
-                  "FoundByUserId": {
-                    "type": "string"
-                  },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
                   }
                 }
               },
               "encoding": {
-                "Id": {
-                  "style": "form"
-                },
                 "ImageUrl": {
                   "style": "form"
                 },
@@ -173,9 +164,6 @@
                   "style": "form"
                 },
                 "LocationFound": {
-                  "style": "form"
-                },
-                "FoundByUserId": {
                   "style": "form"
                 },
                 "Status": {
@@ -213,7 +201,178 @@
         }
       }
     },
-    "/api/v1/found-items/debug": {
+    "/api/v1/admin/found-items": {
+      "get": {
+        "tags": [
+          "FoundItem"
+        ],
+        "parameters": [
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FoundItem"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ImageUrl": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "LocationFound": {
+                    "type": "string"
+                  },
+                  "Status": {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                }
+              },
+              "encoding": {
+                "ImageUrl": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "LocationFound": {
+                  "style": "form"
+                },
+                "Status": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/found-items/{id}": {
+      "get": {
+        "tags": [
+          "FoundItem"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FoundItem"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ImageUrl": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "LocationFound": {
+                    "type": "string"
+                  },
+                  "Status": {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                }
+              },
+              "encoding": {
+                "ImageUrl": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "LocationFound": {
+                  "style": "form"
+                },
+                "Status": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FoundItem"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/found-items/debug": {
       "get": {
         "tags": [
           "FoundItem"
@@ -225,7 +384,30 @@
         }
       }
     },
-    "/api/lostItem/v1/lost-items": {
+    "/api/v1/admin/found-items/{id}/force": {
+      "delete": {
+        "tags": [
+          "FoundItem"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/lost-items": {
       "get": {
         "tags": [
           "LostItem"
@@ -326,7 +508,7 @@
         }
       }
     },
-    "/api/lostItem/v1/lost-item/{id}": {
+    "/api/v1/lost-items/{id}": {
       "get": {
         "tags": [
           "LostItem"

@@ -9,11 +9,9 @@ namespace LostFoundService.Application.DTOs.FoundItem
 {
     public class UpdateFoundItemDto
     {
-        public int Id { get; set; }
         public string ImageUrl { get; set; }
         public string Description { get; set; }
         public string LocationFound { get; set; }
-        public string FoundByUserId { get; set; }
         public Status Status { get; set; }
     }
 }

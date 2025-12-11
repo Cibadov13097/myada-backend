@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LostFoundService.Application.DTOs.FoundItem;
+using LostFoundService.Application.DTOs.FoundItem.Admin;
 using LostFoundService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace LostFoundService.Application.Mappings
             CreateMap<GetFoundItemDto,FoundItem>().ReverseMap();
             CreateMap<AddFoundItemDto, FoundItem>();
             CreateMap<UpdateFoundItemDto, FoundItem>();
+
+        CreateMap<AdminFoundItemDto,FoundItem>().ReverseMap();
         }
     }
 }
