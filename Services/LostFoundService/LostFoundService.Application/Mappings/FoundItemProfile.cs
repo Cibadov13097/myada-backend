@@ -18,6 +18,7 @@ namespace LostFoundService.Application.Mappings
             CreateMap<AddFoundItemDto, FoundItem>();
             CreateMap<UpdateFoundItemDto, FoundItem>();
 
+            CreateMap<AdminCreateFoundItem, FoundItem>();
         CreateMap<AdminFoundItemDto,FoundItem>().ReverseMap();
         }
     }

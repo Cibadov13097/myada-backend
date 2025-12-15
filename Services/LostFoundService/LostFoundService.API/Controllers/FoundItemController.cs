@@ -15,6 +15,8 @@ namespace LostFoundService.Api.Controllers
 {
     [Route("api/v1/found-items")]
     [ApiController]
+    [Tags("Found Items")]
+
     public class FoundItemController : ControllerBase
     {
         private readonly IFoundItemService _service;
@@ -92,7 +94,9 @@ namespace LostFoundService.Api.Controllers
 
 
             var userId = User.GetUserId();
+            var userRole = User.IsInRole("lost_found_leader");
 
+            
 
             if (string.IsNullOrWhiteSpace(userId))
                 throw new UnauthorizedException("User is not authenticated.");

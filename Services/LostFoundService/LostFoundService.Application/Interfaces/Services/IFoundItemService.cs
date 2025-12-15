@@ -26,14 +26,7 @@ using LostFoundService.Domain.Entities;
             Task<GetFoundItemDto> UpdateFoundItemAsync(int itemId, UpdateFoundItemDto entity, string userId);
             Task DeleteFoundItemAsync(int itemId, string userId);
 
-            //Admin
-            Task<List<AdminFoundItemDto>> AdminGetAllAsync(bool includeDeleted);
-
-             Task<AdminFoundItemDto> AdminGetByIdAsync(int id);
-            Task<GetFoundItemDto> AdminUpdateStatusAsync(int itemId, Status status, string adminId);
-
-            Task AdminForceDeleteAsync(int itemId,string adminId);
-            Task<GetFoundItemDto> AdminUpdateAsync(int itemId, UpdateFoundItemDto dto,string adminId);
+       
 
         }
 

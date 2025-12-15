@@ -9,6 +9,7 @@ using LostFoundService.Infrastructure.Persistence.Repositories;
 using LostFoundService.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -100,7 +101,11 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IFoundItemService, FoundItemService>();
 builder.Services.AddScoped<IFoundItemRepository, FoundItemRepository>();
 
+builder.Services.AddScoped<IFoundItemAdminService, FoundItemAdminService>();
+builder.Services.AddScoped<ILostItemAdminService, LostItemAdminService>();
+
 builder.Services.AddScoped<ILostItemService, LostItemService>();
+builder.Services.AddScoped<ILostItemRepository,LostItemRepository>();
 
 builder.Services.AddControllers();
 

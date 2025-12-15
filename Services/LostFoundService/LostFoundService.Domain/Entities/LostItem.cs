@@ -14,7 +14,7 @@ namespace LostFoundService.Domain.Entities
         public string ImageUrl { get; set; }
 
 
-        public string LocationFound { get; set; }
+        public string LocationLost { get; set; }
         public string PostedByUserId { get; set; }
 
     }

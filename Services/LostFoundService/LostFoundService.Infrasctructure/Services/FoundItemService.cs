@@ -48,109 +48,6 @@ namespace LostFoundService.Infrastructure.Services
             return resultDto;
         }
 
-        public async Task AdminDeleteAsync(int itemId, string adminId)
-        {
-            if (adminId == null) { throw new ArgumentNullException("Admin Id is null"); }
-            var entity= await _repository.GetByIdAsync(itemId);
-            await _repository.DeleteAsync(entity);
-        }
-
-        public async Task AdminForceDeleteAsync(int itemId, string adminId)
-        {
-            if (itemId <= 0)
-                throw new ArgumentException("Invalid id");
-
-            if (string.IsNullOrWhiteSpace(adminId))
-                throw new ArgumentNullException(nameof(adminId));
-
-            var foundItem = await _repository.GetByIdForUserAsync(itemId, adminId);
-
-            if (foundItem == null)
-                throw new NotFoundException($"Item with id {itemId} not found.");
-
-
-            await _repository.DeleteAsync(foundItem);
-            await _repository.SaveChangesAsync();
-
-
-        }
-
-        public async Task<List<AdminFoundItemDto>> AdminGetAllAsync(bool includeDeleted)
-        {
-            var entities = await _repository.GetAllForAdminAsync(includeDeleted);
-           var dto= _mapper.Map<List<AdminFoundItemDto>>(entities);
-
-            return dto;
-        }
-
-        public async Task<AdminFoundItemDto> AdminGetByIdAsync(int id)
-        {
-            var entity = await _repository.GetByIdForAdminAsync(id);
-
-            var dto = _mapper.Map<AdminFoundItemDto>(entity);
-
-            return dto;
-        }
-
-        public async Task<GetFoundItemDto> AdminUpdateAsync(int itemId, UpdateFoundItemDto dto, string adminId)
-        {
-            if (dto == null)
-            {
-                throw new ArgumentNullException("Dto is empty");
-            }
-            if (itemId <= 0)
-            {
-                throw new ArgumentException("Invalid Id");
-            }
-
-            var entity = await _repository.GetByIdAsync(itemId);
-            if (entity == null) throw new NotFoundException($"There is no FoundItem with id {itemId}");
-
-            _mapper.Map(dto, entity);
-
-            entity.ModifiedByUserId = adminId;
-            entity.ModifiedAt = DateTime.UtcNow;
-
-            await _repository.UpdateAsync(entity);
-            await _repository.SaveChangesAsync();
-
-
-            var resultDto = _mapper.Map<GetFoundItemDto>(entity);
-            return resultDto;
-        }
-
-        public async Task<GetFoundItemDto> AdminUpdateStatusAsync(int itemId, Status status, string adminId)
-        {
-            if (status == null)
-            {
-                throw new ArgumentNullException("Dto is empty");
-            }
-            if (itemId <= 0)
-            {
-                throw new ArgumentException("Invalid Id");
-            }
-
-            var entity = await _repository.GetByIdAsync(itemId);
-
-            if (entity == null) throw new NotFoundException($"There is no FoundItem with id {itemId}");
-
-
-            entity.Status = status;
-            entity.ModifiedByUserId = adminId;
-            entity.ModifiedAt = DateTime.UtcNow;
-
-            await _repository.UpdateAsync(entity);
-            await _repository.SaveChangesAsync();
-
-
-            var resultDto = _mapper.Map<GetFoundItemDto>(entity);
-            return resultDto;
-        }
-
-        public Task DeleteFoundItemAsync(int itemId, string userId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<List<GetFoundItemDto>> GetAllFoundItemsAsync()
         {
@@ -197,18 +94,19 @@ namespace LostFoundService.Infrastructure.Services
             return dto;
         }
 
-        public async Task RemoveFoundItemAsync(int id, string userId)
+
+        public async Task DeleteFoundItemAsync(int itemId, string userId)
         {
-            if (id <= 0)
+            if (itemId <= 0)
                 throw new ArgumentException("Invalid id");
 
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentNullException(nameof(userId));
 
-            var foundItem = await _repository.GetByIdForUserAsync(id, userId);
+            var foundItem = await _repository.GetByIdForUserAsync(itemId, userId);
 
             if (foundItem == null)
-                throw new NotFoundException($"Item with id {id} not found.");
+                throw new NotFoundException($"Item with id {itemId} not found.");
 
             foundItem.DeletedByUserId = userId;
             foundItem.DeletedAt = DateTime.UtcNow;
@@ -216,6 +114,26 @@ namespace LostFoundService.Infrastructure.Services
             await _repository.UpdateAsync(foundItem);
             await _repository.SaveChangesAsync();
         }
+
+        //public async Task RemoveFoundItemAsync(int id, string userId)
+        //{
+        //    if (id <= 0)
+        //        throw new ArgumentException("Invalid id");
+
+        //    if (string.IsNullOrWhiteSpace(userId))
+        //        throw new ArgumentNullException(nameof(userId));
+
+        //    var foundItem = await _repository.GetByIdForUserAsync(id, userId);
+
+        //    if (foundItem == null)
+        //        throw new NotFoundException($"Item with id {id} not found.");
+
+        //    foundItem.DeletedByUserId = userId;
+        //    foundItem.DeletedAt = DateTime.UtcNow;
+        //    foundItem.IsDeleted = true;
+        //    await _repository.UpdateAsync(foundItem);
+        //    await _repository.SaveChangesAsync();
+        //}
 
         public async Task<GetFoundItemDto> UpdateFoundItemAsync(int id, UpdateFoundItemDto dto, string userId)
         {

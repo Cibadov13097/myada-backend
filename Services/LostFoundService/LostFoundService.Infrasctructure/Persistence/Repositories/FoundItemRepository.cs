@@ -16,38 +16,47 @@ namespace LostFoundService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        // Custom: Get all items for this user
+        // ============================
+        // USER-SCOPED
+        // ============================
+
         public async Task<List<FoundItem>> GetAllByUserIdAsync(string userId)
         {
             return await _context.FoundItems
-                .Where(x => x.FoundByUserId == userId && !x.IsDeleted)
+                .Where(x => x.FoundByUserId == userId)
                 .ToListAsync();
         }
 
-        public async Task<FoundItem> GetByIdForUserAsync(int id, string userId)
+        public async Task<FoundItem?> GetByIdForUserAsync(int id, string userId)
         {
             return await _context.FoundItems
-                .FirstOrDefaultAsync(x => x.Id == id && x.FoundByUserId == userId && !x.IsDeleted);
+                .FirstOrDefaultAsync(x =>
+                    x.Id == id &&
+                    x.FoundByUserId == userId);
         }
 
+        // ============================
+        // ADMIN
+        // ============================
 
-        public async Task<FoundItem> GetByIdForAdminAsync(int id)
+        public async Task<FoundItem?> GetByIdForAdminAsync(int id)
         {
-            var query = _context.FoundItems.AsQueryable();
-
-            
-
-            return await query.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.FoundItems
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<FoundItem>> GetAllForAdminAsync( bool includeDeleted = true)
+        public async Task<List<FoundItem>> GetAllForAdminAsync(bool includeDeleted = true)
         {
-            var query = _context.FoundItems.AsQueryable();
+            if (includeDeleted)
+            {
+                return await _context.FoundItems
+                    .IgnoreQueryFilters()
+                    .ToListAsync();
+            }
 
-            if (!includeDeleted)
-                query = query.Where(x => !x.IsDeleted);
-
-            return await query.ToListAsync() ;
+            // includeDeleted == false → global filter işləyir
+            return await _context.FoundItems.ToListAsync();
         }
     }
 }

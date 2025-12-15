@@ -14,12 +14,14 @@ namespace LostFoundService.Api.Controllers.Admin
 {
     [Route("api/v1/admin/found-items")]
     [ApiController]
+    [Tags("Found Items - Admin")]
+
     public class FoundItemController : ControllerBase
     {
-        private readonly IFoundItemService _service;
+        private readonly IFoundItemAdminService _service;
   
         public FoundItemController(
-            IFoundItemService foundItemService
+            IFoundItemAdminService foundItemService
         
             )
         {
@@ -50,20 +52,9 @@ namespace LostFoundService.Api.Controllers.Admin
             return Ok(resultDto);
         }
 
-        [Authorize]
-        [HttpGet("debug")]
-        public IActionResult DebugAuth()
-        {
-            return Ok(new
-            {
-                IsAuthenticated = User.Identity?.IsAuthenticated,
-                Claims = User.Claims.Select(c => new { c.Type, c.Value })
-            });
-        }
+     
 
-
-
-        [Authorize(Roles = "lost_found_leader")]
+        [Authorize(Roles = "lost_found_leader,admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto)
         {
@@ -72,8 +63,13 @@ namespace LostFoundService.Api.Controllers.Admin
             {
                 return BadRequest(ModelState);
             }
-          var  userId = User.FindFirst(ClaimsIdentity.DefaultNameClaimType).Value;
-          var resultDto= await _service.AddFoundItemAsync(dto, userId);
+            var adminId = User.GetUserId();
+
+            if(adminId == null)
+            {
+                throw new UnauthorizedException("Admin not found!");
+            }
+          var resultDto= await _service.AdminAddFoundItemAsync(dto,adminId);
             return Ok(resultDto);
         }
 
@@ -97,6 +93,9 @@ namespace LostFoundService.Api.Controllers.Admin
 
         [Authorize(Roles = "lost_found_leader,admin")]
         [HttpDelete("{id}")]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(int id)
         {
 
@@ -105,7 +104,7 @@ namespace LostFoundService.Api.Controllers.Admin
 
             if (string.IsNullOrWhiteSpace(userId)) { throw new UnauthorizedException("User is not authenticated."); }
 
-            await _service.DeleteFoundItemAsync(id, userId);
+            await _service.AdminDeleteAsync(id, userId);
 
             return NoContent();
         }
@@ -115,12 +114,7 @@ namespace LostFoundService.Api.Controllers.Admin
         public async Task<IActionResult> ForceDelete(int id)
         {
 
-
-            var userId = User.GetUserId();
-
-            if (string.IsNullOrWhiteSpace(userId)) { throw new UnauthorizedException("User is not authenticated."); }
-
-            await _service.AdminForceDeleteAsync(id, userId);
+            await _service.AdminForceDeleteAsync(id);
 
             return NoContent();
         }

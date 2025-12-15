@@ -12,10 +12,8 @@ namespace LostFoundService.Application.DTOs.FoundItem.Admin
         [JsonPropertyOrder(8)]
         public bool IsDeleted { get; set; }
         [JsonPropertyOrder(9)]
-        public string FoundByUserId { get; set; }
-        [JsonPropertyOrder(10)]
         public string CreatedByUserId { get; set; }
-        [JsonPropertyOrder(11)]
+        [JsonPropertyOrder(10)]
         public string ModifiedByUserId { get; set; }
     }
 

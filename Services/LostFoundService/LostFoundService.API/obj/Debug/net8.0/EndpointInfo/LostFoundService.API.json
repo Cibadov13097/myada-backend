@@ -8,7 +8,7 @@
     "/api/v1/found-items": {
       "get": {
         "tags": [
-          "FoundItem"
+          "Found Items"
         ],
         "responses": {
           "200": {
@@ -18,7 +18,7 @@
       },
       "post": {
         "tags": [
-          "FoundItem"
+          "Found Items"
         ],
         "requestBody": {
           "content": {
@@ -67,7 +67,7 @@
     "/api/v1/found-items/users/me": {
       "get": {
         "tags": [
-          "FoundItem"
+          "Found Items"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@
     "/api/v1/found-items/users/me/{id}": {
       "get": {
         "tags": [
-          "FoundItem"
+          "Found Items"
         ],
         "parameters": [
           {
@@ -102,7 +102,7 @@
     "/api/v1/found-items/{id}": {
       "get": {
         "tags": [
-          "FoundItem"
+          "Found Items"
         ],
         "parameters": [
           {
@@ -123,7 +123,7 @@
       },
       "put": {
         "tags": [
-          "FoundItem"
+          "Found Items"
         ],
         "parameters": [
           {
@@ -181,7 +181,7 @@
       },
       "delete": {
         "tags": [
-          "FoundItem"
+          "Found Items"
         ],
         "parameters": [
           {
@@ -204,7 +204,7 @@
     "/api/v1/admin/found-items": {
       "get": {
         "tags": [
-          "FoundItem"
+          "Found Items - Admin"
         ],
         "parameters": [
           {
@@ -224,7 +224,7 @@
       },
       "post": {
         "tags": [
-          "FoundItem"
+          "Found Items - Admin"
         ],
         "requestBody": {
           "content": {
@@ -273,7 +273,7 @@
     "/api/v1/admin/found-items/{id}": {
       "get": {
         "tags": [
-          "FoundItem"
+          "Found Items - Admin"
         ],
         "parameters": [
           {
@@ -294,7 +294,7 @@
       },
       "put": {
         "tags": [
-          "FoundItem"
+          "Found Items - Admin"
         ],
         "parameters": [
           {
@@ -352,7 +352,7 @@
       },
       "delete": {
         "tags": [
-          "FoundItem"
+          "Found Items - Admin"
         ],
         "parameters": [
           {
@@ -372,22 +372,10 @@
         }
       }
     },
-    "/api/v1/admin/found-items/debug": {
-      "get": {
-        "tags": [
-          "FoundItem"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/v1/admin/found-items/{id}/force": {
       "delete": {
         "tags": [
-          "FoundItem"
+          "Found Items - Admin"
         ],
         "parameters": [
           {
@@ -410,7 +398,7 @@
     "/api/v1/lost-items": {
       "get": {
         "tags": [
-          "LostItem"
+          "Lost Items"
         ],
         "responses": {
           "200": {
@@ -420,7 +408,7 @@
       },
       "post": {
         "tags": [
-          "LostItem"
+          "Lost Items"
         ],
         "requestBody": {
           "content": {
@@ -432,6 +420,9 @@
                     "type": "string"
                   },
                   "Description": {
+                    "type": "string"
+                  },
+                  "LocationLost": {
                     "type": "string"
                   },
                   "Image": {
@@ -446,52 +437,7 @@
                 "Description": {
                   "style": "form"
                 },
-                "Image": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "LostItem"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Title": {
-                    "type": "string"
-                  },
-                  "Description": {
-                    "type": "string"
-                  },
-                  "Image": {
-                    "type": "string"
-                  }
-                }
-              },
-              "encoding": {
-                "Id": {
-                  "style": "form"
-                },
-                "Title": {
-                  "style": "form"
-                },
-                "Description": {
+                "LocationLost": {
                   "style": "form"
                 },
                 "Image": {
@@ -511,7 +457,329 @@
     "/api/v1/lost-items/{id}": {
       "get": {
         "tags": [
-          "LostItem"
+          "Lost Items"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Lost Items"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Title": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "LocationLost": {
+                    "type": "string"
+                  },
+                  "Image": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Title": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "LocationLost": {
+                  "style": "form"
+                },
+                "Image": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Lost Items"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/lost-items/users/me": {
+      "get": {
+        "tags": [
+          "Lost Items"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/lost-items/users/me/{id}": {
+      "get": {
+        "tags": [
+          "Lost Items"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/lost-items": {
+      "get": {
+        "tags": [
+          "Lost Items - Admin"
+        ],
+        "parameters": [
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Lost Items - Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Title": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "LocationLost": {
+                    "type": "string"
+                  },
+                  "Image": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "Title": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "LocationLost": {
+                  "style": "form"
+                },
+                "Image": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/lost-items/{id}": {
+      "get": {
+        "tags": [
+          "Lost Items - Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Lost Items - Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Title": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "LocationLost": {
+                    "type": "string"
+                  },
+                  "Image": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Title": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "LocationLost": {
+                  "style": "form"
+                },
+                "Image": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Lost Items - Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/lost-items/{id}/force": {
+      "delete": {
+        "tags": [
+          "Lost Items - Admin"
         ],
         "parameters": [
           {

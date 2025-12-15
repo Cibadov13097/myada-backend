@@ -1,83 +1,60 @@
-﻿using AutoMapper;
-using LostFoundService.Application.DTOs.LostItem;
-using LostFoundService.Application.Interfaces.Repositories;
+﻿using LostFoundService.Application.DTOs.LostItem;
+using LostFoundService.Application.Extensions;
 using LostFoundService.Application.Interfaces.Services;
-using LostFoundService.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LostFoundService.API.Controllers
+namespace LostFoundService.Api.Controllers
 {
-
     [Route("api/v1/lost-items")]
     [ApiController]
+    [Tags("Lost Items")]
+
     public class LostItemController : ControllerBase
     {
-        private readonly ILostItemService _lostItemService;
-        private readonly IMapper _mapper;
-
-        public LostItemController(
-            ILostItemService lostItemService,
-            IMapper mapper
-            )
-        {
-            _lostItemService = lostItemService;
-            _mapper = mapper;
-        }
+        private readonly ILostItemService _service;
+        public LostItemController(ILostItemService service) => _service = service;
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var lostItems = await _lostItemService.GetAllLostItemsAsync();
+        public async Task<IActionResult> GetAll() => Ok(await _service.GetAllLostItemsAsync());
 
-            var dto = _mapper.Map<List<GetLostItemDto>>(lostItems);
-            return Ok(dto);
-        }
-
- 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
-        {
-            var lostItem = await _lostItemService.GetLostItemByIdAsync(id);
-            if (lostItem == null)
-            {
-                return NotFound("Lost item not found");
-            }
-            var dto = _mapper.Map<GetLostItemDto>(lostItem);
-            return Ok(dto);
-        }
+        public async Task<IActionResult> GetById(int id) => Ok(await _service.GetLostItemByIdAsync(id));
 
-        [HttpPost()]
+
+        [Authorize]
+        [HttpGet("users/me")]
+        public async Task<IActionResult> GetMy() => Ok(await _service.GetMyLostItemsAsync(User.GetUserId()));
+
+
+        [Authorize]
+        [HttpGet("users/me/{id}")]
+        public async Task<IActionResult> GetMyById(int id) => Ok(await _service.GetMyLostItemByIdAsync(id, User.GetUserId()));
+
+
+        [Authorize]
+        [HttpPost]
         public async Task<IActionResult> Create([FromForm] AddLostItemDto dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("Dto cannot be null");
-            }
-            var entity = _mapper.Map<LostItem>(dto);
-            await _lostItemService.AddLostItemAsync(entity);
-            return Ok();
+            var created = await _service.AddLostItemAsync(dto, User.GetUserId());
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
-        [HttpPut()]
-        public async Task<IActionResult> Update([FromForm] UpdateLostItemDto dto)
+
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateLostItemDto dto)
+        => Ok(await _service.UpdateLostItemAsync(id, dto, User.GetUserId()));
+
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (dto == null)
-            {
-                return BadRequest("Dto can not be empty");
-            }
-            var lostItem = await _lostItemService.GetLostItemByIdAsync(dto.Id);
-            if (lostItem == null)
-            {
-                return NotFound("Lost item does not exist in db");
-            }
-            var entity = _mapper.Map(dto, lostItem);
-            await _lostItemService.UpdateLostItemAsync(entity);
-            return Ok();
+            await _service.DeleteLostItemAsync(id, User.GetUserId());
+            return NoContent();
         }
-
     }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LostFoundService.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+33c6111a2340636aa4aca40a124b214af2c951eb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7dfe8df3f03aabda6fe196180bc89791008da810")]
 [assembly: System.Reflection.AssemblyProductAttribute("LostFoundService.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LostFoundService.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

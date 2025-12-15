@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LostFoundService.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49015f6d4c44a322215f75b008da9d7d7c1680f1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7dfe8df3f03aabda6fe196180bc89791008da810")]
 [assembly: System.Reflection.AssemblyProductAttribute("LostFoundService.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LostFoundService.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

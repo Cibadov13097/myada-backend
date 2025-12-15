@@ -1,4 +1,6 @@
-﻿using LostFoundService.Domain.Entities;
+﻿using LostFoundService.Application.DTOs.LostItem;
+using LostFoundService.Application.DTOs.LostItem.Admin;
+using LostFoundService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +11,19 @@ namespace LostFoundService.Application.Interfaces.Services
 {
     public interface ILostItemService
     {
-        Task<LostItem> GetLostItemByIdAsync(int id);
+        // Public
+        Task<List<AdminLostItemDto>> GetAllLostItemsAsync();
+        Task<AdminLostItemDto> GetLostItemByIdAsync(int id);
 
-        Task<LostItem> GetMyLostItemAsync(string id);
-        Task<List<LostItem>> GetAllLostItemsAsync();
 
-        Task AddLostItemAsync(LostItem entity);
+        // User scoped
+        Task<List<AdminLostItemDto>> GetMyLostItemsAsync(string userId);
+        Task<AdminLostItemDto> GetMyLostItemByIdAsync(int id, string userId);
 
-        Task UpdateLostItemAsync(LostItem entity);
+
+        // Mutations
+        Task<AdminLostItemDto> AddLostItemAsync(AddLostItemDto dto, string userId);
+        Task<AdminLostItemDto> UpdateLostItemAsync(int id, UpdateLostItemDto dto, string userId);
+        Task DeleteLostItemAsync(int id, string userId);
     }
 }
