@@ -17,13 +17,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Infrastructure"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LostFoundService", "LostFoundService", "{C5FDAA5D-B3BC-47A9-A1C0-20807D1F527C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostFoundService.API", "Services\LostFoundService\LostFoundService.API\LostFoundService.API.csproj", "{A9832097-CA2F-4565-A6D8-1274591704B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostFoundService.Api", "Services\LostFoundService\LostFoundService.API\LostFoundService.Api.csproj", "{A9832097-CA2F-4565-A6D8-1274591704B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostFoundService.Domain", "Services\LostFoundService\LostFoundService.Domain\LostFoundService.Domain.csproj", "{1A3FA4F4-B684-41A2-A073-202BEB74C382}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostFoundService.Application", "Services\LostFoundService\LostFoundService.Application\LostFoundService.Application.csproj", "{436DC1F6-9107-4C0A-B111-734540A817A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostFoundService.Infrasctructure", "Services\LostFoundService\LostFoundService.Infrasctructure\LostFoundService.Infrasctructure.csproj", "{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostFoundService.Infrastructure", "Services\LostFoundService\LostFoundService.Infrasctructure\LostFoundService.Infrastructure.csproj", "{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keys", "Keys", "{A7992EE9-D0E3-40F8-AE83-9DF453212089}"
+	ProjectSection(SolutionItems) = preProject
+		public_key.pem = public_key.pem
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

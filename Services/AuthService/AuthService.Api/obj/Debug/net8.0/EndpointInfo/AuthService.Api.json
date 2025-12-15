@@ -1,34 +1,15 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "AuthService.Api",
-    "version": "1.0"
+    "title": "Auth API",
+    "version": "v1"
   },
   "paths": {
-    "/api/Auth/register": {
-      "post": {
+    "/api/auth/create-admin": {
+      "get": {
         "tags": [
           "Auth"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK"
@@ -36,7 +17,7 @@
         }
       }
     },
-    "/api/Auth/ForgetPassword": {
+    "/api/auth/forgot-password": {
       "post": {
         "tags": [
           "Auth"
@@ -67,7 +48,7 @@
         }
       }
     },
-    "/api/Auth/ResetPassword": {
+    "/api/auth/reset-password": {
       "post": {
         "tags": [
           "Auth"
@@ -98,7 +79,7 @@
         }
       }
     },
-    "/api/Auth/ChangePassword": {
+    "/api/auth/change-password": {
       "put": {
         "tags": [
           "Auth"
@@ -129,7 +110,7 @@
         }
       }
     },
-    "/api/Auth/login": {
+    "/api/auth/login": {
       "post": {
         "tags": [
           "Auth"
@@ -153,6 +134,18 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/.well-known/jwks.json": {
+      "get": {
+        "tags": [
+          "Jwks"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -194,33 +187,11 @@
       "LoginDto": {
         "type": "object",
         "properties": {
-          "email": {
+          "username": {
             "type": "string",
             "nullable": true
           },
           "password": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "RegisterDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          },
-          "firstName": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastName": {
             "type": "string",
             "nullable": true
           }
@@ -245,6 +216,19 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Bearer token. Format: Bearer {token}",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
 }

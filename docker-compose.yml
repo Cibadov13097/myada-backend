@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+
+  authservice:
+    build: ./Services/AuthService/AuthService.Api
+    container_name: auth-service
+    ports:
+      - "5001:8080"
+    volumes:
+      - ./Keys:/keys
+    environment:
+      - JWT_PUBLIC_KEY=/keys/public_key.pem
+
+  lostfoundservice:
+    build: ./Services/LostFoundService/LostFoundService.Api
+    container_name: lostfound-service
+    ports:
+      - "5002:8080"
+    volumes:
+      - ./Keys:/keys
+    environment:
+      - JWT_PUBLIC_KEY=/keys/public_key.pem

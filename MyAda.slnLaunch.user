@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

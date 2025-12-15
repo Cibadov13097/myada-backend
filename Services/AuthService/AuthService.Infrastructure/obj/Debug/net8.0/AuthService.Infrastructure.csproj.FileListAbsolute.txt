@@ -18,3 +18,23 @@ C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Serv
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.genruntimeconfig.cache
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\ref\AuthService.Infrastructure.dll
 C:\Users\cavid\OneDrive\Desktop\DeskBottom\Backend projects\Freelance\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.sourcelink.json
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Infrastructure.deps.json
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Infrastructure.runtimeconfig.json
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Infrastructure.pdb
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Application.dll
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Domain.dll
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Application.pdb
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Domain.pdb
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.AssemblyInfo.cs
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.sourcelink.json
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthServ.03063B79.Up2Date
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\refint\AuthService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.pdb
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.genruntimeconfig.cache
+C:\Users\cavid\OneDrive\Desktop\DeskBottom\BackendProjects\MyAda\Services\AuthService\AuthService.Infrastructure\obj\Debug\net8.0\ref\AuthService.Infrastructure.dll

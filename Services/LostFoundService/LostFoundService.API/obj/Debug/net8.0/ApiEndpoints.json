@@ -1,0 +1,622 @@
+[
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.FoundItemController",
+    "Method": "GetFoundItems",
+    "RelativePath": "api/v1/admin/found-items",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.FoundItemController",
+    "Method": "Create",
+    "RelativePath": "api/v1/admin/found-items",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ImageUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationFound",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.FoundItemController",
+    "Method": "GetFoundItemById",
+    "RelativePath": "api/v1/admin/found-items/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.FoundItemController",
+    "Method": "Update",
+    "RelativePath": "api/v1/admin/found-items/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "ImageUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationFound",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.FoundItemController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/admin/found-items/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.FoundItemController",
+    "Method": "ForceDelete",
+    "RelativePath": "api/v1/admin/found-items/{id}/force",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.AdminLostItemController",
+    "Method": "GetLostItems",
+    "RelativePath": "api/v1/admin/lost-items",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.AdminLostItemController",
+    "Method": "Create",
+    "RelativePath": "api/v1/admin/lost-items",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationLost",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.AdminLostItemController",
+    "Method": "GetLostItemById",
+    "RelativePath": "api/v1/admin/lost-items/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.AdminLostItemController",
+    "Method": "Update",
+    "RelativePath": "api/v1/admin/lost-items/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationLost",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.AdminLostItemController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/admin/lost-items/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.Admin.AdminLostItemController",
+    "Method": "ForceDelete",
+    "RelativePath": "api/v1/admin/lost-items/{id}/force",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items - Admin"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.FoundItemController",
+    "Method": "GetFoundItems",
+    "RelativePath": "api/v1/found-items",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.FoundItemController",
+    "Method": "Create",
+    "RelativePath": "api/v1/found-items",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ImageUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationFound",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.FoundItemController",
+    "Method": "GetFoundItemById",
+    "RelativePath": "api/v1/found-items/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.FoundItemController",
+    "Method": "Update",
+    "RelativePath": "api/v1/found-items/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "ImageUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationFound",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.FoundItemController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/found-items/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.FoundItemController",
+    "Method": "GetMyFoundItems",
+    "RelativePath": "api/v1/found-items/users/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.FoundItemController",
+    "Method": "GetMyFoundItemById",
+    "RelativePath": "api/v1/found-items/users/me/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Found Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.LostItemController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/lost-items",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.LostItemController",
+    "Method": "Create",
+    "RelativePath": "api/v1/lost-items",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationLost",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.LostItemController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/lost-items/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.LostItemController",
+    "Method": "Update",
+    "RelativePath": "api/v1/lost-items/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LocationLost",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.LostItemController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/lost-items/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.LostItemController",
+    "Method": "GetMy",
+    "RelativePath": "api/v1/lost-items/users/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items"
+    ]
+  },
+  {
+    "ContainingType": "LostFoundService.Api.Controllers.LostItemController",
+    "Method": "GetMyById",
+    "RelativePath": "api/v1/lost-items/users/me/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Lost Items"
+    ]
+  }
+]
