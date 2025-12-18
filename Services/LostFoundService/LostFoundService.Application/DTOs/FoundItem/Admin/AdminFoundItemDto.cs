@@ -15,6 +15,7 @@ namespace LostFoundService.Application.DTOs.FoundItem.Admin
         public string CreatedByUserId { get; set; }
         [JsonPropertyOrder(10)]
         public string ModifiedByUserId { get; set; }
+
     }
 
 }

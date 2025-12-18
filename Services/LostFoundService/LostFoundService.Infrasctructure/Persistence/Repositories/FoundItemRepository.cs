@@ -1,4 +1,5 @@
-﻿using LostFoundService.Application.Interfaces.Repositories;
+﻿using LostFoundService.Application.DTOs.FoundItem.Admin;
+using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,20 @@ namespace LostFoundService.Infrastructure.Persistence.Repositories
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
+        public async Task<List<FoundItem>> GetByCategoryIdAsync(
+         int categoryId,
+            bool includeDeleted = false)
+        {
+            IQueryable<FoundItem> query = _context.FoundItems
+                .AsNoTracking()
+                .Include(f => f.Category)
+                .Where(f => f.CategoryId == categoryId);
+
+            if (!includeDeleted)
+                query = query.Where(f => !f.IsDeleted);
+
+            return await query.ToListAsync();
+        }
 
         public async Task<List<FoundItem>> GetAllForAdminAsync(bool includeDeleted = true)
         {
@@ -55,8 +70,33 @@ namespace LostFoundService.Infrastructure.Persistence.Repositories
                     .ToListAsync();
             }
 
-            // includeDeleted == false → global filter işləyir
             return await _context.FoundItems.ToListAsync();
         }
+
+        public async Task<List<FoundItem>> GetAllAsync(bool includeDeleted)
+        {
+            IQueryable<FoundItem> query = _context.FoundItems
+            .AsNoTracking()
+            .Include(f => f.Category);
+
+
+            if (!includeDeleted)
+                query = query.Where(f => !f.IsDeleted);
+            
+            return await query.ToListAsync();
+
+        }
+        public async Task<FoundItem?> GetByIdAsync(int id)
+        {
+            IQueryable<FoundItem> query = _context.FoundItems
+           .AsNoTracking()
+           .Include(f => f.Category);
+
+
+       
+                var entity = await query.FirstOrDefaultAsync(f => f.Id == id);
+            return entity;
+        }
+
     }
 }

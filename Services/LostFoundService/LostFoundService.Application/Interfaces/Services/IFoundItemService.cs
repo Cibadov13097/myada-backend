@@ -13,7 +13,7 @@ using LostFoundService.Domain.Entities;
         public interface IFoundItemService
         {
             // Public endpoints
-            Task<GetFoundItemDto> GetFoundItemByIdAsync(int id);
+            Task<AdminGetFoundItemDto> GetFoundItemByIdAsync(int id);
             Task<List<GetFoundItemDto>> GetAllFoundItemsAsync();
 
             // User-specific endpoints

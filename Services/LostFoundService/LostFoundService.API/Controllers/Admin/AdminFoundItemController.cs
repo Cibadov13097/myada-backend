@@ -33,26 +33,37 @@ namespace LostFoundService.Api.Controllers.Admin
 
         [Authorize(Roles = "lost_found_leader,admin")]
         [HttpGet()]
-        public async Task<IActionResult> GetFoundItems( [FromQuery] bool includeDeleted = false)
+        public async Task<IActionResult> GetFoundItems([FromQuery]bool includeDeleted )
         {
-            var resultDto = await _service.AdminGetAllAsync(includeDeleted);
+            var resultDto = await _service.GetAllAsync(includeDeleted);
 
 
+            return Ok(resultDto);
+        }
+
+
+        [Authorize(Roles = "lost_found_leader,admin")]
+        [HttpGet("category/{categoryId}")]
+        public async Task<IActionResult> GetByCategory(int categoryId)
+        {
+            var resultDto = await _service.GetByCategoryIdAsync(categoryId);
             return Ok(resultDto);
         }
 
 
         [Authorize(Roles = "admin")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFoundItemById(int id)
+        public async Task<ActionResult<GetFoundItemDto>> GetFoundItemById(int id)
         {
-            var resultDto = await _service.AdminGetByIdAsync(id);
-            if (resultDto == null) { throw new NotFoundException($"FoundItem does not exist with id {id}"); }
-            
+            var resultDto = await _service.GetByIdAsync(id);
+
+            if (resultDto == null)
+                return NotFound($"FoundItem with id {id} not found");
+
             return Ok(resultDto);
         }
 
-     
+
 
         [Authorize(Roles = "lost_found_leader,admin")]
         [HttpPost]
@@ -69,7 +80,7 @@ namespace LostFoundService.Api.Controllers.Admin
             {
                 throw new UnauthorizedException("Admin not found!");
             }
-          var resultDto= await _service.AdminAddFoundItemAsync(dto,adminId);
+          var resultDto= await _service.AddAsync(dto,adminId);
             return Ok(resultDto);
         }
 
@@ -87,7 +98,7 @@ namespace LostFoundService.Api.Controllers.Admin
                 throw new UnauthorizedException("User is not authenticated.");
             }
 
-            var resultDto=await _service.AdminUpdateAsync(id, dto,adminId);
+            var resultDto=await _service.UpdateAsync(id, dto,adminId);
             return Ok(resultDto);
         }
 
@@ -104,7 +115,7 @@ namespace LostFoundService.Api.Controllers.Admin
 
             if (string.IsNullOrWhiteSpace(userId)) { throw new UnauthorizedException("User is not authenticated."); }
 
-            await _service.AdminDeleteAsync(id, userId);
+            await _service.DeleteAsync(id, userId);
 
             return NoContent();
         }
@@ -114,7 +125,7 @@ namespace LostFoundService.Api.Controllers.Admin
         public async Task<IActionResult> ForceDelete(int id)
         {
 
-            await _service.AdminForceDeleteAsync(id);
+            await _service.ForceDeleteAsync(id);
 
             return NoContent();
         }

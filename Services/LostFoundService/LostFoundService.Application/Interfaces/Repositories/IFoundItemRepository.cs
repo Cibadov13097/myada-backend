@@ -1,4 +1,5 @@
-﻿using LostFoundService.Domain.Entities;
+﻿using LostFoundService.Application.DTOs.FoundItem.Admin;
+using LostFoundService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,13 @@ namespace LostFoundService.Application.Interfaces.Repositories
         Task<FoundItem> GetByIdForAdminAsync(int id);
 
         Task<List<FoundItem>> GetAllForAdminAsync(bool includeDeleted = true);
+
+        Task<List<FoundItem>> GetAllAsync(bool includeDeleted);
+        Task<FoundItem?> GetByIdAsync(int id);
+
+        Task<List<FoundItem>> GetByCategoryIdAsync(
+        int categoryId,
+        bool includeDeleted = false
+        );
     }
 }

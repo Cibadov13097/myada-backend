@@ -37,6 +37,10 @@
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -51,6 +55,9 @@
                   "style": "form"
                 },
                 "Status": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -153,6 +160,10 @@
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -167,6 +178,9 @@
                   "style": "form"
                 },
                 "Status": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -211,8 +225,7 @@
             "name": "includeDeleted",
             "in": "query",
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "boolean"
             }
           }
         ],
@@ -243,6 +256,10 @@
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -258,11 +275,37 @@
                 },
                 "Status": {
                   "style": "form"
+                },
+                "CategoryId": {
+                  "style": "form"
                 }
               }
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/found-items/category/{categoryId}": {
+      "get": {
+        "tags": [
+          "Found Items - Admin"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -288,7 +331,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFoundItemDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFoundItemDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFoundItemDto"
+                }
+              }
+            }
           }
         }
       },
@@ -324,6 +384,10 @@
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -338,6 +402,9 @@
                   "style": "form"
                 },
                 "Status": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -802,6 +869,89 @@
   },
   "components": {
     "schemas": {
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedByUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "deletedByUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetFoundItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationFound": {
+            "type": "string",
+            "nullable": true
+          },
+          "foundByUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "Status": {
         "enum": [
           0,

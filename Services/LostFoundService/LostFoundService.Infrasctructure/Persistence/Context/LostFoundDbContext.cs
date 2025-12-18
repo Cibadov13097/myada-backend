@@ -14,6 +14,7 @@ namespace LostFoundService.Infrastructure.Persistence.Context
     {
         public DbSet<FoundItem> FoundItems { get; set; }
         public DbSet<LostItem> LostItems { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public LostFoundDbContext(DbContextOptions<LostFoundDbContext> options) : base(options)
         {
 

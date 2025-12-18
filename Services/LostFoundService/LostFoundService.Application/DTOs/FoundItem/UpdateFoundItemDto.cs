@@ -13,5 +13,6 @@ namespace LostFoundService.Application.DTOs.FoundItem
         public string Description { get; set; }
         public string LocationFound { get; set; }
         public Status Status { get; set; }
+        public int CategoryId { get; set; }
     }
 }

@@ -20,12 +20,28 @@ namespace LostFoundService.Infrastructure.Services
         private readonly IFoundItemRepository _repository;
         private readonly IMapper _mapper;
         public FoundItemService(IFoundItemRepository repository,
-            IMapper mapper)
+            IMapper mapper
+            )
         {
             _repository = repository;
             _mapper = mapper;
         }
 
+        public async Task<List<GetFoundItemDto>> GetAllFoundItemsAsync()
+        {
+            var entity = await _repository.GetAllAsync(false);
+            var dto = _mapper.Map<List<GetFoundItemDto>>(entity);
+            return dto;
+        }
+
+        public async Task<AdminGetFoundItemDto> GetFoundItemByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null)
+                throw new NotFoundException($"There is no FoundItem with id {id}");
+
+            return _mapper.Map<AdminGetFoundItemDto>(entity);
+        }
         public async Task<GetFoundItemDto> AddFoundItemAsync(AddFoundItemDto dto, string userId)
         {
             if (userId == null)
@@ -48,23 +64,14 @@ namespace LostFoundService.Infrastructure.Services
             return resultDto;
         }
 
+        //public async Task<List<GetFoundItemDto>> GetAllFoundItemsAsync()
+        //{
+        //    var foundItems = await _repository.GetAllAsync();
+        //    var dto = _mapper.Map<List<GetFoundItemDto>>(foundItems);
+        //    return dto;
+        //}
 
-        public async Task<List<GetFoundItemDto>> GetAllFoundItemsAsync()
-        {
-            var foundItems = await _repository.GetAllAsync();
-            var dto = _mapper.Map<List<GetFoundItemDto>>(foundItems);
-            return dto;
-        }
-
-        public async Task<GetFoundItemDto> GetFoundItemByIdAsync(int id)
-        {
-            var foundItem = await _repository.GetByIdAsync(id);
-            if (foundItem == null) throw new NotFoundException($"There is no FoundItem with id {id}");
-
-            var dto = _mapper.Map<GetFoundItemDto>(foundItem);
-            return dto;
-        }
-
+      
         public async Task<GetFoundItemDto> GetMyFoundItemByIdAsync(int id, string userId)
         {
             if (id <= 0)
@@ -93,7 +100,6 @@ namespace LostFoundService.Infrastructure.Services
 
             return dto;
         }
-
 
         public async Task DeleteFoundItemAsync(int itemId, string userId)
         {

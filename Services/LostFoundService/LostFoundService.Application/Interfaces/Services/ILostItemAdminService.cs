@@ -1,4 +1,5 @@
-﻿using LostFoundService.Application.DTOs.LostItem;
+﻿using LostFoundService.Application.DTOs.FoundItem.Admin;
+using LostFoundService.Application.DTOs.LostItem;
 using LostFoundService.Application.DTOs.LostItem.Admin;
 
 namespace LostFoundService.Application.Interfaces.Services
@@ -8,6 +9,12 @@ namespace LostFoundService.Application.Interfaces.Services
         Task<List<AdminLostItemDto>> AdminGetAllAsync(bool includeDeleted);
         Task<AdminLostItemDto> AdminGetByIdAsync(int id);
 
+        public async Task<AdminGetFoundItemDto> GetByCategoryId(int categoryId)
+        {
+
+
+            return null;
+        }
         Task<AdminLostItemDto> AdminAddLostItemAsync(AddLostItemDto dto, string adminId);
         Task<AdminLostItemDto> AdminUpdateAsync(int itemId, UpdateLostItemDto dto, string adminId);
 

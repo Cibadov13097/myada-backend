@@ -107,6 +107,7 @@ builder.Services.AddScoped<ILostItemAdminService, LostItemAdminService>();
 builder.Services.AddScoped<ILostItemService, LostItemService>();
 builder.Services.AddScoped<ILostItemRepository,LostItemRepository>();
 
+
 builder.Services.AddControllers();
 
 // ==========================

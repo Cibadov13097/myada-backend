@@ -6,47 +6,41 @@ using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Enums;
 using LostFoundService.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LostFoundService.Infrastructure.Services
 {
-    public class FoundItemAdminService:IFoundItemAdminService
+    public class FoundItemAdminService : IFoundItemAdminService
     {
         private readonly IMapper _mapper;
         private readonly IFoundItemRepository _repository;
-        public FoundItemAdminService(IMapper mapper,
+
+        public FoundItemAdminService(
+            IMapper mapper,
             IFoundItemRepository foundItemRepository)
         {
             _mapper = mapper;
             _repository = foundItemRepository;
         }
 
-        public async Task<GetFoundItemDto> AdminAddFoundItemAsync(AddFoundItemDto dto,string adminId)
+        public async Task<GetFoundItemDto> AddAsync(AddFoundItemDto dto, string adminId)
         {
-        
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
             var entity = _mapper.Map<FoundItem>(dto);
 
-
-
+            entity.Status = Status.approved;
             entity.CreatedAt = DateTime.UtcNow;
             entity.FoundByUserId = adminId;
             entity.CreatedByUserId = adminId;
+
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
-            entity.Status=Status.approved;
-            var resultDto = _mapper.Map<GetFoundItemDto>(entity);
-            return resultDto;
+
+            return _mapper.Map<GetFoundItemDto>(entity);
         }
 
-        public async Task AdminDeleteAsync(int itemId, string adminId)
+        public async Task DeleteAsync(int itemId, string adminId)
         {
-   
             if (itemId <= 0)
                 throw new ArgumentException("Invalid id");
 
@@ -54,106 +48,99 @@ namespace LostFoundService.Infrastructure.Services
                 throw new ArgumentNullException(nameof(adminId));
 
             var entity = await _repository.GetByIdAsync(itemId);
-
             if (entity == null)
                 throw new NotFoundException($"Item with id {itemId} not found.");
 
-            entity.DeletedByUserId = adminId;
-            entity.DeletedAt = DateTime.UtcNow;
             entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
+            entity.DeletedByUserId = adminId;
+
             await _repository.UpdateAsync(entity);
             await _repository.SaveChangesAsync();
         }
 
-        public async Task AdminForceDeleteAsync(int itemId)
+        public async Task ForceDeleteAsync(int itemId)
         {
             if (itemId <= 0)
                 throw new ArgumentException("Invalid id");
 
-
-            var foundItem = await _repository.GetByIdForAdminAsync(itemId);
-            if (foundItem == null)
+            var entity = await _repository.GetByIdAsync(itemId);
+            if (entity == null)
                 throw new NotFoundException($"Item with id {itemId} not found.");
 
-
-            await _repository.DeleteAsync(foundItem);
+            await _repository.DeleteAsync(entity);
             await _repository.SaveChangesAsync();
-
-
         }
 
-        public async Task<List<AdminFoundItemDto>> AdminGetAllAsync(bool includeDeleted)
+        public async Task<List<AdminGetFoundItemDto>> GetAllAsync(bool includeDeleted)
         {
-            var entities = await _repository.GetAllForAdminAsync(includeDeleted);
-            var dto = _mapper.Map<List<AdminFoundItemDto>>(entities);
+            var query = await _repository.GetAllAsync(includeDeleted);
 
-            return dto;
+            var items =  query.ToList();
+            return _mapper.Map<List<AdminGetFoundItemDto>>(items);
         }
 
-        public async Task<AdminFoundItemDto> AdminGetByIdAsync(int id)
+        public async Task<List<GetFoundItemDto>> GetByCategoryIdAsync(int categoryId)
         {
-            var entity = await _repository.GetByIdForAdminAsync(id);
+            var entities = await _repository.GetByCategoryIdAsync(categoryId);
 
-            var dto = _mapper.Map<AdminFoundItemDto>(entity);
-
-            return dto;
+            return _mapper.Map<List<GetFoundItemDto>>(entities);
         }
 
-        public async Task<GetFoundItemDto> AdminUpdateAsync(int itemId, UpdateFoundItemDto dto, string adminId)
+        public async Task<AdminGetFoundItemDto> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null)
+                throw new NotFoundException($"Item with id {id} not found.");
+
+            return _mapper.Map<AdminGetFoundItemDto>(entity);
+        }
+
+        public async Task<GetFoundItemDto> UpdateAsync(int itemId, UpdateFoundItemDto dto, string adminId)
         {
             if (dto == null)
-            {
-                throw new ArgumentNullException("Dto is empty");
-            }
+                throw new ArgumentNullException(nameof(dto));
+
             if (itemId <= 0)
-            {
-                throw new ArgumentException("Invalid Id");
-            }
+                throw new ArgumentException("Invalid id");
 
             var entity = await _repository.GetByIdAsync(itemId);
-            if (entity == null) throw new NotFoundException($"There is no FoundItem with id {itemId}");
+            if (entity == null)
+                throw new NotFoundException($"Item with id {itemId} not found.");
 
             _mapper.Map(dto, entity);
 
-            entity.ModifiedByUserId = adminId;
             entity.ModifiedAt = DateTime.UtcNow;
+            entity.ModifiedByUserId = adminId;
 
             await _repository.UpdateAsync(entity);
             await _repository.SaveChangesAsync();
 
-
-            var resultDto = _mapper.Map<GetFoundItemDto>(entity);
-            return resultDto;
+            return _mapper.Map<GetFoundItemDto>(entity);
         }
 
-        public async Task<GetFoundItemDto> AdminUpdateStatusAsync(int itemId, Status status, string adminId)
+        public async Task<GetFoundItemDto> UpdateStatusAsync(int itemId, Status status, string adminId)
         {
-            if (status == null)
-            {
-                throw new ArgumentNullException("Dto is empty");
-            }
+            if (!Enum.IsDefined(typeof(Status), status))
+                throw new ArgumentException("Invalid status");
+
             if (itemId <= 0)
-            {
-                throw new ArgumentException("Invalid Id");
-            }
+                throw new ArgumentException("Invalid id");
 
             var entity = await _repository.GetByIdAsync(itemId);
-
-            if (entity == null) throw new NotFoundException($"There is no FoundItem with id {itemId}");
-
+            if (entity == null)
+                throw new NotFoundException($"Item with id {itemId} not found.");
 
             entity.Status = status;
-            entity.ModifiedByUserId = adminId;
             entity.ModifiedAt = DateTime.UtcNow;
+            entity.ModifiedByUserId = adminId;
 
             await _repository.UpdateAsync(entity);
             await _repository.SaveChangesAsync();
 
-
-            var resultDto = _mapper.Map<GetFoundItemDto>(entity);
-            return resultDto;
+            return _mapper.Map<GetFoundItemDto>(entity);
         }
-
+    
     
     }
 }

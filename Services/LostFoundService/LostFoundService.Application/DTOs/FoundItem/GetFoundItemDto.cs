@@ -1,4 +1,5 @@
-﻿using LostFoundService.Domain.Enums;
+﻿using LostFoundService.Domain.Entities;
+using LostFoundService.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,9 @@ namespace LostFoundService.Application.DTOs.FoundItem
         [JsonPropertyOrder(6)]
         public Status Status { get; set; }
         [JsonPropertyOrder(7)]
+        public int CategoryId { get; set; }
+        public Category  Category { get; set; }
+        [JsonPropertyOrder(8)]
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }

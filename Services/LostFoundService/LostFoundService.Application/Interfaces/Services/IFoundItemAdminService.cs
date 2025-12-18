@@ -1,25 +1,19 @@
 ﻿using LostFoundService.Application.DTOs.FoundItem;
 using LostFoundService.Application.DTOs.FoundItem.Admin;
-using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LostFoundService.Application.Interfaces.Services
 {
     public interface IFoundItemAdminService
     {
-        //Admin
-        Task<List<AdminFoundItemDto>> AdminGetAllAsync(bool includeDeleted);
+        Task<List<AdminGetFoundItemDto>> GetAllAsync(bool includeDeleted);
+        Task<AdminGetFoundItemDto> GetByIdAsync(int id);
 
-        Task<AdminFoundItemDto> AdminGetByIdAsync(int id);
-        Task<GetFoundItemDto> AdminUpdateStatusAsync(int itemId, Status status, string adminId);
-        Task<GetFoundItemDto> AdminAddFoundItemAsync(AddFoundItemDto dto, string adminId);
-        Task AdminDeleteAsync(int itemId, string adminId);
-        Task AdminForceDeleteAsync(int itemId);
-        Task<GetFoundItemDto> AdminUpdateAsync(int itemId, UpdateFoundItemDto dto, string adminId);
+        Task<List<GetFoundItemDto>> GetByCategoryIdAsync(int categoryId);
+        Task<GetFoundItemDto> AddAsync(AddFoundItemDto dto, string adminId);
+        Task<GetFoundItemDto> UpdateAsync(int itemId, UpdateFoundItemDto dto, string adminId);
+        Task<GetFoundItemDto> UpdateStatusAsync(int itemId, Status status, string adminId);
+        Task DeleteAsync(int itemId, string adminId);
+        Task ForceDeleteAsync(int itemId);
     }
 }

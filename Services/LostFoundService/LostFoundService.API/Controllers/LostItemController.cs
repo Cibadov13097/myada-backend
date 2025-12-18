@@ -26,19 +26,34 @@ namespace LostFoundService.Api.Controllers
 
         [Authorize]
         [HttpGet("users/me")]
-        public async Task<IActionResult> GetMy() => Ok(await _service.GetMyLostItemsAsync(User.GetUserId()));
+        public async Task<IActionResult> GetMy()
+        {
+            var userId = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("User is not authenticated");
+            return Ok(await _service.GetMyLostItemsAsync(userId));
+        }
 
 
         [Authorize]
         [HttpGet("users/me/{id}")]
-        public async Task<IActionResult> GetMyById(int id) => Ok(await _service.GetMyLostItemByIdAsync(id, User.GetUserId()));
+        public async Task<IActionResult> GetMyById(int id)
+        {
+            var userId = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("User is not authenticated");
+            return Ok(await _service.GetMyLostItemByIdAsync(id, userId));
+        }
 
 
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] AddLostItemDto dto)
         {
-            var created = await _service.AddLostItemAsync(dto, User.GetUserId());
+            var userId = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("User is not authenticated");
+            var created = await _service.AddLostItemAsync(dto, userId);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
@@ -46,14 +61,22 @@ namespace LostFoundService.Api.Controllers
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] UpdateLostItemDto dto)
-        => Ok(await _service.UpdateLostItemAsync(id, dto, User.GetUserId()));
+        {
+            var userId = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("User is not authenticated");
+            return Ok(await _service.UpdateLostItemAsync(id, dto, userId));
+        }
 
 
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _service.DeleteLostItemAsync(id, User.GetUserId());
+            var userId = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("User is not authenticated");
+            await _service.DeleteLostItemAsync(id, userId);
             return NoContent();
         }
     }

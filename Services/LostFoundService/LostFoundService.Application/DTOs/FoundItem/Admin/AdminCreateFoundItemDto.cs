@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LostFoundService.Application.DTOs.FoundItem.Admin
 {
-    public class AdminCreateFoundItem
+    public class AdminCreateFoundItemDto
     {
         public string ImageUrl { get; set; }
 
@@ -15,6 +15,7 @@ namespace LostFoundService.Application.DTOs.FoundItem.Admin
         public string Description { get; set; }
         
         public string LocationFound { get; set; }
+        public int CategoryId { get; set; }
 
     }
 }
