@@ -1,146 +1,242 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\",
+  "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\addlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\addlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EF49AA06-D6D2-47E7-84EA-8B05B674193C}|ApiGateway\\ApiGateway.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\apigateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{EF49AA06-D6D2-47E7-84EA-8B05B674193C}|ApiGateway\\ApiGateway.csproj|solutionrelative:apigateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\repositories\\founditemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\repositories\\founditemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EF49AA06-D6D2-47E7-84EA-8B05B674193C}|ApiGateway\\ApiGateway.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\apigateway\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF49AA06-D6D2-47E7-84EA-8B05B674193C}|ApiGateway\\ApiGateway.csproj|solutionrelative:apigateway\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\updatelostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\updatelostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\getlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\getlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.infrastructure\\persistence\\context\\myadadbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|solutionrelative:services\\authservice\\authservice.infrastructure\\persistence\\context\\myadadbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.domain\\entities\\lostitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.domain\\entities\\lostitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EF49AA06-D6D2-47E7-84EA-8B05B674193C}|ApiGateway\\ApiGateway.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\apigateway\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{EF49AA06-D6D2-47E7-84EA-8B05B674193C}|ApiGateway\\ApiGateway.csproj|solutionrelative:apigateway\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\repositories\\lostitemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\repositories\\lostitemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\context\\lostfounddbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\context\\lostfounddbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\lostitemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\lostitemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\repositories\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\persistence\\repositories\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminlostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminlostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\founditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\founditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminfounditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminfounditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\lostitemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\lostitemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\mappings\\lostitemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\mappings\\lostitemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\admin\\adminlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\admin\\adminlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\founditemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\founditemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ilostitemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ilostitemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\founditemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrasctructure\\services\\founditemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ifounditemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ifounditemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.api\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\adminfounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\adminfounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admingetfounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admingetfounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admincreatefounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admincreatefounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\mappings\\founditemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\mappings\\founditemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\updatefounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\updatefounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\extensions\\claimsprincipalextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\extensions\\claimsprincipalextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\desktop\\deskbottom\\backendprojects\\myada\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\addfounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.infrastructure\\persistence\\context\\myadadbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|solutionrelative:services\\authservice\\authservice.infrastructure\\persistence\\context\\myadadbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.infrastructure\\migrations\\20260224233412_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|solutionrelative:services\\authservice\\authservice.infrastructure\\migrations\\20260224233412_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.infrastructure\\persistence\\context\\lostfounddbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B24B81D-2CA2-45B3-819E-4EC8F4F3E234}|Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.infrastructure\\persistence\\context\\lostfounddbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\founditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\founditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\lostfoundservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\lostfoundservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.domain\\lostfoundservice.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.domain\\lostfoundservice.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\lostfoundservice.application.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\lostfoundservice.application.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.api\\controllers\\jwkscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\controllers\\jwkscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Migrations\\20260224193903_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Migrations\\20260224193903_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193826_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193826_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193742_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193742_initial_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193540_db_clean_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193540_db_clean_mig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.domain\\common\\auditableentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.domain\\common\\auditableentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.domain\\entities\\lostitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.domain\\entities\\lostitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\getlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\getlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.domain\\entities\\founditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.domain\\entities\\founditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.domain\\common\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3FA4F4-B684-41A2-A073-202BEB74C382}|Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.domain\\common\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\addlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\addlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\updatelostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\updatelostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminlostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminlostitemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminfounditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\admin\\adminfounditemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\mappings\\lostitemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\mappings\\lostitemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\admin\\adminlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\lostitem\\admin\\adminlostitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ilostitemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ilostitemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ilostitemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\services\\ifounditemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ifounditemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\interfaces\\repositories\\ifounditemrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\adminfounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\adminfounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admingetfounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admingetfounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admincreatefounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\admin\\admincreatefounditem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\mappings\\founditemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\mappings\\founditemprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\updatefounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\updatefounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\extensions\\claimsprincipalextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\extensions\\claimsprincipalextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\addfounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\dtos\\founditem\\addfounditemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -150,7 +246,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -162,375 +258,647 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "UpdateLostItemDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T09:37:28.247Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AddLostItemDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAA0AAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T09:37:13.031Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "LostItemRepository.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwDcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T20:00:26.769Z",
+              "DocumentIndex": 4,
+              "Title": "Dockerfile",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\Dockerfile",
+              "RelativeDocumentMoniker": "ApiGateway\\Dockerfile",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\Dockerfile",
+              "RelativeToolTip": "ApiGateway\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-25T12:57:11.469Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "FoundItemRepository.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwD4AAAAAAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\Program.cs",
+              "RelativeDocumentMoniker": "ApiGateway\\Program.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\Program.cs",
+              "RelativeToolTip": "ApiGateway\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T10:16:32.807Z",
+              "WhenOpened": "2026-02-25T12:55:28.558Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "GetLostItemDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T09:19:21.661Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LostFoundDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAowCAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T09:20:25.825Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "LostItem.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T19:51:32.679Z",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\appsettings.json",
+              "RelativeDocumentMoniker": "ApiGateway\\appsettings.json",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\appsettings.json",
+              "RelativeToolTip": "ApiGateway\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-25T12:54:21.897Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Program.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Program.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Program.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Program.cs",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAAAGgAAAAzAAAAAAAAAA==",
+              "Title": "MyAdaDbContextFactory.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContextFactory.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContextFactory.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContextFactory.cs",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContextFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T19:58:13.694Z",
+              "WhenOpened": "2026-02-25T10:01:58.501Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MyAdaDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContext.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContext.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContext.cs",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Context\\MyAdaDbContext.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAuwBkAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T23:21:42.349Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "docker-compose.yml",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
+              "RelativeDocumentMoniker": "docker-compose.yml",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
+              "RelativeToolTip": "docker-compose.yml",
+              "ViewState": "AgIAACsAAAAAAAAAAAAAAE8AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2026-02-24T21:08:45.069Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\appsettings.json",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\appsettings.json",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\appsettings.json",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-09T12:34:39.409Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Program.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\Program.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Program.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\Program.cs",
+              "ViewState": "AgIAAMYAAAAAAAAAAAAawLwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T19:58:13.694Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "LostItemAdminService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
-              "ViewState": "AgIAADIAAAAAAAAAAAAmwEsAAAAAAAAAAAAAAA==",
+              "Title": "20260224233412_initial_mig.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Migrations\\20260224233412_initial_mig.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Migrations\\20260224233412_initial_mig.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Migrations\\20260224233412_initial_mig.cs",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Migrations\\20260224233412_initial_mig.cs",
+              "ViewState": "AgIAAMEAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T20:04:28.158Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "GenericRepository.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
-              "ViewState": "AgIAACAAAAAAAAAAAAAgwDAAAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T09:22:51.372Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "LostItemController.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostItemController.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostItemController.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostItemController.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostItemController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T21:35:33.294Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "AdminLostItemController.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminLostItemController.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminLostItemController.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminLostItemController.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminLostItemController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T20:12:57.793Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T23:34:12.845Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 12,
-              "Title": "FoundItemController.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\FoundItemController.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\FoundItemController.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\FoundItemController.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\FoundItemController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABEAAAAWAAAAAAAAAA==",
+              "Title": "Dockerfile",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Dockerfile",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Dockerfile",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Dockerfile",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-24T21:08:16.526Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "LostFoundDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAgwB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T06:39:45.26Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T23:21:58.169Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Program.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Program.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Program.cs",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Program.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACMAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T20:52:11.285Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAUwCgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T20:52:05.842Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 13,
-              "Title": "AdminFoundItemController.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminFoundItemController.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminFoundItemController.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminFoundItemController.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\Admin\\AdminFoundItemController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Title": "FoundItemController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\FoundItemController.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\FoundItemController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\FoundItemController.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\FoundItemController.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABEAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-10T06:56:08.803Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-12T06:39:45.26Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "LostItemService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
-              "ViewState": "AgIAAE0AAAAAAAAAAAAvwAkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T19:54:50.948Z",
-              "EditorCaption": ""
+              "DocumentIndex": 58,
+              "Title": "LostFoundService.Infrastructure.csproj",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\LostFoundService.Infrastructure.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-02-24T21:40:15.041Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 15,
-              "Title": "ILostItemService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAYwA4AAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T21:38:58.97Z",
-              "EditorCaption": ""
+              "Title": "LostFoundService.Domain.csproj",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-02-24T21:40:39.341Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 16,
-              "Title": "LostItemProfile.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA0AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T20:06:31.38Z",
-              "EditorCaption": ""
+              "Title": "LostFoundService.Application.csproj",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-02-24T21:40:41.862Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "LostFoundService.Api.csproj",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-02-24T21:40:51.341Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 17,
-              "Title": "AdminLostItemDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAgwBgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T20:05:25.988Z",
-              "EditorCaption": ""
+              "Title": "Dockerfile",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Dockerfile",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\Dockerfile",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Dockerfile",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAiwBYAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-24T20:49:21.916Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 18,
-              "Title": "ILostItemAdminService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAqAAAAAAAAAA==",
+              "Title": "JwksController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\JwksController.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\JwksController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\JwksController.cs",
+              "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Controllers\\JwksController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T20:03:52.947Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T20:38:34.563Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 19,
-              "Title": "FoundItemAdminService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
-              "ViewState": "AgIAAIAAAAAAAAAAAAAcwJ8AAAAAAAAAAAAAAA==",
+              "Title": "20260224193903_initial_mig.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Migrations\\20260224193903_initial_mig.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Migrations\\20260224193903_initial_mig.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Migrations\\20260224193903_initial_mig.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Migrations\\20260224193903_initial_mig.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T05:41:04.378Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T19:39:04.05Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 20,
-              "Title": "IFoundItemAdminService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Title": "20260224193826_initial_mig.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193826_initial_mig.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193826_initial_mig.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193826_initial_mig.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193826_initial_mig.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T06:50:05.64Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T19:38:26.669Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 21,
-              "Title": "ILostItemRepository.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Title": "20260224193742_initial_mig.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193742_initial_mig.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193742_initial_mig.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193742_initial_mig.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193742_initial_mig.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAuwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T19:53:17.894Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T19:37:42.803Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 22,
-              "Title": "FoundItemService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
-              "ViewState": "AgIAAIgAAAAAAAAAAAAiwKgAAAAAAAAAAAAAAA==",
+              "Title": "20260224193540_db_clean_mig.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193540_db_clean_mig.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193540_db_clean_mig.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193540_db_clean_mig.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Migrations\\20260224193540_db_clean_mig.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T09:27:00.246Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T19:35:40.444Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 23,
-              "Title": "IFoundItemService.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAkwCEAAAAAAAAAAAAAAA==",
+              "Title": "AuditableEntity.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Common\\AuditableEntity.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\Common\\AuditableEntity.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Common\\AuditableEntity.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Domain\\Common\\AuditableEntity.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAwAwAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T19:49:56.431Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "IGenericRepository.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T19:49:49.497Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "IFoundItemRepository.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T19:49:39.652Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T19:33:59.148Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 26,
-              "Title": "GlobalExceptionMiddleware.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Middlewares\\GlobalExceptionMiddleware.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Middlewares\\GlobalExceptionMiddleware.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\Middlewares\\GlobalExceptionMiddleware.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Middlewares\\GlobalExceptionMiddleware.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwCwAAAAnAAAAAAAAAA==",
+              "Title": "FoundItem.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\FoundItem.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\FoundItem.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\FoundItem.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\FoundItem.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABEAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-11T19:20:22.778Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T19:33:45.82Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "GetLostItemDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\GetLostItemDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-09T09:19:21.661Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "LostFoundDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Context\\LostFoundDbContext.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAkwCAAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T09:20:25.825Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "FoundItemAdminService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemAdminService.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAIwBsAAABcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T05:41:04.378Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 27,
-              "Title": "AdminFoundItemDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA8AAAAdAAAAAAAAAA==",
+              "Title": "BaseEntity.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Common\\BaseEntity.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\Common\\BaseEntity.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Common\\BaseEntity.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Domain\\Common\\BaseEntity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T06:59:34.404Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T19:33:58.434Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "LostItem.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostItem.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABEAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T19:51:32.679Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "FoundItemRepository.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\FoundItemRepository.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-09T10:16:32.807Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "LostItemRepository.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\LostItemRepository.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:00:26.769Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 28,
+              "Title": "AddLostItemDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\AddLostItemDto.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAA+wA0AAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T09:37:13.031Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "UpdateLostItemDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\UpdateLostItemDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T09:37:28.247Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "LostItemAdminService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemAdminService.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:04:28.158Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "GenericRepository.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Persistence\\Repositories\\GenericRepository.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T09:22:51.372Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "LostItemController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\LostItemController.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\LostItemController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\LostItemController.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\LostItemController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-09T21:35:33.294Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "AdminLostItemController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminLostItemController.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminLostItemController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminLostItemController.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminLostItemController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:12:57.793Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "AdminFoundItemController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminFoundItemController.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminFoundItemController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminFoundItemController.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\Controllers\\Admin\\AdminFoundItemController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T06:56:08.803Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "LostItemService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\LostItemService.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T19:54:50.948Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "ILostItemService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemService.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAYwA4AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-09T21:38:58.97Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "LostItemProfile.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Mappings\\LostItemProfile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:06:31.38Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "AdminLostItemDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\LostItem\\Admin\\AdminLostItemDto.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAA3wBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:05:25.988Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "ILostItemAdminService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\ILostItemAdminService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:03:52.947Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "IFoundItemAdminService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemAdminService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T06:50:05.64Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "ILostItemRepository.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\ILostItemRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T19:53:17.894Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "FoundItemService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrasctructure\\Services\\FoundItemService.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-09T09:27:00.246Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "IFoundItemService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Services\\IFoundItemService.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAkwCEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T19:49:56.431Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "IGenericRepository.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IGenericRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T19:49:49.497Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "IFoundItemRepository.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Interfaces\\Repositories\\IFoundItemRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T19:49:39.652Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "GlobalExceptionMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Api\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Api\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Api\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwCwAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-11T19:20:22.778Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "AdminFoundItemDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminFoundItemDto.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAIBJwA8AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T06:59:34.404Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
               "Title": "AdminGetFoundItem.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminGetFoundItem.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminGetFoundItem.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminGetFoundItem.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminGetFoundItem.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminGetFoundItem.cs",
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminGetFoundItem.cs",
               "ViewState": "AgIAAAsAAAAAAAAAAAAmwBYAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -538,23 +906,23 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 45,
               "Title": "AdminCreateFoundItem.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminCreateFoundItem.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminCreateFoundItem.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminCreateFoundItem.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminCreateFoundItem.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminCreateFoundItem.cs",
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\Admin\\AdminCreateFoundItem.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAkAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAIBJwAkAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-12T07:04:08.155Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 46,
               "Title": "FoundItemProfile.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\FoundItemProfile.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\FoundItemProfile.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Mappings\\FoundItemProfile.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\FoundItemProfile.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Mappings\\FoundItemProfile.cs",
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Mappings\\FoundItemProfile.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -562,11 +930,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 47,
               "Title": "UpdateFoundItemDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\UpdateFoundItemDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\UpdateFoundItemDto.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\UpdateFoundItemDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\UpdateFoundItemDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\UpdateFoundItemDto.cs",
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\UpdateFoundItemDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -574,37 +942,25 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 48,
               "Title": "ClaimsPrincipalExtensions.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Extensions\\ClaimsPrincipalExtensions.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Extensions\\ClaimsPrincipalExtensions.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Extensions\\ClaimsPrincipalExtensions.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\Extensions\\ClaimsPrincipalExtensions.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Extensions\\ClaimsPrincipalExtensions.cs",
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Extensions\\ClaimsPrincipalExtensions.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABJAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-09T21:24:45.02Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
-              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
-              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-09T12:34:39.409Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 49,
               "Title": "AddFoundItemDto.cs",
-              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\AddFoundItemDto.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\AddFoundItemDto.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\AddFoundItemDto.cs",
-              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\AddFoundItemDto.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\AddFoundItemDto.cs",
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\DTOs\\FoundItem\\AddFoundItemDto.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAIBJwA0AAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAIBZwA0AAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-09T11:56:27.183Z"
             }
