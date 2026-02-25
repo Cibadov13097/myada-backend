@@ -23,6 +23,7 @@ namespace AuthService.Infrastructure.Persistence.Context
 
             base.OnModelCreating(builder);
 
+            builder.HasDefaultSchema("auth");
             IdentityRoleSeeder.Seed(builder);
         }
     }

@@ -11,7 +11,10 @@ namespace AuthService.API.Controllers
         [HttpGet("/.well-known/jwks.json")]
         public IActionResult GetJwks()
         {
-            var publicKeyPem = System.IO.File.ReadAllText("keys/public_key.pem");
+
+            var basePath = Directory.GetCurrentDirectory();
+            var keyPath = Path.Combine(basePath, "keys", "public.pem");
+            var publicKeyPem = System.IO.File.ReadAllText(keyPath);
 
             using var rsa = RSA.Create();
             rsa.ImportFromPem(publicKeyPem);

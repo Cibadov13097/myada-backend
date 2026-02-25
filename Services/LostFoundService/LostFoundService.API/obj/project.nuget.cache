@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "tYEdPsRwpss=",
+  "dgSpecHash": "Jga8XICR9es=",
   "success": true,
-  "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+  "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cavid\\.nuget\\packages\\automapper\\15.1.0\\automapper.15.1.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",

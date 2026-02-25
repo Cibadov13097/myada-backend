@@ -1,3 +1,4 @@
+using AuthService.Application.Options;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Persistence.Context;
 using AuthService.Infrastructure.Services;
@@ -8,13 +9,13 @@ using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1?? Database
+// 1. Database
 builder.Services.AddDbContext<MyAdaDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Develop"));
 });
 
-// 2? Identity
+// 2. Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedEmail = false;
@@ -23,18 +24,26 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<MyAdaDbContext>()
 .AddDefaultTokenProviders();
 
-// 3? RSA PRIVATE KEY 
-var privateKeyPem = File.ReadAllText("keys/private_key.pem");
+// 3. JWT options (issuer, audience, lifetime)
+var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
+builder.Services.AddSingleton(jwtOptions);
+
+// 4. RSA private key (path from config or default)
+var keyPath = builder.Configuration["Jwt:PrivateKeyPath"] ?? "Keys/private.pem";
+
+var fullPath = Path.Combine(builder.Environment.ContentRootPath, keyPath);
+
+var privateKeyPem = File.ReadAllText(fullPath);
 var rsa = RSA.Create();
 rsa.ImportFromPem(privateKeyPem);
 
 builder.Services.AddSingleton<RSA>(rsa);
 builder.Services.AddScoped<TokenService>();
 
-// 4? Controllers
+// 5. Controllers/
 builder.Services.AddControllers();
 
-// 5? Swagger + JWT Auth
+// 6. Swagger + JWT Auth
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -68,7 +77,15 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// 6? Swagger
+// 7. Swagger
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<MyAdaDbContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

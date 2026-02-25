@@ -17,22 +17,28 @@ namespace AuthService.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            TokenService tokenService)
+          UserManager<ApplicationUser> userManager,
+          SignInManager<ApplicationUser> signInManager,
+          TokenService tokenService,
+          RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _roleManager = roleManager;
         }
-
 
         [HttpGet("create-admin")]
 
         public async Task<IActionResult> CreateAdmin()
         {
+            if (!await _roleManager.RoleExistsAsync("admin"))
+            {
+                await _roleManager.CreateAsync(new IdentityRole("admin"));
+            }
             ApplicationUser user = new ApplicationUser
             {
                 UserName = "Admin",
