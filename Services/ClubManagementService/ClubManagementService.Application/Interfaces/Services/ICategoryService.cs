@@ -1,0 +1,12 @@
+using ClubManagementService.Application.DTOs.Category;
+
+namespace ClubManagementService.Application.Interfaces.Services;
+
+public interface ICategoryService
+{
+    Task<CategoryDto?> GetByIdAsync(int id);
+    Task<List<CategoryDto>> GetAllAsync();
+    Task<CategoryDto> CreateAsync(CreateCategoryDto dto);
+    Task<CategoryDto> UpdateAsync(int id, UpdateCategoryDto dto);
+    Task DeleteAsync(int id);
+}

@@ -15,11 +15,51 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // =====================================================
-// 1. GET PUBLIC KEY FROM AUTH SERVICE (JWKS)
+// 1. SIGNING KEY: JWKS URL or local public key file
 // =====================================================
 
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
-await JwksProvider.InitializeAsync(jwksUrl);
+var publicKeyPath = builder.Configuration["Auth:PublicKeyPath"];
+
+SecurityKey? signingKey = null;
+
+// 1) Lokal public key varsa istifadə et (AuthService asılılığı yoxdur)
+if (!string.IsNullOrWhiteSpace(publicKeyPath) && File.Exists(publicKeyPath))
+{
+    var publicKeyPem = await File.ReadAllTextAsync(publicKeyPath);
+    var rsa = System.Security.Cryptography.RSA.Create();
+    rsa.ImportFromPem(publicKeyPem);
+    signingKey = new Microsoft.IdentityModel.Tokens.RsaSecurityKey(rsa);
+}
+// 2) JWKS sınanır; uğursuz olsa və PublicKeyPath varsa fallback
+else if (!string.IsNullOrWhiteSpace(jwksUrl))
+{
+    try
+    {
+        await JwksProvider.InitializeAsync(jwksUrl);
+    }
+    catch (HttpRequestException)
+    {
+        if (!string.IsNullOrWhiteSpace(publicKeyPath) && File.Exists(publicKeyPath))
+        {
+            var publicKeyPem = await File.ReadAllTextAsync(publicKeyPath);
+            var rsa = System.Security.Cryptography.RSA.Create();
+            rsa.ImportFromPem(publicKeyPem);
+            signingKey = new Microsoft.IdentityModel.Tokens.RsaSecurityKey(rsa);
+        }
+        else
+            throw new InvalidOperationException(
+                "Auth:JwksUrl is unreachable and Auth:PublicKeyPath is not set or file not found. Start AuthService or set Auth:PublicKeyPath to public_key.pem.");
+    }
+}
+else if (string.IsNullOrWhiteSpace(publicKeyPath) || !File.Exists(publicKeyPath))
+{
+    throw new InvalidOperationException(
+        "Configure Auth:PublicKeyPath (path to public_key.pem) or Auth:JwksUrl for JWT validation.");
+}
+
+var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
+var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
 
 // ==========================
 // 2. JWT AUTHENTICATION 
@@ -29,25 +69,32 @@ builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.RequireHttpsMetadata = false;
+        options.MapInboundClaims = false; // keep "sub" as "sub" in ClaimsPrincipal
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = "myada-auth",
+            ValidIssuer = validIssuer,
 
             ValidateAudience = true,
-            ValidAudience = "myada-api",
+            ValidAudience = validAudience,
 
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
 
+            // Expired token -> 401. No grace period (strict).
+            ClockSkew = TimeSpan.Zero,
 
-            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
-            {
-                return JwksProvider.GetKeys();
-            }
+            // Either local public key (no JWKS) or JWKS resolver
+            IssuerSigningKey = signingKey,
+            IssuerSigningKeyResolver = signingKey == null
+                ? (token, securityToken, kid, parameters) => JwksProvider.GetKeys()
+                : null
         };
     });
+
+
+
 
 // ==========================
 // 3. SWAGGER + JWT AUTH
@@ -85,6 +132,16 @@ builder.Services.AddSwaggerGen(c =>
         { securityScheme, Array.Empty<string>() }
     });
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        p => p.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
+
 
 // ==========================
 // 4. SERVICE REGISTRATION
@@ -124,12 +181,20 @@ builder.Services.AddDbContext<LostFoundDbContext>(options =>
 
 var app = builder.Build();
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<LostFoundDbContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {}
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
+        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
         "projectName": "AuthService.Api",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
+        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
         "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Api\\obj\\",
+        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,11 +32,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
-                "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
+              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
+                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
               },
-              "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj"
+              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj"
               }
             }
           }
@@ -533,14 +533,14 @@
         }
       }
     },
-    "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj",
+        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj",
         "projectName": "AuthService.Application",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj",
+        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj",
         "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\obj\\",
+        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -561,8 +561,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj": {
-                "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj"
+              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj": {
+                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj"
               }
             }
           }
@@ -898,14 +898,14 @@
         }
       }
     },
-    "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj": {
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj",
         "projectName": "AuthService.Domain",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj",
+        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj",
         "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Domain\\obj\\",
+        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1259,14 +1259,14 @@
         }
       }
     },
-    "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
         "projectName": "AuthService.Infrastructure",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1287,8 +1287,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
-                "projectPath": "C:\\Users\\cavid\\OneDrive\\Desktop\\DeskBottom\\BackendProjects\\MyAda\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
+              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
+                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
               }
             }
           }
