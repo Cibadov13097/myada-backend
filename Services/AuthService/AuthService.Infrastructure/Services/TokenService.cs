@@ -21,11 +21,12 @@ namespace AuthService.Infrastructure.Services
             _jwtOptions = jwtOptions ?? throw new ArgumentNullException(nameof(jwtOptions));
         }
 
-        public async Task<string> GenerateToken(ApplicationUser user)
+        public async Task<string> GenerateTokenAsync(ApplicationUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
+            var signingKey = new RsaSecurityKey(_rsa) { KeyId = "my-key-id-1" };
             var creds = new SigningCredentials(
-                new RsaSecurityKey(_rsa),
+                signingKey,
                 SecurityAlgorithms.RsaSha256
             );
 

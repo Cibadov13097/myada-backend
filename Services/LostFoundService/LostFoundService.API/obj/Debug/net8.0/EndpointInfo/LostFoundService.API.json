@@ -5,6 +5,131 @@
     "version": "v1"
   },
   "paths": {
+    "/api/v1/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{id}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/found-items": {
       "get": {
         "tags": [
@@ -32,11 +157,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationFound": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -47,10 +177,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationFound": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Status": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -148,11 +281,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationFound": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -163,10 +301,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationFound": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Status": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -238,11 +379,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationFound": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -253,10 +399,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationFound": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Status": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -319,11 +468,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationFound": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Status": {
                     "$ref": "#/components/schemas/Status"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -334,10 +488,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationFound": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Status": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -422,11 +579,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationLost": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Image": {
                     "type": "string"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -437,10 +599,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationLost": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Image": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -507,11 +672,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationLost": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Image": {
                     "type": "string"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -525,10 +695,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationLost": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Image": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -635,11 +808,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationLost": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Image": {
                     "type": "string"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -650,10 +828,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationLost": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Image": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -720,11 +901,16 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationLost": {
-                    "type": "string"
+                  "LocationId": {
+                    "type": "integer",
+                    "format": "int32"
                   },
                   "Image": {
                     "type": "string"
+                  },
+                  "CategoryId": {
+                    "type": "integer",
+                    "format": "int32"
                   }
                 }
               },
@@ -738,10 +924,13 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationLost": {
+                "LocationId": {
                   "style": "form"
                 },
                 "Image": {
+                  "style": "form"
+                },
+                "CategoryId": {
                   "style": "form"
                 }
               }
@@ -798,10 +987,36 @@
           }
         }
       }
+    },
+    "/debug-auth": {
+      "get": {
+        "tags": [
+          "LostFoundService.Api"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "CreateCategoryDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "Status": {
         "enum": [
           0,
@@ -810,6 +1025,20 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "UpdateCategoryDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

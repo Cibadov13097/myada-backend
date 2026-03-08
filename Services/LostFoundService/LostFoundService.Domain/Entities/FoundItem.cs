@@ -1,4 +1,4 @@
-﻿using LostFoundService.Domain.Common;
+using LostFoundService.Domain.Common;
 using LostFoundService.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -9,15 +9,17 @@ using System.Threading.Tasks;
 namespace LostFoundService.Domain.Entities
 {
   
-        public class FoundItem : AuditableEntity
-        {
-
-            public string ImageUrl { get; set; }
-            public string Description { get; set; }
-            public string LocationFound { get; set; }      
-            public string FoundByUserId { get; set; }
-            public Status Status { get; set; }
-        }
+    public class FoundItem : AuditableEntity
+    {
+        public string Description { get; set; }
+        public int? LocationId { get; set; }
+        public Location LocationFound { get; set; }
+        public string FoundByUserId { get; set; }
+         public string ImageUrl { get; set; }
+        public Status Status { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+    }
     
 
 }

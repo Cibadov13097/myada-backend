@@ -9,6 +9,14 @@
       {
         "Path": "Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "ApiGateway\\ApiGateway.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
+        "Action": "Start"
       }
     ]
   }

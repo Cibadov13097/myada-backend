@@ -1,0 +1,731 @@
+[
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.CategoriesController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/categories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Categories"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.CategoriesController",
+    "Method": "Create",
+    "RelativePath": "api/v1/categories",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Category.CreateCategoryDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Categories"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.CategoriesController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/categories/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Categories"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.CategoriesController",
+    "Method": "Update",
+    "RelativePath": "api/v1/categories/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Category.UpdateCategoryDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Categories"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.CategoriesController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/categories/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Categories"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/clubs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Clubs"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/clubs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Club.CreateClubDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Clubs"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/clubs/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Clubs"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
+    "Method": "Update",
+    "RelativePath": "api/v1/clubs/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Club.UpdateClubDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Clubs"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/clubs/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Clubs"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
+    "Method": "GetByCategoryId",
+    "RelativePath": "api/v1/clubs/by-category/{categoryId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "categoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Clubs"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventRegistrationsController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/event-registrations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Event Registrations"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventRegistrationsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/event-registrations",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.EventRegistration.CreateEventRegistrationDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Event Registrations"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventRegistrationsController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/event-registrations/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Event Registrations"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventRegistrationsController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/event-registrations/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Event Registrations"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventRegistrationsController",
+    "Method": "GetByEventId",
+    "RelativePath": "api/v1/event-registrations/by-event/{eventId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Event Registrations"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/events",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/events",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Event.CreateEventDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/events/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "Update",
+    "RelativePath": "api/v1/events/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Event.UpdateEventDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/events/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobApplicationsController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/job-applications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Applications"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobApplicationsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/job-applications",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.JobApplication.CreateJobApplicationDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Applications"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobApplicationsController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/job-applications/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Applications"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobApplicationsController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/job-applications/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Applications"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobApplicationsController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/v1/job-applications/{id}/status",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.JobApplication.UpdateJobApplicationStatusDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Applications"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobApplicationsController",
+    "Method": "GetByJobVacancyId",
+    "RelativePath": "api/v1/job-applications/by-vacancy/{jobVacancyId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobVacancyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Applications"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/job-vacancies",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "Create",
+    "RelativePath": "api/v1/job-vacancies",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.JobVacancy.CreateJobVacancyDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/job-vacancies/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "Update",
+    "RelativePath": "api/v1/job-vacancies/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.JobVacancy.UpdateJobVacancyDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/job-vacancies/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "GetByClubId",
+    "RelativePath": "api/v1/job-vacancies/by-club/{clubId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Job Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.SubeventsController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/subevents",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Subevents"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.SubeventsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/subevents",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Subevent.CreateSubeventDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Subevents"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.SubeventsController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/subevents/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Subevents"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.SubeventsController",
+    "Method": "Update",
+    "RelativePath": "api/v1/subevents/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.Subevent.UpdateSubeventDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Subevents"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.SubeventsController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/subevents/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Subevents"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.SubeventsController",
+    "Method": "GetByMainEventId",
+    "RelativePath": "api/v1/subevents/by-event/{mainEventId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "mainEventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Subevents"
+    ]
+  }
+]

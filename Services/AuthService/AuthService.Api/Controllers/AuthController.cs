@@ -142,7 +142,7 @@ namespace AuthService.API.Controllers
                 return Unauthorized("Username or password is incorrect");
 
 
-            var token = _tokenService.GenerateToken(user);
+            var token = await _tokenService.GenerateTokenAsync(user);
 
             return Ok(new { accessToken = token });
 

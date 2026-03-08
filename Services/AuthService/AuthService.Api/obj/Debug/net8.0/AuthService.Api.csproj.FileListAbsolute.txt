@@ -305,7 +305,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\appsettings.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AuthService.Api.staticwebassets.endpoints.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AuthService.Api.exe
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\Keys\public_key.pem
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AuthService.Api.deps.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AuthService.Api.runtimeconfig.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AuthService.Api.dll

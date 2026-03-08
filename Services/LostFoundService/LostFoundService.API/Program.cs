@@ -15,81 +15,41 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // =====================================================
-// 1. SIGNING KEY: JWKS URL or local public key file
+// 1. JWT: JWKS endpoint only (no local public key files)
 // =====================================================
 
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
-var publicKeyPath = builder.Configuration["Auth:PublicKeyPath"];
-
-SecurityKey? signingKey = null;
-
-// 1) Lokal public key varsa istifadə et (AuthService asılılığı yoxdur)
-if (!string.IsNullOrWhiteSpace(publicKeyPath) && File.Exists(publicKeyPath))
-{
-    var publicKeyPem = await File.ReadAllTextAsync(publicKeyPath);
-    var rsa = System.Security.Cryptography.RSA.Create();
-    rsa.ImportFromPem(publicKeyPem);
-    signingKey = new Microsoft.IdentityModel.Tokens.RsaSecurityKey(rsa);
-}
-// 2) JWKS sınanır; uğursuz olsa və PublicKeyPath varsa fallback
-else if (!string.IsNullOrWhiteSpace(jwksUrl))
-{
-    try
-    {
-        await JwksProvider.InitializeAsync(jwksUrl);
-    }
-    catch (HttpRequestException)
-    {
-        if (!string.IsNullOrWhiteSpace(publicKeyPath) && File.Exists(publicKeyPath))
-        {
-            var publicKeyPem = await File.ReadAllTextAsync(publicKeyPath);
-            var rsa = System.Security.Cryptography.RSA.Create();
-            rsa.ImportFromPem(publicKeyPem);
-            signingKey = new Microsoft.IdentityModel.Tokens.RsaSecurityKey(rsa);
-        }
-        else
-            throw new InvalidOperationException(
-                "Auth:JwksUrl is unreachable and Auth:PublicKeyPath is not set or file not found. Start AuthService or set Auth:PublicKeyPath to public_key.pem.");
-    }
-}
-else if (string.IsNullOrWhiteSpace(publicKeyPath) || !File.Exists(publicKeyPath))
-{
+if (string.IsNullOrWhiteSpace(jwksUrl))
     throw new InvalidOperationException(
-        "Configure Auth:PublicKeyPath (path to public_key.pem) or Auth:JwksUrl for JWT validation.");
-}
+        "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. https://AUTH_SERVICE_URL/.well-known/jwks.json");
+
+await JwksProvider.InitializeAsync(jwksUrl);
 
 var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
 var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
 
+builder.Services.AddHostedService<JwksRefreshHostedService>();
+
 // ==========================
-// 2. JWT AUTHENTICATION 
+// 2. JWT AUTHENTICATION (RS256, issuer/audience/lifetime/signature)
 // ==========================
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.RequireHttpsMetadata = false;
-        options.MapInboundClaims = false; // keep "sub" as "sub" in ClaimsPrincipal
+        options.MapInboundClaims = false;
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = validIssuer,
-
             ValidateAudience = true,
             ValidAudience = validAudience,
-
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-
-            // Expired token -> 401. No grace period (strict).
-            ClockSkew = TimeSpan.Zero,
-
-            // Either local public key (no JWKS) or JWKS resolver
-            IssuerSigningKey = signingKey,
-            IssuerSigningKeyResolver = signingKey == null
-                ? (token, securityToken, kid, parameters) => JwksProvider.GetKeys()
-                : null
+            ClockSkew = TimeSpan.FromMinutes(1),
+            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => JwksProvider.GetKeys()
         };
     });
 
@@ -164,8 +124,26 @@ builder.Services.AddScoped<ILostItemAdminService, LostItemAdminService>();
 builder.Services.AddScoped<ILostItemService, LostItemService>();
 builder.Services.AddScoped<ILostItemRepository,LostItemRepository>();
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+builder.Services.AddControllers(options =>
+{
+    options.ModelBinderProviders.Insert(0, new LostFoundService.Api.ModelBinding.NullableIntModelBinderProvider());
+});
+
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 // ==========================
 // 5. DATABASE
 // ==========================
@@ -190,7 +168,18 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swagger, httpReq) =>
+        {
+            var serverUrl = $"{httpReq.Scheme}://{httpReq.Host.Value}";
+            swagger.Servers = new List<OpenApiServer>
+            {
+                new OpenApiServer { Url = serverUrl }
+            };
+        });
+    });
+
     app.UseSwaggerUI();
 }
 
@@ -203,5 +192,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/debug-auth", (HttpContext ctx) =>
+{
+    return Results.Ok(new
+    {
+        AuthHeader = ctx.Request.Headers["Authorization"].ToString(),
+        IsAuthenticated = ctx.User.Identity?.IsAuthenticated
+    });
+});
+
+
 
 app.Run();

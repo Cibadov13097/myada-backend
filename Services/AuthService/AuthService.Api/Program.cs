@@ -30,8 +30,28 @@ builder.Services.AddSingleton(jwtOptions);
 
 // 4. RSA private key (path from config or default)
 var keyPath = builder.Configuration["Jwt:PrivateKeyPath"] ?? "Keys/private.pem";
+var fullPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, keyPath));
 
-var fullPath = Path.Combine(builder.Environment.ContentRootPath, keyPath);
+// Development on Windows: /keys/private.pem → C:\keys\... yoxdur; repo root Keys istifadə et
+if (builder.Environment.IsDevelopment() && !File.Exists(fullPath))
+{
+    var contentRoot = builder.Environment.ContentRootPath;
+    var fallbacks = new[]
+    {
+        Path.Combine(contentRoot, "Keys", "private.pem"),
+        Path.Combine(contentRoot, "..", "..", "..", "Keys", "private.pem"),
+        Path.Combine(contentRoot, "..", "..", "..", "keys", "private.pem")
+    };
+    foreach (var path in fallbacks)
+    {
+        var resolved = Path.GetFullPath(path);
+        if (File.Exists(resolved))
+        {
+            fullPath = resolved;
+            break;
+        }
+    }
+}
 
 var privateKeyPem = File.ReadAllText(fullPath);
 var rsa = RSA.Create();
@@ -43,6 +63,17 @@ builder.Services.AddScoped<TokenService>();
 // 5. Controllers/
 builder.Services.AddControllers();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 // 6. Swagger + JWT Auth
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -88,10 +119,22 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swagger, httpReq) =>
+        {
+            var serverUrl = $"{httpReq.Scheme}://{httpReq.Host.Value}";
+            swagger.Servers = new List<OpenApiServer>
+            {
+                new OpenApiServer { Url = serverUrl }
+            };
+        });
+    });
+
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

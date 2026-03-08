@@ -1,4 +1,4 @@
-﻿using LostFoundService.Domain.Enums;
+using LostFoundService.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,8 @@ namespace LostFoundService.Application.DTOs.FoundItem
     {
         public string ImageUrl { get; set; }
         public string Description { get; set; }
-        public string LocationFound { get; set; }
+        public int? LocationId { get; set; }
         public Status Status { get; set; }
+        public int? CategoryId { get; set; }
     }
 }
