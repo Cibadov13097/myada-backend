@@ -1,16 +1,10 @@
-﻿using LostFoundService.Domain.Entities;
+using LostFoundService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LostFoundService.Infrastructure.Persistence.Configurations
 {
-    public class LostItemConfiguration:IEntityTypeConfiguration<LostItem>
+    public class LostItemConfiguration : IEntityTypeConfiguration<LostItem>
     {
         public void Configure(EntityTypeBuilder<LostItem> builder)
         {
@@ -28,9 +22,21 @@ namespace LostFoundService.Infrastructure.Persistence.Configurations
                    .IsRequired(false)
                    .HasMaxLength(500);
 
+            builder.Property(x => x.LocationId).IsRequired(false);
+            builder.HasOne(x => x.LocationLost)
+                   .WithMany()
+                   .HasForeignKey(x => x.LocationId)
+                   .OnDelete(DeleteBehavior.SetNull);
+
             builder.Property(x => x.PostedByUserId)
                    .IsRequired()
                    .HasMaxLength(100);
+
+            builder.Property(x => x.CategoryId).IsRequired();
+            builder.HasOne(x => x.Category)
+                   .WithMany()
+                   .HasForeignKey(x => x.CategoryId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             // AuditableEntity fields
             builder.Property(x => x.CreatedAt)

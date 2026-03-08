@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 
@@ -11,9 +11,19 @@ namespace AuthService.API.Controllers
         [HttpGet("/.well-known/jwks.json")]
         public IActionResult GetJwks()
         {
-
             var basePath = Directory.GetCurrentDirectory();
             var keyPath = Path.Combine(basePath, "keys", "public.pem");
+            if (!System.IO.File.Exists(keyPath))
+            {
+                var fallbacks = new[]
+                {
+                    Path.Combine(basePath, "Keys", "public.pem"),
+                    Path.GetFullPath(Path.Combine(basePath, "..", "..", "..", "Keys", "public.pem")),
+                    Path.GetFullPath(Path.Combine(basePath, "..", "..", "..", "keys", "public.pem"))
+                };
+                keyPath = fallbacks.FirstOrDefault(p => System.IO.File.Exists(p))
+                    ?? throw new FileNotFoundException("public.pem not found. Place it in AuthService.Api/keys or repo root Keys folder.", keyPath);
+            }
             var publicKeyPem = System.IO.File.ReadAllText(keyPath);
 
             using var rsa = RSA.Create();

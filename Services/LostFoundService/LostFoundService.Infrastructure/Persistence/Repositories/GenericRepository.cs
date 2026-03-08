@@ -1,4 +1,4 @@
-﻿using LostFoundService.Application.Interfaces.Repositories;
+using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Domain.Common;
 using LostFoundService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -23,18 +23,18 @@ namespace LostFoundService.Infrastructure.Persistence.Repositories
         }
 
       
-        public async Task DeleteAsync(T entity)
+        public virtual async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
         }
 
       
-        public async Task<List<T>> GetAllAsync()
+        public virtual async Task<List<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
         }

@@ -1,32 +1,33 @@
-﻿using LostFoundService.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using LostFoundService.Application.DTOs.Location;
+using LostFoundService.Domain.Enums;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace LostFoundService.Application.DTOs.FoundItem
 {
-
     public class GetFoundItemDto
     {
         [JsonPropertyOrder(1)]
-        public int  Id { get; set; }
+        public int Id { get; set; }
 
         [JsonPropertyOrder(2)]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
         [JsonPropertyOrder(3)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
         [JsonPropertyOrder(4)]
-        public string LocationFound { get; set; }
+        public int? LocationId { get; set; }
         [JsonPropertyOrder(5)]
-        public string FoundByUserId { get; set; }
+        public LocationDto? Location { get; set; }
         [JsonPropertyOrder(6)]
-        public Status Status { get; set; }
+        public string? LocationFound { get; set; }
         [JsonPropertyOrder(7)]
-
+        public string? FoundByUserId { get; set; }
+        [JsonPropertyOrder(8)]
+        public Status Status { get; set; }
+        [JsonPropertyOrder(9)]
+        public int CategoryId { get; set; }
+        public string? CategoryName { get; set; }
+        [JsonPropertyOrder(10)]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

@@ -1,4 +1,4 @@
-﻿using LostFoundService.Domain.Entities;
+using LostFoundService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,9 +18,11 @@ namespace LostFoundService.Infrastructure.Persistence.Configurations
                    .IsRequired()
                    .HasMaxLength(1000);
 
-            builder.Property(x => x.LocationFound)
-                   .IsRequired()
-                   .HasMaxLength(150);
+            builder.Property(x => x.LocationId).IsRequired(false);
+            builder.HasOne(x => x.LocationFound)
+                   .WithMany()
+                   .HasForeignKey(x => x.LocationId)
+                   .OnDelete(DeleteBehavior.SetNull);
 
             builder.Property(x => x.FoundByUserId)
                    .IsRequired()
@@ -28,6 +30,12 @@ namespace LostFoundService.Infrastructure.Persistence.Configurations
 
             builder.Property(x => x.Status)
                    .IsRequired();
+
+            builder.Property(x => x.CategoryId).IsRequired();
+            builder.HasOne(x => x.Category)
+                   .WithMany()
+                   .HasForeignKey(x => x.CategoryId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.CreatedAt)
                    .IsRequired();
