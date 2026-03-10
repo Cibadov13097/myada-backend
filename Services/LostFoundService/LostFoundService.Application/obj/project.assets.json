@@ -162,6 +162,16 @@
         "runtime": {
           "bin/placeholder/LostFoundService.Domain.dll": {}
         }
+      },
+      "Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Shared.Contracts.dll": {}
+        }
       }
     }
   },
@@ -468,12 +478,18 @@
       "type": "project",
       "path": "../LostFoundService.Domain/LostFoundService.Domain.csproj",
       "msbuildProject": "../LostFoundService.Domain/LostFoundService.Domain.csproj"
+    },
+    "Shared.Contracts/1.0.0": {
+      "type": "project",
+      "path": "../../../Shared/Shared.Contracts/Shared.Contracts.csproj",
+      "msbuildProject": "../../../Shared/Shared.Contracts/Shared.Contracts.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
       "AutoMapper >= 15.1.0",
-      "LostFoundService.Domain >= 1.0.0"
+      "LostFoundService.Domain >= 1.0.0",
+      "Shared.Contracts >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -510,6 +526,9 @@
           "projectReferences": {
             "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj": {
               "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\LostFoundService.Domain.csproj"
+            },
+            "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Shared\\Shared.Contracts\\Shared.Contracts.csproj": {
+              "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Shared\\Shared.Contracts\\Shared.Contracts.csproj"
             }
           }
         }

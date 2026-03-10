@@ -32,7 +32,6 @@ builder.Services.AddSingleton(jwtOptions);
 var keyPath = builder.Configuration["Jwt:PrivateKeyPath"] ?? "Keys/private.pem";
 var fullPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, keyPath));
 
-// Development on Windows: /keys/private.pem → C:\keys\... yoxdur; repo root Keys istifadə et
 if (builder.Environment.IsDevelopment() && !File.Exists(fullPath))
 {
     var contentRoot = builder.Environment.ContentRootPath;
@@ -60,21 +59,22 @@ rsa.ImportFromPem(privateKeyPem);
 builder.Services.AddSingleton<RSA>(rsa);
 builder.Services.AddScoped<TokenService>();
 
-// 5. Controllers/
-builder.Services.AddControllers();
-
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy
-            .AllowAnyOrigin()
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
-    });
+        });
 });
-// 6. Swagger + JWT Auth
+
+// 5. Controllers/
+builder.Services.AddControllers();
+
+// 6. Swagger + JWT Auth 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -119,24 +119,13 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(c =>
-    {
-        c.PreSerializeFilters.Add((swagger, httpReq) =>
-        {
-            var serverUrl = $"{httpReq.Scheme}://{httpReq.Host.Value}";
-            swagger.Servers = new List<OpenApiServer>
-            {
-                new OpenApiServer { Url = serverUrl }
-            };
-        });
-    });
-
+    app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
+app.UseCors("AllowAll");
 app.UseAuthorization();
 
 app.MapControllers();

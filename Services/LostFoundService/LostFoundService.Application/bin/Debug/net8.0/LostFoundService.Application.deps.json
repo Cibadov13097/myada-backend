@@ -9,7 +9,8 @@
       "LostFoundService.Application/1.0.0": {
         "dependencies": {
           "AutoMapper": "15.1.0",
-          "LostFoundService.Domain": "1.0.0"
+          "LostFoundService.Domain": "1.0.0",
+          "Shared.Contracts": "1.0.0"
         },
         "runtime": {
           "LostFoundService.Application.dll": {}
@@ -116,6 +117,14 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "Shared.Contracts/1.0.0": {
+        "runtime": {
+          "Shared.Contracts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -189,6 +198,11 @@
       "hashPath": "microsoft.identitymodel.tokens.8.14.0.nupkg.sha512"
     },
     "LostFoundService.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Shared.Contracts/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

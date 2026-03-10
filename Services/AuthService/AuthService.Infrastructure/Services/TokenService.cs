@@ -1,6 +1,7 @@
 using AuthService.Application.Options;
 using AuthService.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,20 +14,28 @@ namespace AuthService.Infrastructure.Services
         private readonly RSA _rsa;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtOptions _jwtOptions;
+        private readonly IConfiguration _configuration;
 
-        public TokenService(RSA rsa, UserManager<ApplicationUser> userManager, JwtOptions jwtOptions)
+        public TokenService(RSA rsa, UserManager<ApplicationUser> userManager, JwtOptions jwtOptions,
+            IConfiguration configuration
+            )
         {
             _rsa = rsa;
             _userManager = userManager;
             _jwtOptions = jwtOptions ?? throw new ArgumentNullException(nameof(jwtOptions));
+            _configuration=configuration;
         }
 
-        public async Task<string> GenerateTokenAsync(ApplicationUser user)
+        public async Task<string> GenerateToken(ApplicationUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
-            var signingKey = new RsaSecurityKey(_rsa) { KeyId = "my-key-id-1" };
+            var rsaKey = new RsaSecurityKey(_rsa)
+            {
+                KeyId = _configuration["Jwt:KeyId"]
+            };  
+
             var creds = new SigningCredentials(
-                signingKey,
+                rsaKey,
                 SecurityAlgorithms.RsaSha256
             );
 

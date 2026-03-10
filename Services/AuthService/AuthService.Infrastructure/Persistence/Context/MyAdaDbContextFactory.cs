@@ -13,7 +13,7 @@ public class MyAdaDbContextFactory : IDesignTimeDbContextFactory<MyAdaDbContext>
         var optionsBuilder = new DbContextOptionsBuilder<MyAdaDbContext>();
 
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Develop")
-            ?? "Host=db;Port=5432;Database=MyAdaDb;Username=postgres;Password=123";
+            ?? "Host=MyAda;Port=5432;Database=MyAdaDb;Username=postgres;Password=123";
 
         optionsBuilder.UseNpgsql(connectionString);
 
