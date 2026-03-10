@@ -1,4 +1,29 @@
+version: "3.9"
+
 services:
+
+  myada:
+    image: postgres:16
+    container_name: myada-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5433:5432"
+    volumes:
+      - myada_postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: myada-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: always
 
   authservice:
     build:
@@ -8,15 +33,16 @@ services:
     ports:
       - "5001:8080"
     volumes:
-      - ./Keys/private.pem:/keys/private.pem:ro
-      - ./Keys/public.pem:/app/keys/public.pem:ro
+      - ./keys/private.pem:/keys/private.pem:ro
+      - ./keys/public.pem:/keys/public.pem:ro
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__Develop=Host=db;Port=5432;Database=MyAdaDb;Username=postgres;Password=123
-      - Jwt__PrivateKeyPath=/keys/private.pem
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Develop: Host=myada;Port=5432;Database=AuthDb;Username=postgres;Password=123
+      Jwt__PrivateKeyPath: /keys/private.pem
     depends_on:
-      - db
+      - myada
+    restart: always
 
   lostfoundservice:
     build:
@@ -25,14 +51,20 @@ services:
     container_name: lostfound-service
     ports:
       - "5002:8080"
+    volumes:
+      - ./keys/public.pem:/keys/public.pem:ro
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__Develop=Host=db;Port=5432;Database=MyAdaDb;Username=postgres;Password=123
-      - Auth__JwksUrl=http://authservice:8080/.well-known/jwks.json
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Develop: Host=myada;Port=5432;Database=LostFoundDb;Username=postgres;Password=123
+      Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
+      Auth__PublicKeyPath: /keys/public.pem
+      RabbitMQ__Host: rabbitmq
     depends_on:
       - authservice
-      - db
+      - myada
+      - rabbitmq
+    restart: always
 
   clubmanagementservice:
     build:
@@ -42,11 +74,30 @@ services:
     ports:
       - "5003:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__Develop=Host=db;Port=5432;Database=MyAdaDb;Username=postgres;Password=123
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Develop: Host=myada;Port=5432;Database=ClubDb;Username=postgres;Password=123
     depends_on:
-      - db
+      - myada
+    restart: always
+
+  notificationservice:
+    build:
+      context: .
+      dockerfile: Services/NotificationService/NotificationService.API/Dockerfile
+    container_name: notification-service
+    ports:
+      - "5004:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      RabbitMQ__Host: rabbitmq
+      ConnectionStrings__Default: Host=myada;Port=5432;Database=NotificationDb;Username=postgres;Password=123
+    depends_on:
+      - rabbitmq
+      - myada
+    restart: always
+
 
   apigateway:
     build:
@@ -56,23 +107,13 @@ services:
     ports:
       - "5000:8080"
     environment:
-      - ASPNETCORE_URLS=http://+:8080
+      ASPNETCORE_URLS: http://+:8080
     depends_on:
       - authservice
       - lostfoundservice
       - clubmanagementservice
-
-  db:
-    image: postgres:16
-    container_name: myada-db
-    environment:
-      POSTGRES_DB: MyAdaDb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-    ports:
-      - "5433:5432"   # host 5433 → container 5432 (Windows postgres 5432-də qala bilər)
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - notificationservice
+    restart: always
 
 volumes:
-  postgres_data:
+  myada_postgres_data:

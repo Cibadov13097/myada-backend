@@ -1,10 +1,10 @@
-﻿using AutoMapper;
+using AutoMapper;
 using LostFoundService.Application.DTOs.FoundItem;
 using LostFoundService.Application.Extensions;
 using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Exceptions;
-using LostFoundService.Infrastructure.Services;
+using LostFoundService.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;

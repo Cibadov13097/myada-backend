@@ -11,7 +11,8 @@
           "LostFoundService.Application": "1.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.0",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.0"
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.0",
+          "RabbitMQ.Client": "6.8.1"
         },
         "runtime": {
           "LostFoundService.Infrastructure.dll": {}
@@ -662,6 +663,14 @@
           }
         }
       },
+      "RabbitMQ.Client/6.8.1": {
+        "runtime": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.8.1.0"
+          }
+        }
+      },
       "System.CodeDom/4.4.0": {
         "runtime": {
           "lib/netstandard2.0/System.CodeDom.dll": {
@@ -863,7 +872,8 @@
       "LostFoundService.Application/1.0.0": {
         "dependencies": {
           "AutoMapper": "15.1.0",
-          "LostFoundService.Domain": "1.0.0"
+          "LostFoundService.Domain": "1.0.0",
+          "Shared.Contracts": "1.0.0"
         },
         "runtime": {
           "LostFoundService.Application.dll": {
@@ -875,6 +885,14 @@
       "LostFoundService.Domain/1.0.0": {
         "runtime": {
           "LostFoundService.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Shared.Contracts/1.0.0": {
+        "runtime": {
+          "Shared.Contracts.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1168,6 +1186,13 @@
       "path": "npgsql.entityframeworkcore.postgresql/8.0.0",
       "hashPath": "npgsql.entityframeworkcore.postgresql.8.0.0.nupkg.sha512"
     },
+    "RabbitMQ.Client/6.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jNsmGgmCNw2S/NzskeN2ijtGywtH4Sk/G6jWUTD5sY9SrC27Xz6BsLIiB8hdsfjeyWCa4j4GvCIGkpE8wrjU1Q==",
+      "path": "rabbitmq.client/6.8.1",
+      "hashPath": "rabbitmq.client.6.8.1.nupkg.sha512"
+    },
     "System.CodeDom/4.4.0": {
       "type": "package",
       "serviceable": true,
@@ -1286,6 +1311,11 @@
       "sha512": ""
     },
     "LostFoundService.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Shared.Contracts/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

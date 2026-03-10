@@ -987,18 +987,6 @@
           }
         }
       }
-    },
-    "/debug-auth": {
-      "get": {
-        "tags": [
-          "LostFoundService.Api"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": {

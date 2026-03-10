@@ -24,9 +24,6 @@ public static class JwksProvider
         if (!_jwksUrl.EndsWith("/.well-known/jwks.json", StringComparison.OrdinalIgnoreCase))
             _jwksUrl = _jwksUrl.TrimEnd('/') + "/.well-known/jwks.json";
         await RefreshAsync();
-        if (_keys.Count == 0)
-            throw new InvalidOperationException(
-                $"No signing keys loaded from JWKS. Check that Auth:JwksUrl is correct and AuthService is running. URL: {_jwksUrl}");
     }
 
     /// <summary>
@@ -38,10 +35,7 @@ public static class JwksProvider
             return;
         try
         {
-            using var handler = new HttpClientHandler();
-            if (_jwksUrl?.Contains("localhost", StringComparison.OrdinalIgnoreCase) == true)
-                handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
-            using var client = new HttpClient(handler);
+            using var client = new HttpClient();
             client.Timeout = TimeSpan.FromSeconds(10);
             var json = await client.GetStringAsync(_jwksUrl);
             var doc = JsonSerializer.Deserialize<JwksDocument>(json,

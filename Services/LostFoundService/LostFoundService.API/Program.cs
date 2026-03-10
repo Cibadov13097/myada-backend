@@ -1,16 +1,20 @@
 using AutoMapper;
 using LostFoundService.Api.Middlewares;
 using LostFoundService.Api.Security;
+using LostFoundService.Application.Interfaces;
 using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Application.Mappings;
+using LostFoundService.Application.Services;
+
 using LostFoundService.Infrastructure.Persistence.Context;
 using LostFoundService.Infrastructure.Persistence.Repositories;
-using LostFoundService.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using Shared.Shared.Infrastructure;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
 if (string.IsNullOrWhiteSpace(jwksUrl))
     throw new InvalidOperationException(
-        "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. https://AUTH_SERVICE_URL/.well-known/jwks.json");
+        "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. http://localhost:5001/.well-known/jwks.json");
 
 await JwksProvider.InitializeAsync(jwksUrl);
 
@@ -48,7 +52,7 @@ builder.Services.AddAuthentication("Bearer")
             ValidAudience = validAudience,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ClockSkew = TimeSpan.FromMinutes(1),
+            ClockSkew = TimeSpan.Zero,
             IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => JwksProvider.GetKeys()
         };
     });
@@ -127,23 +131,13 @@ builder.Services.AddScoped<ILostItemRepository,LostItemRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+
 builder.Services.AddControllers(options =>
 {
     options.ModelBinderProviders.Insert(0, new LostFoundService.Api.ModelBinding.NullableIntModelBinderProvider());
 });
 
-
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
 // ==========================
 // 5. DATABASE
 // ==========================
@@ -168,18 +162,7 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(c =>
-    {
-        c.PreSerializeFilters.Add((swagger, httpReq) =>
-        {
-            var serverUrl = $"{httpReq.Scheme}://{httpReq.Host.Value}";
-            swagger.Servers = new List<OpenApiServer>
-            {
-                new OpenApiServer { Url = serverUrl }
-            };
-        });
-    });
-
+    app.UseSwagger();
     app.UseSwaggerUI();
 }
 
@@ -192,16 +175,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapGet("/debug-auth", (HttpContext ctx) =>
-{
-    return Results.Ok(new
-    {
-        AuthHeader = ctx.Request.Headers["Authorization"].ToString(),
-        IsAuthenticated = ctx.User.Identity?.IsAuthenticated
-    });
-});
-
-
 
 app.Run();
