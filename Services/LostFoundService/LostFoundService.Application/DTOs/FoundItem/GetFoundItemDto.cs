@@ -1,4 +1,3 @@
-using LostFoundService.Application.DTOs.Location;
 using LostFoundService.Domain.Enums;
 using System.Text.Json.Serialization;
 
@@ -15,19 +14,17 @@ namespace LostFoundService.Application.DTOs.FoundItem
         [JsonPropertyOrder(3)]
         public string? Description { get; set; }
         [JsonPropertyOrder(4)]
-        public int? LocationId { get; set; }
+        public int? BuildingId { get; set; }
         [JsonPropertyOrder(5)]
-        public LocationDto? Location { get; set; }
+        public int? RoomId { get; set; }
         [JsonPropertyOrder(6)]
-        public string? LocationFound { get; set; }
-        [JsonPropertyOrder(7)]
         public string? FoundByUserId { get; set; }
-        [JsonPropertyOrder(8)]
+        [JsonPropertyOrder(7)]
         public Status Status { get; set; }
-        [JsonPropertyOrder(9)]
+        [JsonPropertyOrder(8)]
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        [JsonPropertyOrder(10)]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        [JsonPropertyOrder(9)]
+        public DateTime CreatedAt { get; set; }
     }
 }

@@ -28,4 +28,8 @@
     <ProjectReference Include="..\LostFoundService.Infrastructure\LostFoundService.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Keys\" />
+  </ItemGroup>
+
 </Project>

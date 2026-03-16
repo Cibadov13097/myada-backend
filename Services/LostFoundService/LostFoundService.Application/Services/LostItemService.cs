@@ -6,26 +6,32 @@ using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Exceptions;
+using Microsoft.Extensions.Logging;
 using Shared.Contracts.Events.LostFound;
 using Shared.Shared.Infrastructure;
+using System.Net;
 
 namespace LostFoundService.Application.Services
 {
     public class LostItemService : ILostItemService
     {
         private readonly ILostItemRepository _repository;
-        private readonly IGenericRepository<Location> _locationRepository;
         private readonly IMapper _mapper;
         private readonly IRabbitMqPublisher _rabbitMqPublisher;
+        private readonly ILocationServiceClient _locationServiceClient;
+        private readonly ILogger<LostItemService> _logger;
+
         public LostItemService(ILostItemRepository repository,
-            IGenericRepository<Location> locationRepository,
             IMapper mapper,
-            IRabbitMqPublisher rabbitMqPublisher)
+            IRabbitMqPublisher rabbitMqPublisher,
+            ILocationServiceClient locationServiceClient,
+            ILogger<LostItemService> logger )
         {
             _repository = repository;
             _mapper = mapper;
-            _rabbitMqPublisher=rabbitMqPublisher;
-            _locationRepository = locationRepository;
+            _rabbitMqPublisher = rabbitMqPublisher;
+            _locationServiceClient = locationServiceClient;
+            _logger = logger;
         }
 
         public async Task<List<AdminLostItemDto>> GetAllLostItemsAsync()
@@ -66,27 +72,49 @@ namespace LostFoundService.Application.Services
             if (string.IsNullOrWhiteSpace(userId))
                 throw new UnauthorizedException("User is not authenticated");
 
+            if (dto.BuildingId.HasValue != dto.RoomId.HasValue)
+                throw new ArgumentException("Location requires both BuildingId and RoomId when provided.");
+
+            if (dto.BuildingId.HasValue && dto.RoomId.HasValue)
+            {
+                bool exists;
+                try
+                {
+                    exists = await _locationServiceClient.LocationExistsAsync(dto.BuildingId, dto.RoomId);
+                }
+                catch (Exception)
+                {
+                    throw new ServiceUnavailableException("Location service is unavailable");
+                }
+
+                if (!exists)
+                    throw new NotFoundException("Building or Room not found.");
+
+                _logger.LogInformation($"status:{exists}");
+            }
+
+           
             var entity = _mapper.Map<LostItem>(dto);
             entity.PostedByUserId = userId;
             entity.CreatedByUserId = userId;
             entity.CreatedAt = DateTime.UtcNow;
 
+            
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
 
-            if (entity.LocationId == null)
-                throw new Exception("LocationId cannot be null");
+           
 
-            var location = await _locationRepository.GetByIdAsync(entity.LocationId.Value);
-
+            var locationDisplay = entity.BuildingId.HasValue || entity.RoomId.HasValue
+                ? $"Building {entity.BuildingId}, Room {entity.RoomId}"
+                : string.Empty;
             var evt = new LostItemCreatedEvent
             {
                 LostItemId = entity.Id,
                 Name = entity.Title,
-                Location = location.Place
-
+                Location = locationDisplay
             };
-            await _rabbitMqPublisher.PublishAsync("notification-queue",evt);
+            //await _rabbitMqPublisher.PublishAsync("notification-queue", evt);
             return _mapper.Map<AdminLostItemDto>(entity);
         }
 
@@ -99,6 +127,27 @@ namespace LostFoundService.Application.Services
 
             var entity = await _repository.GetByIdForUserAsync(id, userId)
                 ?? throw new NotFoundException($"LostItem with id {id} not found");
+
+            if (dto.BuildingId.HasValue != dto.RoomId.HasValue)
+                throw new ArgumentException("Location requires both BuildingId and RoomId when provided.");
+
+            if (dto.BuildingId.HasValue && dto.RoomId.HasValue)
+            {
+                bool exists;
+                try
+                {
+                    exists = await _locationServiceClient.LocationExistsAsync(dto.BuildingId, dto.RoomId);
+                }
+                catch (Exception)
+                {
+                    throw new ServiceUnavailableException("Location service is unavailable");
+                }
+
+                if (!exists)
+                    throw new NotFoundException("Building or Room not found.");
+
+                _logger.LogInformation($"status:{exists}");
+            }
 
             _mapper.Map(dto, entity);
             entity.ModifiedByUserId = userId;

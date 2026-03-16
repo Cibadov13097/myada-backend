@@ -92,10 +92,28 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       RabbitMQ__Host: rabbitmq
-      ConnectionStrings__Default: Host=myada;Port=5432;Database=NotificationDb;Username=postgres;Password=123
+      ConnectionStrings__Develop: Host=myada;Port=5432;Database=NotificationDb;Username=postgres;Password=123
     depends_on:
       - rabbitmq
       - myada
+    restart: always
+
+
+  locationservice:
+    build:
+      context: .
+      dockerfile: Services/LocationService/LocationService.Api/Dockerfile
+    container_name: location-service
+    ports:
+      - "5005:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__LocationService: Host=myada;Port=5432;Database=MyAdaLocationDb;Username=postgres;Password=123
+      Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
+    depends_on:
+      - myada
+      - authservice
     restart: always
 
 
@@ -113,6 +131,7 @@ services:
       - lostfoundservice
       - clubmanagementservice
       - notificationservice
+      - locationservice
     restart: always
 
 volumes:

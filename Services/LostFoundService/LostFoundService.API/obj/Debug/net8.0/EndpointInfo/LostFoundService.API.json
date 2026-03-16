@@ -157,7 +157,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -177,7 +181,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Status": {
@@ -281,7 +288,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -301,7 +312,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Status": {
@@ -379,7 +393,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -399,7 +417,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Status": {
@@ -468,7 +489,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -488,7 +513,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Status": {
@@ -579,7 +607,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -599,7 +631,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Image": {
@@ -672,7 +707,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -695,7 +734,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Image": {
@@ -808,7 +850,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -828,7 +874,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Image": {
@@ -901,7 +950,11 @@
                   "Description": {
                     "type": "string"
                   },
-                  "LocationId": {
+                  "BuildingId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "RoomId": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -924,7 +977,10 @@
                 "Description": {
                   "style": "form"
                 },
-                "LocationId": {
+                "BuildingId": {
+                  "style": "form"
+                },
+                "RoomId": {
                   "style": "form"
                 },
                 "Image": {

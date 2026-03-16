@@ -10,7 +10,8 @@ namespace LocationService.Infrastructure.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Code).HasMaxLength(50);
+            builder.Property(x => x.Number).HasMaxLength(50);
+            builder.Property(x => x.Capacity).IsRequired();
             builder.Property(x => x.RoomType).IsRequired();
             builder.Property(x => x.BuildingId).IsRequired();
             builder.Property(x => x.CreatedAt).IsRequired();

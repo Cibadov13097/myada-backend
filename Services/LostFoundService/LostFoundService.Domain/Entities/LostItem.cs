@@ -11,8 +11,9 @@ namespace LostFoundService.Domain.Entities
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public int? LocationId { get; set; }
-        public Location LocationLost { get; set; }
+        
+        public int? BuildingId { get; set; }
+        public int? RoomId { get; set; }
         public string PostedByUserId { get; set; }
         public string ImageUrl { get; set; }
         public int CategoryId { get; set; }

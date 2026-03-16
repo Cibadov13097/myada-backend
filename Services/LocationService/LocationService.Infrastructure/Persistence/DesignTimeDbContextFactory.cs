@@ -8,7 +8,7 @@ namespace LocationService.Infrastructure.Persistence.Context
         public LocationDbContext CreateDbContext(string[] args)
         {
             var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__LocationService")
-                ?? "Host=MyAda;Port=5432;Database=MyAdaLocationDb;Username=postgres;Password=123";
+                ?? "Host=localhost;Port=5432;Database=MyAdaLocationDb;Username=postgres;Password=123";
             var optionsBuilder = new DbContextOptionsBuilder<LocationDbContext>();
             optionsBuilder.UseNpgsql(connectionString);
             return new LocationDbContext(optionsBuilder.Options);

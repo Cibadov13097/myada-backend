@@ -17,6 +17,14 @@
       {
         "Path": "Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj",
+        "Action": "Start"
       }
     ]
   }
