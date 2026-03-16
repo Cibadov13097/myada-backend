@@ -11,7 +11,8 @@ namespace LostFoundService.Application.DTOs.FoundItem
     {
         public string ImageUrl { get; set; }
         public string Description { get; set; }
-        public int? LocationId { get; set; }
+        public int? BuildingId { get; set; }
+        public int? RoomId { get; set; }
         public Status Status { get; set; }
         public int CategoryId { get; set; }
     }

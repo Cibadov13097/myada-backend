@@ -6,7 +6,7 @@ using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Application.Mappings;
 using LostFoundService.Application.Services;
-
+using LostFoundService.Infrastructure.Services;
 using LostFoundService.Infrastructure.Persistence.Context;
 using LostFoundService.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Shared.Shared.Infrastructure;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
 if (string.IsNullOrWhiteSpace(jwksUrl))
     throw new InvalidOperationException(
-        "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. http://localhost:5001/.well-known/jwks.json");
+        "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. https://AUTH_SERVICE_URL/.well-known/jwks.json");
 
 await JwksProvider.InitializeAsync(jwksUrl);
 
@@ -116,6 +115,7 @@ builder.Services.AddAutoMapper(opt =>
 {
     opt.AddProfile(new LostItemProfile());
     opt.AddProfile(new FoundItemProfile());
+    opt.AddProfile(new CategoryProfile());
 }); 
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -132,6 +132,11 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+
+builder.Services.AddHttpClient<ILocationServiceClient, LocationServiceClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["LocationBaseUrl:Url"]);
+});
 
 builder.Services.AddControllers(options =>
 {

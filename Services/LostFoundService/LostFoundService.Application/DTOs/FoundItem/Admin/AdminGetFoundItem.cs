@@ -1,4 +1,4 @@
-﻿using LostFoundService.Domain.Enums;
+using LostFoundService.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,20 +19,20 @@ namespace LostFoundService.Application.DTOs.FoundItem.Admin
         [JsonPropertyOrder(3)]
         public string Description { get; set; }
         [JsonPropertyOrder(4)]
-        public string LocationFound { get; set; }
+        public int? BuildingId { get; set; }
         [JsonPropertyOrder(5)]
-        public string FoundByUserId { get; set; }
+        public int? RoomId { get; set; }
         [JsonPropertyOrder(6)]
-        public Status Status { get; set; }=Status.approved;
+        public string FoundByUserId { get; set; }
         [JsonPropertyOrder(7)]
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public Status Status { get; set; } = Status.approved;
         [JsonPropertyOrder(8)]
-        public bool IsDeleted { get; set; }
+        public DateTime CreatedAt { get; set; }
         [JsonPropertyOrder(9)]
-  
-        public string CreatedByUserId { get; set; }
+        public bool IsDeleted { get; set; }
         [JsonPropertyOrder(10)]
+        public string CreatedByUserId { get; set; }
+        [JsonPropertyOrder(11)]
         public string ModifiedByUserId { get; set; }
     }
 }

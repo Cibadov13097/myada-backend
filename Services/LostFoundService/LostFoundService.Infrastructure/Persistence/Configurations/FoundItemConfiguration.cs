@@ -18,11 +18,8 @@ namespace LostFoundService.Infrastructure.Persistence.Configurations
                    .IsRequired()
                    .HasMaxLength(1000);
 
-            builder.Property(x => x.LocationId).IsRequired(false);
-            builder.HasOne(x => x.LocationFound)
-                   .WithMany()
-                   .HasForeignKey(x => x.LocationId)
-                   .OnDelete(DeleteBehavior.SetNull);
+            builder.Property(x => x.BuildingId).IsRequired(false);
+            builder.Property(x => x.RoomId).IsRequired(false);
 
             builder.Property(x => x.FoundByUserId)
                    .IsRequired()

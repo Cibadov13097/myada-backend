@@ -13,7 +13,8 @@ namespace LostFoundService.Application.DTOs.FoundItem.Admin
 
         
         public string Description { get; set; }
-        public int? LocationId { get; set; }
+        public int? BuildingId { get; set; }
+        public int? RoomId { get; set; }
         public int CategoryId { get; set; }
     }
 }

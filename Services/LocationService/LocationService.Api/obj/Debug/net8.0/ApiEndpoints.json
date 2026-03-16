@@ -1,0 +1,241 @@
+[
+  {
+    "ContainingType": "LocationService.Api.Controllers.BuildingsController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/buildings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Buildings"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.BuildingsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/buildings",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "LocationService.Application.DTOs.CreateBuildingDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Buildings"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.BuildingsController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/buildings/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Buildings"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.BuildingsController",
+    "Method": "Update",
+    "RelativePath": "api/v1/buildings/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "LocationService.Application.DTOs.UpdateBuildingDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Buildings"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.BuildingsController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/buildings/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Buildings"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.LocationController",
+    "Method": "GetLocationAsync",
+    "RelativePath": "api/v1/locations/details",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Location"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.LocationController",
+    "Method": "ValidateRoomLocationAsync",
+    "RelativePath": "api/v1/locations/validate-room-location",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "LocationService.Application.DTOs.ValidateRoomLocationDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Location"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.RoomsController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/rooms",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Rooms"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.RoomsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/rooms",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "LocationService.Application.DTOs.CreateRoomDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Rooms"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.RoomsController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/rooms/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Rooms"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.RoomsController",
+    "Method": "Update",
+    "RelativePath": "api/v1/rooms/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "LocationService.Application.DTOs.UpdateRoomDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Rooms"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.RoomsController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/rooms/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Rooms"
+    ]
+  },
+  {
+    "ContainingType": "LocationService.Api.Controllers.RoomsController",
+    "Method": "GetByBuildingId",
+    "RelativePath": "api/v1/rooms/by-building/{buildingId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "buildingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Rooms"
+    ]
+  }
+]

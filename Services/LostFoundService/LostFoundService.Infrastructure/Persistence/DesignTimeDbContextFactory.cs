@@ -8,7 +8,7 @@ namespace LostFoundService.Infrastructure.Persistence.Context
         public LostFoundDbContext CreateDbContext(string[] args)
         {
             var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Develop")
-                ?? "Host=MyAda;Port=5432;Database=MyAdaDb;Username=postgres;Password=123";
+                ?? "Host=localhost;Port=5432;Database=LostFoundDb;Username=postgres;Password=123";
             var optionsBuilder = new DbContextOptionsBuilder<LostFoundDbContext>();
             optionsBuilder.UseNpgsql(connectionString);
             return new LostFoundDbContext(optionsBuilder.Options);

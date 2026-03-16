@@ -12,8 +12,8 @@ namespace LostFoundService.Domain.Entities
     public class FoundItem : AuditableEntity
     {
         public string Description { get; set; }
-        public int? LocationId { get; set; }
-        public Location LocationFound { get; set; }
+        public int? BuildingId { get; set; }
+        public int? RoomId { get; set; }
         public string FoundByUserId { get; set; }
          public string ImageUrl { get; set; }
         public Status Status { get; set; }

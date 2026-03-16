@@ -4,11 +4,6 @@
     "title": "Auth API",
     "version": "v1"
   },
-  "servers": [
-    {
-      "url": "https://localhost:7001"
-    }
-  ],
   "paths": {
     "/api/auth/create-admin": {
       "get": {

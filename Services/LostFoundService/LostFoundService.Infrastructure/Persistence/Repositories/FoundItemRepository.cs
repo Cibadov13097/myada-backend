@@ -11,7 +11,7 @@ namespace LostFoundService.Infrastructure.Persistence.Repositories
         private readonly LostFoundDbContext _context;
 
         private static IQueryable<FoundItem> WithIncludes(IQueryable<FoundItem> q) =>
-            q.Include(x => x.Category).Include(x => x.LocationFound);
+            q.Include(x => x.Category);
 
         public FoundItemRepository(LostFoundDbContext context)
             : base(context)

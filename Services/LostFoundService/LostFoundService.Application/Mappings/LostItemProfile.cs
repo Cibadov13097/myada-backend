@@ -1,5 +1,4 @@
 using AutoMapper;
-using LostFoundService.Application.DTOs.Location;
 using LostFoundService.Application.DTOs.LostItem;
 using LostFoundService.Application.DTOs.LostItem.Admin;
 using LostFoundService.Domain.Entities;
@@ -10,30 +9,18 @@ namespace LostFoundService.Application.Mappings
     {
         public LostItemProfile()
         {
-            CreateMap<Location, LocationDto>();
             CreateMap<LostItem, GetLostItemDto>()
-                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null))
-                .ForMember(d => d.LocationId, o => o.MapFrom(s => s.LocationId))
-                .ForMember(d => d.Location, o => o.MapFrom(s => s.LocationLost))
-                .ForMember(d => d.LocationLost, o => o.MapFrom(s => FormatLocation(s.LocationLost)));
+                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null));
             CreateMap<LostItem, AdminLostItemDto>()
-                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null))
-                .ForMember(d => d.LocationId, o => o.MapFrom(s => s.LocationId))
-                .ForMember(d => d.Location, o => o.MapFrom(s => s.LocationLost))
-                .ForMember(d => d.LocationLost, o => o.MapFrom(s => FormatLocation(s.LocationLost)));
+                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null));
 
             CreateMap<AddLostItemDto, LostItem>()
-                .ForMember(d => d.LocationId, o => o.MapFrom(s => s.LocationId));
+                .ForMember(d => d.BuildingId, o => o.MapFrom(s => s.BuildingId))
+                .ForMember(d => d.RoomId, o => o.MapFrom(s => s.RoomId));
             CreateMap<UpdateLostItemDto, LostItem>()
                 .ForMember(d => d.CategoryId, o => o.Condition(s => s.CategoryId.HasValue))
-                .ForMember(d => d.LocationId, o => o.Condition(s => s.LocationId.HasValue));
-        }
-
-        private static string FormatLocation(Location? loc)
-        {
-            if (loc == null) return string.Empty;
-            var parts = new[] { loc.Place, loc.Floor, loc.Room }.Where(s => !string.IsNullOrWhiteSpace(s));
-            return string.Join(", ", parts);
+                .ForMember(d => d.BuildingId, o => o.Condition(s => s.BuildingId.HasValue))
+                .ForMember(d => d.RoomId, o => o.Condition(s => s.RoomId.HasValue));
         }
     }
 }
