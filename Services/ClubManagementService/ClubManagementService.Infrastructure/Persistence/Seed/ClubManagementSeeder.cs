@@ -45,15 +45,50 @@ public static class ClubManagementSeeder
 
         if (!await dbContext.Clubs.AnyAsync(cancellationToken))
         {
-            var clubs = Enumerable.Range(1, 10)
-                .Select(i => new Club
+            var clubNamesFromPdf = new[]
+            {
+                "ART CLUB",
+                "DANCE CLUB",
+                "MUSIC CLUB",
+                "CAREER CLUB",
+                "CINEMATES CLUB",
+                "MUTUAL SUPPORT CLUB",
+                "BOOK CLUB",
+                "EMPOWHERMENT CLUB",
+                "EXCHANGE CLUB",
+                "PHOTOGRAPHY CLUB",
+                "INTELLECTUAL GAMES CLUB",
+                "AGRINOVATION CLUB",
+                "SOCIAL CLUB",
+                "SPORTS CLUB",
+                "CHARITY CLUB",
+                "FILMOGRAPHY CLUB",
+                "MEDICAL CLUB",
+                "THE BANKERS CLUB",
+                "COMICVERSE CLUB",
+                "E-COMMERCE CLUB",
+                "IEEE CLUB",
+                "POLITICS CLUB",
+                "FASHION CLUB",
+                "CHESS CLUB",
+                "ARCHITECTURE CLUB",
+                "SAKURA CLUB",
+                "DESIGN CLUB",
+                "CLOUD CLUB",
+                "MEDIA CLUB",
+                "MUN CLUB",
+                "TOPCHUBASHOV FELLOWSHIP CLUB"
+            };
+
+            var clubs = clubNamesFromPdf
+                .Select((clubName, idx) => new Club
                 {
-                    Name = $"Seed Club {i}",
-                    Description = $"Seeded club {i} for integration testing between AuthService and ClubManagementService.",
-                    ApprovedBy = BuildSeedUserGuid(i),
-                    Status = (ClubStatus)((i - 1) % 4),
-                    CategoryId = categoryIds[(i - 1) % categoryIds.Count],
-                    CreatedByUserId = BuildSeedUserGuid(i)
+                    Name = clubName,
+                    Description = $"Official ADA club '{clubName}' seeded for integration testing.",
+                    ApprovedBy = BuildSeedUserGuid((idx % 50) + 1),
+                    Status = (ClubStatus)(idx % 4),
+                    CategoryId = categoryIds[idx % categoryIds.Count],
+                    CreatedByUserId = BuildSeedUserGuid((idx % 50) + 1)
                 })
                 .ToList();
 
