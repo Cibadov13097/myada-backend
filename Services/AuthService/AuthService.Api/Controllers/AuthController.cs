@@ -1,12 +1,10 @@
-﻿using AuthService.Application.DTOs.Auth;
-using AuthService.Domain.Enums;
+using AuthService.Application.DTOs.Auth;
+using AuthService.Application.Interfaces;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
 
 namespace AuthService.API.Controllers
 {
@@ -18,28 +16,31 @@ namespace AuthService.API.Controllers
         private readonly TokenService _tokenService;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IRefreshTokenService _refreshTokenService;
 
         public AuthController(
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,
           TokenService tokenService,
-          RoleManager<IdentityRole> roleManager)
+          RoleManager<IdentityRole> roleManager,
+          IRefreshTokenService refreshTokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
+            _refreshTokenService = refreshTokenService;
         }
 
         [HttpGet("create-admin")]
-
         public async Task<IActionResult> CreateAdmin()
         {
             if (!await _roleManager.RoleExistsAsync("admin"))
             {
                 await _roleManager.CreateAsync(new IdentityRole("admin"));
             }
-            ApplicationUser user = new ApplicationUser
+
+            var user = new ApplicationUser
             {
                 UserName = "Admin",
                 FirstName = "admin",
@@ -48,26 +49,18 @@ namespace AuthService.API.Controllers
                 Email = "admin@gmail",
                 ProfileImage = "sas",
                 CreatedAt = DateTime.UtcNow,
-
-
             };
+
             await _userManager.CreateAsync(user, "Admin123*");
-            var result = await _userManager.AddToRoleAsync(user, "admin");
-            if (result.Succeeded)
-            {
-                Ok();
-            }
+            await _userManager.AddToRoleAsync(user, "admin");
 
             return Ok();
         }
 
-
-
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgetPasswordDto dto)
         {
-            ApplicationUser user = await _userManager.FindByEmailAsync(dto.Email);
-
+            var user = await _userManager.FindByEmailAsync(dto.Email);
 
             if (user != null)
             {
@@ -77,19 +70,15 @@ namespace AuthService.API.Controllers
                 {
                     message = "If this email exists, password reset link sent.",
                     email = dto.Email,
-                    token = token
+                    token
                 });
             }
 
-
-            return Ok(
-                new
-                {
-                    
-                    message = "If this email exists, password reset link sent."
-                });
+            return Ok(new
+            {
+                message = "If this email exists, password reset link sent."
+            });
         }
-
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
@@ -98,11 +87,7 @@ namespace AuthService.API.Controllers
             if (user == null)
                 return NotFound("User not found");
 
-            var result = await _userManager.ResetPasswordAsync(
-                user,
-                dto.Token,
-                dto.NewPassword
-            );
+            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
@@ -110,44 +95,77 @@ namespace AuthService.API.Controllers
             return Ok("Password reset successfully");
         }
 
-
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             var result = await _userManager.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok("Password Changed succesfully");
-
+            return Ok("Password Changed successfully");
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
-
             var user = await _userManager.FindByNameAsync(dto.Username);
+
             if (user == null)
                 return Unauthorized("Username or password is incorrect");
 
-
             var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
+
             if (!result.Succeeded)
                 return Unauthorized("Username or password is incorrect");
 
+            var accessToken = await _tokenService.GenerateToken(user);
+            var refreshTokenEntity = await _refreshTokenService.CreateRefreshTokenAsync(user.Id);
 
-            var token = await _tokenService.GenerateToken(user);
-
-            return Ok(new { accessToken = token });
-
+            return Ok(new
+            {
+                accessToken,
+                refreshToken = refreshTokenEntity.Token
+            });
         }
 
-  
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequestDto dto)
+        {
+            var storedToken = await _refreshTokenService.GetByTokenAsync(dto.RefreshToken);
+
+            if (storedToken == null)
+                return Unauthorized("Invalid refresh token");
+
+            if (storedToken.IsExpired)
+                return Unauthorized("Refresh token expired");
+
+            if (storedToken.IsRevoked)
+                return Unauthorized("Refresh token revoked");
+
+            var user = await _userManager.FindByIdAsync(storedToken.UserId);
+            if (user == null)
+                return Unauthorized();
+
+            var newAccessToken = await _tokenService.GenerateToken(user);
+            var newRefreshTokenEntity = await _refreshTokenService.RotateRefreshTokenAsync(dto.RefreshToken);
+
+            return Ok(new
+            {
+                accessToken = newAccessToken,
+                refreshToken = newRefreshTokenEntity.Token
+            });
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(RefreshTokenRequestDto dto)
+        {
+            await _refreshTokenService.RevokeRefreshTokenAsync(dto.RefreshToken);
+            return Ok(new { message = "Logged out successfully" });
+        }
     }
 }

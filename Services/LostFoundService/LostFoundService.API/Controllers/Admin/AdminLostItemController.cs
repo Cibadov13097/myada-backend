@@ -1,4 +1,4 @@
-﻿using LostFoundService.Application.DTOs.LostItem;
+using LostFoundService.Application.DTOs.LostItem;
 using LostFoundService.Application.Extensions;
 using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Domain.Exceptions;

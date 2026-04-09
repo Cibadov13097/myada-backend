@@ -40,6 +40,7 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Develop: Host=myada;Port=5432;Database=AuthDb;Username=postgres;Password=123
       Jwt__PrivateKeyPath: /keys/private.pem
+      Jwt__PublicKeyPath: /keys/public.pem
     depends_on:
       - myada
     restart: always
@@ -77,7 +78,11 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Develop: Host=myada;Port=5432;Database=ClubDb;Username=postgres;Password=123
+      Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
+      Auth__Issuer: myada-auth
+      Auth__Audience: myada-api
     depends_on:
+      - authservice
       - myada
     restart: always
 

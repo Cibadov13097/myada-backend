@@ -24,7 +24,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\A
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\obj\Debug\net8.0\swae.build.ex.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\obj\Debug\net8.0\ApiGateway.csproj.Up2Date
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\obj\Debug\net8.0\ApiGateway.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\obj\Debug\net8.0\refint\ApiGateway.dll

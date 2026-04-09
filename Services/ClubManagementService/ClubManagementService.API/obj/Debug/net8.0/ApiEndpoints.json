@@ -1,5 +1,48 @@
 [
   {
+    "ContainingType": "ClubManagementService.API.Controllers.ApplicationsController",
+    "Method": "SelectInterviewSlot",
+    "RelativePath": "api/v1/applications/{applicationId}/interview-slot",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "applicationId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ApplicationsController\u002BSelectInterviewSlotRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Applications"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ApplicationsController",
+    "Method": "GetInterviewSlots",
+    "RelativePath": "api/v1/applications/{applicationId}/interview-slots",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "applicationId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Applications"
+    ]
+  },
+  {
     "ContainingType": "ClubManagementService.API.Controllers.CategoriesController",
     "Method": "GetAll",
     "RelativePath": "api/v1/categories",
@@ -94,13 +137,983 @@
     ]
   },
   {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "AddAnnouncement",
+    "RelativePath": "api/v1/club-admin/{clubId}/announcements",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BAnnouncementRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "Applications",
+    "RelativePath": "api/v1/club-admin/{clubId}/applications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "type",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "role",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "ApplicationById",
+    "RelativePath": "api/v1/club-admin/{clubId}/applications/{applicationId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "applicationId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "ApproveApplication",
+    "RelativePath": "api/v1/club-admin/{clubId}/applications/{applicationId}/approve",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "applicationId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "AddNote",
+    "RelativePath": "api/v1/club-admin/{clubId}/applications/{applicationId}/notes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "applicationId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BNoteRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "RejectApplication",
+    "RelativePath": "api/v1/club-admin/{clubId}/applications/{applicationId}/reject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "applicationId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BReasonRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "RequestChanges",
+    "RelativePath": "api/v1/club-admin/{clubId}/applications/{applicationId}/request-changes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "applicationId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BChangesRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "BulkDecision",
+    "RelativePath": "api/v1/club-admin/{clubId}/applications/bulk-decision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BBulkDecisionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "Dashboard",
+    "RelativePath": "api/v1/club-admin/{clubId}/dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "Employees",
+    "RelativePath": "api/v1/club-admin/{clubId}/employees",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "CreateEmployee",
+    "RelativePath": "api/v1/club-admin/{clubId}/employees",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BCreateEmployeeRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "DeleteEmployee",
+    "RelativePath": "api/v1/club-admin/{clubId}/employees/{employeeId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "employeeId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchEmployeePositions",
+    "RelativePath": "api/v1/club-admin/{clubId}/employees/positions",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BUpdateEmployeePositionsRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "Events",
+    "RelativePath": "api/v1/club-admin/{clubId}/events",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchEvent",
+    "RelativePath": "api/v1/club-admin/{clubId}/events/{eventId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "EventAttendees",
+    "RelativePath": "api/v1/club-admin/{clubId}/events/{eventId}/attendees",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchAttendee",
+    "RelativePath": "api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "attendeeId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BAttendeePatchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "DeleteAttendee",
+    "RelativePath": "api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "attendeeId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "EventProposal",
+    "RelativePath": "api/v1/club-admin/{clubId}/events/proposals",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "InterviewSlots",
+    "RelativePath": "api/v1/club-admin/{clubId}/interview-slots",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "vacancy",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchInterviewSlot",
+    "RelativePath": "api/v1/club-admin/{clubId}/interview-slots/{slotId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "slotId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "DeleteInterviewSlot",
+    "RelativePath": "api/v1/club-admin/{clubId}/interview-slots/{slotId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "slotId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "BulkAssignInterviewSlots",
+    "RelativePath": "api/v1/club-admin/{clubId}/interview-slots/bulk-assign-vacancy",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "GenerateInterviewSlots",
+    "RelativePath": "api/v1/club-admin/{clubId}/interview-slots/generate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BGenerateInterviewSlotsRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "Members",
+    "RelativePath": "api/v1/club-admin/{clubId}/members",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "DeleteMember",
+    "RelativePath": "api/v1/club-admin/{clubId}/members/{memberId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "memberId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "Positions",
+    "RelativePath": "api/v1/club-admin/{clubId}/positions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "CreatePosition",
+    "RelativePath": "api/v1/club-admin/{clubId}/positions",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchPosition",
+    "RelativePath": "api/v1/club-admin/{clubId}/positions/{positionId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "positionId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "DeletePosition",
+    "RelativePath": "api/v1/club-admin/{clubId}/positions/{positionId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "positionId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchProfile",
+    "RelativePath": "api/v1/club-admin/{clubId}/profile",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "SocialLinks",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FocusAreasJson",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LogoFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "BackgroundFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "Vacancies",
+    "RelativePath": "api/v1/club-admin/{clubId}/vacancies",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "CreateVacancy",
+    "RelativePath": "api/v1/club-admin/{clubId}/vacancies",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BCreateVacancyRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchVacancy",
+    "RelativePath": "api/v1/club-admin/{clubId}/vacancies/{vacancyId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "vacancyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BUpdateVacancyRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubAdminController",
+    "Method": "PatchVacancyStatus",
+    "RelativePath": "api/v1/club-admin/{clubId}/vacancies/{vacancyId}/status",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "vacancyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.ClubAdminController\u002BStatusRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Admin"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubProposalsController",
+    "Method": "Create",
+    "RelativePath": "api/v1/club-proposals",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LogoFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "ConstitutionFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Club Proposals"
+    ]
+  },
+  {
     "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
     "Method": "GetAll",
     "RelativePath": "api/v1/clubs",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "category",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [],
     "Tags": [
       "Clubs"
@@ -128,13 +1141,13 @@
   {
     "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
     "Method": "GetById",
-    "RelativePath": "api/v1/clubs/{id}",
+    "RelativePath": "api/v1/clubs/{clubId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "clubId",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -147,13 +1160,13 @@
   {
     "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
     "Method": "Update",
-    "RelativePath": "api/v1/clubs/{id}",
-    "HttpMethod": "PUT",
+    "RelativePath": "api/v1/clubs/{clubId}",
+    "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "clubId",
         "Type": "System.Int32",
         "IsRequired": true
       },
@@ -171,13 +1184,13 @@
   {
     "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
     "Method": "Delete",
-    "RelativePath": "api/v1/clubs/{id}",
+    "RelativePath": "api/v1/clubs/{clubId}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "clubId",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -189,14 +1202,48 @@
   },
   {
     "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
-    "Method": "GetByCategoryId",
-    "RelativePath": "api/v1/clubs/by-category/{categoryId}",
+    "Method": "JoinApplication",
+    "RelativePath": "api/v1/clubs/{clubId}/join-applications",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "LetterOfPurpose",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PortfolioLinks",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PortfolioFiles",
+        "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Clubs"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.ClubsController",
+    "Method": "GetMembers",
+    "RelativePath": "api/v1/clubs/{clubId}/members",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "categoryId",
+        "Name": "clubId",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -302,7 +1349,33 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "myClubsOnly",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [],
     "Tags": [
       "Events"
@@ -330,13 +1403,13 @@
   {
     "ContainingType": "ClubManagementService.API.Controllers.EventsController",
     "Method": "GetById",
-    "RelativePath": "api/v1/events/{id}",
+    "RelativePath": "api/v1/events/{eventId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "eventId",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -349,13 +1422,13 @@
   {
     "ContainingType": "ClubManagementService.API.Controllers.EventsController",
     "Method": "Update",
-    "RelativePath": "api/v1/events/{id}",
-    "HttpMethod": "PUT",
+    "RelativePath": "api/v1/events/{eventId}",
+    "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "eventId",
         "Type": "System.Int32",
         "IsRequired": true
       },
@@ -373,13 +1446,70 @@
   {
     "ContainingType": "ClubManagementService.API.Controllers.EventsController",
     "Method": "Delete",
-    "RelativePath": "api/v1/events/{id}",
+    "RelativePath": "api/v1/events/{eventId}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "Register",
+    "RelativePath": "api/v1/events/{eventId}/registrations",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "CancelRegistration",
+    "RelativePath": "api/v1/events/{eventId}/registrations",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Events"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.EventsController",
+    "Method": "GetTicket",
+    "RelativePath": "api/v1/events/{eventId}/ticket",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -503,103 +1633,270 @@
     ]
   },
   {
-    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
-    "Method": "GetAll",
-    "RelativePath": "api/v1/job-vacancies",
+    "ContainingType": "ClubManagementService.API.Controllers.MeController",
+    "Method": "GetClubMemberships",
+    "RelativePath": "api/v1/me/club-memberships",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": [],
     "Tags": [
-      "Job Vacancies"
+      "Me"
     ]
   },
   {
-    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
-    "Method": "Create",
-    "RelativePath": "api/v1/job-vacancies",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "ClubManagementService.Application.DTOs.JobVacancy.CreateJobVacancyDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [],
-    "Tags": [
-      "Job Vacancies"
-    ]
-  },
-  {
-    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
-    "Method": "GetById",
-    "RelativePath": "api/v1/job-vacancies/{id}",
+    "ContainingType": "ClubManagementService.API.Controllers.MeController",
+    "Method": "GetClubNotifications",
+    "RelativePath": "api/v1/me/club-notifications",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
+        "Name": "type",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Me"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.MeController",
+    "Method": "MarkNotificationAsRead",
+    "RelativePath": "api/v1/me/club-notifications/{notificationId}/read",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "notificationId",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [],
     "Tags": [
-      "Job Vacancies"
+      "Me"
     ]
   },
   {
-    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
-    "Method": "Update",
-    "RelativePath": "api/v1/job-vacancies/{id}",
+    "ContainingType": "ClubManagementService.API.Controllers.MeController",
+    "Method": "GetEventRegistrations",
+    "RelativePath": "api/v1/me/event-registrations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Me"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.MeController",
+    "Method": "GetMembershipApplications",
+    "RelativePath": "api/v1/me/membership-applications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Me"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.MeController",
+    "Method": "GetVacancyApplications",
+    "RelativePath": "api/v1/me/vacancy-applications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Me"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ClubProposalRequirements",
+    "RelativePath": "api/v1/student-services/club-proposal-requirements",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "UpdateClubProposalRequirements",
+    "RelativePath": "api/v1/student-services/club-proposal-requirements",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "ClubManagementService.Application.DTOs.JobVacancy.UpdateJobVacancyDto",
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BClubProposalRequirementsRequest",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [],
     "Tags": [
-      "Job Vacancies"
+      "Student Services"
     ]
   },
   {
-    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
-    "Method": "Delete",
-    "RelativePath": "api/v1/job-vacancies/{id}",
-    "HttpMethod": "DELETE",
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ClubProposals",
+    "RelativePath": "api/v1/student-services/club-proposals",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ClubProposalById",
+    "RelativePath": "api/v1/student-services/club-proposals/{proposalId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [],
     "Tags": [
-      "Job Vacancies"
+      "Student Services"
     ]
   },
   {
-    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
-    "Method": "GetByClubId",
-    "RelativePath": "api/v1/job-vacancies/by-club/{clubId}",
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ApproveClubProposal",
+    "RelativePath": "api/v1/student-services/club-proposals/{proposalId}/approve",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "RejectClubProposal",
+    "RelativePath": "api/v1/student-services/club-proposals/{proposalId}/reject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BReasonRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "RequestClubProposalRevision",
+    "RelativePath": "api/v1/student-services/club-proposals/{proposalId}/request-revision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BChangesRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "Clubs",
+    "RelativePath": "api/v1/student-services/clubs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ClubById",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -612,7 +1909,451 @@
     ],
     "ReturnTypes": [],
     "Tags": [
-      "Job Vacancies"
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "PatchClub",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BUpdateClubRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ClubEmployees",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/employees",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "CreateClubEmployee",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/employees",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "PatchClubEmployee",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/employees/{employeeId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "employeeId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "DeleteClubEmployee",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/employees/{employeeId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "employeeId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ClubMembers",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/members",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "PatchClubMember",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/members/{memberId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "memberId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "DeleteClubMember",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/members/{memberId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "memberId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ApproveClubProfileImage",
+    "RelativePath": "api/v1/student-services/clubs/{clubId}/profile-image/approve",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "Dashboard",
+    "RelativePath": "api/v1/student-services/dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "EventProposals",
+    "RelativePath": "api/v1/student-services/event-proposals",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "EventProposalById",
+    "RelativePath": "api/v1/student-services/event-proposals/{proposalId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "ApproveEventProposal",
+    "RelativePath": "api/v1/student-services/event-proposals/{proposalId}/approve",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BApproveEventProposalRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "RejectEventProposal",
+    "RelativePath": "api/v1/student-services/event-proposals/{proposalId}/reject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BReasonRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "RequestEventProposalRevision",
+    "RelativePath": "api/v1/student-services/event-proposals/{proposalId}/request-revision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "proposalId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BChangesRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "Events",
+    "RelativePath": "api/v1/student-services/events",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "CreateEvent",
+    "RelativePath": "api/v1/student-services/events",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ClubManagementService.API.Controllers.StudentServicesController\u002BCreateEventRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "PatchEvent",
+    "RelativePath": "api/v1/student-services/events/{eventId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "body",
+        "Type": "System.Object",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "EventById",
+    "RelativePath": "api/v1/student-services/events/{eventId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.StudentServicesController",
+    "Method": "DeleteEvent",
+    "RelativePath": "api/v1/student-services/events/{eventId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Student Services"
     ]
   },
   {
@@ -726,6 +2467,174 @@
     "ReturnTypes": [],
     "Tags": [
       "Subevents"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/vacancies",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "category",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "savedOnly",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "Create",
+    "RelativePath": "api/v1/vacancies",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.JobVacancy.CreateJobVacancyDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/vacancies/{vacancyId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vacancyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "Update",
+    "RelativePath": "api/v1/vacancies/{vacancyId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vacancyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ClubManagementService.Application.DTOs.JobVacancy.UpdateJobVacancyDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/vacancies/{vacancyId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vacancyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "ApplyToVacancy",
+    "RelativePath": "api/v1/vacancies/{vacancyId}/applications",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vacancyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "PurposeOfApplication",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CvFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Vacancies"
+    ]
+  },
+  {
+    "ContainingType": "ClubManagementService.API.Controllers.JobVacanciesController",
+    "Method": "GetByClubId",
+    "RelativePath": "api/v1/vacancies/by-club/{clubId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clubId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Vacancies"
     ]
   }
 ]

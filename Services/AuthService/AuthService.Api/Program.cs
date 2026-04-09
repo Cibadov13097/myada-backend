@@ -1,9 +1,14 @@
+using AuthService.Application.Interfaces;
 using AuthService.Application.Options;
+using AuthService.Application.Services;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Persistence.Context;
+using AuthService.Infrastructure.Persistence.Repositories;
 using AuthService.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
 
@@ -59,22 +64,65 @@ rsa.ImportFromPem(privateKeyPem);
 builder.Services.AddSingleton<RSA>(rsa);
 builder.Services.AddScoped<TokenService>();
 
+// 5. Refresh token services
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
-builder.Services.AddCors(options =>
+// 6. JWT Bearer authentication
+builder.Services.AddAuthentication(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-        });
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var rsaPublic = RSA.Create();
+    rsaPublic.ImportParameters(rsa.ExportParameters(false));
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwtOptions.Issuer,
+        ValidateAudience = true,
+        ValidAudience = jwtOptions.Audience,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new RsaSecurityKey(rsaPublic),
+        ClockSkew = TimeSpan.FromSeconds(30)
+    };
 });
 
-// 5. Controllers/
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+if (corsOrigins.Length > 0)
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy", policy =>
+        {
+            policy.WithOrigins(corsOrigins)
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+}
+else
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy", policy =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+}
+
+// 7. Controllers
 builder.Services.AddControllers();
 
-// 6. Swagger + JWT Auth 
+// 8. Swagger + JWT Auth
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -108,9 +156,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// 7. Swagger
-
-
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<MyAdaDbContext>();
@@ -124,8 +169,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

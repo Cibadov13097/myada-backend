@@ -146,7 +146,7 @@ namespace LostFoundService.Application.Services
                 if (!exists)
                     throw new NotFoundException("Building or Room not found.");
 
-                _logger.LogInformation($"status:{exists}");
+                _logger.LogWarning($"status:{exists}");
             }
 
             _mapper.Map(dto, entity);

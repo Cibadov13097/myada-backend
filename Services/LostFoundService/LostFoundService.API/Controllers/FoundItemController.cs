@@ -4,7 +4,7 @@ using LostFoundService.Application.Extensions;
 using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Exceptions;
-using LostFoundService.Application.Services;
+using LostFoundService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;

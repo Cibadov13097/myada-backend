@@ -6,5 +6,6 @@ public class JwtOptions
 
     public string Issuer { get; set; } = "myada-auth";
     public string Audience { get; set; } = "myada-api";
-    public int TokenLifetimeHours { get; set; } = 2;
+    public int AccessTokenLifetimeMinutes { get; set; } = 15;
+    public int RefreshTokenLifetimeDays { get; set; } = 30;
 }

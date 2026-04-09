@@ -1,0 +1,12 @@
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\bin\Release\net8.0\LostFoundService.Domain.deps.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\bin\Release\net8.0\LostFoundService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\bin\Release\net8.0\LostFoundService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\LostFoundService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\LostFoundService.Domain.AssemblyInfoInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\LostFoundService.Domain.AssemblyInfo.cs
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\LostFoundService.Domain.csproj.CoreCompileInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\LostFoundService.Domain.sourcelink.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\LostFoundService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\refint\LostFoundService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\LostFoundService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Release\net8.0\ref\LostFoundService.Domain.dll

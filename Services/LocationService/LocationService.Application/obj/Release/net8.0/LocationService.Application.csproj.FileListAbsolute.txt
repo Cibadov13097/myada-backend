@@ -1,0 +1,16 @@
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\bin\Release\net8.0\LocationService.Application.deps.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\bin\Release\net8.0\LocationService.Application.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\bin\Release\net8.0\LocationService.Application.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\bin\Release\net8.0\LocationService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\bin\Release\net8.0\LocationService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.csproj.AssemblyReference.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.AssemblyInfoInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.AssemblyInfo.cs
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.csproj.CoreCompileInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.sourcelink.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\Location.C966D45C.Up2Date
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\refint\LocationService.Application.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\LocationService.Application.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Application\obj\Release\net8.0\ref\LocationService.Application.dll

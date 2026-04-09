@@ -16,23 +16,26 @@ namespace AuthService.Infrastructure.Services
         private readonly JwtOptions _jwtOptions;
         private readonly IConfiguration _configuration;
 
-        public TokenService(RSA rsa, UserManager<ApplicationUser> userManager, JwtOptions jwtOptions,
-            IConfiguration configuration
-            )
+        public TokenService(
+            RSA rsa,
+            UserManager<ApplicationUser> userManager,
+            JwtOptions jwtOptions,
+            IConfiguration configuration)
         {
             _rsa = rsa;
             _userManager = userManager;
             _jwtOptions = jwtOptions ?? throw new ArgumentNullException(nameof(jwtOptions));
-            _configuration=configuration;
+            _configuration = configuration;
         }
 
         public async Task<string> GenerateToken(ApplicationUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
+
             var rsaKey = new RsaSecurityKey(_rsa)
             {
                 KeyId = _configuration["Jwt:KeyId"]
-            };  
+            };
 
             var creds = new SigningCredentials(
                 rsaKey,
@@ -40,13 +43,16 @@ namespace AuthService.Infrastructure.Services
             );
 
             var now = DateTime.UtcNow;
+
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
                 new Claim("firstName", user.FirstName ?? string.Empty),
                 new Claim("userType", user.UserType.ToString())
             };
+
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -57,11 +63,21 @@ namespace AuthService.Infrastructure.Services
                 audience: _jwtOptions.Audience,
                 claims: claims,
                 notBefore: now,
-                expires: now.AddHours(_jwtOptions.TokenLifetimeHours),
+                expires: now.AddMinutes(_jwtOptions.AccessTokenLifetimeMinutes),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomBytes);
+
+            return Convert.ToBase64String(randomBytes);
         }
     }
 }
