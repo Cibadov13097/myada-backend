@@ -4,6 +4,7 @@ using AuthService.Application.Services;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Persistence.Context;
 using AuthService.Infrastructure.Persistence.Repositories;
+using AuthService.Infrastructure.Persistence.Seeders;
 using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -159,7 +160,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<MyAdaDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     db.Database.Migrate();
+    await IdentityUserSeeder.SeedAsync(userManager, roleManager);
 }
 
 if (app.Environment.IsDevelopment())
@@ -169,7 +173,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
