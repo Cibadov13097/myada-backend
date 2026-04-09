@@ -29,5 +29,11 @@ namespace LocationService.Application.DTOs
         public RoomType RoomType { get; set; }
         public int BuildingId { get; set; }
     }
+
+    public class ValidateRoomLocationDto
+    {
+        public int RoomId { get; set; }
+        public int BuildingId { get; set; }
+    }
 }
 

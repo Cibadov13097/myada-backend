@@ -1,0 +1,9 @@
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\ApiGateway.exe
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\appsettings.Development.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\appsettings.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\ApiGateway.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\ApiGateway.deps.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\ApiGateway.runtimeconfig.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\ApiGateway.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\System.IO.Hashing.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\ApiGateway\out-test\Yarp.ReverseProxy.dll

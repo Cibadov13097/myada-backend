@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Services",
+    "\\Services\\AuthService\\AuthService.Infrastructure",
+    "\\Services\\AuthService\\AuthService.Infrastructure\\Identity",
+    "\\Services\\AuthService\\AuthService.Infrastructure\\Services"
   ],
+  "SelectedNode": "\\Services\\AuthService",
   "PreviewInSolutionExplorer": false
 }

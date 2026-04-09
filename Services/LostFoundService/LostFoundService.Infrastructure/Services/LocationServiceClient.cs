@@ -43,7 +43,7 @@ namespace LostFoundService.Infrastructure.Services
 
             var isValid = await response.Content.ReadFromJsonAsync<bool>();
 
-            _logger.LogInformation($"response:  {response}");
+            _logger.LogWarning($"response:  {response}");
             return isValid;
         }
     }

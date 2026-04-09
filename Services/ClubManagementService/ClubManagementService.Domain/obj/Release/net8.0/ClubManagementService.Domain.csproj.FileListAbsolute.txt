@@ -1,0 +1,12 @@
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\bin\Release\net8.0\ClubManagementService.Domain.deps.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\bin\Release\net8.0\ClubManagementService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\bin\Release\net8.0\ClubManagementService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ClubManagementService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ClubManagementService.Domain.AssemblyInfoInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ClubManagementService.Domain.AssemblyInfo.cs
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ClubManagementService.Domain.csproj.CoreCompileInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ClubManagementService.Domain.sourcelink.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ClubManagementService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\refint\ClubManagementService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ClubManagementService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Release\net8.0\ref\ClubManagementService.Domain.dll

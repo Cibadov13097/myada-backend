@@ -1,7 +1,8 @@
-﻿using AuthService.Infrastructure.Identity;
+using AuthService.Domain.Entities;
+using AuthService.Infrastructure.Identity;
+using AuthService.Infrastructure.Persistence.Seeders;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using AuthService.Infrastructure.Persistence.Seeders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace AuthService.Infrastructure.Persistence.Context
     public class MyAdaDbContext:IdentityDbContext<ApplicationUser>
     {
 
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public MyAdaDbContext(DbContextOptions<MyAdaDbContext> options):base(options) 
         {
             

@@ -3,11 +3,66 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Application.Mappings;
 using ClubManagementService.Infrastructure.Persistence.Context;
 using ClubManagementService.Infrastructure.Persistence.Repositories;
+using ClubManagementService.Infrastructure.Persistence.Seed;
 using ClubManagementService.Infrastructure.Services;
+using ClubManagementService.API.Security;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+var isDevelopment = builder.Environment.IsDevelopment();
+
+// ==========================
+// 1. JWT via AuthService JWKS
+// ==========================
+
+var jwksUrl = builder.Configuration["Auth:JwksUrl"];
+var authBuilder = builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Bearer";
+    options.DefaultChallengeScheme = "Bearer";
+});
+
+if (!string.IsNullOrWhiteSpace(jwksUrl))
+{
+    await JwksProvider.InitializeAsync(jwksUrl);
+
+    var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
+    var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
+
+    builder.Services.AddHostedService<JwksRefreshHostedService>();
+
+    authBuilder.AddJwtBearer("Bearer", options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.MapInboundClaims = false;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = validIssuer,
+            ValidateAudience = true,
+            ValidAudience = validAudience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => JwksProvider.GetKeys()
+        };
+    });
+}
+else if (isDevelopment)
+{
+    authBuilder.AddScheme<AuthenticationSchemeOptions, DevBypassAuthHandler>("Bearer", _ => { });
+}
+else
+{
+    throw new InvalidOperationException(
+        "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. http://localhost:5001/.well-known/jwks.json");
+}
+
+builder.Services.AddAuthorization();
 
 // DbContext
 builder.Services.AddDbContext<ClubManagementDbContext>(options =>
@@ -52,10 +107,32 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Club Management Service API",
         Version = "v1"
+    });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter JWT Bearer token: Bearer {token}",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, Array.Empty<string>() }
     });
 });
 
@@ -65,6 +142,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ClubManagementDbContext>();
     db.Database.Migrate();
+    await ClubManagementSeeder.SeedAsync(db);
 }
 
 if (app.Environment.IsDevelopment())
@@ -76,6 +154,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll"); 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

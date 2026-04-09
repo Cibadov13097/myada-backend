@@ -1,0 +1,12 @@
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\bin\Release\net8.0\LocationService.Domain.deps.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\bin\Release\net8.0\LocationService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\bin\Release\net8.0\LocationService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\LocationService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\LocationService.Domain.AssemblyInfoInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\LocationService.Domain.AssemblyInfo.cs
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\LocationService.Domain.csproj.CoreCompileInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\LocationService.Domain.sourcelink.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\LocationService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\refint\LocationService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\LocationService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Domain\obj\Release\net8.0\ref\LocationService.Domain.dll

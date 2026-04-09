@@ -1,0 +1,16 @@
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\bin\Release\net8.0\ClubManagementService.Application.deps.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\bin\Release\net8.0\ClubManagementService.Application.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\bin\Release\net8.0\ClubManagementService.Application.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\bin\Release\net8.0\ClubManagementService.Domain.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\bin\Release\net8.0\ClubManagementService.Domain.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.csproj.AssemblyReference.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.AssemblyInfoInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.AssemblyInfo.cs
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.csproj.CoreCompileInputs.cache
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.sourcelink.json
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubMana.34749C2D.Up2Date
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\refint\ClubManagementService.Application.dll
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ClubManagementService.Application.pdb
+c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Application\obj\Release\net8.0\ref\ClubManagementService.Application.dll

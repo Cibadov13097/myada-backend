@@ -444,11 +444,13 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\swae.build.ex.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\AuthServ.C02AB606.Up2Date
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\AuthService.Api.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\refint\AuthService.Api.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\AuthService.Api.pdb
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\AuthService.Api.genruntimeconfig.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\ref\AuthService.Api.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\StackExchange.Redis.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\System.IO.Hashing.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

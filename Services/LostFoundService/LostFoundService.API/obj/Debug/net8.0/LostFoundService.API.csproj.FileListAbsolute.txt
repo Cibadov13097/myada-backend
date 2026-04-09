@@ -443,7 +443,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\swae.build.ex.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\LostFoundService.Api.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\refint\LostFoundService.Api.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\LostFoundService.Api.pdb
