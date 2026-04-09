@@ -25,6 +25,13 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     restart: always
 
+  myada-redis:
+    image: redis:7-alpine
+    container_name: myada-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
   authservice:
     build:
       context: .
@@ -43,6 +50,7 @@ services:
       Jwt__PublicKeyPath: /keys/public.pem
     depends_on:
       - myada
+      - myada-redis
     restart: always
 
   lostfoundservice:
