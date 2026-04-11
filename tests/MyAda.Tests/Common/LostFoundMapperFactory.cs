@@ -1,5 +1,6 @@
 using AutoMapper;
 using global::LostFoundService.Application.Mappings;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MyAda.Tests.Common;
 
@@ -12,7 +13,7 @@ public static class LostFoundMapperFactory
             cfg.AddProfile<CategoryProfile>();
             cfg.AddProfile<FoundItemProfile>();
             cfg.AddProfile<LostItemProfile>();
-        }, null);
+        }, NullLoggerFactory.Instance);
 
         return configuration.CreateMapper();
     }

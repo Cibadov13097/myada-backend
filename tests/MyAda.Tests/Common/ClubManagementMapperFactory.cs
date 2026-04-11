@@ -1,5 +1,6 @@
 using AutoMapper;
 using global::ClubManagementService.Application.Mappings;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MyAda.Tests.Common;
 
@@ -10,7 +11,7 @@ public static class ClubManagementMapperFactory
         var configuration = new AutoMapper.MapperConfiguration(cfg =>
         {
             cfg.AddProfile<ClubManagementProfile>();
-        }, null);
+        }, NullLoggerFactory.Instance);
         configuration.AssertConfigurationIsValid();
         return configuration.CreateMapper();
     }

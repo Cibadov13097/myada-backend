@@ -16,6 +16,9 @@ namespace LostFoundService.Infrastructure.Persistence.Context
 
         public DbSet<FoundItem> FoundItems { get; set; }
         public DbSet<LostItem> LostItems { get; set; }
+        public DbSet<LostFoundItem> LostFoundItems { get; set; }
+        public DbSet<LostFoundItemImage> LostFoundItemImages { get; set; }
+        public DbSet<LostFoundItemClaim> LostFoundItemClaims { get; set; }
         public LostFoundDbContext(DbContextOptions<LostFoundDbContext> options) : base(options)
         {
 
@@ -26,6 +29,9 @@ namespace LostFoundService.Infrastructure.Persistence.Context
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new LostItemConfiguration());
             modelBuilder.ApplyConfiguration(new FoundItemConfiguration());
+            modelBuilder.ApplyConfiguration(new LostFoundItemConfiguration());
+            modelBuilder.ApplyConfiguration(new LostFoundItemImageConfiguration());
+            modelBuilder.ApplyConfiguration(new LostFoundItemClaimConfiguration());
 
             modelBuilder.Entity<Category>()
                 .HasQueryFilter(x => !x.IsDeleted);
@@ -35,6 +41,9 @@ namespace LostFoundService.Infrastructure.Persistence.Context
                 .HasQueryFilter(x => !x.IsDeleted);
 
             modelBuilder.Entity<FoundItem>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            modelBuilder.Entity<LostFoundItem>()
                 .HasQueryFilter(x => !x.IsDeleted);
 
             modelBuilder.HasDefaultSchema("lostfound");

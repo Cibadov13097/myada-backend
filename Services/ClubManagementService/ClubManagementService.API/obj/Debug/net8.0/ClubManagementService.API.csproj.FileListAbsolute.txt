@@ -121,3 +121,4 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\ClubManagementService.API.pdb
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\ClubManagementService.API.genruntimeconfig.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\ref\ClubManagementService.API.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
