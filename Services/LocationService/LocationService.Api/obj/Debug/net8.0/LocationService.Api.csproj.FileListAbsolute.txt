@@ -125,4 +125,3 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

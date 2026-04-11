@@ -10,6 +10,7 @@ namespace LocationService.Application.DTOs
         public int Capacity { get; set; }
         public RoomType RoomType { get; set; }
         public int BuildingId { get; set; }
+        public string? BuildingName { get; set; }
     }
 
     public class CreateRoomDto

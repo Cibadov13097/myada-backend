@@ -7,31 +7,29 @@ namespace LocationService.Application.Services
 {
     public class RoomService : IRoomService
     {
-        private readonly IGenericRepository<Room> _repository;
+        private readonly IRoomRepository _repository;
 
-        public RoomService(IGenericRepository<Room> repository)
+        public RoomService(IRoomRepository repository)
         {
             _repository = repository;
         }
 
         public async Task<List<RoomDto>> GetAllAsync()
         {
-            var items = await _repository.GetAllAsync();
+            var items = await _repository.GetAllWithBuildingAsync();
             return items.Select(MapToDto).ToList();
         }
 
         public async Task<RoomDto?> GetByIdAsync(int id)
         {
-            var entity = await _repository.GetByIdAsync(id);
+            var entity = await _repository.GetByIdWithBuildingAsync(id);
             return entity == null ? null : MapToDto(entity);
         }
 
         public async Task<List<RoomDto>> GetByBuildingIdAsync(int buildingId)
         {
-            var all = await _repository.GetAllAsync();
-            return all.Where(r => r.BuildingId == buildingId)
-                      .Select(MapToDto)
-                      .ToList();
+            var items = await _repository.GetByBuildingIdWithBuildingAsync(buildingId);
+            return items.Select(MapToDto).ToList();
         }
 
         public async Task<RoomDto> CreateAsync(CreateRoomDto dto)
@@ -48,7 +46,9 @@ namespace LocationService.Application.Services
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
 
-            return MapToDto(entity);
+            var created = await GetByIdAsync(entity.Id)
+                         ?? throw new KeyNotFoundException($"Room with id {entity.Id} not found after creation");
+            return created;
         }
 
         public async Task<RoomDto> UpdateAsync(int id, UpdateRoomDto dto)
@@ -65,7 +65,9 @@ namespace LocationService.Application.Services
             await _repository.UpdateAsync(entity);
             await _repository.SaveChangesAsync();
 
-            return MapToDto(entity);
+            var updated = await GetByIdAsync(entity.Id)
+                         ?? throw new KeyNotFoundException($"Room with id {entity.Id} not found after update");
+            return updated;
         }
 
         public async Task DeleteAsync(int id)
@@ -85,7 +87,8 @@ namespace LocationService.Application.Services
                 Number = entity.Number,
                 Capacity = entity.Capacity,
                 RoomType = entity.RoomType,
-                BuildingId = entity.BuildingId
+                BuildingId = entity.BuildingId,
+                BuildingName = entity.Building?.Name
             };
     }
 }

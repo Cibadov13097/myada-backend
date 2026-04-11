@@ -99,6 +99,7 @@ builder.Services.AddCors(options =>
 // ==========================
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<ILocationService, LocationService.Application.Services.LocationService>();
 builder.Services.AddScoped<IBuildingService, BuildingService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
