@@ -64,7 +64,69 @@ Notes:
 
 ---
 
-### 2) Login
+### 2) Create User With Role
+
+- Method: `POST`
+- Path: `/api/auth/create-user-with-role`
+- Auth: Yes (`Bearer` access token required)
+- Required role: `admin`
+
+Headers:
+
+```http
+Authorization: Bearer <admin-access-token>
+```
+
+Request body:
+
+```json
+{
+  "email": "user1@myada.local",
+  "password": "User123*",
+  "username": "user1",
+  "firstName": "User",
+  "lastName": "One",
+  "phoneNumber": "123456789",
+  "role": "student"
+}
+```
+
+Success response:
+- `200 OK`
+
+```json
+{
+  "message": "User created successfully",
+  "user": {
+    "id": "<guid>",
+    "userName": "user1",
+    "email": "user1@myada.local",
+    "firstName": "User",
+    "lastName": "One",
+    "phoneNumber": "123456789",
+    "role": "student"
+  }
+}
+```
+
+Error responses:
+- `400 Bad Request` -> `"Role '<role>' does not exist"`
+- `400 Bad Request` -> `"Email is already in use"`
+- `400 Bad Request` -> `"Username is already in use"`
+- `400 Bad Request` -> Identity error array (password/validation failures)
+- `401 Unauthorized` when access token is missing/invalid
+- `403 Forbidden` when authenticated user is not in `admin` role
+
+Notes:
+- `role` is normalized to lowercase before assignment.
+- `userType` is inferred from role:
+  - `student` -> `Student`
+  - `teacher` -> `Faculty`
+  - all other roles -> `Staff`
+
+---
+
+### 3) Login
 
 - Method: `POST`
 - Path: `/api/auth/login`
@@ -98,7 +160,7 @@ Error response:
 
 ---
 
-### 3) Refresh Token
+### 4) Refresh Token
 
 - Method: `POST`
 - Path: `/api/auth/refresh`
@@ -133,7 +195,7 @@ Notes:
 
 ---
 
-### 4) Logout
+### 5) Logout
 
 - Method: `POST`
 - Path: `/api/auth/logout`
@@ -170,7 +232,7 @@ Notes:
 
 ---
 
-### 5) Forgot Password
+### 6) Forgot Password
 
 - Method: `POST`
 - Path: `/api/auth/forgot-password`
@@ -209,7 +271,7 @@ Notes:
 
 ---
 
-### 6) Reset Password
+### 7) Reset Password
 
 - Method: `POST`
 - Path: `/api/auth/reset-password`
@@ -249,7 +311,7 @@ Identity error array shape:
 
 ---
 
-### 7) Change Password
+### 8) Change Password
 
 - Method: `PUT`
 - Path: `/api/auth/change-password`
@@ -281,7 +343,7 @@ Notes:
 
 ---
 
-### 8) JWKS Public Key
+### 9) JWKS Public Key
 
 - Method: `GET`
 - Direct auth path: `/.well-known/jwks.json`
@@ -318,5 +380,5 @@ Potential server error:
 - On `401` from protected APIs, call `/api/auth/refresh` once, update both tokens, then retry original request.
 - If refresh fails (`401`), clear session and redirect to login.
 - On logout, call `/api/auth/logout` with refresh token and then clear local tokens.
-- There is currently no register/signup endpoint in `AuthController`.
+- There is no open/public register endpoint. User creation is available through `POST /api/auth/create-user-with-role` for `admin` users.
 

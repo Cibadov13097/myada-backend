@@ -1,5 +1,6 @@
 using AuthService.Application.DTOs.Auth;
 using AuthService.Application.Interfaces;
+using AuthService.Domain.Enums;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -55,6 +56,73 @@ namespace AuthService.API.Controllers
             await _userManager.AddToRoleAsync(user, "admin");
 
             return Ok();
+        }
+
+
+        [Authorize(Roles = "admin")]
+        [HttpPost("create-user-with-role")]
+        public async Task<IActionResult> CreateUserWithRole(CreateUserWithRoleDto dto)
+        {
+            var roleName = dto.Role.Trim().ToLowerInvariant();
+
+            if (!await _roleManager.RoleExistsAsync(roleName))
+                return BadRequest($"Role '{dto.Role}' does not exist");
+
+            var existingEmail = await _userManager.FindByEmailAsync(dto.Email);
+            if (existingEmail != null)
+                return BadRequest("Email is already in use");
+
+            var existingUsername = await _userManager.FindByNameAsync(dto.Username);
+            if (existingUsername != null)
+                return BadRequest("Username is already in use");
+
+            var user = new ApplicationUser
+            {
+                UserName = dto.Username,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                PhoneNumber = dto.PhoneNumber,
+                Email = dto.Email,
+                UserType = MapUserType(roleName),
+                Status = Status.Active,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var createResult = await _userManager.CreateAsync(user, dto.Password);
+            if (!createResult.Succeeded)
+                return BadRequest(createResult.Errors);
+
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!addToRoleResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
+                return BadRequest(addToRoleResult.Errors);
+            }
+
+            return Ok(new
+            {
+                message = "User created successfully",
+                user = new
+                {
+                    user.Id,
+                    user.UserName,
+                    user.Email,
+                    user.FirstName,
+                    user.LastName,
+                    user.PhoneNumber,
+                    role = roleName
+                }
+            });
+        }
+
+        private static UserType MapUserType(string roleName)
+        {
+            return roleName switch
+            {
+                "student" => UserType.Student,
+                "teacher" => UserType.Faculty,
+                _ => UserType.Staff
+            };
         }
 
         [HttpPost("forgot-password")]
@@ -169,3 +237,4 @@ namespace AuthService.API.Controllers
         }
     }
 }
+
