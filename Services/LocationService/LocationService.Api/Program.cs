@@ -129,7 +129,16 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swagger, req) =>
+        {
+            swagger.Servers = new List<OpenApiServer>
+            {
+                new() { Url = "/location" }
+            };
+        });
+    });
     app.UseSwaggerUI();
 }
 

@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "BYBK5FHFV4k=",
+  "dgSpecHash": "XrWbziM6qRM=",
   "success": true,
   "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Shared\\Shared.Contracts\\Shared.Contracts.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.22\\microsoft.windowsdesktop.app.ref.8.0.22.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.22\\microsoft.netcore.app.ref.8.0.22.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.22\\microsoft.aspnetcore.app.ref.8.0.22.nupkg.sha512"
+  ],
   "logs": []
 }

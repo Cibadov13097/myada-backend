@@ -93,32 +93,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
-if (corsOrigins.Length > 0)
+builder.Services.AddCors(options =>
 {
-    builder.Services.AddCors(options =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        options.AddPolicy("CorsPolicy", policy =>
-        {
-            policy.WithOrigins(corsOrigins)
-                .AllowCredentials()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
-}
-else
-{
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("CorsPolicy", policy =>
-        {
-            policy.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
-    });
-}
+});
 
 // 7. Controllers
 builder.Services.AddControllers();
@@ -172,8 +155,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
-app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
