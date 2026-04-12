@@ -1,116 +1,258 @@
-# Call Service API Documentation for Frontend
+# Call Service Realtime (SignalR) Documentation for Frontend
 
 Last updated: 2026-04-13
 
-## Service Status
+## What Frontend Should Use
 
-Call Service is currently in scaffold/minimal state.
+Use API Gateway for realtime call signaling:
+- Base URL: `http://13.60.196.144:5000`
+- Hub URL: `http://13.60.196.144:5000/call/hub`
 
-Implemented endpoint count: `1`
-- `GET /weatherforecast`
+Direct service (for diagnostics only):
+- `http://13.60.196.144:5006/hub`
 
-## Base URLs
+## Transport
 
-Server (when deployed on `http://13.60.196.144`):
-- `http://13.60.196.144:5006` (direct `call-service` container)
-- `http://13.60.196.144:5000` (API Gateway)
+SignalR negotiate endpoint:
+- `POST /call/hub/negotiate?negotiateVersion=1`
 
-Local direct service URLs:
-- `http://localhost:5053`
-- `https://localhost:7092`
-- `http://localhost:5006` (docker-compose mapped port)
-
-IIS Express (local profile):
-- `http://localhost:14527`
-- `https://localhost:44365`
-
-## API Gateway Status
-
-Call Service **is exposed** via `ApiGateway`.
-- Gateway route: `/call/{**catch-all}`
-- Backend cluster destination (docker): `http://callservice:8080/`
-- Compose service: `callservice` (`5006:8080`)
-
-Frontend should use gateway URL:
-- `http://13.60.196.144:5000/call/weatherforecast`
+Available transports:
+- WebSockets (preferred)
+- ServerSentEvents
+- LongPolling
 
 ## Authentication
 
-- Auth required: `No`
-- JWT validation: `Not configured`
-- Authorization header: `Not required`
+Current implementation:
+- No auth required on hub connection
+- No bearer token required
 
-## CORS
+## Hub Methods (Client -> Server)
 
-CORS policy is `AllowAll`:
-- Any origin
-- Any header
-- Any method
+### `JoinRoom(roomId, userId, displayName?)`
+Join a call room. If the connection is already in another room, it is moved automatically.
 
-## Endpoints
+Parameters:
+- `roomId` (`string`, required)
+- `userId` (`string`, required)
+- `displayName` (`string`, optional)
 
-### 1) Get Weather Forecast
+### `LeaveRoom()`
+Leave current room.
 
-- Method: `GET`
-- Path: `/weatherforecast`
-- Auth: `No`
+### `SendOffer(targetConnectionId, sdp)`
+Send WebRTC offer SDP to a target participant in the same room.
 
-Request examples:
+Parameters:
+- `targetConnectionId` (`string`, required)
+- `sdp` (`string`, required)
 
-```http
-GET /weatherforecast HTTP/1.1
-Host: localhost:5053
-Accept: application/json
-```
+### `SendAnswer(targetConnectionId, sdp)`
+Send WebRTC answer SDP to a target participant in the same room.
 
-```http
-GET /weatherforecast HTTP/1.1
-Host: 13.60.196.144:5006
-Accept: application/json
-```
+Parameters:
+- `targetConnectionId` (`string`, required)
+- `sdp` (`string`, required)
 
-```http
-GET /call/weatherforecast HTTP/1.1
-Host: 13.60.196.144:5000
-Accept: application/json
-```
+### `SendIceCandidate(targetConnectionId, candidate, sdpMid, sdpMLineIndex)`
+Send ICE candidate to a target participant in the same room.
 
-Success response:
-- `200 OK`
+Parameters:
+- `targetConnectionId` (`string`, required)
+- `candidate` (`string`, required)
+- `sdpMid` (`string | null`, optional)
+- `sdpMLineIndex` (`number | null`, optional)
 
-Response body (array of 5 items):
+### `EndCall()`
+Broadcast call end event to all participants in current room.
 
+## Server Events (Server -> Client)
+
+### `Connected`
+Emitted right after connection is established.
+
+Payload:
 ```json
-[
-  {
-    "date": "2026-04-14",
-    "temperatureC": 12,
-    "summary": "Mild",
-    "temperatureF": 53
-  }
-]
+{ "connectionId": "abc123" }
 ```
 
-Response field details:
-- `date` (`string`, date): forecast date
-- `temperatureC` (`number`): temperature in Celsius
-- `summary` (`string | null`): random weather summary text
-- `temperatureF` (`number`): calculated as `32 + temperatureC / 0.5556`
+### `JoinedRoom`
+Emitted to caller after successful `JoinRoom`.
 
-Notes:
-- Data is generated randomly per request.
-- This endpoint is template/demo behavior, not call domain logic yet.
+Payload shape:
+```json
+{
+  "roomId": "room-42",
+  "connectionId": "self-connection-id",
+  "userId": "u1",
+  "displayName": "Alice",
+  "otherParticipants": [
+    {
+      "connectionId": "peer-connection-id",
+      "userId": "u2",
+      "displayName": "Bob"
+    }
+  ]
+}
+```
 
-## Swagger/OpenAPI
+### `ParticipantJoined`
+Broadcast to others in room when a new participant joins.
 
-Swagger UI is available in Development environment:
-- `http://localhost:5053/swagger`
-- `https://localhost:7092/swagger`
-- `http://13.60.196.144:5006/swagger` (if call-service container is running on server)
+Payload:
+```json
+{
+  "connectionId": "peer-connection-id",
+  "userId": "u2",
+  "displayName": "Bob"
+}
+```
 
-## Frontend Integration Notes
+### `ParticipantLeft`
+Broadcast to others when a participant leaves/disconnects.
 
-- For frontend, prefer gateway base URL `http://13.60.196.144:5000` and call path `/call/weatherforecast`.
-- Direct service URL `http://13.60.196.144:5006` is still available for diagnostics.
-- Do not build production call flows around `/weatherforecast`; it is a placeholder endpoint.
-- Expect schema/paths to change once real call features are implemented.
+Payload:
+```json
+{
+  "connectionId": "peer-connection-id",
+  "userId": "u2",
+  "displayName": "Bob"
+}
+```
+
+### `LeftRoom`
+Sent to caller after `LeaveRoom()`.
+
+Payload:
+```json
+{
+  "roomId": "room-42",
+  "connectionId": "self-connection-id"
+}
+```
+
+### `ReceiveOffer`
+Sent to target participant.
+
+Payload:
+```json
+{
+  "roomId": "room-42",
+  "fromConnectionId": "peer-connection-id",
+  "fromUserId": "u2",
+  "sdp": "v=0..."
+}
+```
+
+### `ReceiveAnswer`
+Sent to target participant.
+
+Payload:
+```json
+{
+  "roomId": "room-42",
+  "fromConnectionId": "peer-connection-id",
+  "fromUserId": "u2",
+  "sdp": "v=0..."
+}
+```
+
+### `ReceiveIceCandidate`
+Sent to target participant.
+
+Payload:
+```json
+{
+  "roomId": "room-42",
+  "fromConnectionId": "peer-connection-id",
+  "fromUserId": "u2",
+  "candidate": "candidate:...",
+  "sdpMid": "0",
+  "sdpMLineIndex": 0
+}
+```
+
+### `CallEnded`
+Broadcast to the room when `EndCall()` is called.
+
+Payload:
+```json
+{
+  "roomId": "room-42",
+  "endedByConnectionId": "peer-connection-id",
+  "endedByUserId": "u2"
+}
+```
+
+## Error Behavior
+
+Hub errors are returned as SignalR `HubException` messages, for example:
+- `roomId is required.`
+- `userId is required.`
+- `You must join a room before sending signaling messages.`
+- `Target connection is not online.`
+- `Target connection is not in the same room.`
+
+## Frontend Example (JavaScript)
+
+```javascript
+import * as signalR from "@microsoft/signalr";
+
+const connection = new signalR.HubConnectionBuilder()
+  .withUrl("http://13.60.196.144:5000/call/hub")
+  .withAutomaticReconnect()
+  .build();
+
+connection.on("Connected", ({ connectionId }) => {
+  console.log("Connected:", connectionId);
+});
+
+connection.on("JoinedRoom", (payload) => {
+  console.log("JoinedRoom", payload);
+});
+
+connection.on("ParticipantJoined", (participant) => {
+  console.log("ParticipantJoined", participant);
+});
+
+connection.on("ParticipantLeft", (participant) => {
+  console.log("ParticipantLeft", participant);
+});
+
+connection.on("ReceiveOffer", async ({ fromConnectionId, sdp }) => {
+  // set remote offer + create/send answer
+  await connection.invoke("SendAnswer", fromConnectionId, "answer-sdp");
+});
+
+connection.on("ReceiveAnswer", ({ fromConnectionId, sdp }) => {
+  // apply remote answer
+});
+
+connection.on("ReceiveIceCandidate", ({ candidate, sdpMid, sdpMLineIndex }) => {
+  // add ICE candidate to RTCPeerConnection
+});
+
+connection.on("CallEnded", ({ roomId, endedByUserId }) => {
+  console.log(`Call ended in ${roomId} by ${endedByUserId}`);
+});
+
+await connection.start();
+await connection.invoke("JoinRoom", "room-42", "user-123", "Ali");
+```
+
+## Recommended Call Flow
+
+1. Connect hub.
+2. Wait for `Connected`.
+3. Call `JoinRoom(roomId, userId, displayName)`.
+4. Use `otherParticipants` from `JoinedRoom` to start peer offers.
+5. Exchange `SendOffer` / `ReceiveOffer`, `SendAnswer` / `ReceiveAnswer`, and ICE candidates.
+6. On leave, call `LeaveRoom()`.
+7. On call finish, call `EndCall()`.
+
+## Health Endpoints
+
+- Gateway health route for call service container reachability test:
+  - `GET http://13.60.196.144:5000/call/health`
+- Direct call service:
+  - `GET http://13.60.196.144:5006/health`
