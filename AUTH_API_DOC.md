@@ -1,46 +1,77 @@
-# Auth API Documentation
+# Auth API Documentation for Frontend
 
-Bu sənəd `Services/AuthService/AuthService.Api` üçün endpoint-ləri təsvir edir.
+Last updated: 2026-04-13
 
 ## Base URLs
 
-- Local Auth Service: `http://localhost:5001`
-- Docker internal (services arasi): `http://authservice:8080`
-- JWKS endpoint: `/.well-known/jwks.json`
+Recommended for frontend (via gateway):
+- `http://localhost:5000`
+- `https://localhost:7001`
 
-## JWT Config
+Direct auth service (if bypassing gateway):
+- `http://localhost:5001`
+- `https://localhost:7140`
+
+Base path for auth endpoints:
+- `/api/auth`
+
+## Token Settings
 
 - Issuer: `myada-auth`
 - Audience: `myada-api`
 - Algorithm: `RS256`
+- Key ID (`kid`): `my-key-id-1`
+- Access token lifetime: `15 minutes`
+- Refresh token lifetime: `30 days`
 
----
+## JWT Claims in Access Token
 
-## 1) Create Admin
+- `sub`: user id
+- `jti`: token id
+- `email`: user email
+- `firstName`: user first name
+- `userType`: user type value
+- `role`: one or more role claims
 
-- **Method**: `GET`
-- **Path**: `/api/auth/create-admin`
-- **Auth**: No
+## Auth Header
 
-Default admin yaradir:
+For protected endpoints:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+## Endpoints
+
+### 1) Create Admin
+
+- Method: `GET`
+- Path: `/api/auth/create-admin`
+- Auth: No
+
+Creates default admin user/role if bootstrap path is used.
+
+Default credentials:
 - `username`: `Admin`
 - `password`: `Admin123*`
 
-### Success Response
-`200 OK`
-```json
-{}
-```
+Success response:
+- `200 OK`
+- Empty body
+
+Notes:
+- This is a bootstrap/dev-style endpoint and should not be exposed in production.
 
 ---
 
-## 2) Login
+### 2) Login
 
-- **Method**: `POST`
-- **Path**: `/api/auth/login`
-- **Auth**: No
+- Method: `POST`
+- Path: `/api/auth/login`
+- Auth: No
 
-### Request Body
+Request body:
+
 ```json
 {
   "username": "Admin",
@@ -48,8 +79,9 @@ Default admin yaradir:
 }
 ```
 
-### Success Response
-`200 OK`
+Success response:
+- `200 OK`
+
 ```json
 {
   "accessToken": "<jwt-access-token>",
@@ -57,29 +89,32 @@ Default admin yaradir:
 }
 ```
 
-### Error Response
-`401 Unauthorized`
+Error response:
+- `401 Unauthorized`
+
 ```json
 "Username or password is incorrect"
 ```
 
 ---
 
-## 3) Refresh Token
+### 3) Refresh Token
 
-- **Method**: `POST`
-- **Path**: `/api/auth/refresh`
-- **Auth**: No
+- Method: `POST`
+- Path: `/api/auth/refresh`
+- Auth: No
 
-### Request Body
+Request body:
+
 ```json
 {
   "refreshToken": "<refresh-token>"
 }
 ```
 
-### Success Response
-`200 OK`
+Success response:
+- `200 OK`
+
 ```json
 {
   "accessToken": "<new-access-token>",
@@ -87,54 +122,71 @@ Default admin yaradir:
 }
 ```
 
-### Error Responses
+Error responses:
 - `401 Unauthorized` -> `"Invalid refresh token"`
 - `401 Unauthorized` -> `"Refresh token expired"`
 - `401 Unauthorized` -> `"Refresh token revoked"`
+- `401 Unauthorized` -> empty body (if linked user no longer exists)
+
+Notes:
+- Refresh token rotation is enabled. On success, old refresh token is revoked and a new one is returned.
 
 ---
 
-## 4) Logout
+### 4) Logout
 
-- **Method**: `POST`
-- **Path**: `/api/auth/logout`
-- **Auth**: Yes (`Bearer`)
+- Method: `POST`
+- Path: `/api/auth/logout`
+- Auth: Yes (`Bearer` access token required)
 
-### Headers
-`Authorization: Bearer <accessToken>`
+Headers:
 
-### Request Body
+```http
+Authorization: Bearer <accessToken>
+```
+
+Request body:
+
 ```json
 {
   "refreshToken": "<refresh-token>"
 }
 ```
 
-### Success Response
-`200 OK`
+Success response:
+- `200 OK`
+
 ```json
 {
   "message": "Logged out successfully"
 }
 ```
 
+Error response:
+- `401 Unauthorized` when access token is missing/invalid.
+
+Notes:
+- Revocation call is effectively idempotent; if refresh token does not exist, endpoint still returns success.
+
 ---
 
-## 5) Forgot Password
+### 5) Forgot Password
 
-- **Method**: `POST`
-- **Path**: `/api/auth/forgot-password`
-- **Auth**: No
+- Method: `POST`
+- Path: `/api/auth/forgot-password`
+- Auth: No
 
-### Request Body
+Request body:
+
 ```json
 {
   "email": "admin@gmail"
 }
 ```
 
-### Success Response
-`200 OK`
+Success response when user exists:
+- `200 OK`
+
 ```json
 {
   "message": "If this email exists, password reset link sent.",
@@ -143,17 +195,28 @@ Default admin yaradir:
 }
 ```
 
-Qeyd: Email tapilmasa da eyni message qaytarilir.
+Success response when user does not exist:
+- `200 OK`
+
+```json
+{
+  "message": "If this email exists, password reset link sent."
+}
+```
+
+Notes:
+- Current implementation returns reset token directly in API response for existing users.
 
 ---
 
-## 6) Reset Password
+### 6) Reset Password
 
-- **Method**: `POST`
-- **Path**: `/api/auth/reset-password`
-- **Auth**: No
+- Method: `POST`
+- Path: `/api/auth/reset-password`
+- Auth: No
 
-### Request Body
+Request body:
+
 ```json
 {
   "email": "admin@gmail",
@@ -162,25 +225,38 @@ Qeyd: Email tapilmasa da eyni message qaytarilir.
 }
 ```
 
-### Success Response
-`200 OK`
+Success response:
+- `200 OK`
+
 ```json
 "Password reset successfully"
 ```
 
-### Error Responses
+Error responses:
 - `404 Not Found` -> `"User not found"`
-- `400 Bad Request` -> Identity error list
+- `400 Bad Request` -> Identity error array
+
+Identity error array shape:
+
+```json
+[
+  {
+    "code": "PasswordTooShort",
+    "description": "Passwords must be at least 6 characters."
+  }
+]
+```
 
 ---
 
-## 7) Change Password
+### 7) Change Password
 
-- **Method**: `PUT`
-- **Path**: `/api/auth/change-password`
-- **Auth**: No (hazirki implementasiyada)
+- Method: `PUT`
+- Path: `/api/auth/change-password`
+- Auth: No (current implementation)
 
-### Request Body
+Request body:
+
 ```json
 {
   "email": "admin@gmail",
@@ -189,26 +265,32 @@ Qeyd: Email tapilmasa da eyni message qaytarilir.
 }
 ```
 
-### Success Response
-`200 OK`
+Success response:
+- `200 OK`
+
 ```json
 "Password Changed successfully"
 ```
 
-### Error Responses
-- `404 Not Found`
-- `400 Bad Request` -> Identity error list
+Error responses:
+- `404 Not Found` (empty body)
+- `400 Bad Request` -> Identity error array
+
+Notes:
+- Endpoint is not protected by `[Authorize]` right now.
 
 ---
 
-## 8) JWKS (Public Keys)
+### 8) JWKS Public Key
 
-- **Method**: `GET`
-- **Path**: `/.well-known/jwks.json`
-- **Auth**: No
+- Method: `GET`
+- Direct auth path: `/.well-known/jwks.json`
+- Via gateway path: `/auth/.well-known/jwks.json`
+- Auth: No
 
-### Success Response
-`200 OK`
+Success response:
+- `200 OK`
+
 ```json
 {
   "keys": [
@@ -224,11 +306,17 @@ Qeyd: Email tapilmasa da eyni message qaytarilir.
 }
 ```
 
+Potential server error:
+- `500 Internal Server Error` -> `"JWT public key file was not found."`
+
 ---
 
 ## Frontend Integration Notes
 
-- Access token-i request header-da gonderin:
-  - `Authorization: Bearer <accessToken>`
-- `401` gelende `/api/auth/refresh` ile token yenileyin.
-- Logout zamani hem access token temizleyin, hem de `/api/auth/logout` cagirib refresh token-i revoke edin.
+- Store `accessToken` in memory when possible; store `refreshToken` in secure storage strategy suitable for your app.
+- Add `Authorization: Bearer <accessToken>` to protected calls.
+- On `401` from protected APIs, call `/api/auth/refresh` once, update both tokens, then retry original request.
+- If refresh fails (`401`), clear session and redirect to login.
+- On logout, call `/api/auth/logout` with refresh token and then clear local tokens.
+- There is currently no register/signup endpoint in `AuthController`.
+

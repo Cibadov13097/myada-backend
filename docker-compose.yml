@@ -97,7 +97,7 @@ services:
   notificationservice:
     build:
       context: .
-      dockerfile: Services/NotificationService/NotificationService.API/Dockerfile
+      dockerfile: Services/NotificationService/NotificationService.Api/Dockerfile
     container_name: notification-service
     ports:
       - "5004:8080"
@@ -109,6 +109,18 @@ services:
     depends_on:
       - rabbitmq
       - myada
+    restart: always
+
+  callservice:
+    build:
+      context: .
+      dockerfile: Services/CallService/CallService.Api/Dockerfile
+    container_name: call-service
+    ports:
+      - "5006:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
     restart: always
 
 
@@ -144,6 +156,7 @@ services:
       - lostfoundservice
       - clubmanagementservice
       - notificationservice
+      - callservice
       - locationservice
     restart: always
 
