@@ -1,0 +1,344 @@
+using AutoMapper;
+using MyAdaSupportService.Application.DTOs.Dispatcher;
+using MyAdaSupportService.Application.DTOs.Filter;
+using MyAdaSupportService.Application.DTOs.Request;
+using MyAdaSupportService.Application.ServicesInterfaces;
+using MyAdaSupportService.Application.ServicesInterfaces.CrudServiceInterface;
+using MyAdaSupportService.Application.Abstractions;
+using MyAdaSupportService.Domain.Entities.RequestAggregate;
+using MyAdaSupportService.Domain.Enums;
+
+namespace MyAdaSupportService.Application.Services;
+
+public class SupportRequestService
+    : CrudManager<Request, SupportRequestListItemDto, SupportRequestDetailDto, CreateSupportRequestDto, UpdateSupportRequestDto>,
+      IRequestCrudService,
+      ISupportRequestService,
+      IRequestStatusService,
+      IAssignmentService
+{
+    private readonly IRequestRepository _requestRepository;
+    private readonly IMapper _mapper;
+    private readonly ILocationService _locationService;
+    private readonly ISupportRealtimeNotifier _realtimeNotifier;
+
+    public SupportRequestService(
+        IRequestRepository requestRepository,
+        IMapper mapper,
+        ILocationService locationService,
+        ISupportRealtimeNotifier realtimeNotifier)
+        : base(requestRepository, mapper)
+    {
+        _requestRepository = requestRepository;
+        _mapper = mapper;
+        _locationService = locationService;
+        _realtimeNotifier = realtimeNotifier;
+    }
+
+    public async Task<SupportRequestDetailDto> CreateRequestAsync(CreateSupportRequestDto dto, int memberId)
+    {
+        var entity = _mapper.Map<Request>(dto);
+        entity.CreatedUserId = memberId;
+        entity.Status = RequestStatus.New;
+
+        var created = await _requestRepository.AddAsync(entity);
+
+        var result = _mapper.Map<SupportRequestDetailDto>(created);
+        result.Location = await ResolveLocationAsync(created);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(created.Id, "created");
+
+        return result;
+    }
+
+    public async Task<List<SupportRequestListItemDto>> GetMyRequestsAsync(int memberId)
+    {
+        var requests = await _requestRepository.GetRequestsByMemberIdAsync(memberId);
+        return await MapListDtosWithLocationAsync(requests.OrderByDescending(x => x.CreatedAt).ToList());
+    }
+
+    public async Task<List<SupportRequestListItemDto>> GetAssignedRequestsAsync(int staffId)
+    {
+        var requests = await _requestRepository.GetRequestsByStaffIdAsync(staffId);
+        return await MapListDtosWithLocationAsync(requests);
+    }
+
+    public async Task<List<SupportRequestListItemDto>> GetAllRequestsAsync(RequestFilterDto filter)
+    {
+        RequestStatus? statusFilter = null;
+        var includeOpenStatuses = false;
+        if (!string.IsNullOrWhiteSpace(filter.Status))
+        {
+            if (filter.Status.Equals("open", StringComparison.OrdinalIgnoreCase))
+            {
+                includeOpenStatuses = true;
+            }
+            else if (Enum.TryParse<RequestStatus>(filter.Status, true, out var parsed))
+            {
+                statusFilter = parsed;
+            }
+        }
+
+        var requests = await _requestRepository.GetAllWithDetailsAsync(
+            x =>
+                (filter.MemberId == 0 || x.CreatedUserId == filter.MemberId) &&
+                (filter.StaffId == 0 || x.StaffId == filter.StaffId) &&
+                (filter.CategoryId == null || x.CategoryId == filter.CategoryId) &&
+                (includeOpenStatuses
+                    ? (x.Status != RequestStatus.Completed && x.Status != RequestStatus.Cancelled)
+                    : (statusFilter == null || x.Status == statusFilter.Value)) &&
+                (string.IsNullOrWhiteSpace(filter.Service) || (x.Category != null && x.Category.Module.ToString() == filter.Service)));
+
+        return await MapListDtosWithLocationAsync(requests);
+    }
+
+    public async Task<SupportRequestDetailDto> GetRequestDetailAsync(int requestId)
+    {
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        return await MapDetailDtoWithLocationAsync(request);
+    }
+
+    public async Task<List<TimelineItemDto>> GetRequestTimelineAsync(int requestId)
+    {
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        return BuildTimeline(request);
+    }
+
+    public async Task CancelRequestAsync(int requestId, int memberId, CancelRequestDto dto)
+    {
+        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        if (request.CreatedUserId != memberId)
+            throw new Exception("You can only cancel your own requests");
+
+        request.Status = RequestStatus.Cancelled;
+        request.CancelReason = dto.Reason;
+        request.CompletedAt = null;
+
+        await _requestRepository.UpdateAsync(request);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "cancelled");
+    }
+
+    public async Task AssignRequestAsync(int requestId, AssignRequestDto dto, int dispatcherId)
+    {
+        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        request.StaffId = dto.StaffId;
+        request.Status = RequestStatus.Assigned;
+        request.AssignedBy = dispatcherId;
+        request.AssignedAt = DateTime.UtcNow;
+
+        if (!string.IsNullOrWhiteSpace(dto.DispatcherInstructions))
+        {
+            request.DispatcherInstructions = dto.DispatcherInstructions;
+        }
+
+        await _requestRepository.UpdateAsync(request);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "assigned");
+    }
+
+    public async Task ReassignRequestAsync(int requestId, AssignRequestDto dto, int dispatcherId)
+    {
+        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        request.StaffId = dto.StaffId;
+        request.Status = RequestStatus.Assigned;
+        request.AssignedBy = dispatcherId;
+        request.AssignedAt = DateTime.UtcNow;
+
+        if (!string.IsNullOrWhiteSpace(dto.DispatcherInstructions))
+        {
+            request.DispatcherInstructions = dto.DispatcherInstructions;
+        }
+
+        await _requestRepository.UpdateAsync(request);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "reassigned");
+    }
+
+    public async Task AddDispatcherInstructionsAsync(int requestId, DispatcherInstructionDto dto, int dispatcherId)
+    {
+        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        if (!string.IsNullOrWhiteSpace(dto.DispatcherInstructions))
+        {
+            request.DispatcherInstructions = dto.DispatcherInstructions;
+        }
+
+        await _requestRepository.UpdateAsync(request);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "dispatcher-instructions-updated");
+    }
+
+    public async Task MarkAsStartedAsync(int requestId, int staffId)
+    {
+        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        if (request.StaffId != staffId)
+            throw new Exception("Only assigned staff can start this request");
+
+        request.Status = RequestStatus.InProgress;
+        request.StartedAt = DateTime.UtcNow;
+        await _requestRepository.UpdateAsync(request);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "started");
+    }
+
+    public async Task MarkAsInProgressAsync(int requestId, int staffId)
+    {
+        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        if (request.StaffId != staffId)
+            throw new Exception("Only assigned staff can update this request");
+
+        request.Status = RequestStatus.InProgress;
+        request.StartedAt ??= DateTime.UtcNow;
+        await _requestRepository.UpdateAsync(request);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "in-progress");
+    }
+
+    public async Task MarkAsCompletedAsync(int requestId, int staffId)
+    {
+        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+
+        if (request == null)
+            throw new Exception("Request not found");
+
+        if (request.StaffId != staffId)
+            throw new Exception("Only assigned staff can complete this request");
+
+        request.Status = RequestStatus.Completed;
+        request.CompletedAt = DateTime.UtcNow;
+        await _requestRepository.UpdateAsync(request);
+        await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "completed");
+    }
+
+    private async Task<List<SupportRequestListItemDto>> MapListDtosWithLocationAsync(List<Request> requests)
+    {
+        var result = new List<SupportRequestListItemDto>();
+
+        foreach (var request in requests)
+        {
+            var dto = _mapper.Map<SupportRequestListItemDto>(request);
+            dto.Location = await ResolveLocationAsync(request);
+            result.Add(dto);
+        }
+
+        return result;
+    }
+
+    private async Task<SupportRequestDetailDto> MapDetailDtoWithLocationAsync(Request request)
+    {
+        var dto = _mapper.Map<SupportRequestDetailDto>(request);
+        dto.Location = await ResolveLocationAsync(request);
+        dto.Timeline = BuildTimeline(request);
+        return dto;
+    }
+
+    private static List<TimelineItemDto> BuildTimeline(Request request)
+    {
+        var timeline = new List<TimelineItemDto>
+        {
+            new()
+            {
+                Step = "Created",
+                Detail = "Request created.",
+                Done = true,
+                CreatedAt = request.CreatedAt
+            }
+        };
+
+        if (request.AssignedAt.HasValue)
+        {
+            timeline.Add(new TimelineItemDto
+            {
+                Step = "Assigned",
+                Detail = request.StaffId.HasValue
+                    ? $"Assigned to staff member {request.StaffId.Value}."
+                    : "Assigned by dispatcher.",
+                Done = true,
+                CreatedAt = request.AssignedAt.Value
+            });
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.DispatcherInstructions) && request.AssignedAt.HasValue)
+        {
+            timeline.Add(new TimelineItemDto
+            {
+                Step = "DispatcherInstructions",
+                Detail = request.DispatcherInstructions,
+                Done = true,
+                CreatedAt = request.AssignedAt.Value
+            });
+        }
+
+        if (request.StartedAt.HasValue)
+        {
+            timeline.Add(new TimelineItemDto
+            {
+                Step = "InProgress",
+                Detail = "Work started by assigned staff.",
+                Done = true,
+                CreatedAt = request.StartedAt.Value
+            });
+        }
+
+        if (request.CompletedAt.HasValue && request.Status == RequestStatus.Completed)
+        {
+            timeline.Add(new TimelineItemDto
+            {
+                Step = "Completed",
+                Detail = "Request completed.",
+                Done = true,
+                CreatedAt = request.CompletedAt.Value
+            });
+        }
+
+        if (request.Status == RequestStatus.Cancelled)
+        {
+            timeline.Add(new TimelineItemDto
+            {
+                Step = "Cancelled",
+                Detail = string.IsNullOrWhiteSpace(request.CancelReason)
+                    ? "Request cancelled."
+                    : $"Request cancelled: {request.CancelReason}",
+                Done = true,
+                CreatedAt = request.ModifiedAt ?? DateTime.UtcNow
+            });
+        }
+
+        return timeline.OrderBy(x => x.CreatedAt).ToList();
+    }
+
+    private async Task<string> ResolveLocationAsync(Request request)
+    {
+        return await _locationService.ResolveLocationAsync(
+            request.IsBuilding,
+            request.BuildingId,
+            request.IsRoom,
+            request.RoomId,
+            request.AreaDetails);
+    }
+}

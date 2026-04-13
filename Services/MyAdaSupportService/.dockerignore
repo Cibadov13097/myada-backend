@@ -1,0 +1,6 @@
+**/[Bb]in/
+**/[Oo]bj/
+**/.vs/
+.git
+.gitignore
+**/tests/
