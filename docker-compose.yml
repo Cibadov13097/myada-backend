@@ -158,7 +158,14 @@ services:
       - notificationservice
       - callservice
       - locationservice
+    networks:
+      - default
+      - gateway-shared
     restart: always
 
 volumes:
   myada_postgres_data:
+
+networks:
+  gateway-shared:
+    external: true
