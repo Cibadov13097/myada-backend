@@ -19,10 +19,11 @@ namespace AuthService.Infrastructure.Persistence.Seeders
                 new IdentityRole { Id = "5", Name = "it_staff", NormalizedName = "IT_STAFF" },
                 new IdentityRole { Id = "6", Name = "tech_admin", NormalizedName = "TECH_ADMIN" },
                 new IdentityRole { Id = "7", Name = "tech_staff", NormalizedName = "TECH_STAFF" },
-                new IdentityRole { Id = "8", Name = "teacher", NormalizedName = "TEACHER" },
+                new IdentityRole { Id = "8", Name = "instructor", NormalizedName = "INSTRUCTOR" },
                 new IdentityRole { Id = "9", Name = "course_reg_staff", NormalizedName = "COURSE_REG_STAFF" },
                 new IdentityRole { Id = "10", Name = "lost_found_leader", NormalizedName = "LOST_FOUND_LEADER" },
-                new IdentityRole { Id = "11", Name = "admin", NormalizedName = "ADMIN" }
+                new IdentityRole { Id = "11", Name = "admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = "12", Name = "dispatcher", NormalizedName = "DISPATCHER" }
             );
         }
     }

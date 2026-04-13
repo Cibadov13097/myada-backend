@@ -196,13 +196,14 @@ namespace AuthService.Infrastructure.Migrations
                     { "1", null, "student", "STUDENT" },
                     { "10", null, "lost_found_leader", "LOST_FOUND_LEADER" },
                     { "11", null, "admin", "ADMIN" },
+                    { "12", null, "dispatcher", "DISPATCHER" },
                     { "2", null, "club_rep", "CLUB_REP" },
                     { "3", null, "student_services", "STUDENT_SERVICES" },
                     { "4", null, "it_admin", "IT_ADMIN" },
                     { "5", null, "it_staff", "IT_STAFF" },
                     { "6", null, "tech_admin", "TECH_ADMIN" },
                     { "7", null, "tech_staff", "TECH_STAFF" },
-                    { "8", null, "teacher", "TEACHER" },
+                    { "8", null, "instructor", "INSTRUCTOR" },
                     { "9", null, "course_reg_staff", "COURSE_REG_STAFF" }
                 });
 

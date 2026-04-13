@@ -13,20 +13,83 @@ public static class IdentityUserSeeder
         RoleManager<IdentityRole> roleManager,
         CancellationToken cancellationToken = default)
     {
+        var legacyTeacherRole = await roleManager.FindByNameAsync("teacher");
+        if (legacyTeacherRole is not null)
+        {
+            var instructorRole = await roleManager.FindByNameAsync("instructor");
+            if (instructorRole is null)
+            {
+                legacyTeacherRole.Name = "instructor";
+                legacyTeacherRole.NormalizedName = "INSTRUCTOR";
+
+                var renameResult = await roleManager.UpdateAsync(legacyTeacherRole);
+                if (!renameResult.Succeeded)
+                {
+                    var errors = string.Join("; ", renameResult.Errors.Select(e => e.Description));
+                    throw new InvalidOperationException($"Failed to rename 'teacher' role to 'instructor': {errors}");
+                }
+            }
+            else
+            {
+                var usersInTeacherRole = await userManager.GetUsersInRoleAsync("teacher");
+                foreach (var user in usersInTeacherRole)
+                {
+                    if (!await userManager.IsInRoleAsync(user, "instructor"))
+                    {
+                        var addResult = await userManager.AddToRoleAsync(user, "instructor");
+                        if (!addResult.Succeeded)
+                        {
+                            var errors = string.Join("; ", addResult.Errors.Select(e => e.Description));
+                            throw new InvalidOperationException($"Failed to migrate '{user.UserName}' to 'instructor' role: {errors}");
+                        }
+                    }
+
+                    var removeResult = await userManager.RemoveFromRoleAsync(user, "teacher");
+                    if (!removeResult.Succeeded)
+                    {
+                        var errors = string.Join("; ", removeResult.Errors.Select(e => e.Description));
+                        throw new InvalidOperationException($"Failed to remove legacy 'teacher' role from '{user.UserName}': {errors}");
+                    }
+                }
+
+                var deleteResult = await roleManager.DeleteAsync(legacyTeacherRole);
+                if (!deleteResult.Succeeded)
+                {
+                    var errors = string.Join("; ", deleteResult.Errors.Select(e => e.Description));
+                    throw new InvalidOperationException($"Failed to delete legacy 'teacher' role: {errors}");
+                }
+            }
+        }
+
         var roleMap = new Dictionary<int, string>
         {
             [1] = "student",
             [2] = "club_rep",
             [3] = "student_services",
-            [8] = "teacher",
+            [8] = "instructor",
+            [12] = "dispatcher",
             [11] = "admin"
         };
 
-        foreach (var roleName in roleMap.Values.Distinct())
+        foreach (var roleEntry in roleMap)
         {
+            var roleId = roleEntry.Key.ToString();
+            var roleName = roleEntry.Value;
+
             if (!await roleManager.RoleExistsAsync(roleName))
             {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
+                var createRoleResult = await roleManager.CreateAsync(new IdentityRole
+                {
+                    Id = roleId,
+                    Name = roleName,
+                    NormalizedName = roleName.ToUpperInvariant()
+                });
+
+                if (!createRoleResult.Succeeded)
+                {
+                    var errors = string.Join("; ", createRoleResult.Errors.Select(e => e.Description));
+                    throw new InvalidOperationException($"Failed to create role '{roleName}': {errors}");
+                }
             }
         }
 

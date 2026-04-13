@@ -120,7 +120,8 @@ namespace AuthService.API.Controllers
             return roleName switch
             {
                 "student" => UserType.Student,
-                "teacher" => UserType.Faculty,
+                "instructor" => UserType.Faculty,
+                "dispatcher" => UserType.Staff,
                 _ => UserType.Staff
             };
         }

@@ -234,8 +234,8 @@ namespace AuthService.Infrastructure.Migrations
                         new
                         {
                             Id = "8",
-                            Name = "teacher",
-                            NormalizedName = "TEACHER"
+                            Name = "instructor",
+                            NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
@@ -254,6 +254,12 @@ namespace AuthService.Infrastructure.Migrations
                             Id = "11",
                             Name = "admin",
                             NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "12",
+                            Name = "dispatcher",
+                            NormalizedName = "DISPATCHER"
                         });
                 });
 

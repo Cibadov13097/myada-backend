@@ -121,7 +121,7 @@ Notes:
 - `role` is normalized to lowercase before assignment.
 - `userType` is inferred from role:
   - `student` -> `Student`
-  - `teacher` -> `Faculty`
+  - `instructor` -> `Faculty`
   - all other roles -> `Staff`
 
 ---
@@ -140,7 +140,7 @@ Authorization: Bearer <admin-access-token>
 ```
 
 Path parameter:
-- `role` (string, required) e.g. `student`, `teacher`, `admin`
+- `role` (string, required) e.g. `student`, `instructor`, `dispatcher`, `admin`
 
 Success response:
 - `200 OK`

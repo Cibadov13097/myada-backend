@@ -78,7 +78,7 @@ SELECT
     CASE
         WHEN su.idx BETWEEN 1 AND 30 THEN '1'  -- student
         WHEN su.idx BETWEEN 31 AND 40 THEN '3' -- student_services
-        WHEN su.idx BETWEEN 41 AND 45 THEN '8' -- teacher
+        WHEN su.idx BETWEEN 41 AND 45 THEN '8' -- instructor
         WHEN su.idx BETWEEN 46 AND 48 THEN '2' -- club_rep
         ELSE '11' -- admin
     END
