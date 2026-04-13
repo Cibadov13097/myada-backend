@@ -126,7 +126,56 @@ Notes:
 
 ---
 
-### 3) Login
+### 3) Get Users By Role
+
+- Method: `GET`
+- Path: `/api/auth/users-by-role/{role}`
+- Auth: Yes (`Bearer` access token required)
+- Required role: `admin`
+
+Headers:
+
+```http
+Authorization: Bearer <admin-access-token>
+```
+
+Path parameter:
+- `role` (string, required) e.g. `student`, `teacher`, `admin`
+
+Success response:
+- `200 OK`
+
+```json
+{
+  "role": "student",
+  "count": 2,
+  "users": [
+    {
+      "id": "<guid>",
+      "userName": "seed.user01",
+      "email": "seed.user01@myada.local",
+      "firstName": "SeedFirst1",
+      "lastName": "SeedLast1",
+      "phoneNumber": null,
+      "userType": "Student",
+      "status": "Active"
+    }
+  ]
+}
+```
+
+Error responses:
+- `400 Bad Request` -> `"Role is required"`
+- `400 Bad Request` -> `"Role '<role>' does not exist"`
+- `401 Unauthorized` when access token is missing/invalid
+- `403 Forbidden` when authenticated user is not in `admin` role
+
+Notes:
+- Role is normalized to lowercase before querying.
+
+---
+
+### 4) Login
 
 - Method: `POST`
 - Path: `/api/auth/login`
@@ -160,7 +209,7 @@ Error response:
 
 ---
 
-### 4) Refresh Token
+### 5) Refresh Token
 
 - Method: `POST`
 - Path: `/api/auth/refresh`
@@ -195,7 +244,7 @@ Notes:
 
 ---
 
-### 5) Logout
+### 6) Logout
 
 - Method: `POST`
 - Path: `/api/auth/logout`
@@ -232,7 +281,7 @@ Notes:
 
 ---
 
-### 6) Forgot Password
+### 7) Forgot Password
 
 - Method: `POST`
 - Path: `/api/auth/forgot-password`
@@ -271,7 +320,7 @@ Notes:
 
 ---
 
-### 7) Reset Password
+### 8) Reset Password
 
 - Method: `POST`
 - Path: `/api/auth/reset-password`
@@ -311,7 +360,7 @@ Identity error array shape:
 
 ---
 
-### 8) Change Password
+### 9) Change Password
 
 - Method: `PUT`
 - Path: `/api/auth/change-password`
@@ -343,7 +392,7 @@ Notes:
 
 ---
 
-### 9) JWKS Public Key
+### 10) JWKS Public Key
 
 - Method: `GET`
 - Direct auth path: `/.well-known/jwks.json`

@@ -125,6 +125,42 @@ namespace AuthService.API.Controllers
             };
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpGet("users-by-role/{role}")]
+        public async Task<IActionResult> GetUsersByRole(string role)
+        {
+            if (string.IsNullOrWhiteSpace(role))
+                return BadRequest("Role is required");
+
+            var roleName = role.Trim().ToLowerInvariant();
+
+            if (!await _roleManager.RoleExistsAsync(roleName))
+                return BadRequest($"Role '{role}' does not exist");
+
+            var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+
+            var users = usersInRole
+                .Select(user => new
+                {
+                    user.Id,
+                    user.UserName,
+                    user.Email,
+                    user.FirstName,
+                    user.LastName,
+                    user.PhoneNumber,
+                    user.UserType,
+                    user.Status
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                role = roleName,
+                count = users.Count,
+                users
+            });
+        }
+
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgetPasswordDto dto)
         {
