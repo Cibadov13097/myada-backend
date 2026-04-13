@@ -141,6 +141,21 @@ services:
       - authservice
     restart: always
 
+  myadasupportservice:
+    build:
+      context: .
+      dockerfile: Services/MyAdaSupportService/Dockerfile
+    container_name: myada-support-service
+    ports:
+      - "5007:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=myada;Port=5432;Database=MyAdaSupport;Username=postgres;Password=123
+    depends_on:
+      - myada
+    restart: always
+
 
   apigateway:
     build:
@@ -158,6 +173,7 @@ services:
       - notificationservice
       - callservice
       - locationservice
+      - myadasupportservice
     networks:
       - default
       - gateway-shared
