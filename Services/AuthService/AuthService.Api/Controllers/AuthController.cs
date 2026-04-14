@@ -6,6 +6,7 @@ using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AuthService.API.Controllers
 {
@@ -159,6 +160,43 @@ namespace AuthService.API.Controllers
                 role = roleName,
                 count = users.Count,
                 users
+            });
+        }
+
+        [Authorize]
+        [HttpGet("users/{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User id is required");
+
+            var requesterId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                              ?? User.FindFirstValue("sub");
+
+            var isAdmin = User.IsInRole("admin");
+            var isSelf = !string.IsNullOrWhiteSpace(requesterId) &&
+                         string.Equals(requesterId, id, StringComparison.Ordinal);
+
+            if (!isAdmin && !isSelf)
+                return Forbid();
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound("User not found");
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return Ok(new
+            {
+                user.Id,
+                user.UserName,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.PhoneNumber,
+                user.UserType,
+                user.Status,
+                roles
             });
         }
 

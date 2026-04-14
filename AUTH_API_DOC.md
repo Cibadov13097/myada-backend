@@ -175,6 +175,49 @@ Notes:
 
 ---
 
+### 3.1) Get User By Id
+
+- Method: `GET`
+- Path: `/api/auth/users/{id}`
+- Auth: Yes (`Bearer` access token required)
+- Access rules:
+  - `admin` can fetch any user.
+  - non-admin can fetch only their own user (`id` must match token subject).
+
+Headers:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+Path parameter:
+- `id` (string, required): Identity user id
+
+Success response:
+- `200 OK`
+
+```json
+{
+  "id": "<guid>",
+  "userName": "seed.user01",
+  "email": "seed.user01@myada.local",
+  "firstName": "SeedFirst1",
+  "lastName": "SeedLast1",
+  "phoneNumber": null,
+  "userType": "Student",
+  "status": "Active",
+  "roles": ["student"]
+}
+```
+
+Error responses:
+- `400 Bad Request` -> `"User id is required"`
+- `403 Forbidden` when trying to fetch another user without `admin` role
+- `404 Not Found` -> `"User not found"`
+- `401 Unauthorized` when access token is missing/invalid
+
+---
+
 ### 4) Login
 
 - Method: `POST`
