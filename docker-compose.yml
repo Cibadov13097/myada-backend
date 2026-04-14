@@ -145,7 +145,7 @@ services:
       dockerfile: Services/MyAdaSupportService/Dockerfile
     container_name: myada-support-service
     ports:
-      - "5007:8080"
+      - "5008:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
