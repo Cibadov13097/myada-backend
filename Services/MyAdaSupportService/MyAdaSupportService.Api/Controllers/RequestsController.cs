@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyAdaSupportService.Application.DTOs.Dispatcher;
@@ -10,6 +11,7 @@ namespace MyAdaSupportService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SupportRequestsController : ControllerBase
 {
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;

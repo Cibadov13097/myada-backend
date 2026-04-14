@@ -1,6 +1,10 @@
 using AutoWrapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MyAdaSupportService.Api.Hubs;
 using MyAdaSupportService.Api.Realtime;
+using MyAdaSupportService.Api.Security;
 using MyAdaSupportService.Application.Abstractions;
 using MyAdaSupportService.Application.Mapping;
 using MyAdaSupportService.Infrastructure;
@@ -9,9 +13,42 @@ namespace MyAdaSupportService.Api;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        var jwksUrl = builder.Configuration["Auth:JwksUrl"];
+        if (string.IsNullOrWhiteSpace(jwksUrl))
+            throw new InvalidOperationException(
+                "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. http://localhost:5001/.well-known/jwks.json");
+
+        await JwksProvider.InitializeAsync(jwksUrl);
+
+        var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
+        var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
+
+        builder.Services.AddHostedService<JwksRefreshHostedService>();
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.MapInboundClaims = false;
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = validIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = validAudience,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => JwksProvider.GetKeys()
+                };
+            });
+
+        builder.Services.AddAuthorization();
 
         builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -26,7 +63,35 @@ public class Program
             });
         });
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "MyAda Support Service API",
+                Version = "v1"
+            });
+
+            var securityScheme = new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Description = "Enter JWT Bearer token: Bearer {token}",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = JwtBearerDefaults.AuthenticationScheme
+                }
+            };
+
+            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                { securityScheme, Array.Empty<string>() }
+            });
+        });
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
         builder.Services.AddSignalR();
         builder.Services.AddSingleton<ISupportRealtimeNotifier, SupportRealtimeNotifier>();
@@ -54,9 +119,10 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseCors();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.MapHub<SupportUpdatesHub>("/hubs/support-updates");
+        app.MapHub<SupportUpdatesHub>("/hubs/support-updates").RequireAuthorization();
         app.Run();
     }
 }

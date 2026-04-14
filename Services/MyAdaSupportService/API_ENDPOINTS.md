@@ -2,6 +2,8 @@
 
 Base path: `/api`
 
+Authentication: Bearer JWT is required for all endpoints.
+
 ## Response envelope
 
 The API uses AutoWrapper middleware, so successful and error responses are wrapped.

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyAdaSupportService.Application.DTOs.Category;
 using MyAdaSupportService.Application.ServicesInterfaces;
@@ -6,6 +7,7 @@ namespace MyAdaSupportService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryService _categoryService;

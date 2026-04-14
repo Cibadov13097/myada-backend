@@ -150,8 +150,12 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Host=myada;Port=5432;Database=MyAdaSupport;Username=postgres;Password=123
+      Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
+      Auth__Issuer: myada-auth
+      Auth__Audience: myada-api
     depends_on:
       - myada
+      - authservice
     restart: always
 
 

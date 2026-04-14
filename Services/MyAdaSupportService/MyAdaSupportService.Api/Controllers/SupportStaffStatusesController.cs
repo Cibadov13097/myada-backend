@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyAdaSupportService.Application.DTOs.Staff;
 using MyAdaSupportService.Application.ServicesInterfaces;
@@ -6,6 +7,7 @@ namespace MyAdaSupportService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SupportStaffStatusesController : ControllerBase
 {
     private readonly ISupportStaffStatusService _supportStaffStatusService;
