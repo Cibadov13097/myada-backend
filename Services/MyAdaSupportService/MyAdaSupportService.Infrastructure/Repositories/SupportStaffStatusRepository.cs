@@ -12,7 +12,7 @@ public class SupportStaffStatusRepository
     {
     }
 
-    public async Task<SupportStaffStatus?> GetByMemberIdAsync(int memberId)
+    public async Task<SupportStaffStatus?> GetByMemberIdAsync(Guid memberId)
     {
         return await _dbSet
             .AsNoTracking()

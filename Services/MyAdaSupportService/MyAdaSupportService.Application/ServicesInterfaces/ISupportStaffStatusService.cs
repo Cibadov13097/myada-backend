@@ -5,7 +5,8 @@ namespace MyAdaSupportService.Application.ServicesInterfaces;
 public interface ISupportStaffStatusService
 {
     Task<SupportStaffStatusDto> CreateStatusAsync(CreateSupportStaffStatusDto dto);
-    Task<SupportStaffStatusDto?> GetByMemberIdAsync(int memberId);
+    Task<SupportStaffStatusDto> GetOrCreateByMemberIdAsync(Guid memberId);
+    Task<SupportStaffStatusDto?> GetByMemberIdAsync(Guid memberId);
     Task<List<SupportStaffStatusDto>> GetByStatusAsync(string status);
-    Task UpdateStatusAsync(int memberId, UpdateSupportStaffStatusDto dto);
+    Task UpdateStatusAsync(Guid memberId, UpdateSupportStaffStatusDto dto);
 }

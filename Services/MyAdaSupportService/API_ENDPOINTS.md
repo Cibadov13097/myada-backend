@@ -152,19 +152,20 @@ Removes an attachment.
 Gets status by member id.
 
 - Path params:
-  - `memberId` (int)
+  - `memberId` (guid, must match authenticated user `sub`)
 - Response `200 OK` result (`SupportStaffStatusDto`):
 
 ```json
 {
   "id": 1,
-  "memberId": 101,
+  "memberId": "7d75bf0d-c467-4ce7-8872-c58495a6ca8a",
   "status": "Online",
   "updatedAt": "2026-04-13T10:00:00Z"
 }
 ```
 
-- Possible error: `404 Not Found` (when member status does not exist)
+- If not found, service auto-creates with status `Offline`.
+- If authenticated `sub` does not match path `memberId`, returns `403 Forbidden`.
 
 ### GET `/api/SupportStaffStatuses/status/{status}`
 
@@ -173,13 +174,14 @@ Gets all staff statuses by status.
 - Path params:
   - `status` (string enum-like: `Online`, `Offline`, `OnBreak`)
 - Response `200 OK` result: `SupportStaffStatusDto[]`
+- Access: any authenticated user
 
 ### PUT `/api/SupportStaffStatuses/member/{memberId}`
 
 Updates staff status.
 
 - Path params:
-  - `memberId` (int)
+  - `memberId` (guid, must match authenticated user `sub`)
 - Request body (`UpdateSupportStaffStatusDto`):
 
 ```json
@@ -189,6 +191,27 @@ Updates staff status.
 ```
 
 - Response: `204 No Content`
+
+- If not found, service auto-creates status row with the requested status.
+- If authenticated `sub` does not match path `memberId`, returns `403 Forbidden`.
+
+### POST `/api/SupportStaffStatuses`
+
+Creates support staff status.
+
+- Roles: `support`, `dispatcher`, `staff`
+- Request body (`CreateSupportStaffStatusDto`):
+
+```json
+{
+  "memberId": "7d75bf0d-c467-4ce7-8872-c58495a6ca8a",
+  "status": "Online"
+}
+```
+
+- `memberId` must match authenticated user `sub`.
+- `memberId = 00000000-0000-0000-0000-000000000000` means "use authenticated user id (`sub`)".
+- Response: `201 Created`
 
 ---
 

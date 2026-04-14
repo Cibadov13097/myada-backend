@@ -33,22 +33,6 @@ public static class AppDbContextSeed
             await context.SaveChangesAsync();
         }
 
-        if (!await context.SupportStaffStatuses.AnyAsync())
-        {
-            var staffStatuses = new List<SupportStaffStatus>
-            {
-                new() { MemberId = 1001, Status = StaffAvailabilityStatus.Online },
-                new() { MemberId = 1002, Status = StaffAvailabilityStatus.OnBreak },
-                new() { MemberId = 2001, Status = StaffAvailabilityStatus.Online },
-                new() { MemberId = 2002, Status = StaffAvailabilityStatus.Offline }
-            };
-
-            staffStatuses.ForEach(x => x.SetCreated(seedUserId));
-
-            await context.SupportStaffStatuses.AddRangeAsync(staffStatuses);
-            await context.SaveChangesAsync();
-        }
-
         if (!await context.Requests.AnyAsync())
         {
             var wifiCategory = await context.Categories.FirstAsync(x => x.Name == "Internet / Wi-Fi");

@@ -1,15 +1,15 @@
 # Call Service Realtime (SignalR) Documentation for Frontend
 
-Last updated: 2026-04-13
+Last updated: 2026-04-15
 
 ## What Frontend Should Use
 
 Use API Gateway for realtime call signaling:
-- Base URL: `http://13.60.196.144:5000`
-- Hub URL: `http://13.60.196.144:5000/call/hub`
+- Base URL: `http://51.20.193.29/`
+- Hub URL: `http://51.20.193.29/call/hub`
 
-Direct service (for diagnostics only):
-- `http://13.60.196.144:5006/hub`
+Direct service (diagnostics only):
+- `http://51.20.193.29:5006/hub`
 
 ## Transport
 
@@ -23,39 +23,86 @@ Available transports:
 
 ## Authentication
 
-Current implementation:
-- No auth required on hub connection
-- No bearer token required
+Hub connection requires JWT bearer authentication.
+
+Header (negotiate / long polling / SSE):
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+WebSocket connections should send token through SignalR `accessTokenFactory` (query `access_token`).
+
+Token validation settings:
+- Issuer: `myada-auth`
+- Audience: `myada-api`
+- Signing source: AuthService JWKS (`/.well-known/jwks.json`)
+
+## Authorization Rules
+
+- Any authenticated user can call `RequestCall`.
+- Only dispatcher users can call `AcceptCall` and `RejectCall`.
+- Caller who created the request can call `CancelCall`.
+- WebRTC signaling methods require both connections to be in the same accepted room.
 
 ## Hub Methods (Client -> Server)
 
-### `JoinRoom(roomId, userId, displayName?)`
-Join a call room. If the connection is already in another room, it is moved automatically.
+### `RequestCall(dispatcherUserId)`
+Creates a pending call invite from current user to a target dispatcher.
 
 Parameters:
-- `roomId` (`string`, required)
-- `userId` (`string`, required)
-- `displayName` (`string`, optional)
+- `dispatcherUserId` (`string`, required)
 
-### `LeaveRoom()`
-Leave current room.
+Behavior:
+- Creates `callId` and `roomId` internally.
+- Sends `IncomingCall` to dispatcher user connections.
+- Sends `CallRinging` to caller user connections.
+- Starts server-side timeout for invite expiration.
+
+### `AcceptCall(callId)`
+Dispatcher accepts a pending call.
+
+Parameters:
+- `callId` (`string`, required)
+
+Behavior:
+- Valid only for target dispatcher and pending status.
+- Automatically joins caller connection and accepting dispatcher connection to room.
+- Emits `JoinedRoom` and `CallAccepted`.
+
+### `RejectCall(callId, reason?)`
+Dispatcher rejects a pending call.
+
+Parameters:
+- `callId` (`string`, required)
+- `reason` (`string`, optional)
+
+### `CancelCall(callId, reason?)`
+Caller cancels a pending call before acceptance.
+
+Parameters:
+- `callId` (`string`, required)
+- `reason` (`string`, optional)
+
+### `LeaveCall()`
+Leaves current room for current connection.
 
 ### `SendOffer(targetConnectionId, sdp)`
-Send WebRTC offer SDP to a target participant in the same room.
+Send WebRTC offer SDP to target participant in same room.
 
 Parameters:
 - `targetConnectionId` (`string`, required)
 - `sdp` (`string`, required)
 
 ### `SendAnswer(targetConnectionId, sdp)`
-Send WebRTC answer SDP to a target participant in the same room.
+Send WebRTC answer SDP to target participant in same room.
 
 Parameters:
 - `targetConnectionId` (`string`, required)
 - `sdp` (`string`, required)
 
 ### `SendIceCandidate(targetConnectionId, candidate, sdpMid, sdpMLineIndex)`
-Send ICE candidate to a target participant in the same room.
+Send ICE candidate to target participant in same room.
 
 Parameters:
 - `targetConnectionId` (`string`, required)
@@ -64,69 +111,160 @@ Parameters:
 - `sdpMLineIndex` (`number | null`, optional)
 
 ### `EndCall()`
-Broadcast call end event to all participants in current room.
+Broadcasts `CallEnded` to the room and removes room membership for all current participants.
 
 ## Server Events (Server -> Client)
 
 ### `Connected`
-Emitted right after connection is established.
+Emitted right after successful authenticated hub connection.
 
 Payload:
 ```json
-{ "connectionId": "abc123" }
+{
+  "connectionId": "abc123",
+  "userId": "user-guid",
+  "displayName": "Ali",
+  "isDispatcher": false,
+  "roles": ["student"]
+}
 ```
 
-### `JoinedRoom`
-Emitted to caller after successful `JoinRoom`.
+### `IncomingCall`
+Sent to dispatcher when caller requests a call.
 
-Payload shape:
+Payload:
 ```json
 {
-  "roomId": "room-42",
-  "connectionId": "self-connection-id",
-  "userId": "u1",
-  "displayName": "Alice",
-  "otherParticipants": [
+  "callId": "f9f2...",
+  "roomId": "call-f9f2...",
+  "fromUserId": "caller-user-id",
+  "fromConnectionId": "caller-connection-id",
+  "fromDisplayName": "Ali",
+  "requestedAtUtc": "2026-04-15T10:00:00Z",
+  "expiresAtUtc": "2026-04-15T10:00:30Z"
+}
+```
+
+### `CallRinging`
+Sent to caller right after request is created.
+
+Payload:
+```json
+{
+  "callId": "f9f2...",
+  "roomId": "call-f9f2...",
+  "dispatcherUserId": "dispatcher-user-id",
+  "requestedAtUtc": "2026-04-15T10:00:00Z",
+  "expiresAtUtc": "2026-04-15T10:00:30Z"
+}
+```
+
+### `CallAccepted`
+Sent to caller + dispatcher after successful acceptance.
+
+Payload:
+```json
+{
+  "callId": "f9f2...",
+  "roomId": "call-f9f2...",
+  "acceptedByUserId": "dispatcher-user-id",
+  "acceptedByConnectionId": "dispatcher-connection-id",
+  "acceptedAtUtc": "2026-04-15T10:00:05Z",
+  "participants": [
     {
-      "connectionId": "peer-connection-id",
-      "userId": "u2",
-      "displayName": "Bob"
+      "connectionId": "caller-connection-id",
+      "userId": "caller-user-id",
+      "displayName": "Ali"
+    },
+    {
+      "connectionId": "dispatcher-connection-id",
+      "userId": "dispatcher-user-id",
+      "displayName": "Dispatcher A"
     }
   ]
 }
 ```
 
-### `ParticipantJoined`
-Broadcast to others in room when a new participant joins.
+### `CallRejected`
+Sent when dispatcher rejects invite.
 
 Payload:
 ```json
 {
-  "connectionId": "peer-connection-id",
-  "userId": "u2",
-  "displayName": "Bob"
+  "callId": "f9f2...",
+  "roomId": "call-f9f2...",
+  "rejectedByUserId": "dispatcher-user-id",
+  "rejectedAtUtc": "2026-04-15T10:00:08Z",
+  "reason": "Busy"
+}
+```
+
+### `CallCancelled`
+Sent when caller cancels pending invite.
+
+Payload:
+```json
+{
+  "callId": "f9f2...",
+  "roomId": "call-f9f2...",
+  "cancelledByUserId": "caller-user-id",
+  "cancelledAtUtc": "2026-04-15T10:00:07Z",
+  "reason": "No longer needed"
+}
+```
+
+### `CallTimedOut`
+Sent when pending invite expires without accept/reject.
+
+Payload:
+```json
+{
+  "callId": "f9f2...",
+  "roomId": "call-f9f2...",
+  "timedOutAtUtc": "2026-04-15T10:00:30Z",
+  "reason": "No dispatcher response before timeout."
+}
+```
+
+### `JoinedRoom`
+Sent to each joined participant after accept.
+
+Payload:
+```json
+{
+  "roomId": "call-f9f2...",
+  "connectionId": "self-connection-id",
+  "userId": "self-user-id",
+  "displayName": "Ali",
+  "otherParticipants": [
+    {
+      "connectionId": "peer-connection-id",
+      "userId": "peer-user-id",
+      "displayName": "Dispatcher A"
+    }
+  ]
 }
 ```
 
 ### `ParticipantLeft`
-Broadcast to others when a participant leaves/disconnects.
+Sent to other room participants when someone disconnects/leaves room.
 
 Payload:
 ```json
 {
   "connectionId": "peer-connection-id",
-  "userId": "u2",
-  "displayName": "Bob"
+  "userId": "peer-user-id",
+  "displayName": "Ali"
 }
 ```
 
 ### `LeftRoom`
-Sent to caller after `LeaveRoom()`.
+Sent to caller after `LeaveCall()`.
 
 Payload:
 ```json
 {
-  "roomId": "room-42",
+  "roomId": "call-f9f2...",
   "connectionId": "self-connection-id"
 }
 ```
@@ -137,9 +275,9 @@ Sent to target participant.
 Payload:
 ```json
 {
-  "roomId": "room-42",
+  "roomId": "call-f9f2...",
   "fromConnectionId": "peer-connection-id",
-  "fromUserId": "u2",
+  "fromUserId": "peer-user-id",
   "sdp": "v=0..."
 }
 ```
@@ -150,9 +288,9 @@ Sent to target participant.
 Payload:
 ```json
 {
-  "roomId": "room-42",
+  "roomId": "call-f9f2...",
   "fromConnectionId": "peer-connection-id",
-  "fromUserId": "u2",
+  "fromUserId": "peer-user-id",
   "sdp": "v=0..."
 }
 ```
@@ -163,9 +301,9 @@ Sent to target participant.
 Payload:
 ```json
 {
-  "roomId": "room-42",
+  "roomId": "call-f9f2...",
   "fromConnectionId": "peer-connection-id",
-  "fromUserId": "u2",
+  "fromUserId": "peer-user-id",
   "candidate": "candidate:...",
   "sdpMid": "0",
   "sdpMLineIndex": 0
@@ -173,23 +311,27 @@ Payload:
 ```
 
 ### `CallEnded`
-Broadcast to the room when `EndCall()` is called.
+Broadcast to all room participants when `EndCall()` is called.
 
 Payload:
 ```json
 {
-  "roomId": "room-42",
+  "roomId": "call-f9f2...",
   "endedByConnectionId": "peer-connection-id",
-  "endedByUserId": "u2"
+  "endedByUserId": "peer-user-id",
+  "endedAtUtc": "2026-04-15T10:05:00Z"
 }
 ```
 
 ## Error Behavior
 
 Hub errors are returned as SignalR `HubException` messages, for example:
-- `roomId is required.`
-- `userId is required.`
-- `You must join a room before sending signaling messages.`
+- `dispatcherUserId is required.`
+- `Dispatcher is offline.`
+- `Target user does not have dispatcher role.`
+- `Only dispatchers can accept calls.`
+- `Call request expired.`
+- `You must be in a call room before sending signaling messages.`
 - `Target connection is not online.`
 - `Target connection is not in the same room.`
 
@@ -198,25 +340,24 @@ Hub errors are returned as SignalR `HubException` messages, for example:
 ```javascript
 import * as signalR from "@microsoft/signalr";
 
+const accessToken = "<JWT_ACCESS_TOKEN>";
+
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("http://13.60.196.144:5000/call/hub")
+  .withUrl("http://51.20.193.29/call/hub", {
+    accessTokenFactory: () => accessToken
+  })
   .withAutomaticReconnect()
   .build();
 
-connection.on("Connected", ({ connectionId }) => {
-  console.log("Connected:", connectionId);
+connection.on("IncomingCall", ({ callId, fromUserId, fromDisplayName }) => {
+  console.log("Incoming call:", callId, fromUserId, fromDisplayName);
+  // dispatcher can accept/reject:
+  // connection.invoke("AcceptCall", callId);
+  // connection.invoke("RejectCall", callId, "Busy");
 });
 
-connection.on("JoinedRoom", (payload) => {
-  console.log("JoinedRoom", payload);
-});
-
-connection.on("ParticipantJoined", (participant) => {
-  console.log("ParticipantJoined", participant);
-});
-
-connection.on("ParticipantLeft", (participant) => {
-  console.log("ParticipantLeft", participant);
+connection.on("JoinedRoom", ({ roomId, otherParticipants }) => {
+  console.log("Joined room:", roomId, otherParticipants);
 });
 
 connection.on("ReceiveOffer", async ({ fromConnectionId, sdp }) => {
@@ -224,35 +365,24 @@ connection.on("ReceiveOffer", async ({ fromConnectionId, sdp }) => {
   await connection.invoke("SendAnswer", fromConnectionId, "answer-sdp");
 });
 
-connection.on("ReceiveAnswer", ({ fromConnectionId, sdp }) => {
-  // apply remote answer
-});
-
-connection.on("ReceiveIceCandidate", ({ candidate, sdpMid, sdpMLineIndex }) => {
-  // add ICE candidate to RTCPeerConnection
-});
-
-connection.on("CallEnded", ({ roomId, endedByUserId }) => {
-  console.log(`Call ended in ${roomId} by ${endedByUserId}`);
-});
-
 await connection.start();
-await connection.invoke("JoinRoom", "room-42", "user-123", "Ali");
+await connection.invoke("RequestCall", "dispatcher-user-id");
 ```
 
-## Recommended Call Flow
+## Recommended Dispatcher Flow
 
-1. Connect hub.
-2. Wait for `Connected`.
-3. Call `JoinRoom(roomId, userId, displayName)`.
-4. Use `otherParticipants` from `JoinedRoom` to start peer offers.
-5. Exchange `SendOffer` / `ReceiveOffer`, `SendAnswer` / `ReceiveAnswer`, and ICE candidates.
-6. On leave, call `LeaveRoom()`.
-7. On call finish, call `EndCall()`.
+1. Caller and dispatcher connect to `/call/hub` with JWT.
+2. Caller invokes `RequestCall(dispatcherUserId)`.
+3. Dispatcher receives `IncomingCall` in real-time.
+4. Dispatcher invokes `AcceptCall(callId)` or `RejectCall(callId, reason?)`.
+5. On accept, both sides receive `CallAccepted` + `JoinedRoom` and start WebRTC signaling.
+6. During call, exchange `SendOffer` / `SendAnswer` / `SendIceCandidate`.
+7. Use `LeaveCall()` for single participant leave or `EndCall()` to end for everyone.
+8. If dispatcher takes no action, both sides receive `CallTimedOut`.
 
 ## Health Endpoints
 
 - Gateway health route for call service container reachability test:
-  - `GET http://13.60.196.144:5000/call/health`
+  - `GET http://51.20.193.29/call/health`
 - Direct call service:
-  - `GET http://13.60.196.144:5006/health`
+  - `GET http://51.20.193.29:5006/health`

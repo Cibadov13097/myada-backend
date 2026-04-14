@@ -119,7 +119,16 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
+      Auth__Issuer: myada-auth
+      Auth__Audience: myada-api
+      Redis__ConnectionString: myada-redis:6379
+      Redis__ChannelPrefix: myada:call
+      Call__InviteTimeoutSeconds: 30
     restart: always
+    depends_on:
+      - authservice
+      - myada-redis
 
 
   locationservice:

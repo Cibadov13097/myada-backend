@@ -3,7 +3,7 @@
 public class SupportStaffStatusDto
 {
     public int Id { get; set; }
-    public int MemberId { get; set; }
+    public Guid MemberId { get; set; }
 
     public string Status { get; set; } = null!;
     // Online | Offline | OnBreak

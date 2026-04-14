@@ -181,8 +181,8 @@ namespace MyAdaSupportService.Infrastructure.Migrations
                     b.Property<int>("CreatedUserId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MemberId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyAdaSupportService.Application.DTOs.Staff;
 using MyAdaSupportService.Application.ServicesInterfaces;
+using System.Security.Claims;
 
 namespace MyAdaSupportService.Api.Controllers;
 
@@ -21,8 +22,14 @@ public class SupportStaffStatusesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<SupportStaffStatusDto>> Create([FromBody] CreateSupportStaffStatusDto dto)
     {
-        if (dto.MemberId <= 0)
-            return BadRequest("MemberId must be greater than 0");
+        if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
+            return authError!;
+
+        if (dto.MemberId == Guid.Empty)
+            dto.MemberId = authorizedMemberId;
+
+        if (dto.MemberId != authorizedMemberId)
+            return Forbid();
 
         if (string.IsNullOrWhiteSpace(dto.Status))
             return BadRequest("Status is required");
@@ -38,18 +45,18 @@ public class SupportStaffStatusesController : ControllerBase
         }
     }
 
-    [HttpGet("member/{memberId:int}")]
-    public async Task<ActionResult<SupportStaffStatusDto>> GetByMemberId(int memberId)
+    [Authorize(Roles = "support,dispatcher,staff")]
+    [HttpGet("member/{memberId:guid}")]
+    public async Task<ActionResult<SupportStaffStatusDto>> GetByMemberId(Guid memberId)
     {
-        try
-        {
-            var result = await _supportStaffStatusService.GetByMemberIdAsync(memberId);
-            return Ok(result);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+        if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
+            return authError!;
+
+        if (memberId != authorizedMemberId)
+            return Forbid();
+
+        var result = await _supportStaffStatusService.GetOrCreateByMemberIdAsync(memberId);
+        return Ok(result);
     }
 
     [HttpGet("status/{status}")]
@@ -59,10 +66,38 @@ public class SupportStaffStatusesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("member/{memberId:int}")]
-    public async Task<IActionResult> UpdateStatus(int memberId, [FromBody] UpdateSupportStaffStatusDto dto)
+    [Authorize(Roles = "support,dispatcher,staff")]
+    [HttpPut("member/{memberId:guid}")]
+    public async Task<IActionResult> UpdateStatus(Guid memberId, [FromBody] UpdateSupportStaffStatusDto dto)
     {
+        if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
+            return authError!;
+
+        if (memberId != authorizedMemberId)
+            return Forbid();
+
         await _supportStaffStatusService.UpdateStatusAsync(memberId, dto);
         return NoContent();
+    }
+
+    private bool TryGetAuthorizedMemberId(out Guid memberId, out ObjectResult? error)
+    {
+        memberId = Guid.Empty;
+        error = null;
+
+        var sub = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(sub))
+        {
+            error = new UnauthorizedObjectResult("Authenticated user id claim is missing.");
+            return false;
+        }
+
+        if (!Guid.TryParse(sub, out memberId))
+        {
+            error = new BadRequestObjectResult("Authenticated user id must be a valid GUID.");
+            return false;
+        }
+
+        return true;
     }
 }

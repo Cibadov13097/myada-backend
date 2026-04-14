@@ -25,7 +25,7 @@ public class SupportStaffStatusService
 
     public async Task<SupportStaffStatusDto> CreateStatusAsync(CreateSupportStaffStatusDto dto)
     {
-        var existing = await _supportStaffStatusRepository.GetAsync(x => x.MemberId == dto.MemberId);
+        var existing = await _supportStaffStatusRepository.GetByMemberIdAsync(dto.MemberId);
         if (existing != null)
             throw new Exception("Support staff status already exists for this member");
 
@@ -41,9 +41,24 @@ public class SupportStaffStatusService
         return _mapper.Map<SupportStaffStatusDto>(created);
     }
 
-    public async Task<SupportStaffStatusDto?> GetByMemberIdAsync(int memberId)
+    public async Task<SupportStaffStatusDto> GetOrCreateByMemberIdAsync(Guid memberId)
     {
-        var entity = await _supportStaffStatusRepository.GetAsync(x => x.MemberId == memberId);
+        var entity = await _supportStaffStatusRepository.GetByMemberIdAsync(memberId);
+        if (entity == null)
+        {
+            entity = await _supportStaffStatusRepository.AddAsync(new SupportStaffStatus
+            {
+                MemberId = memberId,
+                Status = StaffAvailabilityStatus.Offline
+            });
+        }
+
+        return _mapper.Map<SupportStaffStatusDto>(entity);
+    }
+
+    public async Task<SupportStaffStatusDto?> GetByMemberIdAsync(Guid memberId)
+    {
+        var entity = await _supportStaffStatusRepository.GetByMemberIdAsync(memberId);
         return entity == null ? null : _mapper.Map<SupportStaffStatusDto>(entity);
     }
 
@@ -53,17 +68,9 @@ public class SupportStaffStatusService
         return _mapper.Map<List<SupportStaffStatusDto>>(entities);
     }
 
-    public async Task UpdateStatusAsync(int memberId, UpdateSupportStaffStatusDto dto)
+    public async Task UpdateStatusAsync(Guid memberId, UpdateSupportStaffStatusDto dto)
     {
-        SupportStaffStatus? entity = null;
-        try
-        {
-            entity = await _supportStaffStatusRepository.GetAsync(x => x.MemberId == memberId);
-        }
-        catch (KeyNotFoundException)
-        {
-            entity = null;
-        }
+        var entity = await _supportStaffStatusRepository.GetByMemberIdAsync(memberId);
 
         if (!Enum.TryParse<StaffAvailabilityStatus>(dto.Status, true, out var parsedStatus))
             throw new Exception("Invalid support staff status");

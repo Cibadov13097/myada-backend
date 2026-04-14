@@ -96,19 +96,37 @@ Base path: `/support/api/SupportStaffStatuses`
 - `GET /support/api/SupportStaffStatuses/status/{status}`
 - `PUT /support/api/SupportStaffStatuses/member/{memberId}`
 
-Create access roles:
+Access roles:
 - `support`
 - `dispatcher`
 - `staff`
+- `GET /status/{status}`: any authenticated user
+- `POST`, `GET /member/{memberId}`, `PUT /member/{memberId}`: roles above + ownership check
+
+`memberId` format:
+- GUID (must match authenticated user `sub` claim)
+- If `memberId` in POST body is `00000000-0000-0000-0000-000000000000`, backend uses authenticated user id (`sub`).
+
+Auto-create behavior:
+- `GET /member/{memberId}` automatically creates a status row when it does not exist.
+- `PUT /member/{memberId}` also auto-creates when missing, using the provided status.
 
 Example create payload:
 
 ```json
 {
-  "memberId": 101,
+  "memberId": "7d75bf0d-c467-4ce7-8872-c58495a6ca8a",
   "status": "Online"
 }
 ```
+
+Typical responses:
+- `201 Created` (POST)
+- `200 OK` (GET)
+- `204 No Content` (PUT)
+- `403 Forbidden` when `memberId` does not match authenticated `sub`
+- `401 Unauthorized` when token/user id claim is missing
+- `400 Bad Request` when `sub` is not a valid GUID or status value is invalid
 
 Example update payload:
 
