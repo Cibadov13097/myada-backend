@@ -2,7 +2,9 @@ using AutoMapper;
 using MyAdaSupportService.Application.DTOs.Attcahment;
 using MyAdaSupportService.Application.DTOs.Category;
 using MyAdaSupportService.Application.DTOs.Request;
+using MyAdaSupportService.Application.DTOs.Staff;
 using MyAdaSupportService.Domain.Entities.RequestAggregate;
+using MyAdaSupportService.Domain.Enums;
 
 namespace MyAdaSupportService.Application.Mapping;
 
@@ -70,5 +72,15 @@ public class MappingProfile : Profile
         CreateMap<Category, CategoryDto>().ReverseMap();
         CreateMap<Category, CategoryCreateDto>().ReverseMap();
         CreateMap<Category, CategoryUpdateDto>().ReverseMap();
+
+        CreateMap<SupportStaffStatus, SupportStaffStatusDto>()
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.UpdatedAt,
+                opt => opt.MapFrom(src => src.ModifiedAt));
+
+        CreateMap<CreateSupportStaffStatusDto, SupportStaffStatus>()
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(src => Enum.Parse<StaffAvailabilityStatus>(src.Status, true)));
     }
 }

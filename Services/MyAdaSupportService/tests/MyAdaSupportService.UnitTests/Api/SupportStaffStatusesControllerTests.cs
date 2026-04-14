@@ -9,6 +9,23 @@ namespace MyAdaSupportService.UnitTests.Api;
 public class SupportStaffStatusesControllerTests
 {
     [Fact]
+    public async Task Create_returns_CreatedAtAction()
+    {
+        var svc = new Mock<ISupportStaffStatusService>();
+        var createDto = new CreateSupportStaffStatusDto { MemberId = 7, Status = "Online" };
+        var createdDto = new SupportStaffStatusDto { Id = 1, MemberId = 7, Status = "Online" };
+        svc.Setup(s => s.CreateStatusAsync(createDto)).ReturnsAsync(createdDto);
+        var controller = new SupportStaffStatusesController(svc.Object);
+
+        var result = await controller.Create(createDto);
+
+        var created = Assert.IsType<CreatedAtActionResult>(result.Result);
+        Assert.Equal(nameof(SupportStaffStatusesController.GetByMemberId), created.ActionName);
+        var payload = Assert.IsType<SupportStaffStatusDto>(created.Value);
+        Assert.Equal(7, payload.MemberId);
+    }
+
+    [Fact]
     public async Task GetByMemberId_returns_Ok_when_found()
     {
         var svc = new Mock<ISupportStaffStatusService>();

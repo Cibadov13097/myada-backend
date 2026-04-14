@@ -22,6 +22,68 @@ public class SupportStaffStatusServiceTests
     }
 
     [Fact]
+    public async Task CreateStatusAsync_adds_entity_when_member_status_does_not_exist()
+    {
+        var repo = new Mock<ISupportStaffStatusRepository>();
+        var mapper = new Mock<IMapper>();
+        repo.Setup(r => r.GetAsync(
+                It.IsAny<Expression<Func<SupportStaffStatus, bool>>>(),
+                It.IsAny<Func<IQueryable<SupportStaffStatus>, IQueryable<SupportStaffStatus>>?>(),
+                It.IsAny<bool>()))
+            .Returns(Task.FromResult<SupportStaffStatus>(null!));
+
+        SupportStaffStatus? addedEntity = null;
+        repo.Setup(r => r.AddAsync(It.IsAny<SupportStaffStatus>()))
+            .Callback<SupportStaffStatus>(entity => addedEntity = entity)
+            .ReturnsAsync((SupportStaffStatus entity) => entity);
+
+        mapper.Setup(m => m.Map<SupportStaffStatusDto>(It.IsAny<SupportStaffStatus>()))
+            .Returns((SupportStaffStatus entity) => new SupportStaffStatusDto
+            {
+                MemberId = entity.MemberId,
+                Status = entity.Status.ToString()
+            });
+
+        var sut = new SupportStaffStatusService(repo.Object, mapper.Object);
+
+        var result = await sut.CreateStatusAsync(new CreateSupportStaffStatusDto
+        {
+            MemberId = 42,
+            Status = nameof(StaffAvailabilityStatus.Online)
+        });
+
+        Assert.NotNull(addedEntity);
+        Assert.Equal(42, addedEntity!.MemberId);
+        Assert.Equal(nameof(StaffAvailabilityStatus.Online), result.Status);
+        repo.Verify(r => r.AddAsync(It.IsAny<SupportStaffStatus>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateStatusAsync_throws_when_member_status_already_exists()
+    {
+        var repo = new Mock<ISupportStaffStatusRepository>();
+        var mapper = new Mock<IMapper>();
+        repo.Setup(r => r.GetAsync(
+                It.IsAny<Expression<Func<SupportStaffStatus, bool>>>(),
+                It.IsAny<Func<IQueryable<SupportStaffStatus>, IQueryable<SupportStaffStatus>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new SupportStaffStatus
+            {
+                MemberId = 9,
+                Status = StaffAvailabilityStatus.Online
+            });
+
+        var sut = new SupportStaffStatusService(repo.Object, mapper.Object);
+
+        await Assert.ThrowsAsync<Exception>(() => sut.CreateStatusAsync(new CreateSupportStaffStatusDto
+        {
+            MemberId = 9,
+            Status = nameof(StaffAvailabilityStatus.Online)
+        }));
+        repo.Verify(r => r.AddAsync(It.IsAny<SupportStaffStatus>()), Times.Never);
+    }
+
+    [Fact]
     public async Task GetByMemberIdAsync_returns_dto_when_found()
     {
         var repo = new Mock<ISupportStaffStatusRepository>();

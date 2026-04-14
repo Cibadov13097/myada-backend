@@ -23,6 +23,24 @@ public class SupportStaffStatusService
         _mapper = mapper;
     }
 
+    public async Task<SupportStaffStatusDto> CreateStatusAsync(CreateSupportStaffStatusDto dto)
+    {
+        var existing = await _supportStaffStatusRepository.GetAsync(x => x.MemberId == dto.MemberId);
+        if (existing != null)
+            throw new Exception("Support staff status already exists for this member");
+
+        if (!Enum.TryParse<StaffAvailabilityStatus>(dto.Status, true, out var parsedStatus))
+            throw new Exception("Invalid support staff status");
+
+        var created = await _supportStaffStatusRepository.AddAsync(new SupportStaffStatus
+        {
+            MemberId = dto.MemberId,
+            Status = parsedStatus
+        });
+
+        return _mapper.Map<SupportStaffStatusDto>(created);
+    }
+
     public async Task<SupportStaffStatusDto?> GetByMemberIdAsync(int memberId)
     {
         var entity = await _supportStaffStatusRepository.GetAsync(x => x.MemberId == memberId);

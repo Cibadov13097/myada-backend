@@ -91,9 +91,24 @@ Example create payload:
 
 Base path: `/support/api/SupportStaffStatuses`
 
+- `POST /support/api/SupportStaffStatuses`
 - `GET /support/api/SupportStaffStatuses/member/{memberId}`
 - `GET /support/api/SupportStaffStatuses/status/{status}`
 - `PUT /support/api/SupportStaffStatuses/member/{memberId}`
+
+Create access roles:
+- `support`
+- `dispatcher`
+- `staff`
+
+Example create payload:
+
+```json
+{
+  "memberId": 101,
+  "status": "Online"
+}
+```
 
 Example update payload:
 

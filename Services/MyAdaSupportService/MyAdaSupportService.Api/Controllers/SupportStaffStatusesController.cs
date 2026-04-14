@@ -17,6 +17,27 @@ public class SupportStaffStatusesController : ControllerBase
         _supportStaffStatusService = supportStaffStatusService;
     }
 
+    [Authorize(Roles = "support,dispatcher,staff")]
+    [HttpPost]
+    public async Task<ActionResult<SupportStaffStatusDto>> Create([FromBody] CreateSupportStaffStatusDto dto)
+    {
+        if (dto.MemberId <= 0)
+            return BadRequest("MemberId must be greater than 0");
+
+        if (string.IsNullOrWhiteSpace(dto.Status))
+            return BadRequest("Status is required");
+
+        try
+        {
+            var result = await _supportStaffStatusService.CreateStatusAsync(dto);
+            return CreatedAtAction(nameof(GetByMemberId), new { memberId = result.MemberId }, result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpGet("member/{memberId:int}")]
     public async Task<ActionResult<SupportStaffStatusDto>> GetByMemberId(int memberId)
     {
