@@ -46,6 +46,9 @@ services:
       ConnectionStrings__Develop: Host=myada;Port=5432;Database=AuthDb;Username=postgres;Password=123
       Jwt__PrivateKeyPath: /keys/private.pem
       Jwt__PublicKeyPath: /keys/public.pem
+      SupportService__BaseUrl: http://myadasupportservice:8080
+      SupportService__ProvisioningPath: /api/SupportStaffStatuses/internal/provision
+      SupportService__ProvisioningKey: myada-internal-key
     depends_on:
       - myada
       - myada-redis
@@ -162,6 +165,7 @@ services:
       Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
       Auth__Issuer: myada-auth
       Auth__Audience: myada-api
+      InternalAuth__ProvisioningKey: myada-internal-key
     depends_on:
       - myada
       - authservice

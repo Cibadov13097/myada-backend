@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyAdaSupportService.Application.DTOs.Staff;
 using MyAdaSupportService.Application.ServicesInterfaces;
+using System.Security.Cryptography;
 using System.Security.Claims;
+using System.Text;
 
 namespace MyAdaSupportService.Api.Controllers;
 
@@ -12,10 +14,14 @@ namespace MyAdaSupportService.Api.Controllers;
 public class SupportStaffStatusesController : ControllerBase
 {
     private readonly ISupportStaffStatusService _supportStaffStatusService;
+    private readonly IConfiguration _configuration;
 
-    public SupportStaffStatusesController(ISupportStaffStatusService supportStaffStatusService)
+    public SupportStaffStatusesController(
+        ISupportStaffStatusService supportStaffStatusService,
+        IConfiguration configuration)
     {
         _supportStaffStatusService = supportStaffStatusService;
+        _configuration = configuration;
     }
 
     [Authorize(Roles = "support,dispatcher,staff")]
@@ -66,6 +72,31 @@ public class SupportStaffStatusesController : ControllerBase
         return Ok(result);
     }
 
+    [AllowAnonymous]
+    [HttpPost("internal/provision")]
+    public async Task<ActionResult<SupportStaffStatusDto>> Provision([FromBody] CreateSupportStaffStatusDto dto)
+    {
+        if (!IsValidInternalProvisioningRequest())
+            return Unauthorized("Invalid internal provisioning key.");
+
+        if (dto.MemberId == Guid.Empty)
+            return BadRequest("MemberId is required.");
+
+        var effectiveStatus = string.IsNullOrWhiteSpace(dto.Status)
+            ? "Offline"
+            : dto.Status;
+
+        try
+        {
+            var result = await _supportStaffStatusService.EnsureStatusAsync(dto.MemberId, effectiveStatus);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [Authorize(Roles = "support,dispatcher,staff")]
     [HttpPut("member/{memberId:guid}")]
     public async Task<IActionResult> UpdateStatus(Guid memberId, [FromBody] UpdateSupportStaffStatusDto dto)
@@ -99,5 +130,23 @@ public class SupportStaffStatusesController : ControllerBase
         }
 
         return true;
+    }
+
+    private bool IsValidInternalProvisioningRequest()
+    {
+        var expectedKey = _configuration["InternalAuth:ProvisioningKey"];
+        if (string.IsNullOrWhiteSpace(expectedKey))
+            return false;
+
+        if (!Request.Headers.TryGetValue("X-Internal-Key", out var providedValues))
+            return false;
+
+        var providedKey = providedValues.FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(providedKey))
+            return false;
+
+        var expectedBytes = Encoding.UTF8.GetBytes(expectedKey);
+        var providedBytes = Encoding.UTF8.GetBytes(providedKey);
+        return CryptographicOperations.FixedTimeEquals(expectedBytes, providedBytes);
     }
 }

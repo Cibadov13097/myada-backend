@@ -1,6 +1,7 @@
 using AuthService.Application.DTOs.Auth;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Enums;
+using AuthService.API.Integrations;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -19,19 +20,22 @@ namespace AuthService.API.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IRefreshTokenService _refreshTokenService;
+        private readonly SupportStaffProvisioningClient _supportStaffProvisioningClient;
 
         public AuthController(
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,
           TokenService tokenService,
           RoleManager<IdentityRole> roleManager,
-          IRefreshTokenService refreshTokenService)
+          IRefreshTokenService refreshTokenService,
+          SupportStaffProvisioningClient supportStaffProvisioningClient)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
             _refreshTokenService = refreshTokenService;
+            _supportStaffProvisioningClient = supportStaffProvisioningClient;
         }
 
         [HttpGet("create-admin")]
@@ -98,6 +102,20 @@ namespace AuthService.API.Controllers
             {
                 await _userManager.DeleteAsync(user);
                 return BadRequest(addToRoleResult.Errors);
+            }
+
+            var supportProvisionResult = await _supportStaffProvisioningClient
+                .ProvisionForRoleAsync(user.Id, roleName, HttpContext.RequestAborted);
+
+            if (!supportProvisionResult.IsSuccess)
+            {
+                await _userManager.RemoveFromRoleAsync(user, roleName);
+                await _userManager.DeleteAsync(user);
+
+                return StatusCode(StatusCodes.Status502BadGateway, new
+                {
+                    message = supportProvisionResult.ErrorMessage ?? "Failed to provision support staff status."
+                });
             }
 
             return Ok(new

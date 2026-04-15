@@ -1,6 +1,7 @@
 using AuthService.Application.Interfaces;
 using AuthService.Application.Options;
 using AuthService.Application.Services;
+using AuthService.API.Integrations;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Persistence.Context;
 using AuthService.Infrastructure.Persistence.Repositories;
@@ -68,6 +69,16 @@ builder.Services.AddScoped<TokenService>();
 // 5. Refresh token services
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddHttpClient<SupportStaffProvisioningClient>((sp, client) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = configuration["SupportService:BaseUrl"] ?? "http://localhost:5008";
+    if (!baseUrl.EndsWith("/", StringComparison.Ordinal))
+        baseUrl += "/";
+
+    client.BaseAddress = new Uri(baseUrl);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 // 6. JWT Bearer authentication
 builder.Services.AddAuthentication(options =>

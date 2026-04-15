@@ -43,17 +43,29 @@ public class SupportStaffStatusService
 
     public async Task<SupportStaffStatusDto> GetOrCreateByMemberIdAsync(Guid memberId)
     {
-        var entity = await _supportStaffStatusRepository.GetByMemberIdAsync(memberId);
-        if (entity == null)
+        return await EnsureStatusAsync(memberId, nameof(StaffAvailabilityStatus.Offline));
+    }
+
+    public async Task<SupportStaffStatusDto> EnsureStatusAsync(Guid memberId, string? status = null)
+    {
+        var parsedStatus = StaffAvailabilityStatus.Offline;
+        if (!string.IsNullOrWhiteSpace(status) &&
+            !Enum.TryParse<StaffAvailabilityStatus>(status, true, out parsedStatus))
         {
-            entity = await _supportStaffStatusRepository.AddAsync(new SupportStaffStatus
-            {
-                MemberId = memberId,
-                Status = StaffAvailabilityStatus.Offline
-            });
+            throw new Exception("Invalid support staff status");
         }
 
-        return _mapper.Map<SupportStaffStatusDto>(entity);
+        var entity = await _supportStaffStatusRepository.GetByMemberIdAsync(memberId);
+        if (entity != null)
+            return _mapper.Map<SupportStaffStatusDto>(entity);
+
+        var created = await _supportStaffStatusRepository.AddAsync(new SupportStaffStatus
+        {
+            MemberId = memberId,
+            Status = parsedStatus
+        });
+
+        return _mapper.Map<SupportStaffStatusDto>(created);
     }
 
     public async Task<SupportStaffStatusDto?> GetByMemberIdAsync(Guid memberId)

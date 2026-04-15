@@ -1,6 +1,6 @@
 # Auth API Documentation for Frontend
 
-Last updated: 2026-04-13
+Last updated: 2026-04-15
 
 ## Base URLs
 
@@ -114,6 +114,7 @@ Error responses:
 - `400 Bad Request` -> `"Email is already in use"`
 - `400 Bad Request` -> `"Username is already in use"`
 - `400 Bad Request` -> Identity error array (password/validation failures)
+- `502 Bad Gateway` -> support staff provisioning failed after user creation (request rolled back)
 - `401 Unauthorized` when access token is missing/invalid
 - `403 Forbidden` when authenticated user is not in `admin` role
 
@@ -123,6 +124,9 @@ Notes:
   - `student` -> `Student`
   - `instructor` -> `Faculty`
   - all other roles -> `Staff`
+- For support roles (`support`, `dispatcher`, `staff`, `student_services`, and roles ending with `_staff`), AuthService automatically calls SupportService and ensures a `SupportStaffStatus` row exists.
+- In that auto-provisioned row, `SupportStaffStatus.MemberId` is set to the created auth user id (`user.id` GUID), with default status `Offline`.
+- If SupportService provisioning fails, AuthService removes the role and deletes the created user before returning `502`.
 
 ---
 

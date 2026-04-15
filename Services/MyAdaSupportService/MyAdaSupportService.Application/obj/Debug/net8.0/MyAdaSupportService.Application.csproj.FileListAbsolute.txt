@@ -1,0 +1,16 @@
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Debug\net8.0\MyAdaSupportService.Application.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Debug\net8.0\MyAdaSupportService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Debug\net8.0\MyAdaSupportService.Application.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Debug\net8.0\MyAdaSupportService.Domain.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Debug\net8.0\MyAdaSupportService.Domain.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.csproj.AssemblyReference.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.AssemblyInfoInputs.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.AssemblyInfo.cs
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.csproj.CoreCompileInputs.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.sourcelink.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSup.444B4426.Up2Date
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\refint\MyAdaSupportService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\ref\MyAdaSupportService.Application.dll

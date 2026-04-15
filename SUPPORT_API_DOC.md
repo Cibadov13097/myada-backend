@@ -1,6 +1,6 @@
 # MyAda Support API Documentation for Frontend
 
-Last updated: 2026-04-14
+Last updated: 2026-04-15
 
 ## Base URLs
 
@@ -19,7 +19,7 @@ Direct service (diagnostics only):
 
 ## Authentication
 
-All Support endpoints require JWT bearer token.
+All Support endpoints require JWT bearer token, except internal provisioning endpoint used by backend-to-backend integration.
 
 Header:
 
@@ -95,6 +95,7 @@ Base path: `/support/api/SupportStaffStatuses`
 - `GET /support/api/SupportStaffStatuses/member/{memberId}`
 - `GET /support/api/SupportStaffStatuses/status/{status}`
 - `PUT /support/api/SupportStaffStatuses/member/{memberId}`
+- `POST /support/api/SupportStaffStatuses/internal/provision` (internal backend use only)
 
 Access roles:
 - `support`
@@ -102,6 +103,7 @@ Access roles:
 - `staff`
 - `GET /status/{status}`: any authenticated user
 - `POST`, `GET /member/{memberId}`, `PUT /member/{memberId}`: roles above + ownership check
+- `POST /internal/provision`: no JWT; requires `X-Internal-Key` header matching server config
 
 `memberId` format:
 - GUID (must match authenticated user `sub` claim)
@@ -110,6 +112,8 @@ Access roles:
 Auto-create behavior:
 - `GET /member/{memberId}` automatically creates a status row when it does not exist.
 - `PUT /member/{memberId}` also auto-creates when missing, using the provided status.
+- AuthService `POST /api/auth/create-user-with-role` auto-provisions this table for support roles.
+- In that flow, `SupportStaffStatus.MemberId` is always the Auth user id (JWT `sub`) and initial status is `Offline`.
 
 Example create payload:
 
@@ -134,6 +138,21 @@ Example update payload:
 {
   "status": "OnBreak"
 }
+```
+
+Internal provision payload (backend only):
+
+```json
+{
+  "memberId": "7d75bf0d-c467-4ce7-8872-c58495a6ca8a",
+  "status": "Offline"
+}
+```
+
+Internal provision headers:
+
+```http
+X-Internal-Key: <shared-internal-key>
 ```
 
 ## Support Requests

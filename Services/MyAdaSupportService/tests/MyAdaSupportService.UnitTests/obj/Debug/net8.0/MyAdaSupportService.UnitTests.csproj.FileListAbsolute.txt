@@ -1,0 +1,8 @@
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\bin\Debug\net8.0\.msCoverageSourceRootsMapping_MyAdaSupportService.UnitTests
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\bin\Debug\net8.0\CoverletSourceRootsMapping_MyAdaSupportService.UnitTests
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.csproj.AssemblyReference.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.AssemblyInfoInputs.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.AssemblyInfo.cs
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.csproj.CoreCompileInputs.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.sourcelink.json

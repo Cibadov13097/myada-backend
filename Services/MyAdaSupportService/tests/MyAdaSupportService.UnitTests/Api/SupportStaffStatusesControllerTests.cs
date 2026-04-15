@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using MyAdaSupportService.Api.Controllers;
 using MyAdaSupportService.Application.DTOs.Staff;
@@ -14,7 +15,14 @@ public class SupportStaffStatusesControllerTests
         ISupportStaffStatusService service,
         Guid? authorizedUserId = null)
     {
-        var controller = new SupportStaffStatusesController(service);
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["InternalAuth:ProvisioningKey"] = "test-key"
+            })
+            .Build();
+
+        var controller = new SupportStaffStatusesController(service, configuration);
         var claims = new List<Claim>();
         if (authorizedUserId.HasValue)
             claims.Add(new Claim("sub", authorizedUserId.Value.ToString()));
