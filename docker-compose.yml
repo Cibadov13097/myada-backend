@@ -128,6 +128,7 @@ services:
       Redis__ConnectionString: myada-redis:6379
       Redis__ChannelPrefix: myada:call
       Call__InviteTimeoutSeconds: 30
+      Call__DispatcherInboxPrefix: dispatcher-inbox-
     restart: always
     depends_on:
       - authservice

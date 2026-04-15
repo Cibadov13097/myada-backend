@@ -10,6 +10,7 @@ namespace CallService.Api.Hubs;
 public class CallHub : Hub
 {
     private const string DispatcherRole = "dispatcher";
+    private const string DefaultDispatcherInboxPrefix = "dispatcher-inbox-";
 
     private readonly ICallStateStore _stateStore;
     private readonly IHubContext<CallHub> _hubContext;
@@ -32,6 +33,12 @@ public class CallHub : Hub
     {
         var connection = BuildCurrentConnection();
         await _stateStore.UpsertConnectionAsync(connection);
+        var dispatcherInboxGroup = connection.IsDispatcher
+            ? GetDispatcherInboxGroup(connection.UserId)
+            : null;
+
+        if (!string.IsNullOrWhiteSpace(dispatcherInboxGroup))
+            await Groups.AddToGroupAsync(connection.ConnectionId, dispatcherInboxGroup);
 
         var roles = Context.User?.Claims
             .Where(c => c.Type == ClaimTypes.Role)
@@ -45,6 +52,7 @@ public class CallHub : Hub
             userId = connection.UserId,
             displayName = connection.DisplayName,
             isDispatcher = connection.IsDispatcher,
+            dispatcherInboxGroup,
             roles
         });
 
@@ -54,6 +62,12 @@ public class CallHub : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var disconnected = await _stateStore.RemoveConnectionAsync(Context.ConnectionId);
+
+        if (disconnected?.Connection.IsDispatcher == true)
+        {
+            var dispatcherInboxGroup = GetDispatcherInboxGroup(disconnected.Connection.UserId);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, dispatcherInboxGroup);
+        }
 
         if (!string.IsNullOrWhiteSpace(disconnected?.RoomId))
         {
@@ -117,7 +131,9 @@ public class CallHub : Hub
             pendingCall.RequestedAtUtc,
             pendingCall.ExpiresAtUtc);
 
-        await _hubContext.Clients.User(dispatcherUserId).SendAsync("IncomingCall", incomingPayload);
+        await _hubContext.Clients
+            .Group(GetDispatcherInboxGroup(dispatcherUserId))
+            .SendAsync("IncomingCall", incomingPayload);
 
         await _hubContext.Clients.User(caller.UserId).SendAsync(
             "CallRinging",
@@ -603,6 +619,15 @@ public class CallHub : Hub
             CallRequestStatus.TimedOut => "timed-out",
             _ => "unknown"
         };
+    }
+
+    private string GetDispatcherInboxGroup(string userId)
+    {
+        var prefix = string.IsNullOrWhiteSpace(_options.DispatcherInboxPrefix)
+            ? DefaultDispatcherInboxPrefix
+            : _options.DispatcherInboxPrefix.Trim();
+
+        return $"{prefix}{userId.Trim()}";
     }
 
     private sealed record ParticipantDto(

@@ -1,11 +1,1 @@
-{
-  "Version": 1,
-  "Hash": "v1X+90TbyNsEbDlAEnF9y41HUxWa9PpHhPlSQ3YX1Jo=",
-  "Source": "CallService.Api",
-  "BasePath": "_content/CallService.Api",
-  "Mode": "Default",
-  "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
-}
+{"Version":1,"Hash":"zZy5SazAtcTo9IPt3gIIkWCaADJSmAz9iVKNWZ1+BG8=","Source":"CallService.Api","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}

@@ -44,6 +44,19 @@ Token validation settings:
 - Only dispatcher users can call `AcceptCall` and `RejectCall`.
 - Caller who created the request can call `CancelCall`.
 - WebRTC signaling methods require both connections to be in the same accepted room.
+- `dispatcherUserId` in `RequestCall(dispatcherUserId)` must be the target dispatcher's JWT `sub`.
+
+## Dispatcher Inbox Routing
+
+- On hub connect, users with `dispatcher` role are automatically joined to:
+  - `<DispatcherInboxPrefix><sub>`
+- Default prefix is `dispatcher-inbox-`.
+- Backend config key:
+  - `Call:DispatcherInboxPrefix`
+- Docker env key:
+  - `Call__DispatcherInboxPrefix`
+- Frontend env key (must match backend if overridden):
+  - `VITE_DISPATCHER_INBOX_PREFIX`
 
 ## Hub Methods (Client -> Server)
 
@@ -55,7 +68,8 @@ Parameters:
 
 Behavior:
 - Creates `callId` and `roomId` internally.
-- Sends `IncomingCall` to dispatcher user connections.
+- Sends `IncomingCall` to dispatcher inbox group:
+  - `<DispatcherInboxPrefix><dispatcherUserId>`
 - Sends `CallRinging` to caller user connections.
 - Starts server-side timeout for invite expiration.
 
@@ -125,6 +139,7 @@ Payload:
   "userId": "user-guid",
   "displayName": "Ali",
   "isDispatcher": false,
+  "dispatcherInboxGroup": null,
   "roles": ["student"]
 }
 ```
@@ -369,9 +384,12 @@ await connection.start();
 await connection.invoke("RequestCall", "dispatcher-user-id");
 ```
 
+Dispatcher id note:
+- Replace `"dispatcher-user-id"` with the exact `sub` claim value from the dispatcher's JWT.
+
 ## Recommended Dispatcher Flow
 
-1. Caller and dispatcher connect to `/call/hub` with JWT.
+1. Caller and dispatcher keep a single app-level SignalR connection to `/call/hub` with JWT (do not tie connection lifecycle to one page only).
 2. Caller invokes `RequestCall(dispatcherUserId)`.
 3. Dispatcher receives `IncomingCall` in real-time.
 4. Dispatcher invokes `AcceptCall(callId)` or `RejectCall(callId, reason?)`.

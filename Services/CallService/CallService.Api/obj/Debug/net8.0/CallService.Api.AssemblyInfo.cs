@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CallService.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2a8409aa081028bc93fc52cfd968b0283cfaeb61")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd0c27d0f52d06617d69fd3e58f5960ec5138ce8")]
 [assembly: System.Reflection.AssemblyProductAttribute("CallService.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CallService.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
