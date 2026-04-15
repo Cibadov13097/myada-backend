@@ -24,17 +24,19 @@ public class SupportStaffStatusesController : ControllerBase
         _configuration = configuration;
     }
 
-    [Authorize(Roles = "support,dispatcher,staff")]
+    [Authorize(Roles = "support,dispatcher,staff,admin")]
     [HttpPost]
     public async Task<ActionResult<SupportStaffStatusDto>> Create([FromBody] CreateSupportStaffStatusDto dto)
     {
         if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
             return authError!;
 
+        var isAdmin = User.IsInRole("admin");
+
         if (dto.MemberId == Guid.Empty)
             dto.MemberId = authorizedMemberId;
 
-        if (dto.MemberId != authorizedMemberId)
+        if (!isAdmin && dto.MemberId != authorizedMemberId)
             return Forbid();
 
         if (string.IsNullOrWhiteSpace(dto.Status))
@@ -51,14 +53,15 @@ public class SupportStaffStatusesController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "support,dispatcher,staff")]
+    [Authorize(Roles = "support,dispatcher,staff,admin")]
     [HttpGet("member/{memberId:guid}")]
     public async Task<ActionResult<SupportStaffStatusDto>> GetByMemberId(Guid memberId)
     {
         if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
             return authError!;
 
-        if (memberId != authorizedMemberId)
+        var isAdmin = User.IsInRole("admin");
+        if (!isAdmin && memberId != authorizedMemberId)
             return Forbid();
 
         var result = await _supportStaffStatusService.GetOrCreateByMemberIdAsync(memberId);
@@ -97,14 +100,15 @@ public class SupportStaffStatusesController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "support,dispatcher,staff")]
+    [Authorize(Roles = "support,dispatcher,staff,admin")]
     [HttpPut("member/{memberId:guid}")]
     public async Task<IActionResult> UpdateStatus(Guid memberId, [FromBody] UpdateSupportStaffStatusDto dto)
     {
         if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
             return authError!;
 
-        if (memberId != authorizedMemberId)
+        var isAdmin = User.IsInRole("admin");
+        if (!isAdmin && memberId != authorizedMemberId)
             return Forbid();
 
         await _supportStaffStatusService.UpdateStatusAsync(memberId, dto);

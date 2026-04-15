@@ -1,6 +1,6 @@
 # MyAda Support API Documentation for Frontend
 
-Last updated: 2026-04-15
+Last updated: 2026-04-16
 
 ## Base URLs
 
@@ -101,8 +101,11 @@ Access roles:
 - `support`
 - `dispatcher`
 - `staff`
+- `admin`
 - `GET /status/{status}`: any authenticated user
-- `POST`, `GET /member/{memberId}`, `PUT /member/{memberId}`: roles above + ownership check
+- `POST`, `GET /member/{memberId}`, `PUT /member/{memberId}`:
+  - `admin`: can manage any `memberId`
+  - `support/dispatcher/staff`: ownership check (`memberId` must match JWT `sub`)
 - `POST /internal/provision`: no JWT; requires `X-Internal-Key` header matching server config
 
 `memberId` format:
@@ -128,7 +131,7 @@ Typical responses:
 - `201 Created` (POST)
 - `200 OK` (GET)
 - `204 No Content` (PUT)
-- `403 Forbidden` when `memberId` does not match authenticated `sub`
+- `403 Forbidden` when `memberId` does not match authenticated `sub` for non-admin roles
 - `401 Unauthorized` when token/user id claim is missing
 - `400 Bad Request` when `sub` is not a valid GUID or status value is invalid
 
