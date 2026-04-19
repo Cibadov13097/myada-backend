@@ -22,7 +22,7 @@ public class JobVacancyServiceTests
     [Fact]
     public async Task GetByClubIdAsync_ShouldReturnVacancies()
     {
-        _repositoryMock.Setup(x => x.GetByClubIdAsync(3)).ReturnsAsync(new List<JobVacancy>
+        _repositoryMock.Setup(x => x.GetByClubIdAsync(3, It.IsAny<bool>())).ReturnsAsync(new List<JobVacancy>
         {
             new() { Id = 1, ClubId = 3, Title = "Designer", Description = "Create assets", PostedBy = Guid.NewGuid() }
         });

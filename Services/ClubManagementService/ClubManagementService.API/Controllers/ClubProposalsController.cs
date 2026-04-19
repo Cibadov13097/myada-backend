@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -5,7 +6,8 @@ using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/club-proposals")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/club-proposals")]
 [ApiController]
 [Authorize]
 [Tags("Club Proposals")]

@@ -4,6 +4,7 @@ using LocationService.Application.Interfaces.Repositories;
 using LocationService.Application.Interfaces.Services;
 using LocationService.Application.Services;
 using LocationService.Infrastructure.Persistence.Context;
+using LocationService.Infrastructure.Persistence.Seed;
 using LocationService.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -124,7 +125,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<LocationDbContext>();
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
+    await LocationDbSeeder.SeedAsync(db);
 }
 
 if (app.Environment.IsDevelopment())

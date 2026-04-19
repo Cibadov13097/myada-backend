@@ -1,3 +1,5 @@
+using Asp.Versioning;
+using ClubManagementService.API.Extensions;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +8,8 @@ using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/clubs")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/clubs")]
 [ApiController]
 [Authorize]
 [Tags("Clubs")]
@@ -106,7 +109,7 @@ public class ClubsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateClubDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { clubId = created.Id }, created);
+        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), clubId = created.Id }, created);
     }
 
     [HttpPatch("{clubId:int}")]
@@ -121,6 +124,12 @@ public class ClubsController : ControllerBase
     {
         await _service.DeleteAsync(clubId);
         return NoContent();
+    }
+
+    private Guid GetCurrentUserIdOrDefault()
+    {
+        var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
+        return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
     }
 
     public sealed class JoinApplicationRequest

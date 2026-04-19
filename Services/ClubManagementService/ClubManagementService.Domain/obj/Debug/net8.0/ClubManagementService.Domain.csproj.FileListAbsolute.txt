@@ -10,3 +10,15 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\refint\ClubManagementService.Domain.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.pdb
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ref\ClubManagementService.Domain.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\bin\Debug\net8.0\ClubManagementService.Domain.deps.json
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\bin\Debug\net8.0\ClubManagementService.Domain.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\bin\Debug\net8.0\ClubManagementService.Domain.pdb
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.AssemblyInfoInputs.cache
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.AssemblyInfo.cs
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.sourcelink.json
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\refint\ClubManagementService.Domain.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.pdb
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ref\ClubManagementService.Domain.dll

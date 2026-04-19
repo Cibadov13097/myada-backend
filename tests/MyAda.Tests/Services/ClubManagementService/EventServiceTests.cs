@@ -25,6 +25,7 @@ public class EventServiceTests
     {
         var request = new CreateEventDto
         {
+            ClubId = 1,
             Name = "Hackathon",
             Description = "24 hours",
             StartTime = DateTime.UtcNow,

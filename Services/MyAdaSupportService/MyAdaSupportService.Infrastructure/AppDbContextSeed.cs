@@ -43,12 +43,13 @@ public static class AppDbContextSeed
                 new()
                 {
                     CategoryId = wifiCategory.Id,
-                    Description = "Wi-Fi is not working in the library study area.",
+                    Description =
+                        "Eduroam drops every few minutes in the ADA Library quiet reading zone (second floor, near the window bays).",
                     IsBuilding = true,
                     BuildingId = 1,
                     IsRoom = false,
                     RoomId = null,
-                    AreaDetails = "2nd floor library",
+                    AreaDetails = "ADA Library — 2nd floor, east wing",
                     Status = RequestStatus.New,
                     IsUrgent = true,
                     ImgUrl = null
@@ -56,18 +57,19 @@ public static class AppDbContextSeed
                 new()
                 {
                     CategoryId = acCategory.Id,
-                    Description = "Air conditioner in room B203 is not cooling.",
+                    Description =
+                        "HVAC in Kathleen Velasco Math & Science Building room MSB-305 is blowing warm air during afternoon labs.",
                     IsBuilding = true,
                     BuildingId = 2,
                     IsRoom = true,
-                    RoomId = 203,
-                    AreaDetails = "B block, room 203",
+                    RoomId = 305,
+                    AreaDetails = "MSB-305 (third floor, corridor B)",
                     Status = RequestStatus.Assigned,
                     StaffId = 2001,
                     AssignedBy = 1,
                     AssignedAt = DateTime.UtcNow,
                     IsUrgent = false,
-                    DispatcherInstructions = "Please inspect before noon."
+                    DispatcherInstructions = "Please inspect before 12:00 Baku time; lab session at 14:00."
                 }
             };
 
@@ -79,14 +81,14 @@ public static class AppDbContextSeed
             if (!await context.Attachments.AnyAsync())
             {
                 var savedRequest = await context.Requests
-                    .FirstAsync(x => x.Description.Contains("Wi-Fi is not working"));
+                    .FirstAsync(x => x.Description.Contains("Eduroam drops"));
 
                 var attachments = new List<Attachment>
                 {
                     new()
                     {
                         RequestId = savedRequest.Id,
-                        Url = "https://example.com/uploads/sample-wifi-issue.jpg"
+                        Url = "https://myada.ada.edu.az/storage/support/demo/library-wifi-speedtest.png"
                     }
                 };
 

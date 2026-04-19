@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.Interfaces.Services;
@@ -8,7 +9,8 @@ using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/student-services")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/student-services")]
 [ApiController]
 [Authorize]
 [Tags("Student Services")]
@@ -188,6 +190,7 @@ public class StudentServicesController : ControllerBase
     {
         var created = await _eventService.CreateAsync(new CreateEventDto
         {
+            ClubId = request.ClubId,
             Name = request.Name,
             Description = request.Description,
             StartTime = request.StartTime,
@@ -204,20 +207,27 @@ public class StudentServicesController : ControllerBase
     }
 
     [HttpPatch("events/{eventId:int}")]
-    public async Task<IActionResult> PatchEvent(int eventId, [FromBody] object body)
+    public async Task<IActionResult> PatchEvent(int eventId, [FromBody] UpdateEventDto body)
     {
-        await _notificationService.PublishAsync(new NotificationQueueMessage
+        try
         {
-            Type = "Event Patched",
-            Message = $"Event '{eventId}' was patched by student services.",
-            Source = "club-management",
-            Action = "event.patched",
-            EntityType = "event",
-            EntityId = eventId.ToString(),
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
-
-        return Ok(new { eventId });
+            var updated = await _eventService.UpdateAsync(eventId, body);
+            await _notificationService.PublishAsync(new NotificationQueueMessage
+            {
+                Type = "Event Patched",
+                Message = $"Event '{eventId}' was patched by student services.",
+                Source = "club-management",
+                Action = "event.patched",
+                EntityType = "event",
+                EntityId = eventId.ToString(),
+                ActorUserId = GetCurrentUserIdOrDefault()
+            });
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpGet("events/{eventId:int}")]
@@ -389,6 +399,7 @@ public class StudentServicesController : ControllerBase
 
     public sealed class CreateEventRequest
     {
+        public int ClubId { get; set; } = 1;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime StartTime { get; set; } = DateTime.UtcNow;

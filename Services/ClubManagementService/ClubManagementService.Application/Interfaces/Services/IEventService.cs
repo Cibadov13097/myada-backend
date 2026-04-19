@@ -6,6 +6,7 @@ public interface IEventService
 {
     Task<EventDto?> GetByIdAsync(int id);
     Task<List<EventDto>> GetAllAsync();
+    Task<List<EventDto>> GetByClubIdAsync(int clubId);
     Task<EventDto> CreateAsync(CreateEventDto dto);
     Task<EventDto> UpdateAsync(int id, UpdateEventDto dto);
     Task DeleteAsync(int id);

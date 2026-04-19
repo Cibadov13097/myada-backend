@@ -114,6 +114,122 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                     b.ToTable("Clubs", "club");
                 });
 
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubMembership", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClubId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClubId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("ClubMemberships", "club");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubPosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ClubId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ClubId");
+
+                    b.ToTable("ClubPositions", "club");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubPositionRequirement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClubPositionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClubPositionId");
+
+                    b.ToTable("ClubPositionRequirements", "club");
+                });
+
             modelBuilder.Entity("ClubManagementService.Domain.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -124,6 +240,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("ApprovedBy")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("ClubId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -207,8 +326,8 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("DeletedByUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -223,6 +342,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("EventRegistrations", "club");
                 });
@@ -275,6 +397,8 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("JobVacancyId");
+
                     b.ToTable("JobApplications", "club");
                 });
 
@@ -286,7 +410,13 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ApplicationDeadline")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("ClubId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClubPositionId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
@@ -305,7 +435,13 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDraft")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifiedAt")
@@ -322,6 +458,10 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClubId");
+
+                    b.HasIndex("ClubPositionId");
 
                     b.ToTable("JobVacancies", "club");
                 });
@@ -382,6 +522,92 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubMembership", b =>
+                {
+                    b.HasOne("ClubManagementService.Domain.Entities.Club", "Club")
+                        .WithMany()
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Club");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubPosition", b =>
+                {
+                    b.HasOne("ClubManagementService.Domain.Entities.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ClubManagementService.Domain.Entities.Club", "Club")
+                        .WithMany()
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Club");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubPositionRequirement", b =>
+                {
+                    b.HasOne("ClubManagementService.Domain.Entities.ClubPosition", "ClubPosition")
+                        .WithMany("Requirements")
+                        .HasForeignKey("ClubPositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ClubPosition");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.EventRegistration", b =>
+                {
+                    b.HasOne("ClubManagementService.Domain.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.JobApplication", b =>
+                {
+                    b.HasOne("ClubManagementService.Domain.Entities.JobVacancy", "JobVacancy")
+                        .WithMany()
+                        .HasForeignKey("JobVacancyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobVacancy");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.JobVacancy", b =>
+                {
+                    b.HasOne("ClubManagementService.Domain.Entities.Club", "Club")
+                        .WithMany()
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClubManagementService.Domain.Entities.ClubPosition", "ClubPosition")
+                        .WithMany()
+                        .HasForeignKey("ClubPositionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Club");
+
+                    b.Navigation("ClubPosition");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubPosition", b =>
+                {
+                    b.Navigation("Requirements");
                 });
 #pragma warning restore 612, 618
         }

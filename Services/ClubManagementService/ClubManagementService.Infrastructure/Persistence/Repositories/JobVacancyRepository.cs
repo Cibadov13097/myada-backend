@@ -14,10 +14,30 @@ public class JobVacancyRepository : GenericRepository<JobVacancy>, IJobVacancyRe
         _context = dbContext;
     }
 
-    public async Task<List<JobVacancy>> GetByClubIdAsync(int clubId)
+    public async Task<List<JobVacancy>> GetAllWithClubAsync()
     {
         return await _context.JobVacancies
-            .Where(v => v.ClubId == clubId)
+            .Include(v => v.Club)
+            .Include(v => v.ClubPosition)
             .ToListAsync();
+    }
+
+    public async Task<JobVacancy?> GetByIdWithClubAsync(int id)
+    {
+        return await _context.JobVacancies
+            .Include(v => v.Club)
+            .Include(v => v.ClubPosition)
+            .FirstOrDefaultAsync(v => v.Id == id);
+    }
+
+    public async Task<List<JobVacancy>> GetByClubIdAsync(int clubId, bool activeOnly = false)
+    {
+        var q = _context.JobVacancies
+            .Include(v => v.Club)
+            .Include(v => v.ClubPosition)
+            .Where(v => v.ClubId == clubId);
+        if (activeOnly)
+            q = q.Where(v => v.IsActive);
+        return await q.ToListAsync();
     }
 }

@@ -22,25 +22,34 @@ public class JobVacancyService : IJobVacancyService
 
     public async Task<JobVacancyDto?> GetByIdAsync(int id)
     {
-        var entity = await _repository.GetByIdAsync(id);
+        var entity = await _repository.GetByIdWithClubAsync(id);
         return entity == null ? null : _mapper.Map<JobVacancyDto>(entity);
     }
 
     public async Task<List<JobVacancyDto>> GetAllAsync()
     {
-        var list = await _repository.GetAllAsync();
-        return _mapper.Map<List<JobVacancyDto>>(list);
+        var list = await _repository.GetAllWithClubAsync();
+        var active = list.Where(v => !v.IsDraft && v.IsActive).ToList();
+        return _mapper.Map<List<JobVacancyDto>>(active);
     }
 
-    public async Task<List<JobVacancyDto>> GetByClubIdAsync(int clubId)
+    public async Task<List<JobVacancyDto>> GetByClubIdAsync(int clubId, bool activeOnly = false)
     {
-        var list = await _repository.GetByClubIdAsync(clubId);
-        return _mapper.Map<List<JobVacancyDto>>(list);
+        var list = await _repository.GetByClubIdAsync(clubId, activeOnly: false);
+        var filtered = list.AsEnumerable();
+        if (activeOnly)
+            filtered = filtered.Where(v => !v.IsDraft && v.IsActive);
+        return _mapper.Map<List<JobVacancyDto>>(filtered.ToList());
     }
 
     public async Task<JobVacancyDto> CreateAsync(CreateJobVacancyDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.Title) && (dto.ClubPositionId is null || dto.ClubPositionId <= 0))
+            throw new ArgumentException("Either a vacancy title or a linked position is required.");
+
         var entity = _mapper.Map<JobVacancy>(dto);
+        entity.IsDraft = !dto.Publish;
+        entity.IsActive = dto.Publish;
         await _repository.AddAsync(entity);
         await _repository.SaveChangesAsync();
         await _notificationService.PublishAsync(new NotificationQueueMessage
@@ -53,13 +62,25 @@ public class JobVacancyService : IJobVacancyService
             EntityId = entity.Id.ToString(),
             ActorUserId = entity.PostedBy
         });
-        return _mapper.Map<JobVacancyDto>(entity);
+        var withClub = await _repository.GetByIdWithClubAsync(entity.Id) ?? entity;
+        return _mapper.Map<JobVacancyDto>(withClub);
     }
 
     public async Task<JobVacancyDto> UpdateAsync(int id, UpdateJobVacancyDto dto)
     {
         var entity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"JobVacancy {id} not found.");
-        _mapper.Map(dto, entity);
+        if (dto.Title != null)
+            entity.Title = dto.Title;
+        if (dto.Description != null)
+            entity.Description = dto.Description;
+        if (dto.IsActive.HasValue)
+            entity.IsActive = dto.IsActive.Value;
+        if (dto.ClubPositionId.HasValue)
+            entity.ClubPositionId = dto.ClubPositionId;
+        if (dto.ApplicationDeadline.HasValue)
+            entity.ApplicationDeadline = dto.ApplicationDeadline;
+        if (dto.IsDraft.HasValue)
+            entity.IsDraft = dto.IsDraft.Value;
         await _repository.UpdateAsync(entity);
         await _repository.SaveChangesAsync();
         await _notificationService.PublishAsync(new NotificationQueueMessage
@@ -71,7 +92,8 @@ public class JobVacancyService : IJobVacancyService
             EntityType = "vacancy",
             EntityId = entity.Id.ToString()
         });
-        return _mapper.Map<JobVacancyDto>(entity);
+        var withClub = await _repository.GetByIdWithClubAsync(id) ?? entity;
+        return _mapper.Map<JobVacancyDto>(withClub);
     }
 
     public async Task DeleteAsync(int id)

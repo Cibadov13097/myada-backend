@@ -6,39 +6,94 @@ using ClubManagementService.Application.DTOs.EventRegistration;
 using ClubManagementService.Application.DTOs.JobApplication;
 using ClubManagementService.Application.DTOs.JobVacancy;
 using ClubManagementService.Application.DTOs.Subevent;
+using ClubManagementService.Domain.Common;
 using ClubManagementService.Domain.Entities;
 
 namespace ClubManagementService.Application.Mappings;
+
+internal static class AuditableMappingExtensions
+{
+    public static IMappingExpression<TSource, TDestination> IgnoreAuditableBase<TSource, TDestination>(
+        this IMappingExpression<TSource, TDestination> map)
+        where TDestination : AuditableEntity
+    {
+        return map
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore())
+            .ForMember(d => d.ModifiedAt, o => o.Ignore())
+            .ForMember(d => d.ModifiedByUserId, o => o.Ignore())
+            .ForMember(d => d.DeletedAt, o => o.Ignore())
+            .ForMember(d => d.DeletedByUserId, o => o.Ignore())
+            .ForMember(d => d.IsDeleted, o => o.Ignore());
+    }
+}
 
 public class ClubManagementProfile : Profile
 {
     public ClubManagementProfile()
     {
         CreateMap<Category, CategoryDto>();
-        CreateMap<CreateCategoryDto, Category>();
-        CreateMap<UpdateCategoryDto, Category>();
+        CreateMap<CreateCategoryDto, Category>().IgnoreAuditableBase();
+        CreateMap<UpdateCategoryDto, Category>().IgnoreAuditableBase();
 
         CreateMap<Club, ClubDto>()
             .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null));
-        CreateMap<CreateClubDto, Club>();
-        CreateMap<UpdateClubDto, Club>();
+        CreateMap<CreateClubDto, Club>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.Status, o => o.Ignore())
+            .ForMember(d => d.Category, o => o.Ignore());
+        CreateMap<UpdateClubDto, Club>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.ApprovedBy, o => o.Ignore())
+            .ForMember(d => d.CategoryId, o => o.Ignore())
+            .ForMember(d => d.Category, o => o.Ignore());
 
         CreateMap<Event, EventDto>();
-        CreateMap<CreateEventDto, Event>();
-        CreateMap<UpdateEventDto, Event>();
+        CreateMap<CreateEventDto, Event>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.Status, o => o.Ignore());
+        CreateMap<UpdateEventDto, Event>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.ClubId, o => o.Ignore())
+            .ForMember(d => d.ApprovedBy, o => o.Ignore());
 
         CreateMap<EventRegistration, EventRegistrationDto>();
-        CreateMap<CreateEventRegistrationDto, EventRegistration>();
+        CreateMap<CreateEventRegistrationDto, EventRegistration>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.Event, o => o.Ignore());
 
-        CreateMap<JobVacancy, JobVacancyDto>();
-        CreateMap<CreateJobVacancyDto, JobVacancy>();
-        CreateMap<UpdateJobVacancyDto, JobVacancy>();
+        CreateMap<JobVacancy, JobVacancyDto>()
+            .ForMember(d => d.ClubName, o => o.MapFrom(s => s.Club != null ? s.Club.Name : null))
+            .ForMember(d => d.Title, o => o.MapFrom(s =>
+                string.IsNullOrWhiteSpace(s.Title) && s.ClubPosition != null ? s.ClubPosition.Title : s.Title))
+            .ForMember(d => d.Status, o => o.MapFrom(s =>
+                s.IsDraft ? "draft" : s.IsActive ? "active" : "inactive"))
+            .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.CreatedAt));
+        CreateMap<CreateJobVacancyDto, JobVacancy>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.IsActive, o => o.Ignore())
+            .ForMember(d => d.IsDraft, o => o.Ignore())
+            .ForMember(d => d.Club, o => o.Ignore())
+            .ForMember(d => d.ClubPosition, o => o.Ignore());
+        CreateMap<UpdateJobVacancyDto, JobVacancy>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.IsActive, o => o.Ignore())
+            .ForMember(d => d.ClubId, o => o.Ignore())
+            .ForMember(d => d.PostedBy, o => o.Ignore())
+            .ForMember(d => d.Club, o => o.Ignore())
+            .ForMember(d => d.ClubPosition, o => o.Ignore());
 
         CreateMap<JobApplication, JobApplicationDto>();
-        CreateMap<CreateJobApplicationDto, JobApplication>();
+        CreateMap<CreateJobApplicationDto, JobApplication>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.Status, o => o.Ignore())
+            .ForMember(d => d.JobVacancy, o => o.Ignore());
 
         CreateMap<Subevent, SubeventDto>();
-        CreateMap<CreateSubeventDto, Subevent>();
-        CreateMap<UpdateSubeventDto, Subevent>();
+        CreateMap<CreateSubeventDto, Subevent>().IgnoreAuditableBase();
+        CreateMap<UpdateSubeventDto, Subevent>()
+            .IgnoreAuditableBase()
+            .ForMember(d => d.MainEventId, o => o.Ignore());
     }
 }
