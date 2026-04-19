@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ClubManagementService.API.Extensions;
+using ClubManagementService.API.Security;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.EventRegistration;
 using ClubManagementService.Application.Interfaces.Repositories;
@@ -50,7 +51,7 @@ public class EventsController : ControllerBase
         if (clubId is > 0)
             filtered = filtered.Where(e => e.ClubId == clubId);
 
-        if (myClubsOnly)
+        if (myClubsOnly && !User.IsMyAdaAdministrator())
         {
             var userId = GetCurrentUserIdOrDefault();
             if (userId == Guid.Empty)

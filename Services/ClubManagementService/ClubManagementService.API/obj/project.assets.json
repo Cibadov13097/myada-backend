@@ -3719,11 +3719,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
       "projectName": "ClubManagementService.API",
-      "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
+      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\obj\\",
+      "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3744,11 +3744,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj"
             },
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj"
             }
           }
         }

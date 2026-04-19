@@ -93,6 +93,16 @@ public static class IdentityUserSeeder
             }
         }
 
+        var seedFirstNames = new[]
+        {
+            "Aydan", "Narmin", "Lamiya", "Rashad", "Elvin", "Sabina", "Tural", "Gunay", "Orkhan", "Nigar"
+        };
+
+        var seedLastNames = new[]
+        {
+            "Mammadova", "Hasanov", "Aliyeva", "Bayramov", "Ismayilova"
+        };
+
         for (var i = 1; i <= 50; i++)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -100,7 +110,7 @@ public static class IdentityUserSeeder
             var userGuid = BuildSeedUserGuid(i);
             var userId = userGuid.ToString();
             var userName = $"seed.user{i:00}";
-            var email = $"{userName}@myada.local";
+            var email = $"{userName}@ada.edu.az";
 
             var existing = await userManager.FindByIdAsync(userId);
             if (existing is not null)
@@ -110,14 +120,18 @@ public static class IdentityUserSeeder
 
             var userType = i <= 30 ? UserType.Student : i <= 40 ? UserType.Staff : UserType.Faculty;
 
+            var nameIndex = i - 1;
+            var firstName = seedFirstNames[nameIndex % seedFirstNames.Length];
+            var lastName = seedLastNames[nameIndex / seedFirstNames.Length];
+
             var user = new ApplicationUser
             {
                 Id = userId,
                 UserName = userName,
                 Email = email,
                 EmailConfirmed = true,
-                FirstName = $"SeedFirst{i}",
-                LastName = $"SeedLast{i}",
+                FirstName = firstName,
+                LastName = lastName,
                 UserType = userType,
                 Status = Status.Active
             };

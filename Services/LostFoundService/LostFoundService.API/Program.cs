@@ -8,6 +8,7 @@ using LostFoundService.Application.Mappings;
 using LostFoundService.Application.Services;
 using LostFoundService.Infrastructure.Services;
 using LostFoundService.Infrastructure.Persistence.Context;
+using LostFoundService.Infrastructure.Persistence.Seed;
 using LostFoundService.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -162,7 +163,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<LostFoundDbContext>();
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
+    await LostFoundDbSeeder.SeedAsync(db);
 }
 
 if (app.Environment.IsDevelopment())

@@ -4492,9 +4492,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
-      "projectName": "LostFoundService.Api",
-      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
+      "projectName": "LostFoundService.API",
+      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\obj\\",
       "projectStyle": "PackageReference",

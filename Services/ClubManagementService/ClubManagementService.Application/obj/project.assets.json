@@ -143,11 +143,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj",
       "projectName": "ClubManagementService.Application",
-      "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj",
+      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\obj\\",
+      "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -168,8 +168,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj"
             }
           }
         }

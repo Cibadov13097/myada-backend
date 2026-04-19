@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lRW2qj+N/C0=",
+  "dgSpecHash": "dcdeM2+2QYM=",
   "success": true,
-  "projectFilePath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj",
+  "projectFilePath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

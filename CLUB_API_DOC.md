@@ -177,18 +177,20 @@ No controller-level **`[Authorize]`**.
 
 ---
 
-## Me — `api/v1/me`
+## Users (scoped profile) — `api/v1/users/{userId}`
 
-**`[Authorize]`**.
+**`[Authorize]`**. **`userId`** is a **GUID** in the path. It **must match** the authenticated user’s JWT claim **`sub`** or **`user_id`**; otherwise the API returns **403 Forbidden** (or **401 Unauthorized** if the token has no usable user id).
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/api/v1/me/club-memberships` | `{ items: [ { clubId, role } ] }` from DB memberships. |
-| `GET` | `/api/v1/me/vacancy-applications` | Query: **`page`**, **`limit`**. Current user’s vacancy applications. |
-| `GET` | `/api/v1/me/membership-applications` | Stub empty `items`. |
-| `GET` | `/api/v1/me/event-registrations` | Current user’s registrations. |
-| `GET` | `/api/v1/me/club-notifications` | Query: **`type`** (default `all`). Stub empty `items`. |
-| `PATCH` | `/api/v1/me/club-notifications/{notificationId}/read` | Stub read receipt. |
+| `GET` | `/api/v1/users/{userId}/club-memberships` | `{ items: [ { clubId, role } ] }` from DB memberships. |
+| `GET` | `/api/v1/users/{userId}/vacancy-applications` | Query: **`page`**, **`limit`**. That user’s vacancy applications. |
+| `GET` | `/api/v1/users/{userId}/membership-applications` | Stub empty `items`. |
+| `GET` | `/api/v1/users/{userId}/event-registrations` | That user’s event registrations. |
+| `GET` | `/api/v1/users/{userId}/club-notifications` | Query: **`type`** (default `all`). Stub empty `items`. |
+| `PATCH` | `/api/v1/users/{userId}/club-notifications/{notificationId}/read` | Stub read receipt. |
+
+**Example (local):** `GET http://localhost:5003/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/club-memberships` with a Bearer token whose `sub` is that same GUID.
 
 ---
 
@@ -349,3 +351,27 @@ GET http://51.20.193.29:5000/club/api/v1/club-admin/1/positions
 ## Further detail
 
 For full property-level schemas, generate or inspect **OpenAPI** from Swagger (`/swagger/v1/swagger.json` locally). Domain DTOs live under `Services/ClubManagementService/ClubManagementService.Application/DTOs/`.
+
+---
+
+## Documentation update — user-scoped endpoints (replacing `/me`)
+
+**Change:** Endpoints that previously lived under **`/api/v1/me/...`** now use **`/api/v1/users/{userId}/...`**, where **`{userId}`** is a **GUID** (standard string format).
+
+**Security:** The **`{userId}`** in the URL **must equal** the JWT subject (`sub` or `user_id`). If a client calls another user’s id, the response is **403 Forbidden**. If the token has no parseable user id, **401 Unauthorized**.
+
+**Mapping (old → new):**
+
+| Old path | New path |
+|----------|----------|
+| `GET /api/v1/me/club-memberships` | `GET /api/v1/users/{userId}/club-memberships` |
+| `GET /api/v1/me/vacancy-applications` | `GET /api/v1/users/{userId}/vacancy-applications` |
+| `GET /api/v1/me/membership-applications` | `GET /api/v1/users/{userId}/membership-applications` |
+| `GET /api/v1/me/event-registrations` | `GET /api/v1/users/{userId}/event-registrations` |
+| `GET /api/v1/me/club-notifications` | `GET /api/v1/users/{userId}/club-notifications` |
+| `PATCH /api/v1/me/club-notifications/{notificationId}/read` | `PATCH /api/v1/users/{userId}/club-notifications/{notificationId}/read` |
+
+**Gateway (deployed):** prefix with `/club`, e.g.  
+`http://51.20.193.29:5000/club/api/v1/users/{userId}/club-memberships`.
+
+**Swagger:** Operations are grouped under the **Users** tag (`UsersController`).
