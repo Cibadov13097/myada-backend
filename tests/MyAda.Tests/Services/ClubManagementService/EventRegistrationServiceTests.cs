@@ -22,7 +22,7 @@ public class EventRegistrationServiceTests
     [Fact]
     public async Task GetByEventIdAsync_ShouldReturnEventRegistrations()
     {
-        var eventId = Guid.NewGuid();
+        const int eventId = 42;
         _repositoryMock.Setup(x => x.GetByEventIdAsync(eventId)).ReturnsAsync(new List<EventRegistration>
         {
             new() { Id = 1, EventId = eventId, UserId = Guid.NewGuid() }

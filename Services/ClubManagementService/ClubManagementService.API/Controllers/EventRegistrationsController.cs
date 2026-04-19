@@ -1,10 +1,13 @@
+using Asp.Versioning;
+using ClubManagementService.API.Extensions;
 using ClubManagementService.Application.DTOs.EventRegistration;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/event-registrations")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/event-registrations")]
 [ApiController]
 [Tags("Event Registrations")]
 public class EventRegistrationsController : ControllerBase
@@ -16,8 +19,8 @@ public class EventRegistrationsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _service.GetAllAsync());
 
-    [HttpGet("by-event/{eventId:guid}")]
-    public async Task<IActionResult> GetByEventId(Guid eventId) =>
+    [HttpGet("by-event/{eventId:int}")]
+    public async Task<IActionResult> GetByEventId(int eventId) =>
         Ok(await _service.GetByEventIdAsync(eventId));
 
     [HttpGet("{id:int}")]
@@ -31,7 +34,7 @@ public class EventRegistrationsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateEventRegistrationDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
     }
 
     [HttpDelete("{id:int}")]

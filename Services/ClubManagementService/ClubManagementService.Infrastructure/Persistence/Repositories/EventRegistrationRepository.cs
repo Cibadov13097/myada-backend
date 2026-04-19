@@ -14,10 +14,16 @@ public class EventRegistrationRepository : GenericRepository<EventRegistration>,
         _context = dbContext;
     }
 
-    public async Task<List<EventRegistration>> GetByEventIdAsync(Guid eventId)
+    public async Task<List<EventRegistration>> GetByEventIdAsync(int eventId)
     {
         return await _context.EventRegistrations
             .Where(r => r.EventId == eventId)
             .ToListAsync();
+    }
+
+    public async Task<EventRegistration?> GetByEventAndUserAsync(int eventId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        return await _context.EventRegistrations
+            .FirstOrDefaultAsync(r => r.EventId == eventId && r.UserId == userId, cancellationToken);
     }
 }

@@ -5,7 +5,8 @@ namespace ClubManagementService.Domain.Entities
 {
     public class EventRegistration : AuditableEntity
     {
-        public Guid EventId { get; set; }
+        public int EventId { get; set; }
+        public Event? Event { get; set; }
         public Guid UserId { get; set; }
     }
 }

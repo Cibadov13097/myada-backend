@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyAdaSupportService.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f241ff19901014b894774f8c3258e80b541a7945")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6107a28ae6701c636a3803f0ed93304931eebff0")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyAdaSupportService.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyAdaSupportService.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

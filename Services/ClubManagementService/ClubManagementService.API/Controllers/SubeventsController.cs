@@ -1,10 +1,13 @@
+using Asp.Versioning;
+using ClubManagementService.API.Extensions;
 using ClubManagementService.Application.DTOs.Subevent;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/subevents")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/subevents")]
 [ApiController]
 [Tags("Subevents")]
 public class SubeventsController : ControllerBase
@@ -31,7 +34,7 @@ public class SubeventsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateSubeventDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]

@@ -96,12 +96,34 @@ public static class ClubManagementSeeder
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        var clubIds = await dbContext.Clubs
+            .OrderBy(x => x.Id)
+            .Take(10)
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        if (!await dbContext.ClubMemberships.AnyAsync(cancellationToken) && clubIds.Count > 0)
+        {
+            var memberships = Enumerable.Range(1, 15)
+                .Select(i => new ClubMembership
+                {
+                    ClubId = clubIds[(i - 1) % clubIds.Count],
+                    UserId = BuildSeedUserGuid(i),
+                    CreatedByUserId = BuildSeedUserGuid(i)
+                })
+                .ToList();
+
+            await dbContext.ClubMemberships.AddRangeAsync(memberships, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
         if (!await dbContext.Events.AnyAsync(cancellationToken))
         {
             var now = DateTime.UtcNow;
             var events = Enumerable.Range(1, 10)
                 .Select(i => new Event
                 {
+                    ClubId = clubIds.Count == 0 ? 1 : clubIds[(i - 1) % clubIds.Count],
                     Name = $"Seed Event {i}",
                     Description = $"Seeded event {i} for ClubManagement module testing.",
                     StartTime = now.AddDays(i).AddHours(9),
@@ -121,12 +143,18 @@ public static class ClubManagementSeeder
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        if (!await dbContext.EventRegistrations.AnyAsync(cancellationToken))
+        var eventIds = await dbContext.Events
+            .OrderBy(x => x.Id)
+            .Take(10)
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        if (!await dbContext.EventRegistrations.AnyAsync(cancellationToken) && eventIds.Count > 0)
         {
             var registrations = Enumerable.Range(1, 10)
                 .Select(i => new EventRegistration
                 {
-                    EventId = Guid.NewGuid(),
+                    EventId = eventIds[(i - 1) % eventIds.Count],
                     UserId = BuildSeedUserGuid(i),
                     CreatedByUserId = BuildSeedUserGuid(i)
                 })
@@ -135,12 +163,6 @@ public static class ClubManagementSeeder
             await dbContext.EventRegistrations.AddRangeAsync(registrations, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-
-        var clubIds = await dbContext.Clubs
-            .OrderBy(x => x.Id)
-            .Take(10)
-            .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
 
         if (!await dbContext.JobVacancies.AnyAsync(cancellationToken))
         {
@@ -183,19 +205,19 @@ public static class ClubManagementSeeder
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        var eventIds = await dbContext.Events
+        var eventIdsForSubevents = await dbContext.Events
             .OrderBy(x => x.Id)
             .Take(10)
             .Select(x => x.Id)
             .ToListAsync(cancellationToken);
 
-        if (!await dbContext.Subevents.AnyAsync(cancellationToken))
+        if (!await dbContext.Subevents.AnyAsync(cancellationToken) && eventIdsForSubevents.Count > 0)
         {
             var now = DateTime.UtcNow;
             var subevents = Enumerable.Range(1, 10)
                 .Select(i => new Subevent
                 {
-                    MainEventId = eventIds[(i - 1) % eventIds.Count],
+                    MainEventId = eventIdsForSubevents[(i - 1) % eventIdsForSubevents.Count],
                     Name = $"Seed Subevent {i}",
                     StartTime = now.AddDays(i).AddHours(12),
                     EndTime = now.AddDays(i).AddHours(13),

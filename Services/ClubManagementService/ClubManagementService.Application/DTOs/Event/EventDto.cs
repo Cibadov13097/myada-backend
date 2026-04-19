@@ -5,6 +5,7 @@ namespace ClubManagementService.Application.DTOs.Event;
 public class EventDto
 {
     public int Id { get; set; }
+    public int ClubId { get; set; }
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public DateTime StartTime { get; set; }
@@ -20,6 +21,7 @@ public class EventDto
 
 public class CreateEventDto
 {
+    public int ClubId { get; set; }
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public DateTime StartTime { get; set; }

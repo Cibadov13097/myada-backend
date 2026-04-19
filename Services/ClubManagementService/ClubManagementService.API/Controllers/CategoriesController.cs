@@ -1,10 +1,13 @@
+using Asp.Versioning;
+using ClubManagementService.API.Extensions;
 using ClubManagementService.Application.DTOs.Category;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/categories")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/categories")]
 [ApiController]
 [Tags("Categories")]
 public class CategoriesController : ControllerBase
@@ -27,7 +30,7 @@ public class CategoriesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]

@@ -1,0 +1,99 @@
+using ClubManagementService.Application.DTOs.ClubAdmin;
+using ClubManagementService.Application.DTOs.Event;
+using ClubManagementService.Application.DTOs.JobVacancy;
+
+namespace ClubManagementService.Application.Interfaces.Services;
+
+public interface IClubAdminService
+{
+    Task<ClubAdminDashboardDto?> GetDashboardAsync(string clubRouteKey, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminPagedResult<ClubAdminApplicationListItemDto>> GetApplicationsAsync(
+        string clubRouteKey,
+        string? type,
+        string? status,
+        int page,
+        int limit,
+        CancellationToken cancellationToken = default);
+
+    Task<ClubAdminApplicationDetailDto?> GetApplicationAsync(string clubRouteKey, string applicationId, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminApplicationActionResultDto?> ApproveApplicationAsync(string clubRouteKey, string applicationId, CancellationToken cancellationToken = default);
+    Task<ClubAdminApplicationActionResultDto?> RejectApplicationAsync(string clubRouteKey, string applicationId, string? reason, CancellationToken cancellationToken = default);
+    Task<ClubAdminApplicationActionResultDto?> RequestChangesAsync(string clubRouteKey, string applicationId, string? changes, CancellationToken cancellationToken = default);
+    Task<ClubAdminApplicationNoteDto?> AddApplicationNoteAsync(string clubRouteKey, string applicationId, string note, CancellationToken cancellationToken = default);
+    Task<BulkDecisionResultDto> BulkDecisionAsync(string clubRouteKey, IReadOnlyList<string> applicationIds, string decision, string? reason, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminPagedResult<ClubAdminInterviewSlotDto>> GetInterviewSlotsAsync(string clubRouteKey, int page, int limit, CancellationToken cancellationToken = default);
+    Task<ClubAdminPagedResult<ClubAdminInterviewSlotDto>> GenerateInterviewSlotsAsync(string clubRouteKey, GenerateInterviewSlotsInput input, CancellationToken cancellationToken = default);
+    Task<ClubAdminInterviewSlotDto?> PatchInterviewSlotAsync(string clubRouteKey, string slotId, PatchInterviewSlotInput input, CancellationToken cancellationToken = default);
+    Task<bool> DeleteInterviewSlotAsync(string clubRouteKey, string slotId, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminPagedResult<ClubAdminVacancyAdminDto>> GetVacanciesAsync(string clubRouteKey, string? status, int page, int limit, CancellationToken cancellationToken = default);
+    Task<ClubAdminVacancyAdminDto> CreateVacancyAsync(string clubRouteKey, CreateJobVacancyDto dto, CancellationToken cancellationToken = default);
+    Task<ClubAdminVacancyAdminDto?> PatchVacancyAsync(string clubRouteKey, string vacancyId, UpdateJobVacancyDto dto, CancellationToken cancellationToken = default);
+    Task<ClubAdminVacancyAdminDto?> PatchVacancyStatusAsync(string clubRouteKey, string vacancyId, string status, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminPagedResult<ClubAdminPositionDto>> GetPositionsAsync(string clubRouteKey, int page, int limit, CancellationToken cancellationToken = default);
+    Task<ClubAdminPositionDto?> GetPositionAsync(string clubRouteKey, string positionId, CancellationToken cancellationToken = default);
+    Task<ClubAdminPositionDto> CreatePositionAsync(string clubRouteKey, ClubPositionCreateDto dto, CancellationToken cancellationToken = default);
+    Task<ClubAdminPositionDto?> PatchPositionAsync(string clubRouteKey, string positionId, ClubPositionUpdateDto dto, CancellationToken cancellationToken = default);
+    Task<bool> DeletePositionAsync(string clubRouteKey, string positionId, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminPagedResult<ClubAdminMemberDto>> GetMembersAsync(string clubRouteKey, int page, int limit, CancellationToken cancellationToken = default);
+    Task<bool> DeleteMemberAsync(string clubRouteKey, string memberId, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminPagedResult<ClubAdminEmployeeDto>> GetEmployeesAsync(string clubRouteKey, int page, int limit, CancellationToken cancellationToken = default);
+    Task<ClubAdminEmployeeDto> CreateEmployeeAsync(string clubRouteKey, string studentId, string positionId, CancellationToken cancellationToken = default);
+    Task PatchEmployeePositionsAsync(string clubRouteKey, IReadOnlyList<EmployeePositionChange> changes, CancellationToken cancellationToken = default);
+    Task<bool> DeleteEmployeeAsync(string clubRouteKey, string employeeId, CancellationToken cancellationToken = default);
+
+    Task<ClubAdminPagedResult<ClubAdminEventAdminDto>> GetEventsAsync(string clubRouteKey, string? status, string? search, int page, int limit, CancellationToken cancellationToken = default);
+    Task<ClubAdminEventAdminDto?> PatchEventAsync(string clubRouteKey, string eventId, UpdateEventDto dto, CancellationToken cancellationToken = default);
+    Task<EventProposalResultDto?> CreateEventProposalAsync(string clubRouteKey, object body, CancellationToken cancellationToken = default);
+    Task<ClubAdminPagedResult<ClubAdminAttendeeDto>> GetEventAttendeesAsync(string clubRouteKey, string eventId, int page, int limit, CancellationToken cancellationToken = default);
+    Task<ClubAdminAttendeeDto?> PatchEventAttendeeAsync(string clubRouteKey, string eventId, string attendeeId, bool entered, CancellationToken cancellationToken = default);
+    Task<bool> DeleteEventAttendeeAsync(string clubRouteKey, string eventId, string attendeeId, CancellationToken cancellationToken = default);
+
+    Task<ProfilePatchResultDto> PatchProfileAsync(string clubRouteKey, string? socialLinks, string? focusAreasJson, CancellationToken cancellationToken = default);
+    Task<ClubAdminAnnouncementDto> CreateAnnouncementAsync(string clubRouteKey, string title, string message, CancellationToken cancellationToken = default);
+}
+
+public sealed class BulkDecisionResultDto
+{
+    public int Updated { get; init; }
+}
+
+public sealed class GenerateInterviewSlotsInput
+{
+    public string Date { get; init; } = string.Empty;
+    public string StartTime { get; init; } = string.Empty;
+    public string EndTime { get; init; } = string.Empty;
+    public int InterviewLengthMinutes { get; init; }
+    public string? VacancyId { get; init; }
+}
+
+public sealed class PatchInterviewSlotInput
+{
+    public DateTimeOffset? StartsAt { get; init; }
+    public DateTimeOffset? EndsAt { get; init; }
+    public string? VacancyId { get; init; }
+    public int? Capacity { get; init; }
+}
+
+public sealed class EmployeePositionChange
+{
+    public string EmployeeId { get; init; } = string.Empty;
+    public string PositionId { get; init; } = string.Empty;
+}
+
+public sealed class EventProposalResultDto
+{
+    public string ProposalId { get; init; } = string.Empty;
+}
+
+public sealed class ProfilePatchResultDto
+{
+    public string ClubId { get; init; } = string.Empty;
+    public bool Updated { get; init; }
+}

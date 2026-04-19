@@ -1,9 +1,11 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/club-proposals")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/club-proposals")]
 [ApiController]
 [Authorize]
 [Tags("Club Proposals")]

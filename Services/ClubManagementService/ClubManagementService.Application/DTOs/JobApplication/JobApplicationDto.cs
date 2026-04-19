@@ -10,6 +10,7 @@ public class JobApplicationDto
     public string ExperienceLinks { get; set; } = null!;
     public string FileUrl { get; set; } = null!;
     public JobApplicationStatus Status { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class CreateJobApplicationDto

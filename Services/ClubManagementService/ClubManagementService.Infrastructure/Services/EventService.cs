@@ -29,6 +29,12 @@ public class EventService : IEventService
         return _mapper.Map<List<EventDto>>(list);
     }
 
+    public async Task<List<EventDto>> GetByClubIdAsync(int clubId)
+    {
+        var list = await _repository.GetByClubIdAsync(clubId);
+        return _mapper.Map<List<EventDto>>(list);
+    }
+
     public async Task<EventDto> CreateAsync(CreateEventDto dto)
     {
         var entity = _mapper.Map<Event>(dto);

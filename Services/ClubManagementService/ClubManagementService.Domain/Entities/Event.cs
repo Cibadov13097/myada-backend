@@ -6,6 +6,7 @@ namespace ClubManagementService.Domain.Entities
 {
     public class Event : AuditableEntity
     {
+        public int ClubId { get; set; }
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public DateTime StartTime { get; set; }

@@ -1,10 +1,13 @@
+using Asp.Versioning;
+using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/me")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/me")]
 [ApiController]
 [Authorize]
 [Tags("Me")]
@@ -12,30 +15,38 @@ public class MeController : ControllerBase
 {
     private readonly IJobApplicationService _jobApplicationService;
     private readonly IEventRegistrationService _eventRegistrationService;
+    private readonly IClubMembershipRepository _clubMembershipRepository;
 
-    public MeController(IJobApplicationService jobApplicationService, IEventRegistrationService eventRegistrationService)
+    public MeController(
+        IJobApplicationService jobApplicationService,
+        IEventRegistrationService eventRegistrationService,
+        IClubMembershipRepository clubMembershipRepository)
     {
         _jobApplicationService = jobApplicationService;
         _eventRegistrationService = eventRegistrationService;
+        _clubMembershipRepository = clubMembershipRepository;
     }
 
     [HttpGet("club-memberships")]
-    public IActionResult GetClubMemberships() => Ok(new { items = Array.Empty<object>() });
+    public async Task<IActionResult> GetClubMemberships(CancellationToken cancellationToken)
+    {
+        var userId = GetCurrentUserIdOrDefault();
+        if (userId == Guid.Empty)
+            return Unauthorized();
 
-    //[HttpGet("saved-vacancies")]
-    //public IActionResult GetSavedVacancies() => Ok(new { items = Array.Empty<object>() });
-
-    //[HttpPost("saved-vacancies/{vacancyId:int}")]
-    //public IActionResult SaveVacancy(int vacancyId) => Ok(new { vacancyId, saved = true });
-
-    //[HttpDelete("saved-vacancies/{vacancyId:int}")]
-    //public IActionResult RemoveSavedVacancy(int vacancyId) => NoContent();
+        var clubIds = await _clubMembershipRepository.GetClubIdsByUserAsync(userId, cancellationToken).ConfigureAwait(false);
+        var items = clubIds.Select(id => new { clubId = id, role = "member" }).ToList();
+        return Ok(new { items });
+    }
 
     [HttpGet("vacancy-applications")]
-    public async Task<IActionResult> GetVacancyApplications()
+    public async Task<IActionResult> GetVacancyApplications([FromQuery] int page = 1, [FromQuery] int limit = 50)
     {
-        var mine = (await _jobApplicationService.GetAllAsync()).Where(a => a.ApplicantId == GetCurrentUserIdOrDefault());
-        return Ok(new { items = mine });
+        var userId = GetCurrentUserIdOrDefault();
+        var all = await _jobApplicationService.GetMyVacancyApplicationsAsync(userId);
+        var total = all.Count;
+        var items = all.Skip(Math.Max(page - 1, 0) * Math.Max(limit, 1)).Take(Math.Max(limit, 1)).ToList();
+        return Ok(new { items, page, limit, total });
     }
 
     [HttpGet("membership-applications")]
@@ -44,7 +55,8 @@ public class MeController : ControllerBase
     [HttpGet("event-registrations")]
     public async Task<IActionResult> GetEventRegistrations()
     {
-        var mine = (await _eventRegistrationService.GetAllAsync()).Where(a => a.UserId == GetCurrentUserIdOrDefault());
+        var userId = GetCurrentUserIdOrDefault();
+        var mine = (await _eventRegistrationService.GetAllAsync()).Where(a => a.UserId == userId);
         return Ok(new { items = mine });
     }
 

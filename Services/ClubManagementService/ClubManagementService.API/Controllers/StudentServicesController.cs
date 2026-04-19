@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.Interfaces.Services;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/student-services")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/student-services")]
 [ApiController]
 [Authorize]
 [Tags("Student Services")]
@@ -87,6 +89,7 @@ public class StudentServicesController : ControllerBase
     {
         var created = await _eventService.CreateAsync(new CreateEventDto
         {
+            ClubId = request.ClubId,
             Name = request.Name,
             Description = request.Description,
             StartTime = request.StartTime,
@@ -103,7 +106,18 @@ public class StudentServicesController : ControllerBase
     }
 
     [HttpPatch("events/{eventId:int}")]
-    public IActionResult PatchEvent(int eventId, [FromBody] object body) => Ok(new { eventId });
+    public async Task<IActionResult> PatchEvent(int eventId, [FromBody] UpdateEventDto body)
+    {
+        try
+        {
+            var updated = await _eventService.UpdateAsync(eventId, body);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 
     [HttpGet("events/{eventId:int}")]
     public async Task<IActionResult> EventById(int eventId)
@@ -190,6 +204,7 @@ public class StudentServicesController : ControllerBase
 
     public sealed class CreateEventRequest
     {
+        public int ClubId { get; set; } = 1;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime StartTime { get; set; } = DateTime.UtcNow;

@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"C8pSMQ3ZgsqXNtoWpqc+ffESjxdPYR+fvzKjaliMauA=","Source":"NotificationService.Api","BasePath":"_content/NotificationService.Api","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "SGdP0T8GOS+RCqqp0/m6SrdKDQCGAVSMbbPFCmbfawo=",
+  "Source": "NotificationService.Api",
+  "BasePath": "_content/NotificationService.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

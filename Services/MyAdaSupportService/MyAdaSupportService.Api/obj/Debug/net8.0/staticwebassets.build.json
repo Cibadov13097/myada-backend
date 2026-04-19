@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"bBFjNXSg5k7zJ+R2fsv7mV2sVuUCMUBa1ZDu6cCzSN0=","Source":"MyAdaSupportService.Api","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "gTwsPn7A+yfYXxfrsT1hoD4ksCozLNb2SBMW9KAeBrg=",
+  "Source": "MyAdaSupportService.Api",
+  "BasePath": "_content/MyAdaSupportService.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

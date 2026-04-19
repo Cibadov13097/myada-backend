@@ -1,3 +1,5 @@
+using Asp.Versioning;
+using ClubManagementService.API.Extensions;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -5,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
 
-[Route("api/v1/clubs")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/clubs")]
 [ApiController]
 [Authorize]
 [Tags("Clubs")]
@@ -87,7 +90,7 @@ public class ClubsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateClubDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { clubId = created.Id }, created);
+        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), clubId = created.Id }, created);
     }
 
     [HttpPatch("{clubId:int}")]

@@ -1,8 +1,10 @@
+using System.Globalization;
 using AutoMapper;
 using ClubManagementService.Application.DTOs.JobApplication;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
+using ClubManagementService.Domain.Enums;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -34,6 +36,36 @@ public class JobApplicationService : IJobApplicationService
         var list = await _repository.GetByJobVacancyIdAsync(jobVacancyId);
         return _mapper.Map<List<JobApplicationDto>>(list);
     }
+
+    public async Task<List<JobApplicationDto>> GetByClubIdAsync(int clubId)
+    {
+        var list = await _repository.GetByClubIdAsync(clubId);
+        return _mapper.Map<List<JobApplicationDto>>(list);
+    }
+
+    public async Task<List<MyVacancyApplicationDto>> GetMyVacancyApplicationsAsync(Guid applicantId)
+    {
+        var list = await _repository.GetByApplicantIdAsync(applicantId);
+        return list.Select(a => new MyVacancyApplicationDto
+        {
+            ApplicationId = $"job:{a.Id.ToString(CultureInfo.InvariantCulture)}",
+            VacancyId = a.JobVacancyId.ToString(CultureInfo.InvariantCulture),
+            VacancyTitle = a.JobVacancy?.Title,
+            ClubName = a.JobVacancy?.Club?.Name,
+            Status = FormatApplicationStatus(a.Status),
+            SubmittedAt = a.CreatedAt
+        }).ToList();
+    }
+
+    private static string FormatApplicationStatus(JobApplicationStatus status) => status switch
+    {
+        JobApplicationStatus.Pending => "Pending",
+        JobApplicationStatus.Reviewing => "Reviewing",
+        JobApplicationStatus.Approved => "Approved",
+        JobApplicationStatus.Rejected => "Rejected",
+        JobApplicationStatus.Cancelled => "Cancelled",
+        _ => status.ToString()
+    };
 
     public async Task<JobApplicationDto> CreateAsync(CreateJobApplicationDto dto)
     {

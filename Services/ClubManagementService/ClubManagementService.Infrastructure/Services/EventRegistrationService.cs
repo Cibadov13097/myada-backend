@@ -29,10 +29,16 @@ public class EventRegistrationService : IEventRegistrationService
         return _mapper.Map<List<EventRegistrationDto>>(list);
     }
 
-    public async Task<List<EventRegistrationDto>> GetByEventIdAsync(Guid eventId)
+    public async Task<List<EventRegistrationDto>> GetByEventIdAsync(int eventId)
     {
         var list = await _repository.GetByEventIdAsync(eventId);
         return _mapper.Map<List<EventRegistrationDto>>(list);
+    }
+
+    public async Task<EventRegistrationDto?> GetByEventAndUserAsync(int eventId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var entity = await _repository.GetByEventAndUserAsync(eventId, userId, cancellationToken);
+        return entity == null ? null : _mapper.Map<EventRegistrationDto>(entity);
     }
 
     public async Task<EventRegistrationDto> CreateAsync(CreateEventRegistrationDto dto)
@@ -46,6 +52,15 @@ public class EventRegistrationService : IEventRegistrationService
     public async Task DeleteAsync(int id)
     {
         var entity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"EventRegistration {id} not found.");
+        await _repository.DeleteAsync(entity);
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task DeleteByEventAndUserAsync(int eventId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var entity = await _repository.GetByEventAndUserAsync(eventId, userId, cancellationToken);
+        if (entity == null)
+            throw new KeyNotFoundException($"No registration for event {eventId} and user.");
         await _repository.DeleteAsync(entity);
         await _repository.SaveChangesAsync();
     }

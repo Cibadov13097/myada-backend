@@ -158,7 +158,7 @@ services:
       dockerfile: Services/MyAdaSupportService/Dockerfile
     container_name: myada-support-service
     ports:
-      - "5008:8080"
+      - "5007:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -190,14 +190,14 @@ services:
       - callservice
       - locationservice
       - myadasupportservice
-    networks:
-      - default
-      - gateway-shared
     restart: always
 
 volumes:
   myada_postgres_data:
 
-networks:
-  gateway-shared:
-    external: true
+# Optional: attach API Gateway to an external Docker network (e.g. another Compose stack).
+# 1) Create once: docker network create gateway-shared
+# 2) Uncomment below and add under apigateway: networks: [default, gateway-shared]
+# networks:
+#   gateway-shared:
+#     external: true
