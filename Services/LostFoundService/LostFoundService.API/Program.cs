@@ -66,6 +66,23 @@ builder.Services.AddAuthentication("Bearer")
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+    c.CustomOperationIds(apiDescription =>
+    {
+        var controller = apiDescription.ActionDescriptor.RouteValues["controller"] ?? "UnknownController";
+        var action = apiDescription.ActionDescriptor.RouteValues["action"] ?? "UnknownAction";
+        var method = apiDescription.HttpMethod ?? "UNKNOWN";
+        var path = apiDescription.RelativePath
+            ?.Replace("/", "_")
+            .Replace("{", string.Empty)
+            .Replace("}", string.Empty)
+            .Replace(":", "_")
+            ?? "root";
+
+        return $"{controller}_{action}_{method}_{path}";
+    });
+
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "LostFound Service API",
