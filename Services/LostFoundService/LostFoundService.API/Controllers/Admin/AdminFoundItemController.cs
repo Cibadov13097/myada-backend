@@ -16,11 +16,11 @@ namespace LostFoundService.Api.Controllers.Admin
     [ApiController]
     [Tags("Found Items - Admin")]
 
-    public class FoundItemController : ControllerBase
+    public class AdminFoundItemController : ControllerBase
     {
         private readonly IFoundItemAdminService _service;
   
-        public FoundItemController(
+        public AdminFoundItemController(
             IFoundItemAdminService foundItemService
         
             )
