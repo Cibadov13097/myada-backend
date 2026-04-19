@@ -5,6 +5,7 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -13,15 +14,18 @@ public class EventRegistrationService : IEventRegistrationService
     private readonly IEventRegistrationRepository _repository;
     private readonly IEventRepository _eventRepository;
     private readonly IMapper _mapper;
+    private readonly IClubNotificationService _notificationService;
 
     public EventRegistrationService(
         IEventRegistrationRepository repository,
         IEventRepository eventRepository,
-        IMapper mapper)
+        IMapper mapper,
+        IClubNotificationService notificationService)
     {
         _repository = repository;
         _eventRepository = eventRepository;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
 
     public async Task<EventRegistrationDto?> GetByIdAsync(int id)
@@ -73,6 +77,16 @@ public class EventRegistrationService : IEventRegistrationService
             throw;
         }
 
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Registration",
+            Message = $"A user registered for event '{entity.EventId}'.",
+            Source = "club-management",
+            Action = "event.registration.created",
+            EntityType = "event_registration",
+            EntityId = entity.Id.ToString(),
+            ActorUserId = entity.UserId
+        });
         return _mapper.Map<EventRegistrationDto>(entity);
     }
 
@@ -81,6 +95,16 @@ public class EventRegistrationService : IEventRegistrationService
         var entity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"EventRegistration {id} not found.");
         await _repository.DeleteAsync(entity);
         await _repository.SaveChangesAsync();
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Registration Cancelled",
+            Message = $"A registration for event '{entity.EventId}' was cancelled.",
+            Source = "club-management",
+            Action = "event.registration.deleted",
+            EntityType = "event_registration",
+            EntityId = id.ToString(),
+            ActorUserId = entity.UserId
+        });
     }
 
     public async Task DeleteByEventAndUserAsync(int eventId, Guid userId, CancellationToken cancellationToken = default)

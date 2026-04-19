@@ -281,7 +281,8 @@ public class LostAndFoundController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> Upload([FromForm(Name = "file")] IFormFile? file, [FromForm(Name = "photo")] IFormFile? photo)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Upload(IFormFile? file, IFormFile? photo)
     {
         var upload = file ?? photo;
         if (upload == null)

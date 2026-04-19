@@ -10,6 +10,7 @@ using ClubManagementService.Application.Mappings;
 using ClubManagementService.Infrastructure.Persistence.Context;
 using ClubManagementService.Infrastructure.Persistence.Repositories;
 using ClubManagementService.Infrastructure.Persistence.Seed;
+using ClubManagementService.Infrastructure.Messaging;
 using ClubManagementService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -135,6 +136,7 @@ builder.Services.AddScoped<IEventRegistrationService, EventRegistrationService>(
 builder.Services.AddScoped<IJobVacancyService, JobVacancyService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<ISubeventService, SubeventService>();
+builder.Services.AddSingleton<IClubNotificationService, ClubNotificationService>();
 builder.Services.AddSingleton<ClubAdminWorkspaceStore>();
 builder.Services.AddScoped<IClubAdminService, ClubAdminService>();
 

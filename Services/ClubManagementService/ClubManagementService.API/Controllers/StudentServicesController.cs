@@ -5,6 +5,7 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -17,11 +18,13 @@ public class StudentServicesController : ControllerBase
 {
     private readonly IClubService _clubService;
     private readonly IEventService _eventService;
+    private readonly IClubNotificationService _notificationService;
 
-    public StudentServicesController(IClubService clubService, IEventService eventService)
+    public StudentServicesController(IClubService clubService, IEventService eventService, IClubNotificationService notificationService)
     {
         _clubService = clubService;
         _eventService = eventService;
+        _notificationService = notificationService;
     }
 
     [HttpGet("dashboard")]
@@ -48,19 +51,75 @@ public class StudentServicesController : ControllerBase
     public IActionResult ClubProposalById(string proposalId) => Ok(new { proposalId });
 
     [HttpPost("club-proposals/{proposalId}/approve")]
-    public IActionResult ApproveClubProposal(string proposalId) => Ok(new { proposalId, status = "approved" });
+    public async Task<IActionResult> ApproveClubProposal(string proposalId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Proposal Approved",
+            Message = $"Club proposal '{proposalId}' was approved.",
+            Source = "club-management",
+            Action = "club_proposal.approved",
+            EntityType = "club_proposal",
+            EntityId = proposalId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { proposalId, status = "approved" });
+    }
 
     [HttpPost("club-proposals/{proposalId}/reject")]
-    public IActionResult RejectClubProposal(string proposalId, [FromBody] ReasonRequest request) => Ok(new { proposalId, status = "rejected" });
+    public async Task<IActionResult> RejectClubProposal(string proposalId, [FromBody] ReasonRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Proposal Rejected",
+            Message = $"Club proposal '{proposalId}' was rejected. Reason: {request.Reason}",
+            Source = "club-management",
+            Action = "club_proposal.rejected",
+            EntityType = "club_proposal",
+            EntityId = proposalId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { proposalId, status = "rejected" });
+    }
 
     [HttpPost("club-proposals/{proposalId}/request-revision")]
-    public IActionResult RequestClubProposalRevision(string proposalId, [FromBody] ChangesRequest request) => Ok(new { proposalId, status = "under_revision" });
+    public async Task<IActionResult> RequestClubProposalRevision(string proposalId, [FromBody] ChangesRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Proposal Revision Requested",
+            Message = $"Revision requested for club proposal '{proposalId}'.",
+            Source = "club-management",
+            Action = "club_proposal.revision_requested",
+            EntityType = "club_proposal",
+            EntityId = proposalId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { proposalId, status = "under_revision" });
+    }
 
     [HttpGet("club-proposal-requirements")]
     public IActionResult ClubProposalRequirements() => Ok(new { requirements = Array.Empty<string>(), deadline = (DateTime?)null });
 
     [HttpPut("club-proposal-requirements")]
-    public IActionResult UpdateClubProposalRequirements([FromBody] ClubProposalRequirementsRequest request) => Ok(request);
+    public async Task<IActionResult> UpdateClubProposalRequirements([FromBody] ClubProposalRequirementsRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Proposal Requirements Updated",
+            Message = $"Club proposal requirements were updated ({request.Requirements.Count} requirement items).",
+            Source = "club-management",
+            Action = "club_proposal_requirements.updated",
+            EntityType = "club_proposal_requirements",
+            EntityId = "active",
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(request);
+    }
 
     [HttpGet("event-proposals")]
     public IActionResult EventProposals([FromQuery] string? search = null, [FromQuery] string? status = null) => Ok(new { items = Array.Empty<object>() });
@@ -69,13 +128,55 @@ public class StudentServicesController : ControllerBase
     public IActionResult EventProposalById(string proposalId) => Ok(new { proposalId });
 
     [HttpPost("event-proposals/{proposalId}/approve")]
-    public IActionResult ApproveEventProposal(string proposalId, [FromBody] ApproveEventProposalRequest request) => Ok(new { proposalId, status = "approved" });
+    public async Task<IActionResult> ApproveEventProposal(string proposalId, [FromBody] ApproveEventProposalRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Proposal Approved",
+            Message = $"Event proposal '{proposalId}' was approved.",
+            Source = "club-management",
+            Action = "event_proposal.approved",
+            EntityType = "event_proposal",
+            EntityId = proposalId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { proposalId, status = "approved" });
+    }
 
     [HttpPost("event-proposals/{proposalId}/reject")]
-    public IActionResult RejectEventProposal(string proposalId, [FromBody] ReasonRequest request) => Ok(new { proposalId, status = "rejected" });
+    public async Task<IActionResult> RejectEventProposal(string proposalId, [FromBody] ReasonRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Proposal Rejected",
+            Message = $"Event proposal '{proposalId}' was rejected. Reason: {request.Reason}",
+            Source = "club-management",
+            Action = "event_proposal.rejected",
+            EntityType = "event_proposal",
+            EntityId = proposalId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { proposalId, status = "rejected" });
+    }
 
     [HttpPost("event-proposals/{proposalId}/request-revision")]
-    public IActionResult RequestEventProposalRevision(string proposalId, [FromBody] ChangesRequest request) => Ok(new { proposalId, status = "under_revision" });
+    public async Task<IActionResult> RequestEventProposalRevision(string proposalId, [FromBody] ChangesRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Proposal Revision Requested",
+            Message = $"Revision requested for event proposal '{proposalId}'.",
+            Source = "club-management",
+            Action = "event_proposal.revision_requested",
+            EntityType = "event_proposal",
+            EntityId = proposalId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { proposalId, status = "under_revision" });
+    }
 
     [HttpGet("events")]
     public async Task<IActionResult> Events([FromQuery] string? status = null, [FromQuery] string? search = null)
@@ -111,6 +212,16 @@ public class StudentServicesController : ControllerBase
         try
         {
             var updated = await _eventService.UpdateAsync(eventId, body);
+            await _notificationService.PublishAsync(new NotificationQueueMessage
+            {
+                Type = "Event Patched",
+                Message = $"Event '{eventId}' was patched by student services.",
+                Source = "club-management",
+                Action = "event.patched",
+                EntityType = "event",
+                EntityId = eventId.ToString(),
+                ActorUserId = GetCurrentUserIdOrDefault()
+            });
             return Ok(updated);
         }
         catch (KeyNotFoundException)
@@ -147,28 +258,112 @@ public class StudentServicesController : ControllerBase
     }
 
     [HttpPost("clubs/{clubId:int}/profile-image/approve")]
-    public IActionResult ApproveClubProfileImage(int clubId) => Ok(new { clubId, approved = true });
+    public async Task<IActionResult> ApproveClubProfileImage(int clubId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Profile Image Approved",
+            Message = $"Profile image for club '{clubId}' was approved.",
+            Source = "club-management",
+            Action = "club.profile_image_approved",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { clubId, approved = true });
+    }
 
     [HttpGet("clubs/{clubId:int}/members")]
     public IActionResult ClubMembers(int clubId) => Ok(new { items = Array.Empty<object>() });
 
     [HttpPatch("clubs/{clubId:int}/members/{memberId}")]
-    public IActionResult PatchClubMember(int clubId, string memberId, [FromBody] object body) => Ok(new { memberId });
+    public async Task<IActionResult> PatchClubMember(int clubId, string memberId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Member Updated",
+            Message = $"Member '{memberId}' was updated in club '{clubId}'.",
+            Source = "club-management",
+            Action = "member.updated",
+            EntityType = "member",
+            EntityId = memberId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { memberId });
+    }
 
     [HttpDelete("clubs/{clubId:int}/members/{memberId}")]
-    public IActionResult DeleteClubMember(int clubId, string memberId) => NoContent();
+    public async Task<IActionResult> DeleteClubMember(int clubId, string memberId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Member Removed",
+            Message = $"Member '{memberId}' was removed from club '{clubId}'.",
+            Source = "club-management",
+            Action = "member.deleted",
+            EntityType = "member",
+            EntityId = memberId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return NoContent();
+    }
 
     [HttpGet("clubs/{clubId:int}/employees")]
     public IActionResult ClubEmployees(int clubId) => Ok(new { items = Array.Empty<object>() });
 
     [HttpPost("clubs/{clubId:int}/employees")]
-    public IActionResult CreateClubEmployee(int clubId, [FromBody] object body) => Ok();
+    public async Task<IActionResult> CreateClubEmployee(int clubId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Employee Added",
+            Message = $"A new employee was added to club '{clubId}'.",
+            Source = "club-management",
+            Action = "employee.created",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok();
+    }
 
     [HttpPatch("clubs/{clubId:int}/employees/{employeeId}")]
-    public IActionResult PatchClubEmployee(int clubId, string employeeId, [FromBody] object body) => Ok(new { employeeId });
+    public async Task<IActionResult> PatchClubEmployee(int clubId, string employeeId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Employee Updated",
+            Message = $"Employee '{employeeId}' was updated for club '{clubId}'.",
+            Source = "club-management",
+            Action = "employee.updated",
+            EntityType = "employee",
+            EntityId = employeeId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { employeeId });
+    }
 
     [HttpDelete("clubs/{clubId:int}/employees/{employeeId}")]
-    public IActionResult DeleteClubEmployee(int clubId, string employeeId) => NoContent();
+    public async Task<IActionResult> DeleteClubEmployee(int clubId, string employeeId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Employee Removed",
+            Message = $"Employee '{employeeId}' was removed from club '{clubId}'.",
+            Source = "club-management",
+            Action = "employee.deleted",
+            EntityType = "employee",
+            EntityId = employeeId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return NoContent();
+    }
 
     private static ClubStatus ParseClubStatus(string? value)
     {

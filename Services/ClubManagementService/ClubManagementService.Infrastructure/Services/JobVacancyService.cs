@@ -3,6 +3,7 @@ using ClubManagementService.Application.DTOs.JobVacancy;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -10,11 +11,13 @@ public class JobVacancyService : IJobVacancyService
 {
     private readonly IJobVacancyRepository _repository;
     private readonly IMapper _mapper;
+    private readonly IClubNotificationService _notificationService;
 
-    public JobVacancyService(IJobVacancyRepository repository, IMapper mapper)
+    public JobVacancyService(IJobVacancyRepository repository, IMapper mapper, IClubNotificationService notificationService)
     {
         _repository = repository;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
 
     public async Task<JobVacancyDto?> GetByIdAsync(int id)
@@ -49,6 +52,16 @@ public class JobVacancyService : IJobVacancyService
         entity.IsActive = dto.Publish;
         await _repository.AddAsync(entity);
         await _repository.SaveChangesAsync();
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Vacancy Created",
+            Message = $"Vacancy '{entity.Title}' was created.",
+            Source = "club-management",
+            Action = "vacancy.created",
+            EntityType = "vacancy",
+            EntityId = entity.Id.ToString(),
+            ActorUserId = entity.PostedBy
+        });
         var withClub = await _repository.GetByIdWithClubAsync(entity.Id) ?? entity;
         return _mapper.Map<JobVacancyDto>(withClub);
     }
@@ -70,6 +83,15 @@ public class JobVacancyService : IJobVacancyService
             entity.IsDraft = dto.IsDraft.Value;
         await _repository.UpdateAsync(entity);
         await _repository.SaveChangesAsync();
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Vacancy Updated",
+            Message = $"Vacancy '{entity.Title}' was updated.",
+            Source = "club-management",
+            Action = "vacancy.updated",
+            EntityType = "vacancy",
+            EntityId = entity.Id.ToString()
+        });
         var withClub = await _repository.GetByIdWithClubAsync(id) ?? entity;
         return _mapper.Map<JobVacancyDto>(withClub);
     }
@@ -77,7 +99,17 @@ public class JobVacancyService : IJobVacancyService
     public async Task DeleteAsync(int id)
     {
         var entity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"JobVacancy {id} not found.");
+        var vacancyTitle = entity.Title;
         await _repository.DeleteAsync(entity);
         await _repository.SaveChangesAsync();
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Vacancy Deleted",
+            Message = $"Vacancy '{vacancyTitle}' was deleted.",
+            Source = "club-management",
+            Action = "vacancy.deleted",
+            EntityType = "vacancy",
+            EntityId = id.ToString()
+        });
     }
 }
