@@ -2,6 +2,7 @@ using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -12,8 +13,13 @@ namespace ClubManagementService.API.Controllers;
 public class ClubsController : ControllerBase
 {
     private readonly IClubService _service;
+    private readonly IClubNotificationService _notificationService;
 
-    public ClubsController(IClubService service) => _service = service;
+    public ClubsController(IClubService service, IClubNotificationService notificationService)
+    {
+        _service = service;
+        _notificationService = notificationService;
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] string? search = null, [FromQuery] string? category = null, [FromQuery] int page = 1, [FromQuery] int limit = 12)
@@ -73,11 +79,24 @@ public class ClubsController : ControllerBase
 
     [HttpPost("{clubId:int}/join-applications")]
     [Consumes("multipart/form-data")]
-    public IActionResult JoinApplication(int clubId, [FromForm] JoinApplicationRequest request)
+    public async Task<IActionResult> JoinApplication(int clubId, [FromForm] JoinApplicationRequest request)
     {
+        var applicationId = $"MEM-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Membership Application Submitted",
+            Message = $"A membership application was submitted for club '{clubId}'.",
+            Source = "club-management",
+            Action = "membership_application.created",
+            EntityType = "membership_application",
+            EntityId = applicationId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
         return Ok(new
         {
-            applicationId = $"MEM-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}",
+            applicationId,
             status = "Submitted",
             submittedAt = DateTime.UtcNow
         });

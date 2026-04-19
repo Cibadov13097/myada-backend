@@ -2,6 +2,16 @@
 
 Last updated: 2026-04-16
 
+## Common 404 Mistake (Important)
+
+If you call through gateway (`http://51.20.193.29:5000`), you must include `/support` prefix.
+
+- Correct: `http://51.20.193.29:5000/support/api/...`
+- Wrong: `http://51.20.193.29:5000/api/...` (this returns 404 for Support endpoints)
+
+Direct service (no gateway prefix):
+- `http://51.20.193.29:5008/api/...`
+
 ## Base URLs
 
 Recommended via API Gateway:

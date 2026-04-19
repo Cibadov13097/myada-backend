@@ -1,18 +1,18 @@
 ﻿# Club Management API Documentation for Frontend
 
-Last updated: 2026-04-13
+Last updated: 2026-04-16
 
 ## Base URLs
 
 Recommended via API Gateway:
-- Production: `http://13.60.196.144:5000`
+- Production: `http://51.20.193.29:5000`
 - Local: `http://localhost:5000`
 
 Club service gateway prefix:
 - `/club`
 
 Controller routes are defined as `/api/v1/...`, so final frontend URL format is:
-- `http://13.60.196.144:5000/club/api/v1/...`
+- `http://51.20.193.29:5000/club/api/v1/...`
 
 Direct service (diagnostics only):
 - `http://localhost:5003/api/v1/...`

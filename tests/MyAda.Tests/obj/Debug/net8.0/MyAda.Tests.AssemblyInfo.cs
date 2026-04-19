@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyAda.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2a8409aa081028bc93fc52cfd968b0283cfaeb61")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6107a28ae6701c636a3803f0ed93304931eebff0")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyAda.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyAda.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

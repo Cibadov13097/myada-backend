@@ -1,6 +1,7 @@
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -12,11 +13,16 @@ public class MeController : ControllerBase
 {
     private readonly IJobApplicationService _jobApplicationService;
     private readonly IEventRegistrationService _eventRegistrationService;
+    private readonly IClubNotificationService _notificationService;
 
-    public MeController(IJobApplicationService jobApplicationService, IEventRegistrationService eventRegistrationService)
+    public MeController(
+        IJobApplicationService jobApplicationService,
+        IEventRegistrationService eventRegistrationService,
+        IClubNotificationService notificationService)
     {
         _jobApplicationService = jobApplicationService;
         _eventRegistrationService = eventRegistrationService;
+        _notificationService = notificationService;
     }
 
     [HttpGet("club-memberships")]
@@ -52,7 +58,21 @@ public class MeController : ControllerBase
     public IActionResult GetClubNotifications([FromQuery] string type = "all") => Ok(new { items = Array.Empty<object>() });
 
     [HttpPatch("club-notifications/{notificationId}/read")]
-    public IActionResult MarkNotificationAsRead(string notificationId) => Ok(new { notificationId, read = true });
+    public async Task<IActionResult> MarkNotificationAsRead(string notificationId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Notification Read",
+            Message = $"Notification '{notificationId}' was marked as read.",
+            Source = "club-management",
+            Action = "notification.read",
+            EntityType = "club_notification",
+            EntityId = notificationId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { notificationId, read = true });
+    }
 
     private Guid GetCurrentUserIdOrDefault()
     {

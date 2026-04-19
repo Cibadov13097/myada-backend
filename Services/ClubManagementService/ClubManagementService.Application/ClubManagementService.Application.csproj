@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClubManagementService.Domain\ClubManagementService.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

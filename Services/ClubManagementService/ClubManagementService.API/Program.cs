@@ -5,6 +5,7 @@ using ClubManagementService.Infrastructure.Persistence.Context;
 using ClubManagementService.Infrastructure.Persistence.Repositories;
 using ClubManagementService.Infrastructure.Persistence.Seed;
 using ClubManagementService.Infrastructure.Services;
+using ClubManagementService.Infrastructure.Messaging;
 using ClubManagementService.API.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -90,6 +91,7 @@ builder.Services.AddScoped<IEventRegistrationService, EventRegistrationService>(
 builder.Services.AddScoped<IJobVacancyService, JobVacancyService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<ISubeventService, SubeventService>();
+builder.Services.AddSingleton<IClubNotificationService, ClubNotificationService>();
 
 builder.Services.AddCors(options =>
 {

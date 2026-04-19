@@ -3,6 +3,7 @@ using ClubManagementService.Application.DTOs.JobVacancy;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -14,11 +15,13 @@ public class ClubAdminController : ControllerBase
 {
     private readonly IJobVacancyService _vacancyService;
     private readonly IEventService _eventService;
+    private readonly IClubNotificationService _notificationService;
 
-    public ClubAdminController(IJobVacancyService vacancyService, IEventService eventService)
+    public ClubAdminController(IJobVacancyService vacancyService, IEventService eventService, IClubNotificationService notificationService)
     {
         _vacancyService = vacancyService;
         _eventService = eventService;
+        _notificationService = notificationService;
     }
 
     [HttpGet("dashboard")]
@@ -36,34 +39,160 @@ public class ClubAdminController : ControllerBase
     public IActionResult ApplicationById(int clubId, string applicationId) => Ok(new { applicationId });
 
     [HttpPost("applications/{applicationId}/approve")]
-    public IActionResult ApproveApplication(int clubId, string applicationId) => Ok(new { applicationId, status = "approved" });
+    public async Task<IActionResult> ApproveApplication(int clubId, string applicationId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Membership Application Approved",
+            Message = $"Application '{applicationId}' was approved for club '{clubId}'.",
+            Source = "club-management",
+            Action = "membership_application.approved",
+            EntityType = "membership_application",
+            EntityId = applicationId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { applicationId, status = "approved" });
+    }
 
     [HttpPost("applications/{applicationId}/reject")]
-    public IActionResult RejectApplication(int clubId, string applicationId, [FromBody] ReasonRequest request) => Ok(new { applicationId, status = "rejected" });
+    public async Task<IActionResult> RejectApplication(int clubId, string applicationId, [FromBody] ReasonRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Membership Application Rejected",
+            Message = $"Application '{applicationId}' was rejected for club '{clubId}'. Reason: {request.Reason}",
+            Source = "club-management",
+            Action = "membership_application.rejected",
+            EntityType = "membership_application",
+            EntityId = applicationId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { applicationId, status = "rejected" });
+    }
 
     [HttpPost("applications/{applicationId}/request-changes")]
-    public IActionResult RequestChanges(int clubId, string applicationId, [FromBody] ChangesRequest request) => Ok(new { applicationId, status = "changes_requested" });
+    public async Task<IActionResult> RequestChanges(int clubId, string applicationId, [FromBody] ChangesRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Membership Application Changes Requested",
+            Message = $"Changes were requested for application '{applicationId}'.",
+            Source = "club-management",
+            Action = "membership_application.changes_requested",
+            EntityType = "membership_application",
+            EntityId = applicationId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { applicationId, status = "changes_requested" });
+    }
 
     [HttpPost("applications/{applicationId}/notes")]
-    public IActionResult AddNote(int clubId, string applicationId, [FromBody] NoteRequest request) => Ok(new { applicationId, note = request.Note });
+    public async Task<IActionResult> AddNote(int clubId, string applicationId, [FromBody] NoteRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Application Note Added",
+            Message = $"A note was added to application '{applicationId}'.",
+            Source = "club-management",
+            Action = "membership_application.note_added",
+            EntityType = "membership_application",
+            EntityId = applicationId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { applicationId, note = request.Note });
+    }
 
     [HttpPost("applications/bulk-decision")]
-    public IActionResult BulkDecision(int clubId, [FromBody] BulkDecisionRequest request) => Ok(new { updated = request.ApplicationIds.Count });
+    public async Task<IActionResult> BulkDecision(int clubId, [FromBody] BulkDecisionRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Bulk Application Decision",
+            Message = $"Bulk decision '{request.Decision}' was applied to {request.ApplicationIds.Count} applications for club '{clubId}'.",
+            Source = "club-management",
+            Action = "membership_application.bulk_decision",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { updated = request.ApplicationIds.Count });
+    }
 
     [HttpGet("interview-slots")]
     public IActionResult InterviewSlots(int clubId, [FromQuery] string? vacancy = null) => Ok(new { items = Array.Empty<object>() });
 
     [HttpPost("interview-slots/generate")]
-    public IActionResult GenerateInterviewSlots(int clubId, [FromBody] GenerateInterviewSlotsRequest request) => Ok(new { items = Array.Empty<object>() });
+    public async Task<IActionResult> GenerateInterviewSlots(int clubId, [FromBody] GenerateInterviewSlotsRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Interview Slots Generated",
+            Message = $"Interview slots were generated for club '{clubId}' ({request.Date} {request.StartTime}-{request.EndTime}).",
+            Source = "club-management",
+            Action = "interview_slot.generated",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { items = Array.Empty<object>() });
+    }
 
     [HttpPatch("interview-slots/{slotId}")]
-    public IActionResult PatchInterviewSlot(int clubId, string slotId, [FromBody] object body) => Ok(new { slotId });
+    public async Task<IActionResult> PatchInterviewSlot(int clubId, string slotId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Interview Slot Updated",
+            Message = $"Interview slot '{slotId}' was updated for club '{clubId}'.",
+            Source = "club-management",
+            Action = "interview_slot.updated",
+            EntityType = "interview_slot",
+            EntityId = slotId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { slotId });
+    }
 
     [HttpDelete("interview-slots/{slotId}")]
-    public IActionResult DeleteInterviewSlot(int clubId, string slotId) => NoContent();
+    public async Task<IActionResult> DeleteInterviewSlot(int clubId, string slotId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Interview Slot Deleted",
+            Message = $"Interview slot '{slotId}' was deleted for club '{clubId}'.",
+            Source = "club-management",
+            Action = "interview_slot.deleted",
+            EntityType = "interview_slot",
+            EntityId = slotId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return NoContent();
+    }
 
     [HttpPost("interview-slots/bulk-assign-vacancy")]
-    public IActionResult BulkAssignInterviewSlots(int clubId, [FromBody] object body) => Ok();
+    public async Task<IActionResult> BulkAssignInterviewSlots(int clubId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Interview Slots Assigned",
+            Message = $"Interview slots were bulk-assigned to a vacancy for club '{clubId}'.",
+            Source = "club-management",
+            Action = "interview_slot.bulk_assign",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok();
+    }
 
     [HttpGet("vacancies")]
     public async Task<IActionResult> Vacancies(int clubId) => Ok(await _vacancyService.GetByClubIdAsync(clubId));
@@ -90,37 +219,149 @@ public class ClubAdminController : ControllerBase
     }
 
     [HttpPatch("vacancies/{vacancyId:int}/status")]
-    public IActionResult PatchVacancyStatus(int clubId, int vacancyId, [FromBody] StatusRequest request) => Ok(new { vacancyId, status = request.Status });
+    public async Task<IActionResult> PatchVacancyStatus(int clubId, int vacancyId, [FromBody] StatusRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Vacancy Status Updated",
+            Message = $"Vacancy '{vacancyId}' status changed to '{request.Status}'.",
+            Source = "club-management",
+            Action = "vacancy.status_updated",
+            EntityType = "vacancy",
+            EntityId = vacancyId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { vacancyId, status = request.Status });
+    }
 
     [HttpGet("positions")]
     public IActionResult Positions(int clubId) => Ok(new { items = Array.Empty<object>() });
 
     [HttpPost("positions")]
-    public IActionResult CreatePosition(int clubId, [FromBody] object body) => Ok();
+    public async Task<IActionResult> CreatePosition(int clubId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Position Created",
+            Message = $"A new position was created for club '{clubId}'.",
+            Source = "club-management",
+            Action = "position.created",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok();
+    }
 
     [HttpPatch("positions/{positionId}")]
-    public IActionResult PatchPosition(int clubId, string positionId, [FromBody] object body) => Ok();
+    public async Task<IActionResult> PatchPosition(int clubId, string positionId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Position Updated",
+            Message = $"Position '{positionId}' was updated for club '{clubId}'.",
+            Source = "club-management",
+            Action = "position.updated",
+            EntityType = "position",
+            EntityId = positionId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok();
+    }
 
     [HttpDelete("positions/{positionId}")]
-    public IActionResult DeletePosition(int clubId, string positionId) => NoContent();
+    public async Task<IActionResult> DeletePosition(int clubId, string positionId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Position Deleted",
+            Message = $"Position '{positionId}' was deleted for club '{clubId}'.",
+            Source = "club-management",
+            Action = "position.deleted",
+            EntityType = "position",
+            EntityId = positionId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return NoContent();
+    }
 
     [HttpGet("members")]
     public IActionResult Members(int clubId) => Ok(new { items = Array.Empty<object>() });
 
     [HttpDelete("members/{memberId}")]
-    public IActionResult DeleteMember(int clubId, string memberId) => NoContent();
+    public async Task<IActionResult> DeleteMember(int clubId, string memberId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Member Removed",
+            Message = $"Member '{memberId}' was removed from club '{clubId}'.",
+            Source = "club-management",
+            Action = "member.deleted",
+            EntityType = "member",
+            EntityId = memberId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return NoContent();
+    }
 
     [HttpGet("employees")]
     public IActionResult Employees(int clubId) => Ok(new { items = Array.Empty<object>() });
 
     [HttpPost("employees")]
-    public IActionResult CreateEmployee(int clubId, [FromBody] CreateEmployeeRequest request) => Ok();
+    public async Task<IActionResult> CreateEmployee(int clubId, [FromBody] CreateEmployeeRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Employee Added",
+            Message = $"Employee '{request.StudentId}' was added to club '{clubId}' as '{request.Position}'.",
+            Source = "club-management",
+            Action = "employee.created",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok();
+    }
 
     [HttpPatch("employees/positions")]
-    public IActionResult PatchEmployeePositions(int clubId, [FromBody] UpdateEmployeePositionsRequest request) => Ok();
+    public async Task<IActionResult> PatchEmployeePositions(int clubId, [FromBody] UpdateEmployeePositionsRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Employee Positions Updated",
+            Message = $"{request.Changes.Count} employee position changes were applied for club '{clubId}'.",
+            Source = "club-management",
+            Action = "employee.positions_updated",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok();
+    }
 
     [HttpDelete("employees/{employeeId}")]
-    public IActionResult DeleteEmployee(int clubId, string employeeId) => NoContent();
+    public async Task<IActionResult> DeleteEmployee(int clubId, string employeeId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Employee Removed",
+            Message = $"Employee '{employeeId}' was removed from club '{clubId}'.",
+            Source = "club-management",
+            Action = "employee.deleted",
+            EntityType = "employee",
+            EntityId = employeeId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return NoContent();
+    }
 
     [HttpGet("events")]
     public async Task<IActionResult> Events(int clubId, [FromQuery] string? status = null, [FromQuery] string? search = null)
@@ -130,26 +371,112 @@ public class ClubAdminController : ControllerBase
     }
 
     [HttpPatch("events/{eventId:int}")]
-    public IActionResult PatchEvent(int clubId, int eventId, [FromBody] object body) => Ok(new { eventId });
+    public async Task<IActionResult> PatchEvent(int clubId, int eventId, [FromBody] object body)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Patched",
+            Message = $"Event '{eventId}' was patched for club '{clubId}'.",
+            Source = "club-management",
+            Action = "event.patched",
+            EntityType = "event",
+            EntityId = eventId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { eventId });
+    }
 
     [HttpPost("events/proposals")]
-    public IActionResult EventProposal(int clubId, [FromBody] object body) => Ok(new { proposalId = $"EVP-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}" });
+    public async Task<IActionResult> EventProposal(int clubId, [FromBody] object body)
+    {
+        var proposalId = $"EVP-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Proposal Submitted",
+            Message = $"Event proposal '{proposalId}' was submitted for club '{clubId}'.",
+            Source = "club-management",
+            Action = "event_proposal.created",
+            EntityType = "event_proposal",
+            EntityId = proposalId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { proposalId });
+    }
 
     [HttpGet("events/{eventId:int}/attendees")]
     public IActionResult EventAttendees(int clubId, int eventId) => Ok(new { items = Array.Empty<object>() });
 
     [HttpPatch("events/{eventId:int}/attendees/{attendeeId}")]
-    public IActionResult PatchAttendee(int clubId, int eventId, string attendeeId, [FromBody] AttendeePatchRequest request) => Ok(new { attendeeId, request.Entered });
+    public async Task<IActionResult> PatchAttendee(int clubId, int eventId, string attendeeId, [FromBody] AttendeePatchRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Attendee Updated",
+            Message = $"Attendee '{attendeeId}' was updated for event '{eventId}' (entered: {request.Entered}).",
+            Source = "club-management",
+            Action = "event_attendee.updated",
+            EntityType = "event_attendee",
+            EntityId = attendeeId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { attendeeId, request.Entered });
+    }
 
     [HttpDelete("events/{eventId:int}/attendees/{attendeeId}")]
-    public IActionResult DeleteAttendee(int clubId, int eventId, string attendeeId) => NoContent();
+    public async Task<IActionResult> DeleteAttendee(int clubId, int eventId, string attendeeId)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Attendee Removed",
+            Message = $"Attendee '{attendeeId}' was removed from event '{eventId}'.",
+            Source = "club-management",
+            Action = "event_attendee.deleted",
+            EntityType = "event_attendee",
+            EntityId = attendeeId,
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return NoContent();
+    }
 
     [HttpPatch("profile")]
     [Consumes("multipart/form-data")]
-    public IActionResult PatchProfile(int clubId, [FromForm] ClubProfilePatchRequest request) => Ok(new { clubId, updated = true });
+    public async Task<IActionResult> PatchProfile(int clubId, [FromForm] ClubProfilePatchRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Profile Updated",
+            Message = $"Club '{clubId}' profile was updated.",
+            Source = "club-management",
+            Action = "club.profile_updated",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { clubId, updated = true });
+    }
 
     [HttpPost("announcements")]
-    public IActionResult AddAnnouncement(int clubId, [FromBody] AnnouncementRequest request) => Ok(new { request.Title, request.Message });
+    public async Task<IActionResult> AddAnnouncement(int clubId, [FromBody] AnnouncementRequest request)
+    {
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Announcement",
+            Message = $"Announcement posted for club '{clubId}': {request.Title}.",
+            Source = "club-management",
+            Action = "club.announcement_created",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        return Ok(new { request.Title, request.Message });
+    }
 
     private Guid GetCurrentUserIdOrDefault()
     {
