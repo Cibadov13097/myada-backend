@@ -1,16 +1,26 @@
 # Lost & Found Frontend API Documentation
 
-Last updated: 2026-04-13
+Last updated: 2026-04-19
 
 ## Base URLs
 
-- Deployed API Gateway URL: `http://13.60.196.144:5000/`
+- API Gateway (recommended): `http://51.20.193.29:5000`
 - Gateway route prefix for LostFound service: `/lostfound`
 - LostFound API base path: `/api/lost-and-found`
+- Direct service (diagnostics only):
+  - Production: `http://51.20.193.29:5002`
+  - Local: `http://localhost:5002`
 
 Frontend should use:
 
-- **`http://13.60.196.144:5000/lostfound/api/lost-and-found`**
+- **`http://51.20.193.29:5000/lostfound/api/lost-and-found`**
+
+## Common 404 Mistake (Important)
+
+If you call through gateway (`:5000`), you must include `/lostfound`.
+
+- Correct: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items`
+- Wrong: `http://51.20.193.29:5000/api/lost-and-found/items` (returns 404 on gateway)
 
 ---
 
@@ -89,7 +99,7 @@ Frontend should use:
 
 - Method: `GET`
 - URL: `/items`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items`
 - Auth: Optional
 
 Query params:
@@ -118,7 +128,7 @@ Response:
 
 - Method: `GET`
 - URL: `/items/{id}`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}`
 - Auth: Optional
 
 `404` response:
@@ -137,7 +147,7 @@ Response:
 
 - Method: `GET`
 - URL: `/stats`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/stats`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/stats`
 - Auth: Optional
 
 Response:
@@ -156,7 +166,7 @@ Response:
 
 - Method: `POST`
 - URL: `/reports/lost`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/reports/lost`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/reports/lost`
 - Auth: Optional
 - Content-Type: `application/json` or `multipart/form-data`
 
@@ -191,7 +201,7 @@ Response `201`:
 
 - Method: `POST`
 - URL: `/reports/found`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/reports/found`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/reports/found`
 - Auth: Optional
 - Content-Type: `application/json` or `multipart/form-data`
 
@@ -225,7 +235,7 @@ Response `201`:
 
 - Method: `PATCH`
 - URL: `/items/{id}`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}`
 - Auth: Required (`admin` or `lost_found_leader`)
 
 Body (partial):
@@ -249,7 +259,7 @@ Body (partial):
 
 - Method: `POST`
 - URL: `/items`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items`
 - Auth: Required (`admin` or `lost_found_leader`)
 - Content-Type: `application/json` or `multipart/form-data`
 
@@ -267,7 +277,7 @@ Found-type rules are the same as `/reports/found`.
 
 - Method: `POST`
 - URL: `/upload`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/upload`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/upload`
 - Auth: Optional
 - Content-Type: `multipart/form-data`
 
@@ -291,7 +301,7 @@ Response `201`:
 
 - Method: `POST`
 - URL: `/items/{id}/notify`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}/notify`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}/notify`
 - Auth: Required (`admin` or `lost_found_leader`)
 
 Body:
@@ -317,7 +327,7 @@ Response `202`:
 
 - Method: `POST`
 - URL: `/items/{id}/claims`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}/claims`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}/claims`
 - Auth: Required
 
 Body:
@@ -351,7 +361,7 @@ Duplicate claim by same user for same item + same claim type returns `409`.
 
 - Method: `POST`
 - URL: `/items/{id}/confirm-receipt`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}/confirm-receipt`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}/confirm-receipt`
 - Auth: Required (`admin` or `lost_found_leader`)
 
 Body:
@@ -376,7 +386,7 @@ Effect:
 
 - Method: `POST`
 - URL: `/items/{id}/complete-delivery`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}/complete-delivery`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}/complete-delivery`
 - Auth: Required (`admin` or `lost_found_leader`)
 
 Body:
@@ -400,7 +410,7 @@ Effect:
 
 - Method: `GET`
 - URL: `/items/{id}/claims`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}/claims`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}/claims`
 - Auth: Required (`admin` or `lost_found_leader`)
 
 Response:
@@ -426,7 +436,7 @@ Response:
 
 - Method: `GET`
 - URL: `/items/{id}/timeline`
-- Full URL: `http://13.60.196.144:5000/lostfound/api/lost-and-found/items/{id}/timeline`
+- Full URL: `http://51.20.193.29:5000/lostfound/api/lost-and-found/items/{id}/timeline`
 - Auth: Optional
 
 Response:
@@ -454,4 +464,5 @@ Response:
   }
 }
 ```
+
 

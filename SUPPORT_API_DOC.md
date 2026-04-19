@@ -1,6 +1,6 @@
 # MyAda Support API Documentation for Frontend
 
-Last updated: 2026-04-16
+Last updated: 2026-04-19
 
 ## Common 404 Mistake (Important)
 
@@ -25,7 +25,8 @@ Final frontend URL format:
 - `http://51.20.193.29:5000/support/api/...`
 
 Direct service (diagnostics only):
-- `http://51.20.193.29:5008/api/...`
+- Production: `http://51.20.193.29:5008/api/...`
+- Local: `http://localhost:5008/api/...`
 
 ## Authentication
 

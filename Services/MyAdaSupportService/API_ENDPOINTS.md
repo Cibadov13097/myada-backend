@@ -1,6 +1,18 @@
 # MyAdaSupportService API Endpoints
 
-Base path: `/api`
+Last updated: 2026-04-19
+
+Base path (service): `/api`
+
+Gateway route format (frontend):
+- `http://51.20.193.29:5000/support/api/...`
+
+Direct service format (diagnostics):
+- Production: `http://51.20.193.29:5008/api/...`
+- Local: `http://localhost:5008/api/...`
+
+Common 404 rule:
+- If host is gateway (`:5000`), `/support` prefix is required.
 
 Authentication: Bearer JWT is required for all endpoints.
 

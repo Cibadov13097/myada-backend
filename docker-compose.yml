@@ -30,6 +30,29 @@ services:
       - "6379:6379"
     restart: always
 
+  coturn:
+    image: coturn/coturn:latest
+    container_name: myada-coturn
+    command: >
+      -n
+      --no-cli
+      --no-tls
+      --no-dtls
+      --realm=${TURN_REALM:-myada.local}
+      --listening-port=3478
+      --external-ip=${TURN_EXTERNAL_IP:-127.0.0.1}
+      --min-port=49160
+      --max-port=49200
+      --use-auth-secret
+      --static-auth-secret=${TURN_SHARED_SECRET:-myada-turn-secret-change-me}
+      --log-file=stdout
+      --simple-log
+    ports:
+      - "3478:3478/tcp"
+      - "3478:3478/udp"
+      - "49160-49200:49160-49200/udp"
+    restart: always
+
   authservice:
     build:
       context: .
@@ -129,10 +152,17 @@ services:
       Redis__ChannelPrefix: myada:call
       Call__InviteTimeoutSeconds: 30
       Call__DispatcherInboxPrefix: dispatcher-inbox-
+      Turn__Enabled: true
+      Turn__Urls__0: "stun:${TURN_PUBLIC_HOST:-localhost}:3478"
+      Turn__Urls__1: "turn:${TURN_PUBLIC_HOST:-localhost}:3478?transport=udp"
+      Turn__Urls__2: "turn:${TURN_PUBLIC_HOST:-localhost}:3478?transport=tcp"
+      Turn__SharedSecret: ${TURN_SHARED_SECRET:-myada-turn-secret-change-me}
+      Turn__CredentialTtlSeconds: 3600
     restart: always
     depends_on:
       - authservice
       - myada-redis
+      - coturn
 
 
   locationservice:

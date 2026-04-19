@@ -1,15 +1,66 @@
 # Call Service Realtime (SignalR) Documentation for Frontend
 
-Last updated: 2026-04-15
+Last updated: 2026-04-20
 
 ## What Frontend Should Use
 
 Use API Gateway for realtime call signaling:
-- Base URL: `http://51.20.193.29/`
-- Hub URL: `http://51.20.193.29/call/hub`
+- Base URL: `http://51.20.193.29:5000`
+- Gateway prefix: `/call`
+- Hub URL: `http://51.20.193.29:5000/call/hub`
 
 Direct service (diagnostics only):
 - `http://51.20.193.29:5006/hub`
+
+Local equivalents:
+- Gateway hub: `http://localhost:5000/call/hub`
+- Direct call hub: `http://localhost:5006/hub`
+
+Common 404 rule:
+- If host is gateway (`:5000`), call endpoints must include `/call`.
+- Correct: `http://51.20.193.29:5000/call/hub`
+- Wrong: `http://51.20.193.29:5000/hub`
+
+## ICE Server Configuration (STUN/TURN)
+
+CallService now issues short-lived TURN credentials for cross-network WebRTC calls.
+
+HTTP endpoint (recommended):
+- Gateway: `GET http://51.20.193.29:5000/call/webrtc/ice-servers`
+- Direct service: `GET http://51.20.193.29:5006/webrtc/ice-servers`
+- Local gateway: `GET http://localhost:5000/call/webrtc/ice-servers`
+- Local direct: `GET http://localhost:5006/webrtc/ice-servers`
+
+SignalR options:
+- `Connected` event includes `iceConfiguration`.
+- Hub method `GetIceConfiguration()` returns the same payload shape.
+
+Authentication:
+- Requires JWT bearer token.
+
+Payload example:
+```json
+{
+  "generatedAtUtc": "2026-04-20T09:00:00Z",
+  "expiresAtUtc": "2026-04-20T10:00:00Z",
+  "iceServers": [
+    {
+      "urls": [
+        "stun:51.20.193.29:3478",
+        "turn:51.20.193.29:3478?transport=udp",
+        "turn:51.20.193.29:3478?transport=tcp"
+      ],
+      "username": "1760944800:user-guid",
+      "credential": "base64-hmac-value"
+    }
+  ]
+}
+```
+
+Docker env keys used by current compose setup:
+- `TURN_PUBLIC_HOST`: host/domain clients use in ICE URLs (default `localhost`)
+- `TURN_EXTERNAL_IP`: public IP coturn advertises (default `127.0.0.1`)
+- `TURN_SHARED_SECRET`: shared secret used by both coturn and CallService credential generation
 
 ## Transport
 
@@ -127,6 +178,15 @@ Parameters:
 ### `EndCall()`
 Broadcasts `CallEnded` to the room and removes room membership for all current participants.
 
+### `GetIceConfiguration()`
+Returns TURN/STUN ICE configuration for the current authenticated user.
+
+Parameters:
+- none
+
+Returns:
+- same payload shape as `GET /webrtc/ice-servers`
+
 ## Server Events (Server -> Client)
 
 ### `Connected`
@@ -140,7 +200,22 @@ Payload:
   "displayName": "Ali",
   "isDispatcher": false,
   "dispatcherInboxGroup": null,
-  "roles": ["student"]
+  "roles": ["student"],
+  "iceConfiguration": {
+    "generatedAtUtc": "2026-04-20T09:00:00Z",
+    "expiresAtUtc": "2026-04-20T10:00:00Z",
+    "iceServers": [
+      {
+        "urls": [
+          "stun:51.20.193.29:3478",
+          "turn:51.20.193.29:3478?transport=udp",
+          "turn:51.20.193.29:3478?transport=tcp"
+        ],
+        "username": "1760944800:user-guid",
+        "credential": "base64-hmac-value"
+      }
+    ]
+  }
 }
 ```
 
@@ -358,7 +433,7 @@ import * as signalR from "@microsoft/signalr";
 const accessToken = "<JWT_ACCESS_TOKEN>";
 
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("http://51.20.193.29/call/hub", {
+  .withUrl("http://51.20.193.29:5000/call/hub", {
     accessTokenFactory: () => accessToken
   })
   .withAutomaticReconnect()
@@ -374,6 +449,14 @@ connection.on("IncomingCall", ({ callId, fromUserId, fromDisplayName }) => {
 connection.on("JoinedRoom", ({ roomId, otherParticipants }) => {
   console.log("Joined room:", roomId, otherParticipants);
 });
+
+const iceResponse = await fetch("http://51.20.193.29:5000/call/webrtc/ice-servers", {
+  headers: {
+    Authorization: `Bearer ${accessToken}`
+  }
+});
+const { iceServers } = await iceResponse.json();
+const peerConnection = new RTCPeerConnection({ iceServers });
 
 connection.on("ReceiveOffer", async ({ fromConnectionId, sdp }) => {
   // set remote offer + create/send answer
@@ -393,14 +476,17 @@ Dispatcher id note:
 2. Caller invokes `RequestCall(dispatcherUserId)`.
 3. Dispatcher receives `IncomingCall` in real-time.
 4. Dispatcher invokes `AcceptCall(callId)` or `RejectCall(callId, reason?)`.
-5. On accept, both sides receive `CallAccepted` + `JoinedRoom` and start WebRTC signaling.
-6. During call, exchange `SendOffer` / `SendAnswer` / `SendIceCandidate`.
-7. Use `LeaveCall()` for single participant leave or `EndCall()` to end for everyone.
-8. If dispatcher takes no action, both sides receive `CallTimedOut`.
+5. On accept, fetch ICE config (`GET /call/webrtc/ice-servers`) or call `GetIceConfiguration()`.
+6. Create `RTCPeerConnection({ iceServers })`.
+7. Start WebRTC signaling using `CallAccepted` / `JoinedRoom` data.
+8. During call, exchange `SendOffer` / `SendAnswer` / `SendIceCandidate`.
+9. Use `LeaveCall()` for single participant leave or `EndCall()` to end for everyone.
+10. If dispatcher takes no action, both sides receive `CallTimedOut`.
 
 ## Health Endpoints
 
 - Gateway health route for call service container reachability test:
-  - `GET http://51.20.193.29/call/health`
+  - `GET http://51.20.193.29:5000/call/health`
 - Direct call service:
   - `GET http://51.20.193.29:5006/health`
+

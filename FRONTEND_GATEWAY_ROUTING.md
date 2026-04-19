@@ -1,6 +1,6 @@
 # Frontend Gateway Routing Guide (Avoid 404)
 
-Last updated: 2026-04-16
+Last updated: 2026-04-19
 
 ## Why 404 happens
 
@@ -65,6 +65,20 @@ Gateway:
 Direct:
 - `http://51.20.193.29:5001/api/auth/users-by-role/{role}`
 
+### LostFound and Club (common 404 case)
+
+Wrong on gateway (missing service prefix):
+- `http://51.20.193.29:5000/api/v1/found-items`
+- `http://51.20.193.29:5000/api/v1/categories`
+
+Correct on gateway:
+- `http://51.20.193.29:5000/lostfound/api/v1/found-items` (if endpoint exists in service)
+- `http://51.20.193.29:5000/club/api/v1/categories`
+
+Direct service examples:
+- `http://51.20.193.29:5002/api/v1/found-items`
+- `http://51.20.193.29:5003/api/v1/categories`
+
 ## Swagger URLs
 
 - Gateway Swagger:
@@ -100,4 +114,3 @@ export const endpoints = {
 2. If using gateway, confirm service prefix exists (`/support`, `/call`, etc.).
 3. Do not copy direct service path into gateway URL without adding gateway prefix.
 4. For protected endpoints, ensure `Authorization: Bearer <token>` is present (otherwise 401/403, not 404).
-

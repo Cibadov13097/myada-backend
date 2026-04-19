@@ -1,6 +1,6 @@
-﻿# Club Management API Documentation for Frontend
+# Club Management API Documentation for Frontend
 
-Last updated: 2026-04-16
+Last updated: 2026-04-19
 
 ## Base URLs
 
@@ -15,7 +15,15 @@ Controller routes are defined as `/api/v1/...`, so final frontend URL format is:
 - `http://51.20.193.29:5000/club/api/v1/...`
 
 Direct service (diagnostics only):
-- `http://localhost:5003/api/v1/...`
+- Production: `http://51.20.193.29:5003/api/v1/...`
+- Local: `http://localhost:5003/api/v1/...`
+
+## Common 404 Mistake (Important)
+
+If you call Club through gateway (`http://51.20.193.29:5000`), you must include `/club`.
+
+- Correct: `http://51.20.193.29:5000/club/api/v1/categories`
+- Wrong: `http://51.20.193.29:5000/api/v1/categories` (returns 404 on gateway)
 
 ## Authentication
 

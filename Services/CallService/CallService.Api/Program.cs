@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using CallService.Api.Hubs;
 using CallService.Api.Realtime;
 using CallService.Api.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
@@ -24,11 +26,13 @@ var redisConnectionString = builder.Configuration["Redis:ConnectionString"] ?? "
 var redisChannelPrefix = builder.Configuration["Redis:ChannelPrefix"] ?? "myada:call";
 
 builder.Services.Configure<CallRuntimeOptions>(builder.Configuration.GetSection("Call"));
+builder.Services.Configure<TurnOptions>(builder.Configuration.GetSection("Turn"));
 builder.Services.AddHostedService<JwksRefreshHostedService>();
 
 builder.Services.AddSingleton<IUserIdProvider, SubClaimUserIdProvider>();
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnectionString));
 builder.Services.AddSingleton<ICallStateStore, RedisCallStateStore>();
+builder.Services.AddSingleton<IIceConfigurationProvider, CoturnIceConfigurationProvider>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -138,6 +142,18 @@ app.MapGet("/health", () => Results.Ok(new
 {
     status = "healthy"
 }));
+
+app.MapGet("/webrtc/ice-servers", [Authorize] (ClaimsPrincipal user, IIceConfigurationProvider iceConfigurationProvider) =>
+{
+    var userId = user.FindFirst("sub")?.Value
+                 ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrWhiteSpace(userId))
+        return Results.Unauthorized();
+
+    var iceConfiguration = iceConfigurationProvider.GetForUser(userId);
+    return Results.Ok(iceConfiguration);
+}).RequireAuthorization();
 
 app.MapHub<CallHub>("/hub").RequireAuthorization();
 

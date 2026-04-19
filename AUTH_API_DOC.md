@@ -1,19 +1,26 @@
 # Auth API Documentation for Frontend
 
-Last updated: 2026-04-15
+Last updated: 2026-04-19
 
 ## Base URLs
 
 Recommended for frontend (via gateway):
-- `http://localhost:5000`
-- `https://localhost:7001`
+- Production: `http://51.20.193.29:5000`
+- Local: `http://localhost:5000`
 
 Direct auth service (if bypassing gateway):
-- `http://localhost:5001`
-- `https://localhost:7140`
+- Production: `http://51.20.193.29:5001`
+- Local: `http://localhost:5001`
 
 Base path for auth endpoints:
 - `/api/auth`
+
+Gateway path format:
+- `http://51.20.193.29:5000/api/auth/...` (primary)
+- `http://51.20.193.29:5000/auth/...` (proxy alias used for Swagger/JWKS)
+
+Routing note:
+- Auth is the only service that works on gateway without a service prefix like `/club` or `/support`.
 
 ## Token Settings
 

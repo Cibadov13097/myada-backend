@@ -16,15 +16,18 @@ public class CallHub : Hub
     private readonly IHubContext<CallHub> _hubContext;
     private readonly ILogger<CallHub> _logger;
     private readonly CallRuntimeOptions _options;
+    private readonly IIceConfigurationProvider _iceConfigurationProvider;
 
     public CallHub(
         ICallStateStore stateStore,
         IHubContext<CallHub> hubContext,
+        IIceConfigurationProvider iceConfigurationProvider,
         IOptions<CallRuntimeOptions> options,
         ILogger<CallHub> logger)
     {
         _stateStore = stateStore;
         _hubContext = hubContext;
+        _iceConfigurationProvider = iceConfigurationProvider;
         _logger = logger;
         _options = options.Value;
     }
@@ -45,6 +48,7 @@ public class CallHub : Hub
             .Select(c => c.Value)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? Array.Empty<string>();
+        var iceConfiguration = _iceConfigurationProvider.GetForUser(connection.UserId);
 
         await Clients.Caller.SendAsync("Connected", new
         {
@@ -53,7 +57,8 @@ public class CallHub : Hub
             displayName = connection.DisplayName,
             isDispatcher = connection.IsDispatcher,
             dispatcherInboxGroup,
-            roles
+            roles,
+            iceConfiguration
         });
 
         await base.OnConnectedAsync();
@@ -400,6 +405,14 @@ public class CallHub : Hub
             await _stateStore.RemoveConnectionFromRoomAsync(participant.ConnectionId);
             await Groups.RemoveFromGroupAsync(participant.ConnectionId, roomId);
         }
+    }
+
+    public Task<IceConfigurationDto> GetIceConfiguration()
+    {
+        var user = RequireAuthenticatedUser();
+        var userId = GetUserId(user);
+        var iceConfiguration = _iceConfigurationProvider.GetForUser(userId);
+        return Task.FromResult(iceConfiguration);
     }
 
     private async Task JoinConnectionToRoomAsync(string connectionId, string roomId)
