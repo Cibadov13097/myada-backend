@@ -40,10 +40,25 @@ public sealed class CoturnIceConfigurationProvider : IIceConfigurationProvider
             return new IceConfigurationDto(generatedAtUtc, generatedAtUtc, Array.Empty<IceServerDto>());
         }
 
+        if (urls.Any(IsLoopbackTurnUrl))
+        {
+            _logger.LogWarning(
+                "TURN URLs include loopback host(s): {TurnUrls}. Remote clients will not be able to use relay candidates.",
+                string.Join(", ", urls));
+        }
+
         if (string.IsNullOrWhiteSpace(_options.SharedSecret))
         {
             _logger.LogWarning("TURN is enabled but Turn:SharedSecret is missing. Returning no ICE servers.");
             return new IceConfigurationDto(generatedAtUtc, generatedAtUtc, Array.Empty<IceServerDto>());
+        }
+
+        if (string.Equals(
+                _options.SharedSecret.Trim(),
+                "myada-turn-secret-change-me",
+                StringComparison.Ordinal))
+        {
+            _logger.LogWarning("TURN is using the default shared secret value. Replace it before production use.");
         }
 
         var ttlSeconds = NormalizeTtlSeconds(_options.CredentialTtlSeconds);
@@ -79,5 +94,31 @@ public sealed class CoturnIceConfigurationProvider : IIceConfigurationProvider
         using var hmac = new HMACSHA1(secretBytes);
         var hash = hmac.ComputeHash(usernameBytes);
         return Convert.ToBase64String(hash);
+    }
+
+    private static bool IsLoopbackTurnUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            return false;
+
+        var withoutQuery = url.Trim().Split('?', 2)[0];
+        var schemeSeparator = withoutQuery.IndexOf(':');
+        if (schemeSeparator < 0 || schemeSeparator >= withoutQuery.Length - 1)
+            return false;
+
+        var hostPort = withoutQuery[(schemeSeparator + 1)..].TrimStart('/');
+        if (string.IsNullOrWhiteSpace(hostPort))
+            return false;
+
+        var host = hostPort;
+        var lastColon = hostPort.LastIndexOf(':');
+        if (lastColon > 0)
+            host = hostPort[..lastColon];
+
+        host = host.Trim().Trim('[', ']');
+
+        return string.Equals(host, "localhost", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(host, "127.0.0.1", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(host, "::1", StringComparison.OrdinalIgnoreCase);
     }
 }

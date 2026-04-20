@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using CallService.Api.Hubs;
 using CallService.Api.Realtime;
 using CallService.Api.Security;
@@ -48,6 +49,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ClockSkew = TimeSpan.Zero,
+            NameClaimType = "sub",
+            RoleClaimType = ClaimTypes.Role,
             IssuerSigningKeyResolver = (_, _, _, _) => JwksProvider.GetKeys()
         };
 
@@ -62,6 +65,34 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     path.StartsWithSegments("/hub"))
                 {
                     context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                if (context.Principal?.Identity is not ClaimsIdentity identity)
+                    return Task.CompletedTask;
+
+                var normalizedRoles = identity.Claims
+                    .Where(static claim =>
+                        claim.Type == ClaimTypes.Role ||
+                        string.Equals(claim.Type, "role", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(claim.Type, "roles", StringComparison.OrdinalIgnoreCase))
+                    .SelectMany(static claim => ExpandRoleValues(claim.Value))
+                    .Where(static value => !string.IsNullOrWhiteSpace(value))
+                    .Select(static value => value.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                foreach (var role in normalizedRoles)
+                {
+                    var exists = identity.Claims.Any(claim =>
+                        claim.Type == ClaimTypes.Role &&
+                        string.Equals(claim.Value, role, StringComparison.OrdinalIgnoreCase));
+
+                    if (!exists)
+                        identity.AddClaim(new Claim(ClaimTypes.Role, role));
                 }
 
                 return Task.CompletedTask;
@@ -143,7 +174,14 @@ app.MapGet("/health", () => Results.Ok(new
     status = "healthy"
 }));
 
-app.MapGet("/webrtc/ice-servers", [Authorize] (ClaimsPrincipal user, IIceConfigurationProvider iceConfigurationProvider) =>
+app.MapGet("/webrtc/ice-servers", GetIceServers).RequireAuthorization();
+app.MapGet("/call/webrtc/ice-servers", GetIceServers).RequireAuthorization();
+
+app.MapHub<CallHub>("/hub").RequireAuthorization();
+
+app.Run();
+
+static IResult GetIceServers(ClaimsPrincipal user, IIceConfigurationProvider iceConfigurationProvider)
 {
     var userId = user.FindFirst("sub")?.Value
                  ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -153,9 +191,46 @@ app.MapGet("/webrtc/ice-servers", [Authorize] (ClaimsPrincipal user, IIceConfigu
 
     var iceConfiguration = iceConfigurationProvider.GetForUser(userId);
     return Results.Ok(iceConfiguration);
-}).RequireAuthorization();
+}
 
-app.MapHub<CallHub>("/hub").RequireAuthorization();
+static IEnumerable<string> ExpandRoleValues(string rawRoleValue)
+{
+    if (string.IsNullOrWhiteSpace(rawRoleValue))
+        return Array.Empty<string>();
 
-app.Run();
+    var trimmed = rawRoleValue.Trim();
+
+    if (trimmed.StartsWith('[', StringComparison.Ordinal) &&
+        trimmed.EndsWith(']', StringComparison.Ordinal))
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(trimmed);
+            if (document.RootElement.ValueKind == JsonValueKind.Array)
+            {
+                return document.RootElement
+                    .EnumerateArray()
+                    .Where(static element => element.ValueKind == JsonValueKind.String)
+                    .Select(static element => element.GetString())
+                    .Where(static value => !string.IsNullOrWhiteSpace(value))
+                    .Cast<string>()
+                    .ToArray();
+            }
+        }
+        catch (JsonException)
+        {
+            // Fallback to plain string parsing when claim is not valid JSON.
+        }
+    }
+
+    if (trimmed.Contains(',', StringComparison.Ordinal))
+    {
+        return trimmed
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .ToArray();
+    }
+
+    return new[] { trimmed };
+}
 

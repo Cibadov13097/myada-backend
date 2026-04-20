@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using CallService.Api.Realtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -43,12 +44,14 @@ public class CallHub : Hub
         if (!string.IsNullOrWhiteSpace(dispatcherInboxGroup))
             await Groups.AddToGroupAsync(connection.ConnectionId, dispatcherInboxGroup);
 
-        var roles = Context.User?.Claims
-            .Where(c => c.Type == ClaimTypes.Role)
-            .Select(c => c.Value)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray() ?? Array.Empty<string>();
+        var roles = GetRoleValues(Context.User);
         var iceConfiguration = _iceConfigurationProvider.GetForUser(connection.UserId);
+
+        _logger.LogInformation(
+            "Connection established. ConnectionId={ConnectionId}, UserId={UserId}, IsDispatcher={IsDispatcher}",
+            connection.ConnectionId,
+            connection.UserId,
+            connection.IsDispatcher);
 
         await Clients.Caller.SendAsync("Connected", new
         {
@@ -67,6 +70,15 @@ public class CallHub : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var disconnected = await _stateStore.RemoveConnectionAsync(Context.ConnectionId);
+
+        if (disconnected?.Connection is not null)
+        {
+            _logger.LogInformation(
+                "Connection disconnected. ConnectionId={ConnectionId}, UserId={UserId}, RoomId={RoomId}",
+                disconnected.Connection.ConnectionId,
+                disconnected.Connection.UserId,
+                disconnected.RoomId ?? "<none>");
+        }
 
         if (disconnected?.Connection.IsDispatcher == true)
         {
@@ -95,6 +107,12 @@ public class CallHub : Hub
 
         var caller = await GetCurrentConnectionOrThrowAsync();
         dispatcherUserId = dispatcherUserId.Trim();
+
+        _logger.LogInformation(
+            "Call request created by caller {CallerUserId} ({CallerConnectionId}) targeting dispatcher {DispatcherUserId}",
+            caller.UserId,
+            caller.ConnectionId,
+            dispatcherUserId);
 
         if (string.Equals(caller.UserId, dispatcherUserId, StringComparison.Ordinal))
             throw new HubException("You cannot call yourself.");
@@ -126,6 +144,14 @@ public class CallHub : Hub
         };
 
         await _stateStore.CreatePendingCallAsync(pendingCall);
+
+        _logger.LogInformation(
+            "Pending call state saved. CallId={CallId}, RoomId={RoomId}, Caller={CallerUserId}, Dispatcher={DispatcherUserId}, ExpiresAtUtc={ExpiresAtUtc:o}",
+            pendingCall.CallId,
+            pendingCall.RoomId,
+            pendingCall.CallerUserId,
+            pendingCall.DispatcherUserId,
+            pendingCall.ExpiresAtUtc);
 
         var incomingPayload = new IncomingCallDto(
             pendingCall.CallId,
@@ -233,6 +259,14 @@ public class CallHub : Hub
         var participants = await GetParticipantDtosAsync(accepted.RoomId);
         var acceptedAtUtc = accepted.ResolvedAtUtc ?? DateTime.UtcNow;
 
+        _logger.LogInformation(
+            "Call accepted. CallId={CallId}, RoomId={RoomId}, DispatcherConnectionId={DispatcherConnectionId}, CallerConnectionId={CallerConnectionId}, ParticipantCount={ParticipantCount}",
+            accepted.CallId,
+            accepted.RoomId,
+            dispatcher.ConnectionId,
+            callerConnection.ConnectionId,
+            participants.Length);
+
         var payload = new CallAcceptedDto(
             accepted.CallId,
             accepted.RoomId,
@@ -337,6 +371,12 @@ public class CallHub : Hub
         var roomId = await GetCurrentRoomOrThrowAsync(sender.ConnectionId);
         await EnsureTargetInSameRoomAsync(targetConnectionId, roomId);
 
+        _logger.LogInformation(
+            "Forwarding offer. RoomId={RoomId}, FromConnectionId={FromConnectionId}, ToConnectionId={ToConnectionId}",
+            roomId,
+            sender.ConnectionId,
+            targetConnectionId);
+
         await _hubContext.Clients.Client(targetConnectionId).SendAsync(
             "ReceiveOffer",
             new SignalDescriptionDto(roomId, sender.ConnectionId, sender.UserId, sdp));
@@ -353,6 +393,12 @@ public class CallHub : Hub
         var sender = await GetCurrentConnectionOrThrowAsync();
         var roomId = await GetCurrentRoomOrThrowAsync(sender.ConnectionId);
         await EnsureTargetInSameRoomAsync(targetConnectionId, roomId);
+
+        _logger.LogInformation(
+            "Forwarding answer. RoomId={RoomId}, FromConnectionId={FromConnectionId}, ToConnectionId={ToConnectionId}",
+            roomId,
+            sender.ConnectionId,
+            targetConnectionId);
 
         await _hubContext.Clients.Client(targetConnectionId).SendAsync(
             "ReceiveAnswer",
@@ -375,6 +421,15 @@ public class CallHub : Hub
         var roomId = await GetCurrentRoomOrThrowAsync(sender.ConnectionId);
         await EnsureTargetInSameRoomAsync(targetConnectionId, roomId);
 
+        _logger.LogDebug(
+            "Forwarding ICE candidate. RoomId={RoomId}, FromConnectionId={FromConnectionId}, ToConnectionId={ToConnectionId}, CandidateLength={CandidateLength}, SdpMid={SdpMid}, SdpMLineIndex={SdpMLineIndex}",
+            roomId,
+            sender.ConnectionId,
+            targetConnectionId,
+            candidate.Length,
+            sdpMid ?? "<null>",
+            sdpMLineIndex);
+
         await _hubContext.Clients.Client(targetConnectionId).SendAsync(
             "ReceiveIceCandidate",
             new IceCandidateDto(
@@ -391,6 +446,12 @@ public class CallHub : Hub
         var sender = await GetCurrentConnectionOrThrowAsync();
         var roomId = await GetCurrentRoomOrThrowAsync(sender.ConnectionId);
         var participants = await _stateStore.GetRoomParticipantsAsync(roomId);
+
+        _logger.LogInformation(
+            "Ending call. RoomId={RoomId}, EndedByConnectionId={ConnectionId}, ParticipantCount={ParticipantCount}",
+            roomId,
+            sender.ConnectionId,
+            participants.Count);
 
         await _hubContext.Clients.Group(roomId).SendAsync("CallEnded", new
         {
@@ -533,9 +594,66 @@ public class CallHub : Hub
 
     private static bool IsDispatcher(ClaimsPrincipal user)
     {
-        return user.Claims.Any(c =>
-            c.Type == ClaimTypes.Role &&
-            string.Equals(c.Value, DispatcherRole, StringComparison.OrdinalIgnoreCase));
+        return GetRoleValues(user).Any(role =>
+            string.Equals(role, DispatcherRole, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string[] GetRoleValues(ClaimsPrincipal? user)
+    {
+        if (user is null)
+            return Array.Empty<string>();
+
+        return user.Claims
+            .Where(claim =>
+                claim.Type == ClaimTypes.Role ||
+                string.Equals(claim.Type, "role", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(claim.Type, "roles", StringComparison.OrdinalIgnoreCase))
+            .SelectMany(claim => ExpandRoleValues(claim.Value))
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static IEnumerable<string> ExpandRoleValues(string rawRoleValue)
+    {
+        if (string.IsNullOrWhiteSpace(rawRoleValue))
+            return Array.Empty<string>();
+
+        var trimmed = rawRoleValue.Trim();
+
+        if (trimmed.StartsWith('[', StringComparison.Ordinal) &&
+            trimmed.EndsWith(']', StringComparison.Ordinal))
+        {
+            try
+            {
+                using var document = JsonDocument.Parse(trimmed);
+                if (document.RootElement.ValueKind == JsonValueKind.Array)
+                {
+                    return document.RootElement
+                        .EnumerateArray()
+                        .Where(element => element.ValueKind == JsonValueKind.String)
+                        .Select(element => element.GetString())
+                        .Where(value => !string.IsNullOrWhiteSpace(value))
+                        .Cast<string>()
+                        .ToArray();
+                }
+            }
+            catch (JsonException)
+            {
+                // Fallback to plain string parsing when claim is not valid JSON.
+            }
+        }
+
+        if (trimmed.Contains(',', StringComparison.Ordinal))
+        {
+            return trimmed
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(value => !string.IsNullOrWhiteSpace(value))
+                .ToArray();
+        }
+
+        return new[] { trimmed };
     }
 
     private int GetInviteTimeoutSeconds()

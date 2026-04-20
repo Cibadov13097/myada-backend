@@ -62,6 +62,45 @@ Docker env keys used by current compose setup:
 - `TURN_EXTERNAL_IP`: public IP coturn advertises (default `127.0.0.1`)
 - `TURN_SHARED_SECRET`: shared secret used by both coturn and CallService credential generation
 
+## Frontend Impact When Coturn Is Added
+
+UI redesign is not required.
+
+Frontend WebRTC setup must ensure it uses backend-issued ICE config:
+- If your frontend already fetches `GET /call/webrtc/ice-servers` (or calls hub `GetIceConfiguration()`) and passes `iceServers` into `RTCPeerConnection`, no code change is required.
+- If your frontend currently uses hardcoded STUN/TURN (or no TURN), update call setup to use dynamic ICE config from backend before creating `RTCPeerConnection`.
+
+Minimum expected client flow:
+1. Get JWT token.
+2. Fetch `GET /call/webrtc/ice-servers`.
+3. Create `new RTCPeerConnection({ iceServers })`.
+4. Continue signaling via `SendOffer` / `SendAnswer` / `SendIceCandidate`.
+
+## Coturn + Backend Runtime Verification
+
+Run these checks on deployment host:
+
+```bash
+docker compose ps coturn callservice apigateway
+docker logs --tail=100 myada-coturn
+docker logs --tail=100 call-service
+```
+
+Verify ICE endpoint response is non-empty:
+
+```bash
+curl -H "Authorization: Bearer <JWT>" http://localhost:5000/call/webrtc/ice-servers
+```
+
+Expected:
+- `iceServers` contains at least one entry.
+- Entry has `urls` with `stun:` and/or `turn:`.
+- Entry includes non-empty `username` and `credential`.
+
+Production requirement:
+- Do not leave `TURN_PUBLIC_HOST=localhost` or `TURN_EXTERNAL_IP=127.0.0.1` in public deployments.
+- Set both to your reachable public domain/IP so external clients can use TURN.
+
 ## Transport
 
 SignalR negotiate endpoint:
