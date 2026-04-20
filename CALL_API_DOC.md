@@ -58,8 +58,10 @@ Payload example:
 ```
 
 Docker env keys used by current compose setup:
-- `TURN_PUBLIC_HOST`: host/domain clients use in ICE URLs (default `localhost`)
-- `TURN_EXTERNAL_IP`: public IP coturn advertises (default `127.0.0.1`)
+- `TURN_PUBLIC_HOST`: host/domain clients use in ICE URLs (default `13.60.31.141`)
+- `TURN_EXTERNAL_IP`: public IP coturn advertises (default `13.60.31.141`, or NAT mapping `PUBLIC_IP/CONTAINER_IP`)
+- `TURN_LISTENING_IP`: coturn listener interface (default `0.0.0.0`)
+- `TURN_RELAY_IP`: coturn relay interface (default `0.0.0.0`)
 - `TURN_SHARED_SECRET`: shared secret used by both coturn and CallService credential generation
 
 ## Frontend Impact When Coturn Is Added
