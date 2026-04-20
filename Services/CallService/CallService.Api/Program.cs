@@ -200,8 +200,8 @@ static IEnumerable<string> ExpandRoleValues(string rawRoleValue)
 
     var trimmed = rawRoleValue.Trim();
 
-    if (trimmed.StartsWith('[', StringComparison.Ordinal) &&
-        trimmed.EndsWith(']', StringComparison.Ordinal))
+    if (trimmed.StartsWith("[", StringComparison.Ordinal) &&
+        trimmed.EndsWith("]", StringComparison.Ordinal))
     {
         try
         {

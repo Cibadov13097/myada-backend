@@ -622,8 +622,8 @@ public class CallHub : Hub
 
         var trimmed = rawRoleValue.Trim();
 
-        if (trimmed.StartsWith('[', StringComparison.Ordinal) &&
-            trimmed.EndsWith(']', StringComparison.Ordinal))
+        if (trimmed.StartsWith("[", StringComparison.Ordinal) &&
+            trimmed.EndsWith("]", StringComparison.Ordinal))
         {
             try
             {
