@@ -24,6 +24,7 @@ namespace AuthService.API.Controllers
         private readonly SupportStaffProvisioningClient _supportStaffProvisioningClient;
         private readonly NotificationEmailClient _notificationEmailClient;
         private readonly ILogger<AuthController> _logger;
+        private readonly IConfiguration _configuration;
 
         public AuthController(
           UserManager<ApplicationUser> userManager,
@@ -33,7 +34,8 @@ namespace AuthService.API.Controllers
           IRefreshTokenService refreshTokenService,
           SupportStaffProvisioningClient supportStaffProvisioningClient,
           NotificationEmailClient notificationEmailClient,
-          ILogger<AuthController> logger)
+          ILogger<AuthController> logger,
+          IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -43,6 +45,7 @@ namespace AuthService.API.Controllers
             _supportStaffProvisioningClient = supportStaffProvisioningClient;
             _notificationEmailClient = notificationEmailClient;
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet("create-admin")]
@@ -242,8 +245,9 @@ namespace AuthService.API.Controllers
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var subject = "MyADA Password Reset";
-                var body = BuildPasswordResetMessage(user.FirstName, token);
                 var recipientEmail = string.IsNullOrWhiteSpace(user.Email) ? dto.Email.Trim() : user.Email;
+                var resetLink = BuildPasswordResetLink(recipientEmail!, token);
+                var body = BuildPasswordResetMessage(user.FirstName, resetLink);
 
                 var sent = await _notificationEmailClient.SendEmailAsync(
                     recipientEmail!,
@@ -270,16 +274,28 @@ namespace AuthService.API.Controllers
             });
         }
 
-        private static string BuildPasswordResetMessage(string? firstName, string token)
+        private string BuildPasswordResetLink(string email, string token)
+        {
+            var resetPageUrl = _configuration["PasswordReset:ClientResetUrl"];
+            if (string.IsNullOrWhiteSpace(resetPageUrl))
+                resetPageUrl = "http://localhost:3000/reset-password";
+
+            var separator = resetPageUrl.Contains('?') ? "&" : "?";
+            var encodedEmail = Uri.EscapeDataString(email);
+            var encodedToken = Uri.EscapeDataString(token);
+            return $"{resetPageUrl}{separator}email={encodedEmail}&token={encodedToken}";
+        }
+
+        private static string BuildPasswordResetMessage(string? firstName, string resetLink)
         {
             var name = string.IsNullOrWhiteSpace(firstName) ? "User" : firstName.Trim();
             var sb = new StringBuilder();
             sb.AppendLine($"Hello {name},");
             sb.AppendLine();
             sb.AppendLine("We received a request to reset your MyADA password.");
-            sb.AppendLine("Use the following reset token in the reset password form:");
+            sb.AppendLine("Use the following link to reset your password:");
             sb.AppendLine();
-            sb.AppendLine(token);
+            sb.AppendLine(resetLink);
             sb.AppendLine();
             sb.AppendLine("If you did not request this, please ignore this email.");
             return sb.ToString();
@@ -288,16 +304,35 @@ namespace AuthService.API.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
+            var email = dto.Email?.Trim();
+            if (string.IsNullOrWhiteSpace(email))
+                return BadRequest("Email is required");
+
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 return NotFound("User not found");
 
-            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
+            var token = NormalizeResetToken(dto.Token);
+            var result = await _userManager.ResetPasswordAsync(user, token, dto.NewPassword);
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
             return Ok("Password reset successfully");
+        }
+
+        private static string NormalizeResetToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return string.Empty;
+
+            var normalized = token.Trim();
+
+            // Some clients decode query params and turn '+' into spaces; Identity expects '+'.
+            if (normalized.Contains(' '))
+                normalized = normalized.Replace(" ", "+");
+
+            return normalized;
         }
 
         [HttpPut("change-password")]

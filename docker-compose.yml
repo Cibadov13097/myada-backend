@@ -79,6 +79,7 @@ services:
       NotificationService__BaseUrl: http://notificationservice:8080
       NotificationService__SendEmailPath: /api/v1/notifications/email
       NotificationService__RequestTimeoutSeconds: 10
+      PasswordReset__ClientResetUrl: ${AUTH_PASSWORD_RESET_URL:-http://localhost:3000/reset-password}
     depends_on:
       - myada
       - myada-redis
