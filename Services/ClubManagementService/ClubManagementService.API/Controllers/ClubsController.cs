@@ -17,11 +17,16 @@ public class ClubsController : ControllerBase
 {
     private readonly IClubService _service;
     private readonly IClubNotificationService _notificationService;
+    private readonly IImageStorageService _imageStorageService;
 
-    public ClubsController(IClubService service, IClubNotificationService notificationService)
+    public ClubsController(
+        IClubService service,
+        IClubNotificationService notificationService,
+        IImageStorageService imageStorageService)
     {
         _service = service;
         _notificationService = notificationService;
+        _imageStorageService = imageStorageService;
     }
 
     [HttpGet]
@@ -85,6 +90,11 @@ public class ClubsController : ControllerBase
     public async Task<IActionResult> JoinApplication(int clubId, [FromForm] JoinApplicationRequest request)
     {
         var applicationId = $"MEM-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+        var portfolioUrls = await UploadPortfolioFilesAsync(clubId, applicationId, request.PortfolioFiles);
+        if (portfolioUrls == null)
+        {
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported portfolio file type." });
+        }
 
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
@@ -101,7 +111,8 @@ public class ClubsController : ControllerBase
         {
             applicationId,
             status = "Submitted",
-            submittedAt = DateTime.UtcNow
+            submittedAt = DateTime.UtcNow,
+            portfolioUrls
         });
     }
 
@@ -130,6 +141,30 @@ public class ClubsController : ControllerBase
     {
         var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
+    }
+
+    private async Task<List<string>?> UploadPortfolioFilesAsync(int clubId, string applicationId, List<IFormFile>? files)
+    {
+        if (files == null || files.Count == 0)
+            return new List<string>();
+
+        var uploaded = new List<string>(files.Count);
+        foreach (var file in files.Where(f => f is { Length: > 0 }))
+        {
+            if (!_imageStorageService.IsSupportedImage(file.FileName))
+                return null;
+
+            await using var stream = file.OpenReadStream();
+            var url = await _imageStorageService.UploadImageAsync(
+                stream,
+                file.FileName,
+                file.ContentType,
+                $"clubs/{clubId}/membership-applications/{applicationId}",
+                HttpContext.RequestAborted);
+            uploaded.Add(url);
+        }
+
+        return uploaded;
     }
 
     public sealed class JoinApplicationRequest

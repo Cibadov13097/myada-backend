@@ -100,8 +100,10 @@ services:
       RabbitMQ__Host: rabbitmq
       S3__BucketName: ${LOSTFOUND_S3_BUCKET_NAME:-myada-app}
       S3__Region: ${LOSTFOUND_S3_REGION:-eu-north-1}
-      S3__AccessKey: ${LOSTFOUND_S3_ACCESS_KEY:-}
-      S3__SecretKey: ${LOSTFOUND_S3_SECRET_KEY:-}
+      S3__AccessKey: ${LOSTFOUND_S3_ACCESS_KEY:?LOSTFOUND_S3_ACCESS_KEY_REQUIRED}
+      S3__SecretKey: ${LOSTFOUND_S3_SECRET_KEY:?LOSTFOUND_S3_SECRET_KEY_REQUIRED}
+      AWS_ACCESS_KEY_ID: ${LOSTFOUND_S3_ACCESS_KEY:?LOSTFOUND_S3_ACCESS_KEY_REQUIRED}
+      AWS_SECRET_ACCESS_KEY: ${LOSTFOUND_S3_SECRET_KEY:?LOSTFOUND_S3_SECRET_KEY_REQUIRED}
       S3__ServiceUrl: ${LOSTFOUND_S3_SERVICE_URL:-}
       S3__ForcePathStyle: ${LOSTFOUND_S3_FORCE_PATH_STYLE:-false}
       S3__PublicBaseUrl: ${LOSTFOUND_S3_PUBLIC_BASE_URL:-}
@@ -127,9 +129,22 @@ services:
       Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
       Auth__Issuer: myada-auth
       Auth__Audience: myada-api
+      RabbitMQ__Host: rabbitmq
+      S3__BucketName: ${CLUB_S3_BUCKET_NAME:-myada-app}
+      S3__Region: ${CLUB_S3_REGION:-eu-north-1}
+      S3__AccessKey: ${CLUB_S3_ACCESS_KEY:?CLUB_S3_ACCESS_KEY_REQUIRED}
+      S3__SecretKey: ${CLUB_S3_SECRET_KEY:?CLUB_S3_SECRET_KEY_REQUIRED}
+      AWS_ACCESS_KEY_ID: ${CLUB_S3_ACCESS_KEY:?CLUB_S3_ACCESS_KEY_REQUIRED}
+      AWS_SECRET_ACCESS_KEY: ${CLUB_S3_SECRET_KEY:?CLUB_S3_SECRET_KEY_REQUIRED}
+      S3__ServiceUrl: ${CLUB_S3_SERVICE_URL:-}
+      S3__ForcePathStyle: ${CLUB_S3_FORCE_PATH_STYLE:-false}
+      S3__PublicBaseUrl: ${CLUB_S3_PUBLIC_BASE_URL:-}
+      S3__KeyPrefix: ${CLUB_S3_KEY_PREFIX:-clubs}
+      S3__AutoCreateBucket: ${CLUB_S3_AUTO_CREATE_BUCKET:-false}
     depends_on:
       - authservice
       - myada
+      - rabbitmq
     restart: always
 
   notificationservice:

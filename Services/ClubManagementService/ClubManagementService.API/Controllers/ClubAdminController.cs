@@ -16,8 +16,13 @@ namespace ClubManagementService.API.Controllers;
 public class ClubAdminController : ControllerBase
 {
     private readonly IClubAdminService _clubAdmin;
+    private readonly IImageStorageService _imageStorageService;
 
-    public ClubAdminController(IClubAdminService clubAdmin) => _clubAdmin = clubAdmin;
+    public ClubAdminController(IClubAdminService clubAdmin, IImageStorageService imageStorageService)
+    {
+        _clubAdmin = clubAdmin;
+        _imageStorageService = imageStorageService;
+    }
 
     [HttpGet("dashboard")]
     public async Task<IActionResult> Dashboard(string clubId, CancellationToken cancellationToken)
@@ -306,8 +311,22 @@ public class ClubAdminController : ControllerBase
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> PatchProfile(string clubId, [FromForm] ClubProfilePatchRequest request, CancellationToken cancellationToken)
     {
+        var logoUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/profile/logo", request.LogoFile);
+        if (logoUrl == string.Empty)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported logo file type." });
+
+        var backgroundUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/profile/background", request.BackgroundFile);
+        if (backgroundUrl == string.Empty)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported background file type." });
+
         var result = await _clubAdmin.PatchProfileAsync(clubId, request.SocialLinks, request.FocusAreasJson, cancellationToken).ConfigureAwait(false);
-        return Ok(result);
+        return Ok(new
+        {
+            result.ClubId,
+            result.Updated,
+            logoUrl,
+            backgroundUrl
+        });
     }
 
     [HttpPost("announcements")]
@@ -321,6 +340,23 @@ public class ClubAdminController : ControllerBase
     {
         var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
+    }
+
+    private async Task<string?> UploadFileIfPresentAsync(string directory, IFormFile? file)
+    {
+        if (file == null || file.Length == 0)
+            return null;
+
+        if (!_imageStorageService.IsSupportedImage(file.FileName))
+            return string.Empty;
+
+        await using var stream = file.OpenReadStream();
+        return await _imageStorageService.UploadImageAsync(
+            stream,
+            file.FileName,
+            file.ContentType,
+            directory,
+            HttpContext.RequestAborted);
     }
 
     public sealed class ReasonRequest { public string Reason { get; set; } = string.Empty; }

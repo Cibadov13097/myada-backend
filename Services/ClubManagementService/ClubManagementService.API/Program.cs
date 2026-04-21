@@ -7,6 +7,7 @@ using ClubManagementService.API.Swagger;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Application.Mappings;
+using ClubManagementService.Infrastructure.Options;
 using ClubManagementService.Infrastructure.Persistence.Context;
 using ClubManagementService.Infrastructure.Persistence.Repositories;
 using ClubManagementService.Infrastructure.Persistence.Seed;
@@ -138,6 +139,8 @@ builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<ISubeventService, SubeventService>();
 builder.Services.AddSingleton<IClubNotificationService, ClubNotificationService>();
 builder.Services.AddSingleton<ClubAdminWorkspaceStore>();
+builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection(S3StorageOptions.SectionName));
+builder.Services.AddSingleton<IImageStorageService, S3ImageStorageService>();
 builder.Services.AddScoped<IClubAdminService, ClubAdminService>();
 
 // SPA CORS: explicit origins (required when combining with credentials; avoids invalid AllowAnyOrigin+WithOrigins).

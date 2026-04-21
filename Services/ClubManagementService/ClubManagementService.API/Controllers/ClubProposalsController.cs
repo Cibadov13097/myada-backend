@@ -14,16 +14,28 @@ namespace ClubManagementService.API.Controllers;
 public class ClubProposalsController : ControllerBase
 {
     private readonly IClubNotificationService _notificationService;
+    private readonly IImageStorageService _imageStorageService;
 
-    public ClubProposalsController(IClubNotificationService notificationService)
+    public ClubProposalsController(
+        IClubNotificationService notificationService,
+        IImageStorageService imageStorageService)
     {
         _notificationService = notificationService;
+        _imageStorageService = imageStorageService;
     }
 
     [HttpPost]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> Create([FromForm] ClubProposalRequest request)
     {
+        var logoUrl = await UploadFileIfPresentAsync("club-proposals/logos", request.LogoFile);
+        if (logoUrl == string.Empty)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported logo file type." });
+
+        var constitutionUrl = await UploadFileIfPresentAsync("club-proposals/constitutions", request.ConstitutionFile);
+        if (constitutionUrl == string.Empty)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported constitution file type." });
+
         var proposalId = $"PROP-{DateTime.UtcNow.Year}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
 
         await _notificationService.PublishAsync(new NotificationQueueMessage
@@ -40,8 +52,27 @@ public class ClubProposalsController : ControllerBase
         return Ok(new
         {
             proposalId,
-            status = "pending_review"
+            status = "pending_review",
+            logoUrl,
+            constitutionUrl
         });
+    }
+
+    private async Task<string?> UploadFileIfPresentAsync(string directory, IFormFile? file)
+    {
+        if (file == null || file.Length == 0)
+            return null;
+
+        if (!_imageStorageService.IsSupportedImage(file.FileName))
+            return string.Empty;
+
+        await using var stream = file.OpenReadStream();
+        return await _imageStorageService.UploadImageAsync(
+            stream,
+            file.FileName,
+            file.ContentType,
+            directory,
+            HttpContext.RequestAborted);
     }
 
     private Guid GetCurrentUserIdOrDefault()
