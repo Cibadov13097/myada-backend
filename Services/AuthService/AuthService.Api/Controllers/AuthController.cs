@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text;
 
 namespace AuthService.API.Controllers
 {
@@ -21,6 +22,8 @@ namespace AuthService.API.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly SupportStaffProvisioningClient _supportStaffProvisioningClient;
+        private readonly NotificationEmailClient _notificationEmailClient;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(
           UserManager<ApplicationUser> userManager,
@@ -28,7 +31,9 @@ namespace AuthService.API.Controllers
           TokenService tokenService,
           RoleManager<IdentityRole> roleManager,
           IRefreshTokenService refreshTokenService,
-          SupportStaffProvisioningClient supportStaffProvisioningClient)
+          SupportStaffProvisioningClient supportStaffProvisioningClient,
+          NotificationEmailClient notificationEmailClient,
+          ILogger<AuthController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -36,6 +41,8 @@ namespace AuthService.API.Controllers
             _roleManager = roleManager;
             _refreshTokenService = refreshTokenService;
             _supportStaffProvisioningClient = supportStaffProvisioningClient;
+            _notificationEmailClient = notificationEmailClient;
+            _logger = logger;
         }
 
         [HttpGet("create-admin")]
@@ -221,17 +228,39 @@ namespace AuthService.API.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgetPasswordDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (string.IsNullOrWhiteSpace(dto.Email))
+            {
+                return Ok(new
+                {
+                    message = "If this email exists, password reset link sent."
+                });
+            }
+
+            var user = await _userManager.FindByEmailAsync(dto.Email.Trim());
 
             if (user != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var subject = "MyADA Password Reset";
+                var body = BuildPasswordResetMessage(user.FirstName, token);
+                var recipientEmail = string.IsNullOrWhiteSpace(user.Email) ? dto.Email.Trim() : user.Email;
+
+                var sent = await _notificationEmailClient.SendEmailAsync(
+                    recipientEmail!,
+                    subject,
+                    body,
+                    HttpContext.RequestAborted);
+
+                if (!sent)
+                {
+                    _logger.LogWarning(
+                        "Failed to dispatch forgot-password email via NotificationService for user {UserId}.",
+                        user.Id);
+                }
 
                 return Ok(new
                 {
-                    message = "If this email exists, password reset link sent.",
-                    email = dto.Email,
-                    token
+                    message = "If this email exists, password reset link sent."
                 });
             }
 
@@ -239,6 +268,21 @@ namespace AuthService.API.Controllers
             {
                 message = "If this email exists, password reset link sent."
             });
+        }
+
+        private static string BuildPasswordResetMessage(string? firstName, string token)
+        {
+            var name = string.IsNullOrWhiteSpace(firstName) ? "User" : firstName.Trim();
+            var sb = new StringBuilder();
+            sb.AppendLine($"Hello {name},");
+            sb.AppendLine();
+            sb.AppendLine("We received a request to reset your MyADA password.");
+            sb.AppendLine("Use the following reset token in the reset password form:");
+            sb.AppendLine();
+            sb.AppendLine(token);
+            sb.AppendLine();
+            sb.AppendLine("If you did not request this, please ignore this email.");
+            return sb.ToString();
         }
 
         [HttpPost("reset-password")]

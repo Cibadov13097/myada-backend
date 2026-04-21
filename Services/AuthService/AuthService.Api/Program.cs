@@ -79,6 +79,21 @@ builder.Services.AddHttpClient<SupportStaffProvisioningClient>((sp, client) =>
     client.BaseAddress = new Uri(baseUrl);
     client.Timeout = TimeSpan.FromSeconds(10);
 });
+builder.Services.AddHttpClient<NotificationEmailClient>((sp, client) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = configuration["NotificationService:BaseUrl"] ?? "http://localhost:5004";
+    if (!baseUrl.EndsWith("/", StringComparison.Ordinal))
+        baseUrl += "/";
+
+    var timeout = 10;
+    var configuredTimeout = configuration["NotificationService:RequestTimeoutSeconds"];
+    if (int.TryParse(configuredTimeout, out var parsedTimeout) && parsedTimeout > 0)
+        timeout = parsedTimeout;
+
+    client.BaseAddress = new Uri(baseUrl);
+    client.Timeout = TimeSpan.FromSeconds(timeout);
+});
 
 // 6. JWT Bearer authentication
 builder.Services.AddAuthentication(options =>

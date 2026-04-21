@@ -76,9 +76,13 @@ services:
       SupportService__BaseUrl: http://myadasupportservice:8080
       SupportService__ProvisioningPath: /api/SupportStaffStatuses/internal/provision
       SupportService__ProvisioningKey: myada-internal-key
+      NotificationService__BaseUrl: http://notificationservice:8080
+      NotificationService__SendEmailPath: /api/v1/notifications/email
+      NotificationService__RequestTimeoutSeconds: 10
     depends_on:
       - myada
       - myada-redis
+      - notificationservice
     restart: always
 
   lostfoundservice:
