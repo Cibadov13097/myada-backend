@@ -67,13 +67,13 @@ public class EmailSender : IEmailSender
         if (_smtpOptions.Port <= 0)
             throw new InvalidOperationException("SMTP configuration has invalid Smtp:Port.");
 
-        if (string.IsNullOrWhiteSpace(fromEmail))
-            throw new InvalidOperationException("SMTP configuration is missing Smtp:FromEmail.");
-
         if (!_smtpOptions.UseDefaultCredentials && string.IsNullOrWhiteSpace(_smtpOptions.Username))
             throw new InvalidOperationException("SMTP configuration is missing Smtp:Username.");
 
         if (!_smtpOptions.UseDefaultCredentials && string.IsNullOrWhiteSpace(_smtpOptions.Password))
             throw new InvalidOperationException("SMTP configuration is missing Smtp:Password.");
+
+        if (string.IsNullOrWhiteSpace(fromEmail))
+            throw new InvalidOperationException("SMTP configuration is missing Smtp:FromEmail.");
     }
 }

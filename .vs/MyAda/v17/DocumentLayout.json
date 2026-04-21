@@ -3,6 +3,22 @@
   "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{411EBE9D-1060-4014-A880-39D77A77A241}|Services\\NotificationService\\NotificationService.Infrastructure\\NotificationService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\notificationservice\\notificationservice.infrastructure\\email\\smtpoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{411EBE9D-1060-4014-A880-39D77A77A241}|Services\\NotificationService\\NotificationService.Infrastructure\\NotificationService.Infrastructure.csproj|solutionrelative:services\\notificationservice\\notificationservice.infrastructure\\email\\smtpoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{411EBE9D-1060-4014-A880-39D77A77A241}|Services\\NotificationService\\NotificationService.Infrastructure\\NotificationService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\notificationservice\\notificationservice.infrastructure\\email\\emailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{411EBE9D-1060-4014-A880-39D77A77A241}|Services\\NotificationService\\NotificationService.Infrastructure\\NotificationService.Infrastructure.csproj|solutionrelative:services\\notificationservice\\notificationservice.infrastructure\\email\\emailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\notificationservice\\notificationservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|solutionrelative:services\\notificationservice\\notificationservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\notificationservice\\notificationservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|solutionrelative:services\\notificationservice\\notificationservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -26,10 +42,6 @@
       "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
@@ -45,7 +57,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -57,20 +69,59 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "SmtpOptions.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
+              "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
+              "RelativeToolTip": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-21T21:19:17.6Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Dockerfile",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\Dockerfile",
+              "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\Dockerfile",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\Dockerfile",
+              "RelativeToolTip": "Services\\NotificationService\\NotificationService.Api\\Dockerfile",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-04-21T21:19:13.007Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EmailSender.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
+              "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
+              "RelativeToolTip": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
+              "ViewState": "AgIAAD0AAAAAAAAAAAA5wAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-21T21:18:50.939Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\appsettings.json",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\appsettings.json",
               "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\appsettings.json",
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Api\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-04-21T21:13:32.387Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 5,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
@@ -78,12 +129,11 @@
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-21T21:13:30.94Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T21:13:30.94Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "ClubMembershipsController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
@@ -91,12 +141,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
               "ViewState": "AgIAABQAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-21T20:07:55.942Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T20:07:55.942Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "Microsoft.NET.Sdk.DefaultItems.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
@@ -108,7 +157,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\appsettings.Development.json",
@@ -120,19 +169,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "docker-compose.yml",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
               "RelativeDocumentMoniker": "docker-compose.yml",
               "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
               "RelativeToolTip": "docker-compose.yml",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAAAGMAAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAAPgAAAAAAAAAAAAAABIBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
-              "WhenOpened": "2026-04-21T16:42:08.334Z"
+              "WhenOpened": "2026-04-21T16:42:08.334Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "Dockerfile",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
@@ -144,7 +194,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "S3ImageStorageService.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
@@ -156,7 +206,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",
