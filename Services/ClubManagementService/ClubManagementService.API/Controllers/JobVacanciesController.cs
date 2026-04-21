@@ -76,13 +76,15 @@ public class JobVacanciesController : ControllerBase
         var cvUrl = await UploadCvIfPresentAsync(id, request.CvFile);
         if (cvUrl == string.Empty)
             return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported CV file type." });
+        if (string.IsNullOrWhiteSpace(cvUrl))
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "cvFile is required." });
 
         var created = await _applicationService.CreateAsync(new CreateJobApplicationDto
         {
             JobVacancyId = id,
             ApplicantId = GetCurrentUserIdOrDefault(),
             ExperienceLinks = request.PurposeOfApplication.Trim(),
-            FileUrl = cvUrl ?? string.Empty
+            FileUrl = cvUrl!
         });
 
         return Ok(new { applicationId = $"job:{created.Id}", status = "Submitted", cvUrl });

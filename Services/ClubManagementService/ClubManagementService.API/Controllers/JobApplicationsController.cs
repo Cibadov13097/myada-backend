@@ -14,8 +14,13 @@ namespace ClubManagementService.API.Controllers;
 public class JobApplicationsController : ControllerBase
 {
     private readonly IJobApplicationService _service;
+    private readonly IImageStorageService _imageStorageService;
 
-    public JobApplicationsController(IJobApplicationService service) => _service = service;
+    public JobApplicationsController(IJobApplicationService service, IImageStorageService imageStorageService)
+    {
+        _service = service;
+        _imageStorageService = imageStorageService;
+    }
 
     [HttpGet]
     [AllowAnonymous]
@@ -36,8 +41,23 @@ public class JobApplicationsController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] CreateJobApplicationDto dto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create([FromForm] CreateJobApplicationRequest request)
     {
+        var uploadedCvUrl = await UploadCvIfPresentAsync(request.JobVacancyId, request.CvFile);
+        if (uploadedCvUrl == string.Empty)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported CV file type." });
+        if (string.IsNullOrWhiteSpace(uploadedCvUrl))
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "cvFile is required." });
+
+        var dto = new CreateJobApplicationDto
+        {
+            JobVacancyId = request.JobVacancyId,
+            ApplicantId = request.ApplicantId,
+            ExperienceLinks = request.ExperienceLinks,
+            FileUrl = uploadedCvUrl!
+        };
+
         var created = await _service.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
     }
@@ -56,5 +76,30 @@ public class JobApplicationsController : ControllerBase
     {
         await _service.DeleteAsync(id);
         return NoContent();
+    }
+
+    private async Task<string?> UploadCvIfPresentAsync(int vacancyId, IFormFile? file)
+    {
+        if (file == null || file.Length == 0)
+            return null;
+
+        if (!_imageStorageService.IsSupportedImage(file.FileName))
+            return string.Empty;
+
+        await using var stream = file.OpenReadStream();
+        return await _imageStorageService.UploadImageAsync(
+            stream,
+            file.FileName,
+            file.ContentType,
+            $"vacancies/{vacancyId}/applications/cv",
+            HttpContext.RequestAborted);
+    }
+
+    public sealed class CreateJobApplicationRequest
+    {
+        public int JobVacancyId { get; set; }
+        public Guid ApplicantId { get; set; }
+        public string ExperienceLinks { get; set; } = string.Empty;
+        public IFormFile? CvFile { get; set; }
     }
 }
