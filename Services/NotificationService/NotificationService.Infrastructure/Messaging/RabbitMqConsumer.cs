@@ -1,7 +1,10 @@
+using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NotificationService.Application.Interfaces;
 using NotificationService.Domain.Entities;
 using NotificationService.Domain.Enums;
 using NotificationService.Infrastructure.Persistence;
@@ -10,8 +13,8 @@ using RabbitMQ.Client.Events;
 using Shared.Contracts.Events.LostFound;
 using Shared.Contracts.Events.Notifications;
 using Shared.Contracts.Messaging;
-using System.Text;
-using System.Text.Json;
+
+namespace NotificationService.Infrastructure.Messaging;
 
 public class RabbitMqConsumer : BackgroundService
 {
@@ -19,7 +22,10 @@ public class RabbitMqConsumer : BackgroundService
     private readonly ILogger<RabbitMqConsumer> _logger;
     private readonly ConnectionFactory _factory;
 
-    public RabbitMqConsumer(IServiceScopeFactory scopeFactory, IConfiguration configuration, ILogger<RabbitMqConsumer> logger)
+    public RabbitMqConsumer(
+        IServiceScopeFactory scopeFactory,
+        IConfiguration configuration,
+        ILogger<RabbitMqConsumer> logger)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
@@ -49,29 +55,25 @@ public class RabbitMqConsumer : BackgroundService
             try
             {
                 var rawMessage = Encoding.UTF8.GetString(ea.Body.ToArray());
-                var notification = BuildNotification(rawMessage);
+                var envelope = BuildNotification(rawMessage);
 
-                if (notification is null)
+                if (envelope is null)
                 {
                     _logger.LogWarning("Unsupported notification payload received from queue.");
                     channel.BasicAck(ea.DeliveryTag, false);
                     return;
                 }
 
-                using var scope = _scopeFactory.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
-
-                dbContext.Notifications.Add(notification);
-                await dbContext.SaveChangesAsync(stoppingToken);
-
+                await PersistAndDispatchAsync(envelope, stoppingToken);
                 channel.BasicAck(ea.DeliveryTag, false);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
                 channel.BasicNack(ea.DeliveryTag, false, true);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to process notification queue message.");
                 channel.BasicNack(ea.DeliveryTag, false, true);
             }
         };
@@ -91,19 +93,68 @@ public class RabbitMqConsumer : BackgroundService
         }
     }
 
-    private static Notification? BuildNotification(string rawMessage)
+    private async Task PersistAndDispatchAsync(NotificationEnvelope envelope, CancellationToken cancellationToken)
+    {
+        using var scope = _scopeFactory.CreateScope();
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
+        dbContext.Notifications.Add(envelope.Notification);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        if (envelope.Notification.NotificationType != NotificationType.Email)
+            return;
+
+        if (string.IsNullOrWhiteSpace(envelope.RecipientEmail))
+        {
+            _logger.LogWarning(
+                "Email notification was requested but no recipient email was provided. Type: {Type}",
+                envelope.Notification.Type);
+            return;
+        }
+
+        var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+
+        try
+        {
+            await notificationService.SendEmailAsync(
+                envelope.RecipientEmail,
+                envelope.Subject,
+                envelope.Notification.Message,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Failed to send email notification to {Recipient}. Notification was still persisted.",
+                envelope.RecipientEmail);
+        }
+    }
+
+    private static NotificationEnvelope? BuildNotification(string rawMessage)
     {
         try
         {
             var queueMessage = JsonSerializer.Deserialize<NotificationQueueMessage>(rawMessage);
             if (queueMessage != null && (!string.IsNullOrWhiteSpace(queueMessage.Type) || !string.IsNullOrWhiteSpace(queueMessage.Message)))
             {
-                return new Notification
+                var createdAt = queueMessage.OccurredAtUtc == default ? DateTime.UtcNow : queueMessage.OccurredAtUtc;
+                var notificationType = ResolveNotificationType(queueMessage.Channel, queueMessage.RecipientEmail);
+                var fallbackType = string.IsNullOrWhiteSpace(queueMessage.Type) ? "Club Notification" : queueMessage.Type;
+
+                return new NotificationEnvelope
                 {
-                    Type = string.IsNullOrWhiteSpace(queueMessage.Type) ? "Club Notification" : queueMessage.Type,
-                    Message = string.IsNullOrWhiteSpace(queueMessage.Message) ? "Notification received." : queueMessage.Message,
-                    NotificationType = NotificationType.Push,
-                    CreatedAt = queueMessage.OccurredAtUtc == default ? DateTime.UtcNow : queueMessage.OccurredAtUtc
+                    Notification = new Notification
+                    {
+                        Type = fallbackType,
+                        Message = string.IsNullOrWhiteSpace(queueMessage.Message) ? "Notification received." : queueMessage.Message,
+                        NotificationType = notificationType,
+                        CreatedAt = createdAt
+                    },
+                    RecipientEmail = queueMessage.RecipientEmail,
+                    Subject = string.IsNullOrWhiteSpace(queueMessage.EmailSubject)
+                        ? fallbackType
+                        : queueMessage.EmailSubject
                 };
             }
         }
@@ -117,12 +168,16 @@ public class RabbitMqConsumer : BackgroundService
             var lostFoundEvent = JsonSerializer.Deserialize<LostItemCreatedEvent>(rawMessage);
             if (lostFoundEvent != null && !string.IsNullOrWhiteSpace(lostFoundEvent.Name))
             {
-                return new Notification
+                return new NotificationEnvelope
                 {
-                    Type = "New Lost Item",
-                    Message = $"{lostFoundEvent.Name} at {lostFoundEvent.Location}",
-                    NotificationType = NotificationType.Push,
-                    CreatedAt = DateTime.UtcNow
+                    Notification = new Notification
+                    {
+                        Type = "New Lost Item",
+                        Message = $"{lostFoundEvent.Name} at {lostFoundEvent.Location}",
+                        NotificationType = NotificationType.Push,
+                        CreatedAt = DateTime.UtcNow
+                    },
+                    Subject = "New Lost Item"
                 };
             }
         }
@@ -132,5 +187,25 @@ public class RabbitMqConsumer : BackgroundService
         }
 
         return null;
+    }
+
+    private static NotificationType ResolveNotificationType(string? channel, string? recipientEmail)
+    {
+        if (!string.IsNullOrWhiteSpace(channel) &&
+            Enum.TryParse<NotificationType>(channel, true, out var parsedChannel))
+        {
+            return parsedChannel;
+        }
+
+        return string.IsNullOrWhiteSpace(recipientEmail)
+            ? NotificationType.Push
+            : NotificationType.Email;
+    }
+
+    private sealed class NotificationEnvelope
+    {
+        public required Notification Notification { get; init; }
+        public string? RecipientEmail { get; init; }
+        public string Subject { get; init; } = "MyADA Notification";
     }
 }

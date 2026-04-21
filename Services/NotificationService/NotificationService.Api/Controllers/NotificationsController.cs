@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NotificationService.Application.Interfaces;
+using NotificationService.Domain.Entities;
 using NotificationService.Domain.Enums;
 using NotificationService.Infrastructure.Persistence;
+using System.ComponentModel.DataAnnotations;
 
 namespace NotificationService.Api.Controllers;
 
@@ -11,10 +14,14 @@ namespace NotificationService.Api.Controllers;
 public class NotificationsController : ControllerBase
 {
     private readonly NotificationDbContext _dbContext;
+    private readonly INotificationService _notificationService;
 
-    public NotificationsController(NotificationDbContext dbContext)
+    public NotificationsController(
+        NotificationDbContext dbContext,
+        INotificationService notificationService)
     {
         _dbContext = dbContext;
+        _notificationService = notificationService;
     }
 
     [HttpGet]
@@ -105,6 +112,44 @@ public class NotificationsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("email")]
+    public async Task<IActionResult> SendEmail(
+        [FromBody] SendEmailNotificationRequest request,
+        CancellationToken cancellationToken)
+    {
+        var toEmail = request.ToEmail.Trim();
+        var subject = request.Subject.Trim();
+        var message = request.Message.Trim();
+
+        if (toEmail.Length == 0 || subject.Length == 0 || message.Length == 0)
+        {
+            return BadRequest(new
+            {
+                error = "ToEmail, subject and message are required."
+            });
+        }
+
+        await _notificationService.SendEmailAsync(
+            toEmail,
+            subject,
+            message,
+            cancellationToken);
+
+        _dbContext.Notifications.Add(new Notification
+        {
+            Type = string.IsNullOrWhiteSpace(request.Type) ? "Direct Email" : request.Type.Trim(),
+            Message = message,
+            NotificationType = NotificationType.Email,
+            CreatedAt = DateTime.UtcNow
+        });
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return Ok(new
+        {
+            message = "Email notification sent successfully."
+        });
+    }
+
     public sealed class NotificationItemDto
     {
         public Guid Id { get; set; }
@@ -112,5 +157,22 @@ public class NotificationsController : ControllerBase
         public string Message { get; set; } = string.Empty;
         public string Channel { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+    }
+
+    public sealed class SendEmailNotificationRequest
+    {
+        public string? Type { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string ToEmail { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(200)]
+        public string Subject { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(4000)]
+        public string Message { get; set; } = string.Empty;
     }
 }

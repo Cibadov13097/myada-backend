@@ -1,7 +1,10 @@
-
 using Microsoft.EntityFrameworkCore;
+using NotificationService.Application.Interfaces;
+using NotificationService.Infrastructure.Email;
+using NotificationService.Infrastructure.Messaging;
 using NotificationService.Infrastructure.Persistence;
 using NotificationService.Infrastructure.Persistence.Seed;
+using NotificationAppService = NotificationService.Application.Services.NotificationService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,9 @@ builder.Services.AddCors(options =>
 });
 
 
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<INotificationService, NotificationAppService>();
 builder.Services.AddHostedService<RabbitMqConsumer>();
 builder.Services.AddDbContext<NotificationDbContext>(options=>
 {
