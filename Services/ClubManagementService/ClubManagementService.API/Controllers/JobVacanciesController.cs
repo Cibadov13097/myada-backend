@@ -102,6 +102,11 @@ public class JobVacanciesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateJobVacancyDto dto)
     {
+        var postedBy = GetCurrentUserIdOrDefault();
+        if (postedBy == Guid.Empty)
+            return Unauthorized();
+
+        dto.PostedBy = postedBy;
         var created = await _vacancyService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), vacancyId = created.Id.ToString() }, created);
     }

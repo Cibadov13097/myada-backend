@@ -2,6 +2,7 @@ using Asp.Versioning;
 using ClubManagementService.API.Extensions;
 using ClubManagementService.Application.DTOs.EventRegistration;
 using ClubManagementService.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementService.API.Controllers;
@@ -31,8 +32,19 @@ public class EventRegistrationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateEventRegistrationDto dto)
+    [Authorize]
+    public async Task<IActionResult> Create([FromBody] CreateEventRegistrationRequest request)
     {
+        var userId = GetCurrentUserIdOrDefault();
+        if (userId == Guid.Empty)
+            return Unauthorized();
+
+        var dto = new CreateEventRegistrationDto
+        {
+            EventId = request.EventId,
+            UserId = userId
+        };
+
         var created = await _service.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
     }
@@ -42,5 +54,16 @@ public class EventRegistrationsController : ControllerBase
     {
         await _service.DeleteAsync(id);
         return NoContent();
+    }
+
+    private Guid GetCurrentUserIdOrDefault()
+    {
+        var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
+        return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
+    }
+
+    public sealed class CreateEventRegistrationRequest
+    {
+        public int EventId { get; set; }
     }
 }

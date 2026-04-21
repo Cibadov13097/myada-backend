@@ -44,6 +44,10 @@ public class JobApplicationsController : ControllerBase
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> Create([FromForm] CreateJobApplicationRequest request)
     {
+        var applicantId = GetCurrentUserIdOrDefault();
+        if (applicantId == Guid.Empty)
+            return Unauthorized();
+
         var uploadedCvUrl = await UploadCvIfPresentAsync(request.JobVacancyId, request.CvFile);
         if (uploadedCvUrl == string.Empty)
             return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported CV file type." });
@@ -53,7 +57,7 @@ public class JobApplicationsController : ControllerBase
         var dto = new CreateJobApplicationDto
         {
             JobVacancyId = request.JobVacancyId,
-            ApplicantId = request.ApplicantId,
+            ApplicantId = applicantId,
             ExperienceLinks = request.ExperienceLinks,
             FileUrl = uploadedCvUrl!
         };
@@ -78,6 +82,12 @@ public class JobApplicationsController : ControllerBase
         return NoContent();
     }
 
+    private Guid GetCurrentUserIdOrDefault()
+    {
+        var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
+        return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
+    }
+
     private async Task<string?> UploadCvIfPresentAsync(int vacancyId, IFormFile? file)
     {
         if (file == null || file.Length == 0)
@@ -98,7 +108,6 @@ public class JobApplicationsController : ControllerBase
     public sealed class CreateJobApplicationRequest
     {
         public int JobVacancyId { get; set; }
-        public Guid ApplicantId { get; set; }
         public string ExperienceLinks { get; set; } = string.Empty;
         public IFormFile? CvFile { get; set; }
     }

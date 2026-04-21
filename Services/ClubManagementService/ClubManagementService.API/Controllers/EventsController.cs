@@ -171,6 +171,11 @@ public class EventsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateEventDto dto)
     {
+        var approvedBy = GetCurrentUserIdOrDefault();
+        if (approvedBy == Guid.Empty)
+            return Unauthorized();
+
+        dto.ApprovedBy = approvedBy;
         var created = await _eventService.CreateAsync(dto);
         var v = HttpContext.GetClubApiMajorVersion();
         return CreatedAtAction(nameof(GetById), new { version = v, eventId = created.Id }, created);

@@ -119,6 +119,11 @@ public class ClubsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateClubDto dto)
     {
+        var approvedBy = GetCurrentUserIdOrDefault();
+        if (approvedBy == Guid.Empty)
+            return Unauthorized();
+
+        dto.ApprovedBy = approvedBy;
         var created = await _service.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), clubId = created.Id }, created);
     }
