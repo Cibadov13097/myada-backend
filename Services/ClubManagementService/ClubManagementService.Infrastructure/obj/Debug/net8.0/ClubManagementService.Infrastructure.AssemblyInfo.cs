@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ClubManagementService.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+988ccb240494e6b879813422b693b95bd08bd0fa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0468c24a659127de5d285eb3589bbd4f79396cee")]
 [assembly: System.Reflection.AssemblyProductAttribute("ClubManagementService.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClubManagementService.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
