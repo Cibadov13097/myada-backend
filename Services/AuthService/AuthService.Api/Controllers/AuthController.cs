@@ -7,6 +7,7 @@ using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
 using System.Text;
 
@@ -282,7 +283,7 @@ namespace AuthService.API.Controllers
 
             var separator = resetPageUrl.Contains('?') ? "&" : "?";
             var encodedEmail = Uri.EscapeDataString(email);
-            var encodedToken = Uri.EscapeDataString(token);
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
             return $"{resetPageUrl}{separator}email={encodedEmail}&token={encodedToken}";
         }
 
@@ -328,9 +329,24 @@ namespace AuthService.API.Controllers
 
             var normalized = token.Trim();
 
+            if (normalized.Contains('%'))
+                normalized = Uri.UnescapeDataString(normalized);
+
             // Some clients decode query params and turn '+' into spaces; Identity expects '+'.
             if (normalized.Contains(' '))
                 normalized = normalized.Replace(" ", "+");
+
+            try
+            {
+                var bytes = WebEncoders.Base64UrlDecode(normalized);
+                var decoded = Encoding.UTF8.GetString(bytes);
+                if (!string.IsNullOrWhiteSpace(decoded))
+                    return decoded;
+            }
+            catch (FormatException)
+            {
+                // Legacy plain token format; keep normalized value.
+            }
 
             return normalized;
         }
