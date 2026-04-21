@@ -13,20 +13,33 @@ public static class LostFoundDbSeeder
 
     public static async Task SeedAsync(LostFoundDbContext db, CancellationToken cancellationToken = default)
     {
-        if (!await db.Categories.AnyAsync(cancellationToken).ConfigureAwait(false))
+        var now = DateTime.UtcNow;
+        var requiredCategoryNames = new[]
         {
-            var now = DateTime.UtcNow;
-            var names = new[]
-            {
-                "Electronics & gadgets",
-                "ID cards, keys & wallets",
-                "Books & course materials",
-                "Clothing & bags",
-                "Sports & water bottles",
-                "Other"
-            };
+            "Electronics & gadgets",
+            "ID cards, keys & wallets",
+            "Books & course materials",
+            "Clothing & bags",
+            "Sports & water bottles",
+            "Other"
+        };
 
-            foreach (var name in names)
+        var existingCategories = await db.Categories
+            .AsNoTracking()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var existingNameSet = new HashSet<string>(
+            existingCategories.Select(x => x.Name),
+            StringComparer.OrdinalIgnoreCase);
+
+        var missingCategoryNames = requiredCategoryNames
+            .Where(name => !existingNameSet.Contains(name))
+            .ToList();
+
+        if (missingCategoryNames.Count > 0)
+        {
+            foreach (var name in missingCategoryNames)
             {
                 await db.Categories.AddAsync(
                     new Category { Name = name, CreatedAt = now },
@@ -38,16 +51,44 @@ public static class LostFoundDbSeeder
 
         var categoryByName = await db.Categories
             .AsNoTracking()
-            .ToDictionaryAsync(c => c.Name, c => c.Id, cancellationToken)
+            .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
+
+        var categoryIdByName = categoryByName
+            .GroupBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First().Id, StringComparer.OrdinalIgnoreCase);
+
+        async Task<int> GetCategoryIdAsync(params string[] preferredNames)
+        {
+            foreach (var name in preferredNames)
+            {
+                if (categoryIdByName.TryGetValue(name, out var existingId))
+                {
+                    return existingId;
+                }
+            }
+
+            var created = new Category
+            {
+                Name = preferredNames[0],
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await db.Categories.AddAsync(created, cancellationToken).ConfigureAwait(false);
+            await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+            categoryIdByName[created.Name] = created.Id;
+            return created.Id;
+        }
+
+        var electronics = await GetCategoryIdAsync("Electronics & gadgets", "Electronics").ConfigureAwait(false);
+        var idCat = await GetCategoryIdAsync("ID cards, keys & wallets", "Documents").ConfigureAwait(false);
+        var books = await GetCategoryIdAsync("Books & course materials").ConfigureAwait(false);
+        var clothing = await GetCategoryIdAsync("Clothing & bags", "Personal Items").ConfigureAwait(false);
+        var other = await GetCategoryIdAsync("Other", "Accessories").ConfigureAwait(false);
 
         if (!await db.LostItems.AnyAsync(cancellationToken).ConfigureAwait(false))
         {
-            var electronics = categoryByName["Electronics & gadgets"];
-            var idCat = categoryByName["ID cards, keys & wallets"];
-            var books = categoryByName["Books & course materials"];
-            var clothing = categoryByName["Clothing & bags"];
-
             var lost = new[]
             {
                 new LostItem
@@ -98,10 +139,6 @@ public static class LostFoundDbSeeder
 
         if (!await db.FoundItems.AnyAsync(cancellationToken).ConfigureAwait(false))
         {
-            var electronics = categoryByName["Electronics & gadgets"];
-            var idCat = categoryByName["ID cards, keys & wallets"];
-            var other = categoryByName["Other"];
-
             var found = new[]
             {
                 new FoundItem

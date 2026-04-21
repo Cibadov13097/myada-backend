@@ -96,6 +96,7 @@ services:
       ConnectionStrings__Develop: Host=myada;Port=5432;Database=LostFoundDb;Username=postgres;Password=123
       Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
       Auth__PublicKeyPath: /keys/public.pem
+      LocationBaseUrl__Url: http://locationservice:8080/
       RabbitMQ__Host: rabbitmq
       S3__BucketName: ${LOSTFOUND_S3_BUCKET_NAME:-myada-app}
       S3__Region: ${LOSTFOUND_S3_REGION:-eu-central-1}
