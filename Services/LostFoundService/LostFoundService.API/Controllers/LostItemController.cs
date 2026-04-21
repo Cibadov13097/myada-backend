@@ -13,7 +13,15 @@ namespace LostFoundService.Api.Controllers
     public class LostItemController : ControllerBase
     {
         private readonly ILostItemService _service;
-        public LostItemController(ILostItemService service) => _service = service;
+        private readonly IImageStorageService _imageStorageService;
+
+        public LostItemController(
+            ILostItemService service,
+            IImageStorageService imageStorageService)
+        {
+            _service = service;
+            _imageStorageService = imageStorageService;
+        }
 
 
         [HttpGet]
@@ -38,6 +46,17 @@ namespace LostFoundService.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] AddLostItemDto dto)
         {
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items");
+            if (uploadedImageUrl == string.Empty)
+            {
+                return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
+            }
+
+            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
+            {
+                dto.Image = uploadedImageUrl;
+            }
+
             var created = await _service.AddLostItemAsync(dto, User.GetUserId());
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -46,7 +65,20 @@ namespace LostFoundService.Api.Controllers
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] UpdateLostItemDto dto)
-        => Ok(await _service.UpdateLostItemAsync(id, dto, User.GetUserId()));
+        {
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items");
+            if (uploadedImageUrl == string.Empty)
+            {
+                return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
+            }
+
+            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
+            {
+                dto.Image = uploadedImageUrl;
+            }
+
+            return Ok(await _service.UpdateLostItemAsync(id, dto, User.GetUserId()));
+        }
 
 
         [Authorize]
@@ -55,6 +87,38 @@ namespace LostFoundService.Api.Controllers
         {
             await _service.DeleteLostItemAsync(id, User.GetUserId());
             return NoContent();
+        }
+
+        private async Task<string?> UploadFormImageIfPresentAsync(string directory)
+        {
+            if (!Request.HasFormContentType)
+            {
+                return null;
+            }
+
+            var form = await Request.ReadFormAsync();
+            var file = form.Files.GetFile("imageFile")
+                ?? form.Files.GetFile("image")
+                ?? form.Files.GetFile("photo")
+                ?? form.Files.FirstOrDefault();
+
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
+
+            if (!_imageStorageService.IsSupportedImage(file.FileName))
+            {
+                return string.Empty;
+            }
+
+            await using var stream = file.OpenReadStream();
+            return await _imageStorageService.UploadImageAsync(
+                stream,
+                file.FileName,
+                file.ContentType,
+                directory,
+                HttpContext.RequestAborted);
         }
     }
 }

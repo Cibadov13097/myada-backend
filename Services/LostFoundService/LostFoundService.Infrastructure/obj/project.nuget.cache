@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "r/edn4SJcgI=",
+  "dgSpecHash": "+TcAKElCkKU=",
   "success": true,
   "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cavid\\.nuget\\packages\\automapper\\15.1.0\\automapper.15.1.0.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\awssdk.core\\3.7.401.10\\awssdk.core.3.7.401.10.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\awssdk.s3\\3.7.414\\awssdk.s3.3.7.414.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
@@ -68,5 +70,18 @@
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.22\\microsoft.netcore.app.ref.8.0.22.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.22\\microsoft.aspnetcore.app.ref.8.0.22.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "LostFoundService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. AWSSDK.S3 3.7.414 was resolved instead.",
+      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
+      "libraryId": "AWSSDK.S3",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }

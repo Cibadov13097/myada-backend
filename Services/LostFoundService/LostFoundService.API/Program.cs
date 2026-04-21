@@ -6,6 +6,7 @@ using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Application.Mappings;
 using LostFoundService.Application.Services;
+using LostFoundService.Infrastructure.Options;
 using LostFoundService.Infrastructure.Services;
 using LostFoundService.Infrastructure.Persistence.Context;
 using LostFoundService.Infrastructure.Persistence.Seed;
@@ -150,6 +151,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection(S3StorageOptions.SectionName));
+builder.Services.AddSingleton<IImageStorageService, S3ImageStorageService>();
 
 builder.Services.AddHttpClient<ILocationServiceClient, LocationServiceClient>(client =>
 {

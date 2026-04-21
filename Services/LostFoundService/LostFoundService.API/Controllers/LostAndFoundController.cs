@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Claims;
 using System.Text.Json;
 using LostFoundService.Application.Extensions;
+using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Enums;
 using LostFoundService.Infrastructure.Persistence.Context;
@@ -24,12 +25,14 @@ public class LostAndFoundController : ControllerBase
     };
 
     private readonly LostFoundDbContext _dbContext;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IImageStorageService _imageStorageService;
 
-    public LostAndFoundController(LostFoundDbContext dbContext, IWebHostEnvironment environment)
+    public LostAndFoundController(
+        LostFoundDbContext dbContext,
+        IImageStorageService imageStorageService)
     {
         _dbContext = dbContext;
-        _environment = environment;
+        _imageStorageService = imageStorageService;
     }
 
     [HttpGet("items")]
@@ -498,7 +501,30 @@ public class LostAndFoundController : ControllerBase
 
             if (form.Files.Count > 0)
             {
-                model.Files = form.Files.ToList();
+                var reportFiles = new List<IFormFile>();
+                foreach (var file in form.Files)
+                {
+                    if (string.Equals(file.Name, "intakePhoto", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(file.Name, "intakePhotoFile", StringComparison.OrdinalIgnoreCase))
+                    {
+                        model.IntakePhotoFile = file;
+                        continue;
+                    }
+
+                    if (string.Equals(file.Name, "handoverProof", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(file.Name, "handoverProofFile", StringComparison.OrdinalIgnoreCase))
+                    {
+                        model.HandoverProofFile = file;
+                        continue;
+                    }
+
+                    reportFiles.Add(file);
+                }
+
+                if (reportFiles.Count > 0)
+                {
+                    model.Files = reportFiles;
+                }
             }
 
             return model;
@@ -538,6 +564,18 @@ public class LostAndFoundController : ControllerBase
             }
         }
 
+        var intakePhotoUrl = request.IntakePhotoUrl;
+        if (request.IntakePhotoFile != null)
+        {
+            intakePhotoUrl = await SaveFileAsync(request.IntakePhotoFile, "intake");
+        }
+
+        var handoverProofUrl = request.HandoverProofUrl;
+        if (request.HandoverProofFile != null)
+        {
+            handoverProofUrl = await SaveFileAsync(request.HandoverProofFile, "handover");
+        }
+
         var postedAt = DateTime.UtcNow;
         if (!string.IsNullOrWhiteSpace(request.DateLost) &&
             DateOnly.TryParse(request.DateLost, out var dateOnly))
@@ -572,12 +610,12 @@ public class LostAndFoundController : ControllerBase
             Condition = TryParseCondition(request.Condition, out var parsedCondition) ? parsedCondition : null,
             AdminNotes = request.AdminNotes,
             ReportedColor = request.ReportedColor,
-            IntakePhotoUrl = request.IntakePhotoUrl,
+            IntakePhotoUrl = intakePhotoUrl,
             ConfirmAccuracy = request.ConfirmAccuracy,
             ClaimantName = request.ClaimantName,
             ClaimantStudentId = request.ClaimantStudentId,
             StudentIdVerified = request.StudentIdVerified,
-            HandoverProofUrl = request.HandoverProofUrl,
+            HandoverProofUrl = handoverProofUrl,
             CreatedByUserId = TryGetUserId()
         };
         if (!isAdminCreate)
@@ -655,15 +693,27 @@ public class LostAndFoundController : ControllerBase
             if (string.IsNullOrWhiteSpace(request.CollectionPlace)) Add("collectionPlace", "collectionPlace is required for found reports.");
         }
 
+        var filesToValidate = new List<IFormFile>();
         if (request.Files != null)
         {
-            foreach (var file in request.Files)
+            filesToValidate.AddRange(request.Files);
+        }
+
+        if (request.IntakePhotoFile != null)
+        {
+            filesToValidate.Add(request.IntakePhotoFile);
+        }
+
+        if (request.HandoverProofFile != null)
+        {
+            filesToValidate.Add(request.HandoverProofFile);
+        }
+
+        foreach (var file in filesToValidate)
+        {
+            if (!_imageStorageService.IsSupportedImage(file.FileName))
             {
-                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if (extension != ".png" && extension != ".jpg" && extension != ".jpeg")
-                {
-                    Add("photos", "Only PNG/JPG files are supported.");
-                }
+                Add("photos", "Only PNG/JPG files are supported.");
             }
         }
 
@@ -891,23 +941,20 @@ public class LostAndFoundController : ControllerBase
         return string.Join(", ", parts.Where(x => !string.IsNullOrWhiteSpace(x)));
     }
 
-    private async Task<string> SaveFileAsync(IFormFile file)
+    private async Task<string> SaveFileAsync(IFormFile file, string directory = "items")
     {
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        if (extension != ".png" && extension != ".jpg" && extension != ".jpeg")
+        if (!_imageStorageService.IsSupportedImage(file.FileName))
         {
             return string.Empty;
         }
 
-        var uploadsRoot = Path.Combine(_environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads", "lost-and-found");
-        Directory.CreateDirectory(uploadsRoot);
-
-        var fileName = $"{Guid.NewGuid():N}{extension}";
-        var fullPath = Path.Combine(uploadsRoot, fileName);
-        await using var stream = System.IO.File.Create(fullPath);
-        await file.CopyToAsync(stream);
-
-        return $"{Request.Scheme}://{Request.Host}/uploads/lost-and-found/{fileName}";
+        await using var stream = file.OpenReadStream();
+        return await _imageStorageService.UploadImageAsync(
+            stream,
+            file.FileName,
+            file.ContentType,
+            directory,
+            HttpContext.RequestAborted);
     }
 
     private string? TryGetUserId()
@@ -996,6 +1043,8 @@ public class LostAndFoundController : ControllerBase
         public string? ContactPhone { get; set; }
         public List<string>? PhotoUrls { get; set; }
         public List<IFormFile>? Files { get; set; }
+        public IFormFile? IntakePhotoFile { get; set; }
+        public IFormFile? HandoverProofFile { get; set; }
         public string? CollectionPlace { get; set; }
         public string? Status { get; set; }
         public string? AdminStatus { get; set; }

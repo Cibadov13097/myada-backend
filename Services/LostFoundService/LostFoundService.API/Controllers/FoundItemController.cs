@@ -21,13 +21,17 @@ namespace LostFoundService.Api.Controllers
     {
         private readonly IFoundItemService _service;
         private readonly IMapper _mapper;
+        private readonly IImageStorageService _imageStorageService;
+
         public FoundItemController(
             IFoundItemService foundItemService,
-            IMapper mapper
+            IMapper mapper,
+            IImageStorageService imageStorageService
             )
         {
             _mapper = mapper;
             _service = foundItemService;
+            _imageStorageService = imageStorageService;
         }
 
 
@@ -91,6 +95,16 @@ namespace LostFoundService.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto)
         {
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items");
+            if (uploadedImageUrl == string.Empty)
+            {
+                return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
+            }
+
+            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
+            {
+                dto.ImageUrl = uploadedImageUrl;
+            }
 
 
             var userId = User.GetUserId();
@@ -119,7 +133,17 @@ namespace LostFoundService.Api.Controllers
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] UpdateFoundItemDto dto)
-        {   
+        {
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items");
+            if (uploadedImageUrl == string.Empty)
+            {
+                return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
+            }
+
+            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
+            {
+                dto.ImageUrl = uploadedImageUrl;
+            }
 
             var userId = User.GetUserId();
 
@@ -149,6 +173,38 @@ namespace LostFoundService.Api.Controllers
             await _service.DeleteFoundItemAsync(id, userId);
 
             return NoContent();
+        }
+
+        private async Task<string?> UploadFormImageIfPresentAsync(string directory)
+        {
+            if (!Request.HasFormContentType)
+            {
+                return null;
+            }
+
+            var form = await Request.ReadFormAsync();
+            var file = form.Files.GetFile("imageFile")
+                ?? form.Files.GetFile("image")
+                ?? form.Files.GetFile("photo")
+                ?? form.Files.FirstOrDefault();
+
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
+
+            if (!_imageStorageService.IsSupportedImage(file.FileName))
+            {
+                return string.Empty;
+            }
+
+            await using var stream = file.OpenReadStream();
+            return await _imageStorageService.UploadImageAsync(
+                stream,
+                file.FileName,
+                file.ContentType,
+                directory,
+                HttpContext.RequestAborted);
         }
     }
 }
