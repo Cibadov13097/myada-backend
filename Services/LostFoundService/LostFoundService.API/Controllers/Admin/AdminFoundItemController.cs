@@ -59,18 +59,20 @@ namespace LostFoundService.Api.Controllers.Admin
 
         [Authorize(Roles = "lost_found_leader,admin")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto)
+        public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto, IFormFile? imageFile)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin");
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin", imageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
             }
 
-            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
+            if (string.IsNullOrWhiteSpace(uploadedImageUrl))
             {
-                dto.ImageUrl = uploadedImageUrl;
+                return BadRequest(new { error = "VALIDATION_ERROR", message = "imageFile is required." });
             }
+
+            dto.ImageUrl = uploadedImageUrl;
 
             if (!ModelState.IsValid)
             {
@@ -90,18 +92,16 @@ namespace LostFoundService.Api.Controllers.Admin
 
         [Authorize(Roles = "lost_found_leader,admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id,[FromForm] UpdateFoundItemDto dto)
+        public async Task<IActionResult> Update(int id,[FromForm] UpdateFoundItemDto dto, IFormFile? imageFile)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin");
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin", imageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
             }
 
-            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
-            {
-                dto.ImageUrl = uploadedImageUrl;
-            }
+            // Ignore manual URL updates; image changes must come from uploaded file.
+            dto.ImageUrl = string.IsNullOrWhiteSpace(uploadedImageUrl) ? null : uploadedImageUrl;
 
           
             var adminId = User.GetUserId();
@@ -143,18 +143,17 @@ namespace LostFoundService.Api.Controllers.Admin
             return NoContent();
         }
 
-        private async Task<string?> UploadFormImageIfPresentAsync(string directory)
+        private async Task<string?> UploadFormImageIfPresentAsync(string directory, IFormFile? imageFile)
         {
-            if (!Request.HasFormContentType)
+            var file = imageFile;
+            if (file == null && Request.HasFormContentType)
             {
-                return null;
+                var form = await Request.ReadFormAsync();
+                file = form.Files.GetFile("imageFile")
+                    ?? form.Files.GetFile("image")
+                    ?? form.Files.GetFile("photo")
+                    ?? form.Files.FirstOrDefault();
             }
-
-            var form = await Request.ReadFormAsync();
-            var file = form.Files.GetFile("imageFile")
-                ?? form.Files.GetFile("image")
-                ?? form.Files.GetFile("photo")
-                ?? form.Files.FirstOrDefault();
 
             if (file == null || file.Length == 0)
             {

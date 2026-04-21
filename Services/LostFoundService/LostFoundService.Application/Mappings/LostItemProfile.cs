@@ -16,11 +16,17 @@ namespace LostFoundService.Application.Mappings
 
             CreateMap<AddLostItemDto, LostItem>()
                 .ForMember(d => d.BuildingId, o => o.MapFrom(s => s.BuildingId))
-                .ForMember(d => d.RoomId, o => o.MapFrom(s => s.RoomId));
+                .ForMember(d => d.RoomId, o => o.MapFrom(s => s.RoomId))
+                .ForMember(d => d.ImageUrl, o => o.MapFrom(s => s.Image));
             CreateMap<UpdateLostItemDto, LostItem>()
                 .ForMember(d => d.CategoryId, o => o.Condition(s => s.CategoryId.HasValue))
                 .ForMember(d => d.BuildingId, o => o.Condition(s => s.BuildingId.HasValue))
-                .ForMember(d => d.RoomId, o => o.Condition(s => s.RoomId.HasValue));
+                .ForMember(d => d.RoomId, o => o.Condition(s => s.RoomId.HasValue))
+                .ForMember(d => d.ImageUrl, o =>
+                {
+                    o.PreCondition(s => !string.IsNullOrWhiteSpace(s.Image));
+                    o.MapFrom(s => s.Image);
+                });
         }
     }
 }

@@ -357,7 +357,7 @@ public class LostAndFoundController : ControllerBase
     }
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items/{id:int}/confirm-receipt")]
-    public async Task<IActionResult> ConfirmReceipt(int id, [FromBody] ConfirmReceiptRequest request)
+    public async Task<IActionResult> ConfirmReceipt(int id, [FromForm] ConfirmReceiptRequest request)
     {
         var item = await _dbContext.LostFoundItems.FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -373,7 +373,18 @@ public class LostAndFoundController : ControllerBase
         item.AdminStatus = LostFoundAdminStatus.Received;
         item.StorageBinId = request.StorageBinId;
         item.Condition = parsedCondition;
-        item.IntakePhotoUrl = request.IntakePhotoUrl;
+
+        if (request.IntakePhotoFile != null)
+        {
+            var intakePhotoUrl = await SaveFileAsync(request.IntakePhotoFile, "intake");
+            if (string.IsNullOrWhiteSpace(intakePhotoUrl))
+            {
+                return BadRequest(Error("VALIDATION_ERROR", "Only PNG/JPG files are supported."));
+            }
+
+            item.IntakePhotoUrl = intakePhotoUrl;
+        }
+
         item.ConfirmAccuracy = request.ConfirmAccuracy;
         item.AdminNotes = request.AdminNotes;
         item.ModifiedAt = DateTime.UtcNow;
@@ -385,7 +396,7 @@ public class LostAndFoundController : ControllerBase
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items/{id:int}/complete-delivery")]
-    public async Task<IActionResult> CompleteDelivery(int id, [FromBody] CompleteDeliveryRequest request)
+    public async Task<IActionResult> CompleteDelivery(int id, [FromForm] CompleteDeliveryRequest request)
     {
         var item = await _dbContext.LostFoundItems.FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -397,7 +408,18 @@ public class LostAndFoundController : ControllerBase
         item.ClaimantName = request.ClaimantName;
         item.ClaimantStudentId = request.ClaimantStudentId;
         item.StudentIdVerified = request.StudentIdVerified;
-        item.HandoverProofUrl = request.HandoverProofUrl;
+
+        if (request.HandoverProofFile != null)
+        {
+            var handoverProofUrl = await SaveFileAsync(request.HandoverProofFile, "handover");
+            if (string.IsNullOrWhiteSpace(handoverProofUrl))
+            {
+                return BadRequest(Error("VALIDATION_ERROR", "Only PNG/JPG files are supported."));
+            }
+
+            item.HandoverProofUrl = handoverProofUrl;
+        }
+
         item.DeliveryCompletedAt = DateTime.UtcNow;
         item.ModifiedAt = DateTime.UtcNow;
         item.ModifiedByUserId = TryGetUserId();
@@ -484,20 +506,11 @@ public class LostAndFoundController : ControllerBase
                 Condition = GetForm(form, "condition"),
                 AdminNotes = GetForm(form, "adminNotes"),
                 ReportedColor = GetForm(form, "reportedColor"),
-                IntakePhotoUrl = GetForm(form, "intakePhotoUrl"),
                 ConfirmAccuracy = TryParseBool(GetForm(form, "confirmAccuracy")),
                 ClaimantName = GetForm(form, "claimantName"),
                 ClaimantStudentId = GetForm(form, "claimantStudentId"),
-                StudentIdVerified = TryParseBool(GetForm(form, "studentIdVerified")),
-                HandoverProofUrl = GetForm(form, "handoverProofUrl")
+                StudentIdVerified = TryParseBool(GetForm(form, "studentIdVerified"))
             };
-
-            if (form.TryGetValue("photoUrls", out var photoUrls))
-            {
-                model.PhotoUrls = photoUrls
-                    .SelectMany(x => x.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                    .ToList();
-            }
 
             if (form.Files.Count > 0)
             {
@@ -547,10 +560,6 @@ public class LostAndFoundController : ControllerBase
     private async Task<LostFoundItem> CreateItemAsync(ReportRequest request, LostFoundItemType type, bool isAdminCreate)
     {
         var imageUrls = new List<string>();
-        if (request.PhotoUrls != null)
-        {
-            imageUrls.AddRange(request.PhotoUrls.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
-        }
 
         if (request.Files != null)
         {
@@ -564,13 +573,13 @@ public class LostAndFoundController : ControllerBase
             }
         }
 
-        var intakePhotoUrl = request.IntakePhotoUrl;
+        string? intakePhotoUrl = null;
         if (request.IntakePhotoFile != null)
         {
             intakePhotoUrl = await SaveFileAsync(request.IntakePhotoFile, "intake");
         }
 
-        var handoverProofUrl = request.HandoverProofUrl;
+        string? handoverProofUrl = null;
         if (request.HandoverProofFile != null)
         {
             handoverProofUrl = await SaveFileAsync(request.HandoverProofFile, "handover");
@@ -688,7 +697,7 @@ public class LostAndFoundController : ControllerBase
                 Add("campusLocation", "campusLocation is required when locationType=campus.");
             }
 
-            var totalPhotoCount = (request.PhotoUrls?.Count ?? 0) + (request.Files?.Count ?? 0);
+            var totalPhotoCount = request.Files?.Count ?? 0;
             if (totalPhotoCount == 0) Add("photos", "At least one photo is required for found reports.");
             if (string.IsNullOrWhiteSpace(request.CollectionPlace)) Add("collectionPlace", "collectionPlace is required for found reports.");
         }
@@ -1009,7 +1018,7 @@ public class LostAndFoundController : ControllerBase
     {
         public string StorageBinId { get; set; } = string.Empty;
         public string Condition { get; set; } = string.Empty;
-        public string? IntakePhotoUrl { get; set; }
+        public IFormFile? IntakePhotoFile { get; set; }
         public bool ConfirmAccuracy { get; set; }
         public string? AdminNotes { get; set; }
     }
@@ -1019,7 +1028,7 @@ public class LostAndFoundController : ControllerBase
         public string? ClaimantName { get; set; }
         public string? ClaimantStudentId { get; set; }
         public bool StudentIdVerified { get; set; }
-        public string? HandoverProofUrl { get; set; }
+        public IFormFile? HandoverProofFile { get; set; }
     }
 
     public sealed class ReportRequest
@@ -1041,7 +1050,6 @@ public class LostAndFoundController : ControllerBase
         public string? TimeLost { get; set; }
         public string? ContactName { get; set; }
         public string? ContactPhone { get; set; }
-        public List<string>? PhotoUrls { get; set; }
         public List<IFormFile>? Files { get; set; }
         public IFormFile? IntakePhotoFile { get; set; }
         public IFormFile? HandoverProofFile { get; set; }
@@ -1052,11 +1060,9 @@ public class LostAndFoundController : ControllerBase
         public string? Condition { get; set; }
         public string? AdminNotes { get; set; }
         public string? ReportedColor { get; set; }
-        public string? IntakePhotoUrl { get; set; }
         public bool? ConfirmAccuracy { get; set; }
         public string? ClaimantName { get; set; }
         public string? ClaimantStudentId { get; set; }
         public bool? StudentIdVerified { get; set; }
-        public string? HandoverProofUrl { get; set; }
     }
 }

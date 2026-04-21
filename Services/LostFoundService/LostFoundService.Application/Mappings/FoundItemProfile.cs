@@ -18,7 +18,12 @@ namespace LostFoundService.Application.Mappings
             CreateMap<UpdateFoundItemDto, FoundItem>()
                 .ForMember(d => d.CategoryId, o => o.Condition(s => s.CategoryId.HasValue))
                 .ForMember(d => d.BuildingId, o => o.Condition(s => s.BuildingId.HasValue))
-                .ForMember(d => d.RoomId, o => o.Condition(s => s.RoomId.HasValue));
+                .ForMember(d => d.RoomId, o => o.Condition(s => s.RoomId.HasValue))
+                .ForMember(d => d.ImageUrl, o =>
+                {
+                    o.PreCondition(s => !string.IsNullOrWhiteSpace(s.ImageUrl));
+                    o.MapFrom(s => s.ImageUrl);
+                });
 
             CreateMap<AdminCreateFoundItem, FoundItem>()
                 .ForMember(d => d.BuildingId, o => o.MapFrom(s => s.BuildingId))

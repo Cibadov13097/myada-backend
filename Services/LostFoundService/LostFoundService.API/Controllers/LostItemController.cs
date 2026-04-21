@@ -44,19 +44,20 @@ namespace LostFoundService.Api.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] AddLostItemDto dto)
+        public async Task<IActionResult> Create([FromForm] AddLostItemDto dto, IFormFile? imageFile)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items");
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items", imageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
             }
 
-            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
+            if (string.IsNullOrWhiteSpace(uploadedImageUrl))
             {
-                dto.Image = uploadedImageUrl;
+                return BadRequest(new { error = "VALIDATION_ERROR", message = "imageFile is required." });
             }
 
+            dto.Image = uploadedImageUrl;
             var created = await _service.AddLostItemAsync(dto, User.GetUserId());
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -64,18 +65,16 @@ namespace LostFoundService.Api.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] UpdateLostItemDto dto)
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateLostItemDto dto, IFormFile? imageFile)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items");
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items", imageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
             }
 
-            if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
-            {
-                dto.Image = uploadedImageUrl;
-            }
+            // Ignore manual URL updates; image changes must come from uploaded file.
+            dto.Image = string.IsNullOrWhiteSpace(uploadedImageUrl) ? null : uploadedImageUrl;
 
             return Ok(await _service.UpdateLostItemAsync(id, dto, User.GetUserId()));
         }
@@ -89,18 +88,17 @@ namespace LostFoundService.Api.Controllers
             return NoContent();
         }
 
-        private async Task<string?> UploadFormImageIfPresentAsync(string directory)
+        private async Task<string?> UploadFormImageIfPresentAsync(string directory, IFormFile? imageFile)
         {
-            if (!Request.HasFormContentType)
+            var file = imageFile;
+            if (file == null && Request.HasFormContentType)
             {
-                return null;
+                var form = await Request.ReadFormAsync();
+                file = form.Files.GetFile("imageFile")
+                    ?? form.Files.GetFile("image")
+                    ?? form.Files.GetFile("photo")
+                    ?? form.Files.FirstOrDefault();
             }
-
-            var form = await Request.ReadFormAsync();
-            var file = form.Files.GetFile("imageFile")
-                ?? form.Files.GetFile("image")
-                ?? form.Files.GetFile("photo")
-                ?? form.Files.FirstOrDefault();
 
             if (file == null || file.Length == 0)
             {
