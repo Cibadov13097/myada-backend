@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ClubManagementService.API.Extensions;
+using ClubManagementService.API.Security;
 using ClubManagementService.Application.DTOs.EventRegistration;
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -49,9 +50,44 @@ public class EventRegistrationsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
     }
 
+    [HttpPut("{id:int}")]
+    [Authorize]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateEventRegistrationRequest request)
+    {
+        var userId = GetCurrentUserIdOrDefault();
+        if (userId == Guid.Empty)
+            return Unauthorized();
+
+        var current = await _service.GetByIdAsync(id);
+        if (current == null)
+            return NotFound();
+
+        if (!User.IsMyAdaAdministrator() && current.UserId != userId)
+            return Forbid();
+
+        var updated = await _service.UpdateAsync(id, new UpdateEventRegistrationDto
+        {
+            EventId = request.EventId
+        });
+
+        return Ok(updated);
+    }
+
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
+        var userId = GetCurrentUserIdOrDefault();
+        if (userId == Guid.Empty)
+            return Unauthorized();
+
+        var current = await _service.GetByIdAsync(id);
+        if (current == null)
+            return NotFound();
+
+        if (!User.IsMyAdaAdministrator() && current.UserId != userId)
+            return Forbid();
+
         await _service.DeleteAsync(id);
         return NoContent();
     }
@@ -63,6 +99,11 @@ public class EventRegistrationsController : ControllerBase
     }
 
     public sealed class CreateEventRegistrationRequest
+    {
+        public int EventId { get; set; }
+    }
+
+    public sealed class UpdateEventRegistrationRequest
     {
         public int EventId { get; set; }
     }

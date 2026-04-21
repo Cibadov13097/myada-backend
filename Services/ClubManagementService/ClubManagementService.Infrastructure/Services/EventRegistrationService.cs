@@ -90,6 +90,47 @@ public class EventRegistrationService : IEventRegistrationService
         return _mapper.Map<EventRegistrationDto>(entity);
     }
 
+    public async Task<EventRegistrationDto> UpdateAsync(int id, UpdateEventRegistrationDto dto)
+    {
+        var entity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"EventRegistration {id} not found.");
+
+        _ = await _eventRepository.GetByIdAsync(dto.EventId)
+            ?? throw new KeyNotFoundException($"Event {dto.EventId} was not found.");
+
+        var duplicate = await _repository.GetByEventAndUserAsync(dto.EventId, entity.UserId);
+        if (duplicate != null && duplicate.Id != entity.Id)
+            throw new InvalidOperationException("Already registered for this event.");
+
+        entity.EventId = dto.EventId;
+        await _repository.UpdateAsync(entity);
+
+        try
+        {
+            await _repository.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg)
+        {
+            if (pg.SqlState == "23505")
+                throw new InvalidOperationException("Already registered for this event.");
+            if (pg.SqlState == "23503")
+                throw new KeyNotFoundException($"Event {dto.EventId} was not found.");
+            throw;
+        }
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Registration Updated",
+            Message = $"Registration '{entity.Id}' was updated to event '{entity.EventId}'.",
+            Source = "club-management",
+            Action = "event.registration.updated",
+            EntityType = "event_registration",
+            EntityId = entity.Id.ToString(),
+            ActorUserId = entity.UserId
+        });
+
+        return _mapper.Map<EventRegistrationDto>(entity);
+    }
+
     public async Task DeleteAsync(int id)
     {
         var entity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"EventRegistration {id} not found.");

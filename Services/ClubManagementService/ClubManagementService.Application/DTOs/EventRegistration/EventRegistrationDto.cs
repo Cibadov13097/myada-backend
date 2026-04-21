@@ -12,3 +12,8 @@ public class CreateEventRegistrationDto
     public int EventId { get; set; }
     public Guid UserId { get; set; }
 }
+
+public class UpdateEventRegistrationDto
+{
+    public int EventId { get; set; }
+}
