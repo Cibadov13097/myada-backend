@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -18,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,7 +38,33 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "docker-compose.yml",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
+              "RelativeDocumentMoniker": "docker-compose.yml",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
+              "RelativeToolTip": "docker-compose.yml",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAAAGMAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2026-04-21T16:42:08.334Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Dockerfile",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-04-21T16:42:00.875Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "S3ImageStorageService.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
@@ -38,12 +72,11 @@
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
               "ViewState": "AgIAAMgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-21T15:43:26.953Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T15:43:26.953Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",

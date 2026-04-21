@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LostFoundService.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29f9072f0f959afc0f704f7467a28b166a3ead23")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+988ccb240494e6b879813422b693b95bd08bd0fa")]
 [assembly: System.Reflection.AssemblyProductAttribute("LostFoundService.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LostFoundService.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
