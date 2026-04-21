@@ -23,11 +23,12 @@ public class EmailSender : IEmailSender
         string body,
         CancellationToken cancellationToken = default)
     {
-        ValidateConfiguration();
+        var fromEmail = ResolveFromEmail();
+        ValidateConfiguration(fromEmail);
 
         using var message = new MailMessage
         {
-            From = new MailAddress(_smtpOptions.FromEmail, _smtpOptions.FromName),
+            From = new MailAddress(fromEmail, _smtpOptions.FromName),
             Subject = subject,
             Body = body,
             IsBodyHtml = false
@@ -51,7 +52,14 @@ public class EmailSender : IEmailSender
         _logger.LogInformation("Email notification sent to {Recipient}.", email);
     }
 
-    private void ValidateConfiguration()
+    private string ResolveFromEmail()
+    {
+        return string.IsNullOrWhiteSpace(_smtpOptions.FromEmail)
+            ? _smtpOptions.Username
+            : _smtpOptions.FromEmail;
+    }
+
+    private void ValidateConfiguration(string fromEmail)
     {
         if (string.IsNullOrWhiteSpace(_smtpOptions.Host))
             throw new InvalidOperationException("SMTP configuration is missing Smtp:Host.");
@@ -59,7 +67,7 @@ public class EmailSender : IEmailSender
         if (_smtpOptions.Port <= 0)
             throw new InvalidOperationException("SMTP configuration has invalid Smtp:Port.");
 
-        if (string.IsNullOrWhiteSpace(_smtpOptions.FromEmail))
+        if (string.IsNullOrWhiteSpace(fromEmail))
             throw new InvalidOperationException("SMTP configuration is missing Smtp:FromEmail.");
 
         if (!_smtpOptions.UseDefaultCredentials && string.IsNullOrWhiteSpace(_smtpOptions.Username))
