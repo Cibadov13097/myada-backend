@@ -242,7 +242,7 @@ if (app.Environment.IsDevelopment())
     {
         var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
         foreach (var description in provider.ApiVersionDescriptions.OrderByDescending(d => d.ApiVersion))
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Club {description.GroupName}");
+            options.SwaggerEndpoint($"{description.GroupName}/swagger.json", $"Club {description.GroupName}");
     });
 }
 
