@@ -25,8 +25,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
 if (string.IsNullOrWhiteSpace(jwksUrl))
-    throw new InvalidOperationException(
-        "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. https://AUTH_SERVICE_URL/.well-known/jwks.json");
+{
+    jwksUrl = "http://authservice:8080/.well-known/jwks.json";
+}
 
 await JwksProvider.InitializeAsync(jwksUrl);
 
@@ -154,9 +155,20 @@ builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection(S3StorageOptions.SectionName));
 builder.Services.AddSingleton<IImageStorageService, S3ImageStorageService>();
 
+var locationBaseUrl = builder.Configuration["LocationBaseUrl:Url"];
+if (string.IsNullOrWhiteSpace(locationBaseUrl))
+{
+    locationBaseUrl = "http://locationservice:8080/";
+}
+
+if (!Uri.TryCreate(locationBaseUrl, UriKind.Absolute, out var locationBaseUri))
+{
+    throw new InvalidOperationException("LocationBaseUrl:Url must be a valid absolute URL.");
+}
+
 builder.Services.AddHttpClient<ILocationServiceClient, LocationServiceClient>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["LocationBaseUrl:Url"]);
+    client.BaseAddress = locationBaseUri;
 });
 
 builder.Services.AddControllers(options =>
