@@ -34,7 +34,8 @@ public class EventRegistrationsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateEventRegistrationDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
+        // Avoid CreatedAtAction route mismatch issues (API versioning + wrappers).
+        return Ok(created);
     }
 
     [HttpDelete("{id:int}")]

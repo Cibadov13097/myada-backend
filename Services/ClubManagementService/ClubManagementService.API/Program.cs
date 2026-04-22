@@ -133,6 +133,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IClubService, ClubService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IEventRegistrationService, EventRegistrationService>();
+builder.Services.AddScoped<ITicketJwtService, TicketJwtService>();
 builder.Services.AddScoped<IJobVacancyService, JobVacancyService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<ISubeventService, SubeventService>();

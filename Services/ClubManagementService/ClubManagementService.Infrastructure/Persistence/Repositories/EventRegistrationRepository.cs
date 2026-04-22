@@ -26,4 +26,18 @@ public class EventRegistrationRepository : GenericRepository<EventRegistration>,
         return await _context.EventRegistrations
             .FirstOrDefaultAsync(r => r.EventId == eventId && r.UserId == userId, cancellationToken);
     }
+
+    public async Task<List<EventRegistration>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return await _context.EventRegistrations
+            .Where(r => r.UserId == userId)
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<EventRegistration?> GetByTicketIdAsync(string ticketId, CancellationToken cancellationToken = default)
+    {
+        return await _context.EventRegistrations
+            .FirstOrDefaultAsync(r => r.TicketId == ticketId, cancellationToken);
+    }
 }

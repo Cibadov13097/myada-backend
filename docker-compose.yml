@@ -114,6 +114,9 @@ services:
       Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
       Auth__Issuer: myada-auth
       Auth__Audience: myada-api
+      Tickets__SigningKey: dev-only-change-me-please-32chars-min!!
+      Tickets__Issuer: myada-tickets
+      Tickets__Audience: myada-scanner
     depends_on:
       - authservice
       - myada

@@ -7,4 +7,6 @@ public interface IEventRegistrationRepository : IGenericRepository<EventRegistra
 {
     Task<List<EventRegistration>> GetByEventIdAsync(int eventId);
     Task<EventRegistration?> GetByEventAndUserAsync(int eventId, Guid userId, CancellationToken cancellationToken = default);
+    Task<List<EventRegistration>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<EventRegistration?> GetByTicketIdAsync(string ticketId, CancellationToken cancellationToken = default);
 }

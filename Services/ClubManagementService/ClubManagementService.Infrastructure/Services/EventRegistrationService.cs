@@ -5,6 +5,8 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.Infrastructure.Services;
@@ -15,17 +17,20 @@ public class EventRegistrationService : IEventRegistrationService
     private readonly IEventRepository _eventRepository;
     private readonly IMapper _mapper;
     private readonly IClubNotificationService _notificationService;
+    private readonly ITicketJwtService _ticketJwt;
 
     public EventRegistrationService(
         IEventRegistrationRepository repository,
         IEventRepository eventRepository,
         IMapper mapper,
-        IClubNotificationService notificationService)
+        IClubNotificationService notificationService,
+        ITicketJwtService ticketJwt)
     {
         _repository = repository;
         _eventRepository = eventRepository;
         _mapper = mapper;
         _notificationService = notificationService;
+        _ticketJwt = ticketJwt;
     }
 
     public async Task<EventRegistrationDto?> GetByIdAsync(int id)
@@ -54,28 +59,10 @@ public class EventRegistrationService : IEventRegistrationService
 
     public async Task<EventRegistrationDto> CreateAsync(CreateEventRegistrationDto dto)
     {
-        _ = await _eventRepository.GetByIdAsync(dto.EventId)
-            ?? throw new KeyNotFoundException($"Event {dto.EventId} was not found.");
-
-        var duplicate = await _repository.GetByEventAndUserAsync(dto.EventId, dto.UserId);
-        if (duplicate != null)
-            throw new InvalidOperationException("Already registered for this event.");
-
-        var entity = _mapper.Map<EventRegistration>(dto);
-        await _repository.AddAsync(entity);
-        try
-        {
-            await _repository.SaveChangesAsync();
-        }
-        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg)
-        {
-            // 23505 = unique_violation (e.g. concurrent duplicate), 23503 = foreign_key_violation
-            if (pg.SqlState == "23505")
-                throw new InvalidOperationException("Already registered for this event.");
-            if (pg.SqlState == "23503")
-                throw new KeyNotFoundException($"Event {dto.EventId} was not found.");
-            throw;
-        }
+        // Legacy endpoint support: keep behavior but populate ticket fields & snapshot.
+        var created = await RegisterAsync(dto.EventId, dto.UserId);
+        var entity = await _repository.GetByIdAsync(created.Id)
+            ?? throw new InvalidOperationException("Registration was not persisted.");
 
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
@@ -87,7 +74,7 @@ public class EventRegistrationService : IEventRegistrationService
             EntityId = entity.Id.ToString(),
             ActorUserId = entity.UserId
         });
-        return _mapper.Map<EventRegistrationDto>(entity);
+        return created;
     }
 
     public async Task DeleteAsync(int id)
@@ -114,5 +101,140 @@ public class EventRegistrationService : IEventRegistrationService
             throw new KeyNotFoundException($"No registration for event {eventId} and user.");
         await _repository.DeleteAsync(entity);
         await _repository.SaveChangesAsync();
+    }
+
+    public async Task<EventRegistrationDto> RegisterAsync(int eventId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var evt = await _eventRepository.GetByIdAsync(eventId)
+            ?? throw new KeyNotFoundException($"Event {eventId} was not found.");
+
+        var existing = await _repository.GetByEventAndUserAsync(eventId, userId, cancellationToken).ConfigureAwait(false);
+        if (existing != null)
+            return _mapper.Map<EventRegistrationDto>(existing);
+
+        var current = (await _repository.GetByEventIdAsync(eventId)).Count;
+        if (evt.SeatLimit > 0 && current >= evt.SeatLimit)
+            throw new InvalidOperationException("This event has reached its seat limit.");
+
+        var ticketId = $"TCK-{Guid.NewGuid():N}"[..16].ToUpperInvariant();
+        var now = DateTimeOffset.UtcNow;
+        var expiresAt = now.AddDays(180);
+        var jwt = _ticketJwt.CreateTicketJwt(userId, eventId, ticketId, now, expiresAt);
+
+        var entity = new EventRegistration
+        {
+            EventId = eventId,
+            UserId = userId,
+            TicketId = ticketId,
+            RegistrationJwt = jwt,
+
+            EventNameSnapshot = evt.Name,
+            EventImageUrlSnapshot = evt.ImageUrl,
+            EventStartTimeSnapshot = evt.StartTime,
+            EventEndTimeSnapshot = evt.EndTime,
+            EventLocationSnapshot = evt.Location,
+            EventSeatLimitSnapshot = evt.SeatLimit,
+
+            CreatedByUserId = userId
+        };
+
+        await _repository.AddAsync(entity);
+        try
+        {
+            await _repository.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg)
+        {
+            if (pg.SqlState == "23505")
+            {
+                // concurrent duplicate register (EventId,UserId unique) - return existing
+                var dupe = await _repository.GetByEventAndUserAsync(eventId, userId, cancellationToken).ConfigureAwait(false);
+                if (dupe != null)
+                    return _mapper.Map<EventRegistrationDto>(dupe);
+                throw new InvalidOperationException("Already registered for this event.");
+            }
+            if (pg.SqlState == "23503")
+                throw new KeyNotFoundException($"Event {eventId} was not found.");
+            throw;
+        }
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Registration",
+            Message = $"A user registered for event '{entity.EventId}'.",
+            Source = "club-management",
+            Action = "event.registration.created",
+            EntityType = "event_registration",
+            EntityId = entity.Id.ToString(),
+            ActorUserId = entity.UserId
+        });
+
+        return _mapper.Map<EventRegistrationDto>(entity);
+    }
+
+    public async Task<List<EventRegistrationDto>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var list = await _repository.GetByUserIdAsync(userId, cancellationToken).ConfigureAwait(false);
+        return _mapper.Map<List<EventRegistrationDto>>(list);
+    }
+
+    public async Task<EventRegistrationDto?> GetTicketAsync(int eventId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var entity = await _repository.GetByEventAndUserAsync(eventId, userId, cancellationToken).ConfigureAwait(false);
+        return entity == null ? null : _mapper.Map<EventRegistrationDto>(entity);
+    }
+
+    public async Task<CheckInResult> CheckInAsync(int eventId, string jwt, Guid staffUserId, CancellationToken cancellationToken = default)
+    {
+        ClaimsPrincipal principal;
+        try
+        {
+            principal = _ticketJwt.ValidateTicketJwt(jwt, validateLifetime: true);
+        }
+        catch (SecurityTokenExpiredException)
+        {
+            return new CheckInResult(false, "expired_ticket", "Ticket token is expired.", "", Guid.Empty, eventId, null);
+        }
+        catch (Exception)
+        {
+            return new CheckInResult(false, "invalid_ticket", "Invalid ticket token.", "", Guid.Empty, eventId, null);
+        }
+
+        var claimEventId = principal.FindFirst("eventId")?.Value;
+        var claimUserId = principal.FindFirst("userId")?.Value;
+        var claimTicketId = principal.FindFirst("ticketId")?.Value;
+
+        if (!int.TryParse(claimEventId, out var tokenEventId) || tokenEventId != eventId)
+            return new CheckInResult(false, "event_mismatch", "Ticket does not belong to this event.", claimTicketId ?? "", Guid.Empty, eventId, null);
+        if (!Guid.TryParse(claimUserId, out var attendeeId) || attendeeId == Guid.Empty || string.IsNullOrWhiteSpace(claimTicketId))
+            return new CheckInResult(false, "invalid_ticket", "Ticket claims are missing.", claimTicketId ?? "", Guid.Empty, eventId, null);
+
+        var reg = await _repository.GetByTicketIdAsync(claimTicketId, cancellationToken).ConfigureAwait(false);
+        if (reg == null)
+            return new CheckInResult(false, "ticket_not_found", "Ticket not found.", claimTicketId, attendeeId, eventId, null);
+        if (reg.EventId != eventId || reg.UserId != attendeeId)
+            return new CheckInResult(false, "invalid_ticket", "Ticket does not match registration.", claimTicketId, attendeeId, eventId, null);
+
+        var now = DateTime.UtcNow;
+        var windowStart = reg.EventStartTimeSnapshot.ToUniversalTime().AddHours(-1);
+        var windowEnd = reg.EventEndTimeSnapshot.ToUniversalTime();
+        if (now < windowStart || now > windowEnd)
+            return new CheckInResult(false, "outside_checkin_window", "Outside check-in window.", reg.TicketId, attendeeId, eventId, reg.CheckedInAt);
+
+        reg.LastScannedAt = now;
+        reg.ScanCount = reg.ScanCount + 1;
+
+        if (reg.IsCheckedIn)
+        {
+            await _repository.SaveChangesAsync();
+            return new CheckInResult(false, "already_checked_in", "This ticket was already used.", reg.TicketId, attendeeId, eventId, reg.CheckedInAt);
+        }
+
+        reg.IsCheckedIn = true;
+        reg.CheckedInAt = now;
+        reg.CheckedInBy = staffUserId;
+
+        await _repository.SaveChangesAsync();
+        return new CheckInResult(true, "checked_in", "Entry allowed", reg.TicketId, attendeeId, eventId, reg.CheckedInAt);
     }
 }

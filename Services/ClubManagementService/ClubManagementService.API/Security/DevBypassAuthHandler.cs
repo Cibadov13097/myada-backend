@@ -17,9 +17,13 @@ public sealed class DevBypassAuthHandler : AuthenticationHandler<AuthenticationS
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        // Use a stable, non-empty GUID so user-scoped endpoints work in Development
+        // when JWT bearer validation is bypassed (e.g. AuthService/JWKS is not reachable yet).
+        var devUserId = new Guid("00000000-0000-0000-0000-000000000001");
+
         var claims = new List<Claim>
         {
-            new("sub", Guid.Empty.ToString()),
+            new("sub", devUserId.ToString("D")),
             new(ClaimTypes.Name, "dev-user"),
             // Allow admin-only endpoints in Development without a real AuthService token.
             new(ClaimTypes.Role, "admin")

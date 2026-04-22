@@ -49,6 +49,10 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
                 .HasIndex(r => new { r.EventId, r.UserId })
                 .IsUnique();
 
+            modelBuilder.Entity<EventRegistration>()
+                .HasIndex(r => r.TicketId)
+                .IsUnique();
+
             modelBuilder.Entity<ClubMembership>()
                 .HasQueryFilter(x => !x.IsDeleted);
 
@@ -61,6 +65,13 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
             modelBuilder.Entity<ClubMembership>()
                 .HasIndex(m => new { m.ClubId, m.UserId })
                 .IsUnique();
+
+            modelBuilder.Entity<ClubEmployee>()
+                .HasIndex(e => new { e.ClubId, e.UserId })
+                .IsUnique();
+
+            modelBuilder.Entity<EventProposal>()
+                .HasIndex(p => p.Status);
 
             modelBuilder.Entity<ClubPosition>()
                 .HasQueryFilter(x => !x.IsDeleted);
