@@ -26,7 +26,8 @@ public sealed class MembershipApplicationRow
 {
     public Guid Id { get; init; }
     public string ApplicantUserId { get; init; } = string.Empty;
-    public string? Message { get; init; }
+    public string? LetterOfPurpose { get; init; }
+    public string? Links { get; init; }
     public string Status { get; set; } = "Pending";
     public DateTimeOffset CreatedAt { get; init; }
 }

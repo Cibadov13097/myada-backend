@@ -20,7 +20,9 @@ public sealed class DevBypassAuthHandler : AuthenticationHandler<AuthenticationS
         var claims = new List<Claim>
         {
             new("sub", Guid.Empty.ToString()),
-            new(ClaimTypes.Name, "dev-user")
+            new(ClaimTypes.Name, "dev-user"),
+            // Allow admin-only endpoints in Development without a real AuthService token.
+            new(ClaimTypes.Role, "admin")
         };
 
         var identity = new ClaimsIdentity(claims, Scheme.Name);

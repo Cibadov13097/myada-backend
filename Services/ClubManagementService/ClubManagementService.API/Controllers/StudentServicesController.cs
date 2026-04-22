@@ -1,11 +1,17 @@
 using Asp.Versioning;
+using ClubManagementService.API.Security;
 using ClubManagementService.Application.DTOs.Club;
+using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Event;
+using ClubManagementService.Domain.Entities;
+using ClubManagementService.Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Events.Notifications;
+using System.Globalization;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -19,40 +25,108 @@ public class StudentServicesController : ControllerBase
     private readonly IClubService _clubService;
     private readonly IEventService _eventService;
     private readonly IClubNotificationService _notificationService;
+    private readonly IProposalContractService _proposalContract;
+    private readonly ClubManagementDbContext _db;
 
-    public StudentServicesController(IClubService clubService, IEventService eventService, IClubNotificationService notificationService)
+    public StudentServicesController(
+        IClubService clubService,
+        IEventService eventService,
+        IClubNotificationService notificationService,
+        IProposalContractService proposalContract,
+        ClubManagementDbContext db)
     {
         _clubService = clubService;
         _eventService = eventService;
         _notificationService = notificationService;
+        _proposalContract = proposalContract;
+        _db = db;
     }
 
     [HttpGet("dashboard")]
-    public IActionResult Dashboard() => Ok(new { cards = Array.Empty<object>() });
+    public IActionResult Dashboard()
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        return Ok(new { cards = Array.Empty<object>() });
+    }
 
     [HttpGet("clubs")]
     public async Task<IActionResult> Clubs([FromQuery] string? search = null, [FromQuery] int page = 1, [FromQuery] int limit = 12)
     {
-        var clubs = await _clubService.GetAllAsync();
-        return Ok(new { items = clubs, total = clubs.Count, page, limit });
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var clubs = await _clubService.GetAllAsync().ConfigureAwait(false);
+        var filtered = clubs.AsEnumerable();
+        if (!string.IsNullOrWhiteSpace(search))
+            filtered = filtered.Where(c => c.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+
+        var items = filtered
+            .Skip(Math.Max(page - 1, 0) * Math.Max(limit, 1))
+            .Take(Math.Max(limit, 1))
+            .Select(c => new
+            {
+                id = c.Id,
+                name = c.Name,
+                category = c.CategoryName ?? "General",
+                status = string.Equals(c.Status.ToString(), "Approved", StringComparison.OrdinalIgnoreCase) ? "Active" :
+                         string.Equals(c.Status.ToString(), "Archived", StringComparison.OrdinalIgnoreCase) ? "Inactive" :
+                         c.Status.ToString(),
+                members = 0,
+                president = (string?)null,
+                presidentId = (string?)null,
+                profileImageUrl = c.ProfileImageUrl,
+                image = "/clubs/default.png",
+                proposedProfileImageUrl = c.ProposedProfileImageUrl
+            })
+            .ToList();
+
+        return Ok(new { items, total = filtered.Count(), page, limit });
     }
 
     [HttpGet("clubs/{clubId:int}")]
     public async Task<IActionResult> ClubById(int clubId)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         var club = await _clubService.GetByIdAsync(clubId);
         return club == null ? NotFound() : Ok(club);
     }
 
-    [HttpGet("club-proposals")]
-    public IActionResult ClubProposals([FromQuery] string? status = null, [FromQuery] string? search = null) => Ok(new { items = Array.Empty<object>() });
+    [HttpGet("clubs/proposals")]
+    public Task<IActionResult> ClubProposals(
+        [FromQuery] string? status = null,
+        [FromQuery] string? search = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int limit = 20,
+        CancellationToken cancellationToken = default) =>
+        ClubProposalsCore(status, search, page, limit, cancellationToken);
 
-    [HttpGet("club-proposals/{proposalId}")]
-    public IActionResult ClubProposalById(string proposalId) => Ok(new { proposalId });
-
-    [HttpPost("club-proposals/{proposalId}/approve")]
-    public async Task<IActionResult> ApproveClubProposal(string proposalId)
+    private async Task<IActionResult> ClubProposalsCore(string? status, string? search, int page, int limit, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var data = await _proposalContract.ListClubProposalsAsync(status, search, page, limit, cancellationToken).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [HttpGet("clubs/proposals/{proposalId}")]
+    public async Task<IActionResult> ClubProposalById(string proposalId, CancellationToken cancellationToken)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var data = await _proposalContract.GetClubProposalAsync(proposalId, cancellationToken).ConfigureAwait(false);
+        return data == null ? NotFound() : Ok(data);
+    }
+
+    [HttpPost("clubs/proposals/{proposalId}/approve")]
+    public async Task<IActionResult> ApproveClubProposal(string proposalId, CancellationToken cancellationToken)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var actor = GetCurrentUserIdOrDefault();
+        var data = await _proposalContract.ApproveClubProposalAsync(proposalId, actor, cancellationToken).ConfigureAwait(false);
+        if (data == null)
+            return NotFound();
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Proposal Approved",
@@ -61,15 +135,20 @@ public class StudentServicesController : ControllerBase
             Action = "club_proposal.approved",
             EntityType = "club_proposal",
             EntityId = proposalId,
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
-
-        return Ok(new { proposalId, status = "approved" });
+            ActorUserId = actor
+        }).ConfigureAwait(false);
+        return Ok(data);
     }
 
-    [HttpPost("club-proposals/{proposalId}/reject")]
-    public async Task<IActionResult> RejectClubProposal(string proposalId, [FromBody] ReasonRequest request)
+    [HttpPost("clubs/proposals/{proposalId}/reject")]
+    public async Task<IActionResult> RejectClubProposal(string proposalId, [FromBody] ReasonRequest request, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var actor = GetCurrentUserIdOrDefault();
+        var data = await _proposalContract.RejectClubProposalAsync(proposalId, request.Reason, actor, cancellationToken).ConfigureAwait(false);
+        if (data == null)
+            return NotFound();
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Proposal Rejected",
@@ -78,15 +157,20 @@ public class StudentServicesController : ControllerBase
             Action = "club_proposal.rejected",
             EntityType = "club_proposal",
             EntityId = proposalId,
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
-
-        return Ok(new { proposalId, status = "rejected" });
+            ActorUserId = actor
+        }).ConfigureAwait(false);
+        return Ok(data);
     }
 
-    [HttpPost("club-proposals/{proposalId}/request-revision")]
-    public async Task<IActionResult> RequestClubProposalRevision(string proposalId, [FromBody] ChangesRequest request)
+    [HttpPost("clubs/proposals/{proposalId}/request-revision")]
+    public async Task<IActionResult> RequestClubProposalRevision(string proposalId, [FromBody] ChangesRequest request, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var actor = GetCurrentUserIdOrDefault();
+        var data = await _proposalContract.RequestClubProposalRevisionAsync(proposalId, request.Changes, actor, cancellationToken).ConfigureAwait(false);
+        if (data == null)
+            return NotFound();
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Proposal Revision Requested",
@@ -95,41 +179,80 @@ public class StudentServicesController : ControllerBase
             Action = "club_proposal.revision_requested",
             EntityType = "club_proposal",
             EntityId = proposalId,
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
-
-        return Ok(new { proposalId, status = "under_revision" });
+            ActorUserId = actor
+        }).ConfigureAwait(false);
+        return Ok(data);
     }
 
     [HttpGet("club-proposal-requirements")]
-    public IActionResult ClubProposalRequirements() => Ok(new { requirements = Array.Empty<string>(), deadline = (DateTime?)null });
+    public IActionResult ClubProposalRequirements() => Ok(_proposalContract.GetClubProposalRequirements());
 
     [HttpPut("club-proposal-requirements")]
-    public async Task<IActionResult> UpdateClubProposalRequirements([FromBody] ClubProposalRequirementsRequest request)
+    public async Task<IActionResult> UpdateClubProposalRequirements([FromBody] ClubProposalRequirementsDto request)
     {
+        var updated = _proposalContract.SetClubProposalRequirements(request);
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Proposal Requirements Updated",
-            Message = $"Club proposal requirements were updated ({request.Requirements.Count} requirement items).",
+            Message = $"Club proposal requirements were updated ({updated.Requirements.Count} requirement items).",
             Source = "club-management",
             Action = "club_proposal_requirements.updated",
             EntityType = "club_proposal_requirements",
             EntityId = "active",
             ActorUserId = GetCurrentUserIdOrDefault()
-        });
+        }).ConfigureAwait(false);
 
-        return Ok(request);
+        return Ok(updated);
     }
 
-    [HttpGet("event-proposals")]
-    public IActionResult EventProposals([FromQuery] string? search = null, [FromQuery] string? status = null) => Ok(new { items = Array.Empty<object>() });
-
-    [HttpGet("event-proposals/{proposalId}")]
-    public IActionResult EventProposalById(string proposalId) => Ok(new { proposalId });
-
-    [HttpPost("event-proposals/{proposalId}/approve")]
-    public async Task<IActionResult> ApproveEventProposal(string proposalId, [FromBody] ApproveEventProposalRequest request)
+    [HttpPost("events/proposals")]
+    public async Task<IActionResult> CreateStaffEventProposal([FromBody] EventProposalSubmitDto body, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var actor = GetCurrentUserIdOrDefault();
+        var result = await _proposalContract.SubmitStaffEventProposalAsync(body, actor, cancellationToken).ConfigureAwait(false);
+        if (!result.Success)
+            return BadRequest(result.ErrorBody ?? new { message = result.ErrorMessage });
+        return Ok(result.Payload);
+    }
+
+    [HttpGet("events/proposals")]
+    public Task<IActionResult> EventProposals(
+        [FromQuery] string? search = null,
+        [FromQuery] string? status = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int limit = 20,
+        CancellationToken cancellationToken = default) =>
+        EventProposalsCore(search, status, page, limit, cancellationToken);
+
+    private async Task<IActionResult> EventProposalsCore(string? search, string? status, int page, int limit, CancellationToken cancellationToken)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var data = await _proposalContract.ListEventProposalsAsync(status, search, page, limit, cancellationToken).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [HttpGet("events/proposals/{proposalId}")]
+    public async Task<IActionResult> EventProposalById(string proposalId, CancellationToken cancellationToken)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var data = await _proposalContract.GetEventProposalAsync(proposalId, cancellationToken).ConfigureAwait(false);
+        return data == null ? NotFound() : Ok(data);
+    }
+
+    [HttpPost("events/proposals/{proposalId}/approve")]
+    public async Task<IActionResult> ApproveEventProposal(string proposalId, [FromBody] EventProposalApproveDto? request, CancellationToken cancellationToken)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var actor = GetCurrentUserIdOrDefault();
+        var body = request ?? new EventProposalApproveDto();
+        var data = await _proposalContract.ApproveEventProposalAsync(proposalId, body, actor, cancellationToken).ConfigureAwait(false);
+        if (data == null)
+            return NotFound();
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Event Proposal Approved",
@@ -138,15 +261,20 @@ public class StudentServicesController : ControllerBase
             Action = "event_proposal.approved",
             EntityType = "event_proposal",
             EntityId = proposalId,
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
-
-        return Ok(new { proposalId, status = "approved" });
+            ActorUserId = actor
+        }).ConfigureAwait(false);
+        return Ok(data);
     }
 
-    [HttpPost("event-proposals/{proposalId}/reject")]
-    public async Task<IActionResult> RejectEventProposal(string proposalId, [FromBody] ReasonRequest request)
+    [HttpPost("events/proposals/{proposalId}/reject")]
+    public async Task<IActionResult> RejectEventProposal(string proposalId, [FromBody] ReasonRequest request, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var actor = GetCurrentUserIdOrDefault();
+        var data = await _proposalContract.RejectEventProposalAsync(proposalId, request.Reason, actor, cancellationToken).ConfigureAwait(false);
+        if (data == null)
+            return NotFound();
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Event Proposal Rejected",
@@ -155,15 +283,20 @@ public class StudentServicesController : ControllerBase
             Action = "event_proposal.rejected",
             EntityType = "event_proposal",
             EntityId = proposalId,
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
-
-        return Ok(new { proposalId, status = "rejected" });
+            ActorUserId = actor
+        }).ConfigureAwait(false);
+        return Ok(data);
     }
 
-    [HttpPost("event-proposals/{proposalId}/request-revision")]
-    public async Task<IActionResult> RequestEventProposalRevision(string proposalId, [FromBody] ChangesRequest request)
+    [HttpPost("events/proposals/{proposalId}/request-revision")]
+    public async Task<IActionResult> RequestEventProposalRevision(string proposalId, [FromBody] ChangesRequest request, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        var actor = GetCurrentUserIdOrDefault();
+        var data = await _proposalContract.RequestEventProposalRevisionAsync(proposalId, request.Changes, actor, cancellationToken).ConfigureAwait(false);
+        if (data == null)
+            return NotFound();
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Event Proposal Revision Requested",
@@ -172,15 +305,16 @@ public class StudentServicesController : ControllerBase
             Action = "event_proposal.revision_requested",
             EntityType = "event_proposal",
             EntityId = proposalId,
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
-
-        return Ok(new { proposalId, status = "under_revision" });
+            ActorUserId = actor
+        }).ConfigureAwait(false);
+        return Ok(data);
     }
 
     [HttpGet("events")]
     public async Task<IActionResult> Events([FromQuery] string? status = null, [FromQuery] string? search = null)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         var events = await _eventService.GetAllAsync();
         return Ok(new { items = events });
     }
@@ -188,6 +322,8 @@ public class StudentServicesController : ControllerBase
     [HttpPost("events")]
     public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest request)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         var created = await _eventService.CreateAsync(new CreateEventDto
         {
             ClubId = request.ClubId,
@@ -209,6 +345,8 @@ public class StudentServicesController : ControllerBase
     [HttpPatch("events/{eventId:int}")]
     public async Task<IActionResult> PatchEvent(int eventId, [FromBody] UpdateEventDto body)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         try
         {
             var updated = await _eventService.UpdateAsync(eventId, body);
@@ -233,6 +371,8 @@ public class StudentServicesController : ControllerBase
     [HttpGet("events/{eventId:int}")]
     public async Task<IActionResult> EventById(int eventId)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         var evt = await _eventService.GetByIdAsync(eventId);
         return evt == null ? NotFound() : Ok(evt);
     }
@@ -240,6 +380,8 @@ public class StudentServicesController : ControllerBase
     [HttpDelete("events/{eventId:int}")]
     public async Task<IActionResult> DeleteEvent(int eventId)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         await _eventService.DeleteAsync(eventId);
         return NoContent();
     }
@@ -247,19 +389,73 @@ public class StudentServicesController : ControllerBase
     [HttpPatch("clubs/{clubId:int}")]
     public async Task<IActionResult> PatchClub(int clubId, [FromBody] UpdateClubRequest request)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+
+        var existing = await _clubService.GetByIdAsync(clubId).ConfigureAwait(false);
+        if (existing == null) return NotFound();
+
         var updated = await _clubService.UpdateAsync(clubId, new UpdateClubDto
         {
-            Name = request.Name,
-            Description = request.Description,
-            Status = ParseClubStatus(request.Status)
+            Name = string.IsNullOrWhiteSpace(request.Name) ? existing.Name : request.Name,
+            Description = request.Description ?? existing.Description,
+            Status = ParseClubStatus(request.Status ?? existing.Status.ToString())
         });
 
         return Ok(updated);
     }
 
-    [HttpPost("clubs/{clubId:int}/profile-image/approve")]
-    public async Task<IActionResult> ApproveClubProfileImage(int clubId)
+    [HttpPost("clubs/{clubId:int}/profile-image")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadClubProfileImage(int clubId, [FromForm] UploadClubProfileImageRequest request, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+
+        if (request.LogoFile == null || request.LogoFile.Length <= 0)
+            return BadRequest(new { message = "logoFile is required." });
+
+        var club = await _db.Clubs.FirstOrDefaultAsync(c => c.Id == clubId, cancellationToken).ConfigureAwait(false);
+        if (club == null)
+            return NotFound();
+
+        var ext = Path.GetExtension(request.LogoFile.FileName);
+        if (string.IsNullOrWhiteSpace(ext)) ext = ".png";
+        var safeExt = ext.Length > 10 ? ".png" : ext;
+
+        var relDir = Path.Combine("uploads", "clubs", clubId.ToString(CultureInfo.InvariantCulture));
+        var absDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relDir);
+        Directory.CreateDirectory(absDir);
+
+        var fileName = $"logo-proposed-{Guid.NewGuid():N}{safeExt}";
+        var absPath = Path.Combine(absDir, fileName);
+        await using (var fs = System.IO.File.Create(absPath))
+            await request.LogoFile.CopyToAsync(fs, cancellationToken).ConfigureAwait(false);
+
+        club.ProposedProfileImageUrl = "/" + Path.Combine(relDir, fileName).Replace("\\", "/");
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        var dto = await _clubService.GetByIdAsync(clubId).ConfigureAwait(false);
+        return dto == null ? Ok(new { clubId }) : Ok(dto);
+    }
+
+    [HttpPost("clubs/{clubId:int}/profile-image/approve")]
+    public async Task<IActionResult> ApproveClubProfileImage(int clubId, CancellationToken cancellationToken)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+
+        var club = await _db.Clubs.FirstOrDefaultAsync(c => c.Id == clubId, cancellationToken).ConfigureAwait(false);
+        if (club == null)
+            return NotFound();
+
+        if (!string.IsNullOrWhiteSpace(club.ProposedProfileImageUrl))
+        {
+            club.ProfileImageUrl = club.ProposedProfileImageUrl;
+            club.ProposedProfileImageUrl = null;
+            await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Profile Image Approved",
@@ -271,15 +467,23 @@ public class StudentServicesController : ControllerBase
             ActorUserId = GetCurrentUserIdOrDefault()
         });
 
-        return Ok(new { clubId, approved = true });
+        var dto = await _clubService.GetByIdAsync(clubId).ConfigureAwait(false);
+        return dto == null ? Ok(new { clubId, approved = true }) : Ok(dto);
     }
 
     [HttpGet("clubs/{clubId:int}/members")]
-    public IActionResult ClubMembers(int clubId) => Ok(new { items = Array.Empty<object>() });
+    public IActionResult ClubMembers(int clubId)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        return Ok(new { items = Array.Empty<object>() });
+    }
 
     [HttpPatch("clubs/{clubId:int}/members/{memberId}")]
     public async Task<IActionResult> PatchClubMember(int clubId, string memberId, [FromBody] object body)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Member Updated",
@@ -297,6 +501,8 @@ public class StudentServicesController : ControllerBase
     [HttpDelete("clubs/{clubId:int}/members/{memberId}")]
     public async Task<IActionResult> DeleteClubMember(int clubId, string memberId)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Member Removed",
@@ -312,11 +518,46 @@ public class StudentServicesController : ControllerBase
     }
 
     [HttpGet("clubs/{clubId:int}/employees")]
-    public IActionResult ClubEmployees(int clubId) => Ok(new { items = Array.Empty<object>() });
+    public IActionResult ClubEmployees(int clubId)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+        return Ok(new { items = Array.Empty<object>() });
+    }
 
     [HttpPost("clubs/{clubId:int}/employees")]
-    public async Task<IActionResult> CreateClubEmployee(int clubId, [FromBody] object body)
+    public async Task<IActionResult> CreateClubEmployee(int clubId, [FromBody] CreateClubEmployeeRequest body, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+
+        if (!Guid.TryParse(body.UserId, out var userId) || userId == Guid.Empty)
+            return BadRequest(new { message = "userId must be a valid GUID." });
+
+        int? positionId = null;
+        if (!string.IsNullOrWhiteSpace(body.PositionId))
+        {
+            if (!int.TryParse(body.PositionId, out var pid) || pid <= 0)
+                return BadRequest(new { message = "positionId must be a valid integer id." });
+            positionId = pid;
+        }
+
+        var existing = await _db.ClubEmployees
+            .FirstOrDefaultAsync(e => e.ClubId == clubId && e.UserId == userId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (existing == null)
+        {
+            existing = new ClubEmployee { ClubId = clubId, UserId = userId, PositionId = positionId };
+            _db.ClubEmployees.Add(existing);
+        }
+        else
+        {
+            existing.PositionId = positionId;
+        }
+
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Employee Added",
@@ -328,12 +569,41 @@ public class StudentServicesController : ControllerBase
             ActorUserId = GetCurrentUserIdOrDefault()
         });
 
-        return Ok();
+        return Ok(new
+        {
+            employeeId = existing.Id.ToString(),
+            clubId = clubId.ToString(),
+            userId = existing.UserId.ToString("D"),
+            positionId = existing.PositionId?.ToString()
+        });
     }
 
     [HttpPatch("clubs/{clubId:int}/employees/{employeeId}")]
-    public async Task<IActionResult> PatchClubEmployee(int clubId, string employeeId, [FromBody] object body)
+    public async Task<IActionResult> PatchClubEmployee(int clubId, string employeeId, [FromBody] PatchClubEmployeeRequest body, CancellationToken cancellationToken)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+
+        if (!int.TryParse(employeeId, out var eid) || eid <= 0)
+            return BadRequest(new { message = "Invalid employeeId." });
+
+        int? positionId = null;
+        if (!string.IsNullOrWhiteSpace(body.PositionId))
+        {
+            if (!int.TryParse(body.PositionId, out var pid) || pid <= 0)
+                return BadRequest(new { message = "positionId must be a valid integer id." });
+            positionId = pid;
+        }
+
+        var existing = await _db.ClubEmployees
+            .FirstOrDefaultAsync(e => e.Id == eid && e.ClubId == clubId, cancellationToken)
+            .ConfigureAwait(false);
+        if (existing == null)
+            return NotFound();
+
+        existing.PositionId = positionId;
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Employee Updated",
@@ -345,12 +615,31 @@ public class StudentServicesController : ControllerBase
             ActorUserId = GetCurrentUserIdOrDefault()
         });
 
-        return Ok(new { employeeId });
+        return Ok(new
+        {
+            employeeId = existing.Id.ToString(),
+            clubId = clubId.ToString(),
+            userId = existing.UserId.ToString("D"),
+            positionId = existing.PositionId?.ToString()
+        });
+    }
+
+    public sealed class CreateClubEmployeeRequest
+    {
+        public string UserId { get; set; } = string.Empty;
+        public string? PositionId { get; set; }
+    }
+
+    public sealed class PatchClubEmployeeRequest
+    {
+        public string? PositionId { get; set; }
     }
 
     [HttpDelete("clubs/{clubId:int}/employees/{employeeId}")]
     public async Task<IActionResult> DeleteClubEmployee(int clubId, string employeeId)
     {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Employee Removed",
@@ -367,6 +656,11 @@ public class StudentServicesController : ControllerBase
 
     private static ClubStatus ParseClubStatus(string? value)
     {
+        // UI sends Active/Inactive. Map to our persisted enum.
+        if (string.Equals(value, "Active", StringComparison.OrdinalIgnoreCase))
+            return ClubStatus.Approved;
+        if (string.Equals(value, "Inactive", StringComparison.OrdinalIgnoreCase))
+            return ClubStatus.Archived;
         return Enum.TryParse<ClubStatus>(value, true, out var status) ? status : ClubStatus.Pending;
     }
 
@@ -376,26 +670,14 @@ public class StudentServicesController : ControllerBase
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
     }
 
+    private IActionResult? EnsureStudentServices()
+    {
+        // Student Services endpoints must not be callable by club admins or regular users.
+        return User.IsMyAdaAdministrator() ? null : Forbid();
+    }
+
     public sealed class ReasonRequest { public string Reason { get; set; } = string.Empty; }
     public sealed class ChangesRequest { public string Changes { get; set; } = string.Empty; }
-
-    public sealed class ClubProposalRequirementsRequest
-    {
-        public List<string> Requirements { get; set; } = new();
-        public DateTime? Deadline { get; set; }
-    }
-
-    public sealed class ApproveEventProposalRequest
-    {
-        public List<SubEventAssignmentRequest> Assignments { get; set; } = new();
-    }
-
-    public sealed class SubEventAssignmentRequest
-    {
-        public int SubEventIndex { get; set; }
-        public string BuildingId { get; set; } = string.Empty;
-        public string RoomId { get; set; } = string.Empty;
-    }
 
     public sealed class CreateEventRequest
     {
@@ -413,8 +695,13 @@ public class StudentServicesController : ControllerBase
 
     public sealed class UpdateClubRequest
     {
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Status { get; set; } = "Pending";
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? Status { get; set; }
+    }
+
+    public sealed class UploadClubProfileImageRequest
+    {
+        public IFormFile? LogoFile { get; set; }
     }
 }

@@ -1,4 +1,6 @@
+using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.ClubAdmin;
+using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.JobVacancy;
 
@@ -50,12 +52,19 @@ public interface IClubAdminService
 
     Task<ClubAdminPagedResult<ClubAdminEventAdminDto>> GetEventsAsync(string clubRouteKey, string? status, string? search, int page, int limit, CancellationToken cancellationToken = default);
     Task<ClubAdminEventAdminDto?> PatchEventAsync(string clubRouteKey, string eventId, UpdateEventDto dto, CancellationToken cancellationToken = default);
-    Task<EventProposalResultDto?> CreateEventProposalAsync(string clubRouteKey, object body, CancellationToken cancellationToken = default);
+    Task<EventProposalResultDto?> CreateEventProposalAsync(string clubRouteKey, EventProposalSubmitDto body, Guid actorUserId, CancellationToken cancellationToken = default);
     Task<ClubAdminPagedResult<ClubAdminAttendeeDto>> GetEventAttendeesAsync(string clubRouteKey, string eventId, int page, int limit, CancellationToken cancellationToken = default);
     Task<ClubAdminAttendeeDto?> PatchEventAttendeeAsync(string clubRouteKey, string eventId, string attendeeId, bool entered, CancellationToken cancellationToken = default);
     Task<bool> DeleteEventAttendeeAsync(string clubRouteKey, string eventId, string attendeeId, CancellationToken cancellationToken = default);
 
-    Task<ProfilePatchResultDto> PatchProfileAsync(string clubRouteKey, string? socialLinks, string? focusAreasJson, CancellationToken cancellationToken = default);
+    Task<ProfilePatchResultDto> PatchProfileAsync(
+        string clubRouteKey,
+        string? socialLinks,
+        string? focusAreasJson,
+        string? email,
+        string? resourcesJson,
+        ClubProfileUploadHintsDto? uploadHints,
+        CancellationToken cancellationToken = default);
     Task<ClubAdminAnnouncementDto> CreateAnnouncementAsync(string clubRouteKey, string title, string message, CancellationToken cancellationToken = default);
 }
 
@@ -90,10 +99,26 @@ public sealed class EmployeePositionChange
 public sealed class EventProposalResultDto
 {
     public string ProposalId { get; init; } = string.Empty;
+    public string Id { get; init; } = string.Empty;
+    public string Status { get; init; } = "pending_review";
+    public string ClubId { get; init; } = string.Empty;
 }
 
 public sealed class ProfilePatchResultDto
 {
     public string ClubId { get; init; } = string.Empty;
+
+    /// <summary><c>true</c> when <c>FocusAreasJson</c>, <c>SocialLinksJson</c>, <c>Email</c>, and/or <c>ResourcesJson</c> was written.</summary>
     public bool Updated { get; init; }
+
+    /// <summary>Option A (immediate publish): always false. Option B would set true when changes await approval.</summary>
+    public bool PendingReview { get; init; }
+
+    public List<ClubFocusAreaItemDto> FocusAreas { get; init; } = new();
+
+    public string? Email { get; init; }
+
+    public ClubSocialLinksDto? SocialLinks { get; init; }
+
+    public List<ClubResourceItemDto> Resources { get; init; } = new();
 }

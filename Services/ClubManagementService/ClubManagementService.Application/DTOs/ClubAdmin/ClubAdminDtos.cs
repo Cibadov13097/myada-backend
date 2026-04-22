@@ -1,5 +1,11 @@
 namespace ClubManagementService.Application.DTOs.ClubAdmin;
 
+public sealed class ClubProfileUploadHintsDto
+{
+    public bool HasLogo { get; init; }
+    public bool HasBackground { get; init; }
+}
+
 public sealed class ClubAdminPagedResult<T>
 {
     public IReadOnlyList<T> Items { get; init; } = Array.Empty<T>();
@@ -35,7 +41,8 @@ public sealed class ClubAdminApplicationListItemDto
 public sealed class ClubAdminMembershipApplicationBriefDto
 {
     public string ApplicantUserId { get; init; } = string.Empty;
-    public string? Message { get; init; }
+    public string? LetterOfPurpose { get; init; }
+    public string? Links { get; init; }
 }
 
 public sealed class ClubAdminJobApplicationBriefDto
@@ -58,7 +65,8 @@ public sealed class ClubAdminApplicationDetailDto
 public sealed class ClubAdminMembershipApplicationDetailDto
 {
     public string ApplicantUserId { get; init; } = string.Empty;
-    public string? Message { get; init; }
+    public string? LetterOfPurpose { get; init; }
+    public string? Links { get; init; }
     public string CreatedAt { get; init; } = string.Empty;
 }
 

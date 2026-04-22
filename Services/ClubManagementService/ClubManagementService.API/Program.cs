@@ -138,6 +138,8 @@ builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<ISubeventService, SubeventService>();
 builder.Services.AddSingleton<IClubNotificationService, ClubNotificationService>();
 builder.Services.AddSingleton<ClubAdminWorkspaceStore>();
+builder.Services.AddSingleton<ProposalStateStore>();
+builder.Services.AddScoped<IProposalContractService, ProposalContractService>();
 builder.Services.AddScoped<IClubAdminService, ClubAdminService>();
 
 // SPA CORS: explicit origins (required when combining with credentials; avoids invalid AllowAnyOrigin+WithOrigins).
@@ -231,6 +233,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("SpaCors");
+
+app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {

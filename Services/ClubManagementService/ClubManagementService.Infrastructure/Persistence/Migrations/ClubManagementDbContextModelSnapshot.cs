@@ -91,6 +91,12 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FocusAreasJson")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -102,6 +108,18 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfileImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProposedProfileImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResourcesJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SocialLinksJson")
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
@@ -155,6 +173,63 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("ClubMemberships", "club");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubEmployee", b =>
+                {
+                    b.HasOne("ClubManagementService.Domain.Entities.Club", "Club")
+                        .WithMany()
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Club");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubEmployee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClubId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("PositionId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClubId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("ClubEmployees", "club");
                 });
 
             modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubPosition", b =>
@@ -304,6 +379,54 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Events", "club");
+                });
+
+            modelBuilder.Entity("ClubManagementService.Domain.Entities.EventProposal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("BodyJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClubName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ClubNumericId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ClubRouteKey")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedEventId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LastApproveAssignmentsJson")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("SubmittedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("EventProposals", "club");
                 });
 
             modelBuilder.Entity("ClubManagementService.Domain.Entities.EventRegistration", b =>

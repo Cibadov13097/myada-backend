@@ -61,6 +61,12 @@ public class JobVacanciesController : ControllerBase
         if (!int.TryParse(vacancyId, out var id) || id <= 0)
             return BadRequest();
 
+        var applicantUserId = request.UserId?.Trim();
+        if (string.IsNullOrWhiteSpace(applicantUserId))
+            applicantUserId = GetCurrentUserIdOrDefault().ToString("D");
+        if (!Guid.TryParse(applicantUserId, out var applicantGuid) || applicantGuid == Guid.Empty)
+            return BadRequest(new { error = "userId must be a valid GUID." });
+
         if (string.IsNullOrWhiteSpace(request.PurposeOfApplication))
             return BadRequest(new { error = "purposeOfApplication is required." });
 
@@ -71,7 +77,7 @@ public class JobVacanciesController : ControllerBase
         var created = await _applicationService.CreateAsync(new CreateJobApplicationDto
         {
             JobVacancyId = id,
-            ApplicantId = GetCurrentUserIdOrDefault(),
+            ApplicantId = applicantGuid,
             ExperienceLinks = request.PurposeOfApplication.Trim(),
             FileUrl = request.CvFile?.FileName ?? string.Empty
         });
@@ -123,6 +129,7 @@ public class JobVacanciesController : ControllerBase
 
     public sealed class VacancyApplicationRequest
     {
+        public string? UserId { get; set; }
         public string PurposeOfApplication { get; set; } = string.Empty;
         public IFormFile? CvFile { get; set; }
     }
