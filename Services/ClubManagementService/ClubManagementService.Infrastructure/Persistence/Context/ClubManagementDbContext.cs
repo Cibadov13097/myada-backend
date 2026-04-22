@@ -16,6 +16,7 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
         public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
         public DbSet<JobVacancy> JobVacancies => Set<JobVacancy>();
         public DbSet<JobApplication> JobApplications => Set<JobApplication>();
+        public DbSet<InterviewSlot> InterviewSlots => Set<InterviewSlot>();
         public DbSet<Subevent> Subevents => Set<Subevent>();
         public DbSet<ClubMembership> ClubMemberships => Set<ClubMembership>();
         public DbSet<ClubEmployee> ClubEmployees => Set<ClubEmployee>();
@@ -35,6 +36,8 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
             modelBuilder.Entity<JobVacancy>()
                 .HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<JobApplication>()
+                .HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<InterviewSlot>()
                 .HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Subevent>()
                 .HasQueryFilter(x => !x.IsDeleted);
@@ -102,6 +105,16 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
                 .WithMany()
                 .HasForeignKey(v => v.ClubPositionId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // A slot can be reserved by at most one application.
+            modelBuilder.Entity<JobApplication>()
+                .HasIndex(a => a.InterviewSlotId)
+                .IsUnique()
+                .HasFilter("\"InterviewSlotId\" IS NOT NULL");
+
+            modelBuilder.Entity<InterviewSlot>()
+                .HasIndex(s => s.SlotId)
+                .IsUnique();
 
             modelBuilder.HasDefaultSchema("club");
             base.OnModelCreating(modelBuilder);

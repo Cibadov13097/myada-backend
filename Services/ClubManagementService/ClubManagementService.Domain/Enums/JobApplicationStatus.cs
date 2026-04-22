@@ -6,7 +6,8 @@ namespace ClubManagementService.Domain.Enums
         Approved = 1,
         Rejected = 2,
         Cancelled = 3,
-        Reviewing = 4
+        Reviewing = 4,
+        InterviewScheduled = 5
     }
 }
 

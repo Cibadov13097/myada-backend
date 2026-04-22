@@ -12,5 +12,7 @@ namespace ClubManagementService.Domain.Entities
         public string ExperienceLinks { get; set; } = null!;
         public string FileUrl { get; set; } = null!;
         public JobApplicationStatus Status { get; set; }
+
+        public string? InterviewSlotId { get; set; }
     }
 }
