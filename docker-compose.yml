@@ -247,6 +247,26 @@ services:
       - authservice
     restart: always
 
+  myadaattandanceservice:
+    build:
+      context: ./Services/MyAdaAttendanceService
+      dockerfile: Dockerfile
+    container_name: myada-attandance-service
+    ports:
+      - "5009:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=myada;Port=5432;Database=my_ada_attendance_db;Username=postgres;Password=123
+      Database__SeedLessonsIfEmpty: "true"
+      AuthService__BaseUrl: http://authservice:8080/
+      AuthService__RefreshPath: api/auth/refresh
+      Authentication__RequireHttpsMetadata: "false"
+    depends_on:
+      - myada
+      - authservice
+    restart: always
+
 
   apigateway:
     build:
@@ -265,6 +285,7 @@ services:
       - callservice
       - locationservice
       - myadasupportservice
+      - myadaattandanceservice
     restart: always
 
 volumes:

@@ -8,20 +8,18 @@ public partial class AddArchivedAtToEventProposals : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.AddColumn<DateTimeOffset>(
-            name: "ArchivedAt",
-            schema: "club",
-            table: "EventProposals",
-            type: "timestamp with time zone",
-            nullable: true);
+        migrationBuilder.Sql("""
+            ALTER TABLE club."EventProposals"
+            ADD COLUMN IF NOT EXISTS "ArchivedAt" timestamp with time zone;
+            """);
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropColumn(
-            name: "ArchivedAt",
-            schema: "club",
-            table: "EventProposals");
+        migrationBuilder.Sql("""
+            ALTER TABLE club."EventProposals"
+            DROP COLUMN IF EXISTS "ArchivedAt";
+            """);
     }
 }
 
