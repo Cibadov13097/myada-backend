@@ -23,4 +23,14 @@ public class ClubMembershipRepository : GenericRepository<ClubMembership>, IClub
             .Distinct()
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<List<Guid>> GetUserIdsByClubAsync(int clubId, CancellationToken cancellationToken = default)
+    {
+        return await _context.ClubMemberships
+            .AsNoTracking()
+            .Where(m => m.ClubId == clubId)
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+    }
 }

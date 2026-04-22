@@ -13,6 +13,7 @@ namespace ClubManagementService.API.Controllers;
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/events")]
+[Route("api/events")]
 [ApiController]
 [Authorize]
 [Tags("Events")]
@@ -96,25 +97,38 @@ public class EventsController : ControllerBase
         if (evt == null)
             return NotFound();
 
-        var existing = await _registrationService.GetByEventAndUserAsync(eventId, userId, HttpContext.RequestAborted).ConfigureAwait(false);
-        if (existing != null)
-            return Conflict(new { message = "Already registered for this event." });
-
-        var current = (await _registrationService.GetByEventIdAsync(eventId)).Count;
-        if (evt.SeatLimit > 0 && current >= evt.SeatLimit)
-            return Conflict(new { message = "This event has reached its seat limit." });
-
-        var reg = await _registrationService.CreateAsync(new CreateEventRegistrationDto
+        EventRegistrationDto reg;
+        try
         {
-            EventId = eventId,
-            UserId = userId
-        });
+            reg = await _registrationService.RegisterAsync(eventId, userId, HttpContext.RequestAborted).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException)
+        {
+            return Conflict(new { message = "This event has reached its seat limit." });
+        }
+
+        var registeredCount = (await _registrationService.GetByEventIdAsync(eventId)).Count;
 
         return Ok(new
         {
-            registrationId = $"REG-{reg.Id}",
-            ticketId = $"TC-{DateTime.UtcNow.Year}-{reg.Id:D4}",
-            qrToken = Guid.NewGuid().ToString("N")
+            ticketId = reg.TicketId,
+            eventId = eventId.ToString(),
+            userId = userId.ToString("D"),
+            jwt = reg.RegistrationJwt,
+            attendeeId = userId.ToString("D"),
+            @event = new
+            {
+                id = evt.Id.ToString(),
+                name = evt.Name,
+                date = evt.StartTime.ToString("yyyy-MM-dd"),
+                startTime = evt.StartTime.ToString("HH:mm"),
+                endTime = evt.EndTime.ToString("HH:mm"),
+                location = evt.Location,
+                clubName = (string?)null,
+                imageUrl = evt.ImageUrl,
+                seatLimit = evt.SeatLimit,
+                registeredCount
+            }
         });
     }
 
@@ -155,16 +169,57 @@ public class EventsController : ControllerBase
         if (userId == Guid.Empty)
             return Unauthorized();
 
-        var reg = await _registrationService.GetByEventAndUserAsync(eventId, userId, HttpContext.RequestAborted).ConfigureAwait(false);
+        var reg = await _registrationService.GetTicketAsync(eventId, userId, HttpContext.RequestAborted).ConfigureAwait(false);
         if (reg == null)
             return NotFound();
 
         return Ok(new
         {
-            ticketId = $"TC-{DateTime.UtcNow.Year}-{reg.Id:D4}",
-            eventId,
-            attendeeName = "Student",
-            qrData = Guid.NewGuid().ToString("N")
+            ticketId = reg.TicketId,
+            eventId = eventId.ToString(),
+            userId = userId.ToString("D"),
+            jwt = reg.RegistrationJwt,
+            attendeeId = userId.ToString("D"),
+            eventImageUrl = reg.EventImageUrlSnapshot
+        });
+    }
+
+    [HttpPost("{eventId:int}/check-in")]
+    [Authorize(Roles = "admin,Admin,staff,Staff")]
+    public async Task<IActionResult> CheckIn(int eventId, [FromBody] CheckInRequest body, CancellationToken cancellationToken)
+    {
+        if (body == null || string.IsNullOrWhiteSpace(body.Jwt))
+            return BadRequest(new { message = "jwt is required." });
+
+        var staffId = GetCurrentUserIdOrDefault();
+        if (staffId == Guid.Empty)
+            return Unauthorized();
+
+        var result = await _registrationService.CheckInAsync(eventId, body.Jwt, staffId, cancellationToken).ConfigureAwait(false);
+
+        if (result.Success)
+        {
+            return Ok(new
+            {
+                success = true,
+                status = result.Status,
+                message = result.Message ?? "Entry allowed",
+                ticketId = result.TicketId,
+                attendeeId = result.AttendeeId.ToString("D"),
+                eventId = result.EventId.ToString(),
+                checkedInAt = result.CheckedInAt?.ToString("O")
+            });
+        }
+
+        return Ok(new
+        {
+            success = false,
+            status = result.Status,
+            message = result.Message,
+            ticketId = result.TicketId,
+            attendeeId = result.AttendeeId == Guid.Empty ? null : result.AttendeeId.ToString("D"),
+            eventId = result.EventId.ToString(),
+            checkedInAt = result.CheckedInAt?.ToString("O")
         });
     }
 
@@ -202,4 +257,9 @@ public class EventsController : ControllerBase
     }
 
     private int GetDefaultEventPageSize() => HttpContext.GetClubApiMajorVersion() >= 2 ? 24 : 12;
+
+    public sealed class CheckInRequest
+    {
+        public string Jwt { get; set; } = string.Empty;
+    }
 }

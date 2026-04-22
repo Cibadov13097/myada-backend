@@ -47,7 +47,8 @@ public class EventRegistrationsController : ControllerBase
         };
 
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
+        // Avoid CreatedAtAction route mismatch issues (API versioning + wrappers).
+        return Ok(created);
     }
 
     [HttpPut("{id:int}")]

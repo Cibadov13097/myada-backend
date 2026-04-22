@@ -146,6 +146,9 @@ services:
       S3__PublicBaseUrl: ${CLUB_S3_PUBLIC_BASE_URL:-}
       S3__KeyPrefix: ${CLUB_S3_KEY_PREFIX:-clubs}
       S3__AutoCreateBucket: ${CLUB_S3_AUTO_CREATE_BUCKET:-false}
+      Tickets__SigningKey: dev-only-change-me-please-32chars-min!!
+      Tickets__Issuer: myada-tickets
+      Tickets__Audience: myada-scanner
     depends_on:
       - authservice
       - myada

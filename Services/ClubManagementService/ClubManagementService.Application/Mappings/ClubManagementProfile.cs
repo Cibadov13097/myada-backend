@@ -38,16 +38,33 @@ public class ClubManagementProfile : Profile
         CreateMap<UpdateCategoryDto, Category>().IgnoreAuditableBase();
 
         CreateMap<Club, ClubDto>()
-            .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null));
+            .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null))
+            .ForMember(d => d.FocusAreas, o => o.Ignore())
+            .ForMember(d => d.SocialLinks, o => o.Ignore())
+            .ForMember(d => d.Resources, o => o.Ignore())
+            .AfterMap((s, d) =>
+            {
+                d.FocusAreas = ClubFocusAreasJson.ParseForRead(s.FocusAreasJson);
+                d.SocialLinks = ClubSocialLinksJson.ParseForRead(s.SocialLinksJson);
+                d.Resources = ClubResourcesJson.ParseForRead(s.ResourcesJson);
+            });
         CreateMap<CreateClubDto, Club>()
             .IgnoreAuditableBase()
             .ForMember(d => d.Status, o => o.Ignore())
-            .ForMember(d => d.Category, o => o.Ignore());
+            .ForMember(d => d.Category, o => o.Ignore())
+            .ForMember(d => d.FocusAreasJson, o => o.Ignore())
+            .ForMember(d => d.SocialLinksJson, o => o.Ignore())
+            .ForMember(d => d.Email, o => o.Ignore())
+            .ForMember(d => d.ResourcesJson, o => o.Ignore());
         CreateMap<UpdateClubDto, Club>()
             .IgnoreAuditableBase()
             .ForMember(d => d.ApprovedBy, o => o.Ignore())
             .ForMember(d => d.CategoryId, o => o.Ignore())
-            .ForMember(d => d.Category, o => o.Ignore());
+            .ForMember(d => d.Category, o => o.Ignore())
+            .ForMember(d => d.FocusAreasJson, o => o.Ignore())
+            .ForMember(d => d.SocialLinksJson, o => o.Ignore())
+            .ForMember(d => d.Email, o => o.Ignore())
+            .ForMember(d => d.ResourcesJson, o => o.Ignore());
 
         CreateMap<Event, EventDto>();
         CreateMap<CreateEventDto, Event>()

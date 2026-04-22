@@ -372,10 +372,18 @@ public static class ClubManagementSeeder
         if (eventIds.Count == 0 || await dbContext.EventRegistrations.AnyAsync(cancellationToken).ConfigureAwait(false))
             return;
 
+        var events = await dbContext.Events
+            .Where(e => eventIds.Contains(e.Id))
+            .ToDictionaryAsync(e => e.Id, cancellationToken)
+            .ConfigureAwait(false);
+
         var registrations = new List<EventRegistration>();
         var userBase = 400;
         foreach (var eventId in eventIds.Take(8))
         {
+            if (!events.TryGetValue(eventId, out var evt))
+                continue;
+
             for (var u = 0; u < 3; u++)
             {
                 var userId = BuildSeedUserGuid(userBase++);
@@ -383,6 +391,14 @@ public static class ClubManagementSeeder
                 {
                     EventId = eventId,
                     UserId = userId,
+                    TicketId = $"TCK-SEED-{eventId:D4}-{u:D2}",
+                    RegistrationJwt = "seed",
+                    EventNameSnapshot = evt.Name,
+                    EventImageUrlSnapshot = evt.ImageUrl,
+                    EventStartTimeSnapshot = evt.StartTime,
+                    EventEndTimeSnapshot = evt.EndTime,
+                    EventLocationSnapshot = evt.Location,
+                    EventSeatLimitSnapshot = evt.SeatLimit,
                     CreatedByUserId = userId
                 });
             }

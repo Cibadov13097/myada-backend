@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using System.Globalization;
 using ClubManagementService.Application.ClubAdmin;
+using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.ClubAdmin;
+using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.JobApplication;
 using ClubManagementService.Application.DTOs.JobVacancy;
@@ -8,6 +11,8 @@ using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
 using ClubManagementService.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
+using ClubManagementService.Infrastructure.Persistence.Context;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -21,6 +26,10 @@ public sealed class ClubAdminService : IClubAdminService
     private readonly IClubPositionRepository _positionRepository;
     private readonly ICategoryRepository _categoryRepository;
     private readonly ClubAdminWorkspaceStore _workspace;
+    private readonly IProposalContractService _proposalContract;
+    private readonly IClubRepository _clubRepository;
+    private readonly IClubMembershipRepository _clubMembershipRepository;
+    private readonly ClubManagementDbContext _db;
 
     public ClubAdminService(
         IClubService clubService,
@@ -29,7 +38,11 @@ public sealed class ClubAdminService : IClubAdminService
         IEventService eventService,
         IClubPositionRepository positionRepository,
         ICategoryRepository categoryRepository,
-        ClubAdminWorkspaceStore workspace)
+        ClubAdminWorkspaceStore workspace,
+        IProposalContractService proposalContract,
+        IClubRepository clubRepository,
+        IClubMembershipRepository clubMembershipRepository,
+        ClubManagementDbContext db)
     {
         _clubService = clubService;
         _jobVacancyService = jobVacancyService;
@@ -38,6 +51,10 @@ public sealed class ClubAdminService : IClubAdminService
         _positionRepository = positionRepository;
         _categoryRepository = categoryRepository;
         _workspace = workspace;
+        _proposalContract = proposalContract;
+        _clubRepository = clubRepository;
+        _clubMembershipRepository = clubMembershipRepository;
+        _db = db;
     }
 
     public async Task<ClubAdminDashboardDto?> GetDashboardAsync(string clubRouteKey, CancellationToken cancellationToken = default)
@@ -115,7 +132,12 @@ public sealed class ClubAdminService : IClubAdminService
         if (typeNorm is "all" or "membership")
         {
             foreach (var m in ws.MembershipApplications.Values
-                         .Where(m => ClubAdminStatusMaps.MembershipMatchesApiFilter(status, m.Status)))
+                         .Where(m =>
+                             // Default list hides decided applications (Approved/Rejected)
+                             (string.IsNullOrWhiteSpace(status)
+                                 ? !string.Equals(m.Status, "Approved", StringComparison.OrdinalIgnoreCase)
+                                   && !string.Equals(m.Status, "Rejected", StringComparison.OrdinalIgnoreCase)
+                                 : ClubAdminStatusMaps.MembershipMatchesApiFilter(status, m.Status))))
             {
                 list.Add(new ClubAdminApplicationListItemDto
                 {
@@ -125,7 +147,8 @@ public sealed class ClubAdminService : IClubAdminService
                     Membership = new ClubAdminMembershipApplicationBriefDto
                     {
                         ApplicantUserId = m.ApplicantUserId,
-                        Message = m.Message
+                        LetterOfPurpose = m.LetterOfPurpose,
+                        Links = m.Links
                     }
                 });
             }
@@ -183,7 +206,8 @@ public sealed class ClubAdminService : IClubAdminService
             Membership = new ClubAdminMembershipApplicationDetailDto
             {
                 ApplicantUserId = row.ApplicantUserId,
-                Message = row.Message,
+                LetterOfPurpose = row.LetterOfPurpose,
+                Links = row.Links,
                 CreatedAt = row.CreatedAt.ToString("O")
             },
             Notes = SnapshotNotesForClub(clubId, applicationId)
@@ -213,6 +237,24 @@ public sealed class ClubAdminService : IClubAdminService
         var ws = _workspace.GetOrCreate(clubId);
         if (!ws.MembershipApplications.TryGetValue(membershipId, out var row))
             return null;
+        if (!Guid.TryParse(row.ApplicantUserId, out var applicantGuid))
+            throw new ArgumentException("Invalid applicantUserId for membership application.");
+
+        // Add user to real membership table (idempotent with unique index on (ClubId, UserId))
+        try
+        {
+            await _clubMembershipRepository.AddAsync(new ClubMembership
+            {
+                ClubId = clubId,
+                UserId = applicantGuid
+            }).ConfigureAwait(false);
+            await _clubMembershipRepository.SaveChangesAsync().ConfigureAwait(false);
+        }
+        catch (DbUpdateException)
+        {
+            // If the membership already exists, treat approve as idempotent.
+        }
+
         row.Status = "Approved";
         return new ClubAdminApplicationActionResultDto { ApplicationId = applicationId, Status = "Approved" };
     }
@@ -687,9 +729,14 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return EmptyPage<ClubAdminMemberDto>(page, limit);
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        var items = ws.Members.Values
-            .Select(m => new ClubAdminMemberDto { Id = m.Id, ClubId = ctx.Key, UserId = m.UserId })
+        var userIds = await _clubMembershipRepository.GetUserIdsByClubAsync(ctx.ClubId, cancellationToken).ConfigureAwait(false);
+        var items = userIds
+            .Select(u => new ClubAdminMemberDto
+            {
+                Id = u.ToString("D"),
+                ClubId = ctx.Key,
+                UserId = u.ToString("D")
+            })
             .ToList();
         return Page(items, page, limit);
     }
@@ -710,16 +757,20 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return EmptyPage<ClubAdminEmployeeDto>(page, limit);
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        var items = ws.Employees.Values
-            .Select(e => new ClubAdminEmployeeDto
-            {
-                Id = e.Id,
-                ClubId = ctx.Key,
-                StudentId = e.StudentId,
-                PositionId = e.PositionId
-            })
-            .ToList();
+        var rows = await _db.ClubEmployees
+            .AsNoTracking()
+            .Where(e => e.ClubId == ctx.ClubId)
+            .OrderBy(e => e.Id)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var items = rows.Select(e => new ClubAdminEmployeeDto
+        {
+            Id = e.Id.ToString(CultureInfo.InvariantCulture),
+            ClubId = ctx.Key,
+            StudentId = e.UserId.ToString("D"),
+            PositionId = e.PositionId?.ToString(CultureInfo.InvariantCulture)
+        }).ToList();
         return Page(items, page, limit);
     }
 
@@ -728,6 +779,10 @@ public sealed class ClubAdminService : IClubAdminService
         var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false)
                   ?? throw new InvalidOperationException("Club not found.");
 
+        if (!Guid.TryParse(studentId, out var userId) || userId == Guid.Empty)
+            throw new ArgumentException("studentId must be a valid GUID user id.");
+
+        int? pidOrNull = null;
         if (int.TryParse(positionId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var pid))
         {
             var pos = await _positionRepository
@@ -735,17 +790,29 @@ public sealed class ClubAdminService : IClubAdminService
                 .ConfigureAwait(false);
             if (pos == null)
                 throw new ArgumentException("Position not found for this club.");
+            pidOrNull = pid;
         }
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        var id = Guid.NewGuid().ToString("D");
-        ws.Employees[id] = new EmployeeRow { Id = id, StudentId = studentId, PositionId = positionId };
+        var existing = await _db.ClubEmployees
+            .FirstOrDefaultAsync(e => e.ClubId == ctx.ClubId && e.UserId == userId, cancellationToken)
+            .ConfigureAwait(false);
+        if (existing == null)
+        {
+            existing = new ClubEmployee { ClubId = ctx.ClubId, UserId = userId, PositionId = pidOrNull };
+            _db.ClubEmployees.Add(existing);
+        }
+        else
+        {
+            existing.PositionId = pidOrNull;
+        }
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
         return new ClubAdminEmployeeDto
         {
-            Id = id,
+            Id = existing.Id.ToString(CultureInfo.InvariantCulture),
             ClubId = ctx.Key,
-            StudentId = studentId,
-            PositionId = positionId
+            StudentId = existing.UserId.ToString("D"),
+            PositionId = existing.PositionId?.ToString(CultureInfo.InvariantCulture)
         };
     }
 
@@ -755,9 +822,12 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return;
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
         foreach (var c in changes)
         {
+            if (!int.TryParse(c.EmployeeId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var eid) || eid <= 0)
+                continue;
+
+            int? pidOrNull = null;
             if (int.TryParse(c.PositionId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var pid))
             {
                 var pos = await _positionRepository
@@ -765,11 +835,17 @@ public sealed class ClubAdminService : IClubAdminService
                     .ConfigureAwait(false);
                 if (pos == null)
                     throw new ArgumentException("Position not found for this club.");
+                pidOrNull = pid;
             }
 
-            if (ws.Employees.TryGetValue(c.EmployeeId, out var row))
-                row.PositionId = c.PositionId;
+            var row = await _db.ClubEmployees
+                .FirstOrDefaultAsync(e => e.Id == eid && e.ClubId == ctx.ClubId, cancellationToken)
+                .ConfigureAwait(false);
+            if (row != null)
+                row.PositionId = pidOrNull;
         }
+
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<bool> DeleteEmployeeAsync(string clubRouteKey, string employeeId, CancellationToken cancellationToken = default)
@@ -778,8 +854,18 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return false;
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        return ws.Employees.TryRemove(employeeId, out _);
+        if (!int.TryParse(employeeId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var eid) || eid <= 0)
+            return false;
+
+        var row = await _db.ClubEmployees
+            .FirstOrDefaultAsync(e => e.Id == eid && e.ClubId == ctx.ClubId, cancellationToken)
+            .ConfigureAwait(false);
+        if (row == null)
+            return false;
+
+        _db.ClubEmployees.Remove(row);
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return true;
     }
 
     public async Task<ClubAdminPagedResult<ClubAdminEventAdminDto>> GetEventsAsync(string clubRouteKey, string? status, string? search, int page, int limit, CancellationToken cancellationToken = default)
@@ -846,14 +932,32 @@ public sealed class ClubAdminService : IClubAdminService
         };
     }
 
-    public async Task<EventProposalResultDto?> CreateEventProposalAsync(string clubRouteKey, object body, CancellationToken cancellationToken = default)
+    public async Task<EventProposalResultDto?> CreateEventProposalAsync(string clubRouteKey, EventProposalSubmitDto body, Guid actorUserId, CancellationToken cancellationToken = default)
     {
-        _ = body;
         var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
         if (ctx == null)
             return null;
 
-        return new EventProposalResultDto { ProposalId = Guid.NewGuid().ToString("D") };
+        var result = await _proposalContract
+            .SubmitClubAdminEventProposalAsync(clubRouteKey, body, actorUserId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!result.Success)
+            throw new ArgumentException(result.ErrorMessage ?? "Invalid event proposal.");
+
+        if (result.Payload is not Dictionary<string, object?> d)
+            return new EventProposalResultDto { ProposalId = string.Empty, Id = string.Empty, Status = "pending_review", ClubId = ctx.Key };
+
+        d.TryGetValue("proposalId", out var pid);
+        d.TryGetValue("id", out var id);
+        d.TryGetValue("status", out var st);
+        d.TryGetValue("clubId", out var cid);
+        return new EventProposalResultDto
+        {
+            ProposalId = pid?.ToString() ?? string.Empty,
+            Id = id?.ToString() ?? pid?.ToString() ?? string.Empty,
+            Status = st?.ToString() ?? "pending_review",
+            ClubId = cid?.ToString() ?? ctx.Key
+        };
     }
 
     public async Task<ClubAdminPagedResult<ClubAdminAttendeeDto>> GetEventAttendeesAsync(string clubRouteKey, string eventId, int page, int limit, CancellationToken cancellationToken = default)
@@ -931,15 +1035,119 @@ public sealed class ClubAdminService : IClubAdminService
         return bucket.Items.TryRemove(attendeeId, out _);
     }
 
-    public async Task<ProfilePatchResultDto> PatchProfileAsync(string clubRouteKey, string? socialLinks, string? focusAreasJson, CancellationToken cancellationToken = default)
+    public async Task<ProfilePatchResultDto> PatchProfileAsync(
+        string clubRouteKey,
+        string? socialLinks,
+        string? focusAreasJson,
+        string? email,
+        string? resourcesJson,
+        ClubProfileUploadHintsDto? uploadHints,
+        CancellationToken cancellationToken = default)
     {
-        _ = socialLinks;
-        _ = focusAreasJson;
+        _ = uploadHints;
         var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
         if (ctx == null)
-            return new ProfilePatchResultDto { ClubId = clubRouteKey, Updated = false };
+        {
+            return new ProfilePatchResultDto
+            {
+                ClubId = clubRouteKey,
+                Updated = false,
+                PendingReview = false,
+                FocusAreas = new List<ClubFocusAreaItemDto>(),
+                Email = null,
+                SocialLinks = null,
+                Resources = new List<ClubResourceItemDto>()
+            };
+        }
 
-        return new ProfilePatchResultDto { ClubId = ctx.Key, Updated = true };
+        var entity = await _clubRepository.GetByIdWithCategoryAsync(ctx.ClubId).ConfigureAwait(false);
+        if (entity == null)
+        {
+            return new ProfilePatchResultDto
+            {
+                ClubId = clubRouteKey,
+                Updated = false,
+                PendingReview = false,
+                FocusAreas = new List<ClubFocusAreaItemDto>(),
+                Email = null,
+                SocialLinks = null,
+                Resources = new List<ClubResourceItemDto>()
+            };
+        }
+
+        var modified = false;
+
+        if (focusAreasJson is not null)
+        {
+            if (string.IsNullOrWhiteSpace(focusAreasJson))
+                throw new ArgumentException("focusAreasJson must be a valid JSON array");
+
+            var (ok, err, serialized, _) = ClubFocusAreasJson.ValidateAndNormalizeForWrite(focusAreasJson);
+            if (!ok || serialized == null)
+                throw new ArgumentException(err ?? "Invalid focusAreasJson");
+
+            entity.FocusAreasJson = serialized;
+            modified = true;
+        }
+
+        if (socialLinks is not null)
+        {
+            if (string.IsNullOrWhiteSpace(socialLinks))
+                throw new ArgumentException("socialLinks must be a valid JSON object when provided");
+
+            var (ok, err, canonical) = ClubSocialLinksJson.MergePatch(entity.SocialLinksJson, socialLinks);
+            if (!ok || canonical == null)
+                throw new ArgumentException(err ?? "Invalid socialLinks");
+
+            entity.SocialLinksJson = canonical;
+            modified = true;
+        }
+
+        if (email is not null)
+        {
+            if (!ClubContactEmail.TryNormalize(email, out var em, out var mailErr))
+                throw new ArgumentException(mailErr ?? "Invalid email.");
+
+            entity.Email = em;
+            modified = true;
+        }
+
+        if (resourcesJson is not null)
+        {
+            if (string.IsNullOrWhiteSpace(resourcesJson))
+                throw new ArgumentException("resourcesJson must be a valid JSON array when provided");
+
+            var (ok, err, canonical) = ClubResourcesJson.ValidateAndReplace(resourcesJson);
+            if (!ok || canonical == null)
+                throw new ArgumentException(err ?? "Invalid resourcesJson");
+
+            entity.ResourcesJson = canonical;
+            modified = true;
+        }
+
+        if (modified)
+        {
+            entity.ModifiedAt = DateTime.UtcNow;
+            await _clubRepository.UpdateAsync(entity).ConfigureAwait(false);
+            await _clubRepository.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        var publishedFocus = ClubFocusAreasJson.ParseForRead(entity.FocusAreasJson);
+        var publishedSocial = ClubSocialLinksJson.ParseForRead(entity.SocialLinksJson);
+        if (publishedSocial is { Website: null, Instagram: null, X: null, Tiktok: null })
+            publishedSocial = null;
+
+        var publishedResources = ClubResourcesJson.ParseForRead(entity.ResourcesJson);
+        return new ProfilePatchResultDto
+        {
+            ClubId = ctx.Key,
+            Updated = modified,
+            PendingReview = false,
+            FocusAreas = publishedFocus,
+            Email = entity.Email,
+            SocialLinks = publishedSocial,
+            Resources = publishedResources
+        };
     }
 
     public async Task<ClubAdminAnnouncementDto> CreateAnnouncementAsync(string clubRouteKey, string title, string message, CancellationToken cancellationToken = default)

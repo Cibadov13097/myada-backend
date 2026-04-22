@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ClubManagementService.Application.DTOs.ClubAdmin;
+using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.JobVacancy;
 using ClubManagementService.Application.Interfaces.Services;
@@ -280,9 +281,9 @@ public class ClubAdminController : ControllerBase
     }
 
     [HttpPost("events/proposals")]
-    public async Task<IActionResult> EventProposal(string clubId, [FromBody] object body, CancellationToken cancellationToken)
+    public async Task<IActionResult> EventProposal(string clubId, [FromBody] EventProposalSubmitDto body, CancellationToken cancellationToken)
     {
-        var dto = await _clubAdmin.CreateEventProposalAsync(clubId, body, cancellationToken).ConfigureAwait(false);
+        var dto = await _clubAdmin.CreateEventProposalAsync(clubId, body, GetCurrentUserIdOrDefault(), cancellationToken).ConfigureAwait(false);
         return dto == null ? NotFound() : Ok(dto);
     }
 
@@ -307,6 +308,11 @@ public class ClubAdminController : ControllerBase
         return ok ? NoContent() : NotFound();
     }
 
+    /// <summary>
+    /// Multipart profile update (Option A: changes publish immediately; <see cref="ProfilePatchResultDto.PendingReview"/> is always false).
+    /// Parts: <c>focusAreasJson</c> (JSON array, replace-only), optional <c>socialLinks</c> (JSON object, merge-patch),
+    /// optional <c>email</c>, optional <c>resourcesJson</c> (JSON array, replace-only), optional <c>logoFile</c>/<c>backgroundFile</c>.
+    /// </summary>
     [HttpPatch("profile")]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> PatchProfile(string clubId, [FromForm] ClubProfilePatchRequest request, CancellationToken cancellationToken)
@@ -319,11 +325,28 @@ public class ClubAdminController : ControllerBase
         if (backgroundUrl == string.Empty)
             return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported background file type." });
 
-        var result = await _clubAdmin.PatchProfileAsync(clubId, request.SocialLinks, request.FocusAreasJson, cancellationToken).ConfigureAwait(false);
+        var hints = new ClubProfileUploadHintsDto
+        {
+            HasLogo = request.LogoFile is { Length: > 0 },
+            HasBackground = request.BackgroundFile is { Length: > 0 }
+        };
+        var result = await _clubAdmin.PatchProfileAsync(
+            clubId,
+            request.SocialLinks,
+            request.FocusAreasJson,
+            request.Email,
+            request.ResourcesJson,
+            hints,
+            cancellationToken).ConfigureAwait(false);
         return Ok(new
         {
             result.ClubId,
             result.Updated,
+            result.PendingReview,
+            result.FocusAreas,
+            result.Email,
+            result.SocialLinks,
+            result.Resources,
             logoUrl,
             backgroundUrl
         });
@@ -443,9 +466,22 @@ public class ClubAdminController : ControllerBase
 
     public sealed class ClubProfilePatchRequest
     {
+        [FromForm(Name = "socialLinks")]
         public string? SocialLinks { get; set; }
+
+        [FromForm(Name = "focusAreasJson")]
         public string? FocusAreasJson { get; set; }
+
+        [FromForm(Name = "email")]
+        public string? Email { get; set; }
+
+        [FromForm(Name = "resourcesJson")]
+        public string? ResourcesJson { get; set; }
+
+        [FromForm(Name = "logoFile")]
         public IFormFile? LogoFile { get; set; }
+
+        [FromForm(Name = "backgroundFile")]
         public IFormFile? BackgroundFile { get; set; }
     }
 

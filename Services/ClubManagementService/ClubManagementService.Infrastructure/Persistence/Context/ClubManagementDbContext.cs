@@ -12,11 +12,13 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Club> Clubs => Set<Club>();
         public DbSet<Event> Events => Set<Event>();
+        public DbSet<EventProposal> EventProposals => Set<EventProposal>();
         public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
         public DbSet<JobVacancy> JobVacancies => Set<JobVacancy>();
         public DbSet<JobApplication> JobApplications => Set<JobApplication>();
         public DbSet<Subevent> Subevents => Set<Subevent>();
         public DbSet<ClubMembership> ClubMemberships => Set<ClubMembership>();
+        public DbSet<ClubEmployee> ClubEmployees => Set<ClubEmployee>();
         public DbSet<ClubPosition> ClubPositions => Set<ClubPosition>();
         public DbSet<ClubPositionRequirement> ClubPositionRequirements => Set<ClubPositionRequirement>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,6 +49,10 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
                 .HasIndex(r => new { r.EventId, r.UserId })
                 .IsUnique();
 
+            modelBuilder.Entity<EventRegistration>()
+                .HasIndex(r => r.TicketId)
+                .IsUnique();
+
             modelBuilder.Entity<ClubMembership>()
                 .HasQueryFilter(x => !x.IsDeleted);
 
@@ -59,6 +65,13 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
             modelBuilder.Entity<ClubMembership>()
                 .HasIndex(m => new { m.ClubId, m.UserId })
                 .IsUnique();
+
+            modelBuilder.Entity<ClubEmployee>()
+                .HasIndex(e => new { e.ClubId, e.UserId })
+                .IsUnique();
+
+            modelBuilder.Entity<EventProposal>()
+                .HasIndex(p => p.Status);
 
             modelBuilder.Entity<ClubPosition>()
                 .HasQueryFilter(x => !x.IsDeleted);

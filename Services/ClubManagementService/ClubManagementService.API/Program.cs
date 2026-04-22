@@ -134,6 +134,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IClubService, ClubService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IEventRegistrationService, EventRegistrationService>();
+builder.Services.AddScoped<ITicketJwtService, TicketJwtService>();
 builder.Services.AddScoped<IJobVacancyService, JobVacancyService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<ISubeventService, SubeventService>();
@@ -141,6 +142,8 @@ builder.Services.AddSingleton<IClubNotificationService, ClubNotificationService>
 builder.Services.AddSingleton<ClubAdminWorkspaceStore>();
 builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection(S3StorageOptions.SectionName));
 builder.Services.AddSingleton<IImageStorageService, S3ImageStorageService>();
+builder.Services.AddSingleton<ProposalStateStore>();
+builder.Services.AddScoped<IProposalContractService, ProposalContractService>();
 builder.Services.AddScoped<IClubAdminService, ClubAdminService>();
 
 // SPA CORS: explicit origins (required when combining with credentials; avoids invalid AllowAnyOrigin+WithOrigins).
@@ -234,6 +237,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("SpaCors");
+
+app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {

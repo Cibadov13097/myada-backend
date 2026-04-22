@@ -8,6 +8,7 @@ public class EventDto
     public int ClubId { get; set; }
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
+    public string? ImageUrl { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Location { get; set; } = null!;
@@ -24,6 +25,7 @@ public class CreateEventDto
     public int ClubId { get; set; }
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
+    public string? ImageUrl { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Location { get; set; } = null!;
@@ -38,6 +40,7 @@ public class UpdateEventDto
 {
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
+    public string? ImageUrl { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Location { get; set; } = null!;
