@@ -80,6 +80,17 @@ services:
       NotificationService__SendEmailPath: /api/v1/notifications/email
       NotificationService__RequestTimeoutSeconds: 10
       PasswordReset__ClientResetUrl: ${AUTH_PASSWORD_RESET_URL:-http://localhost:3000/reset-password}
+      S3__BucketName: ${AUTH_S3_BUCKET_NAME:-myada-app}
+      S3__Region: ${AUTH_S3_REGION:-eu-north-1}
+      S3__AccessKey: ${AUTH_S3_ACCESS_KEY:-}
+      S3__SecretKey: ${AUTH_S3_SECRET_KEY:-}
+      AWS_ACCESS_KEY_ID: ${AUTH_S3_ACCESS_KEY:-}
+      AWS_SECRET_ACCESS_KEY: ${AUTH_S3_SECRET_KEY:-}
+      S3__ServiceUrl: ${AUTH_S3_SERVICE_URL:-}
+      S3__ForcePathStyle: ${AUTH_S3_FORCE_PATH_STYLE:-false}
+      S3__PublicBaseUrl: ${AUTH_S3_PUBLIC_BASE_URL:-}
+      S3__KeyPrefix: ${AUTH_S3_KEY_PREFIX:-users}
+      S3__AutoCreateBucket: ${AUTH_S3_AUTO_CREATE_BUCKET:-false}
     depends_on:
       - myada
       - myada-redis

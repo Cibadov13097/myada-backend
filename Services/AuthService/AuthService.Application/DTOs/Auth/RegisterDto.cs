@@ -14,6 +14,7 @@ namespace AuthService.Application.DTOs.Auth
         public string PhoneNumber { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
+        public string? ProfileImage { get; set; }
 
     }
 }

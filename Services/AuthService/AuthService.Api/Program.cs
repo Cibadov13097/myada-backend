@@ -3,6 +3,7 @@ using AuthService.Application.Options;
 using AuthService.Application.Services;
 using AuthService.API.Integrations;
 using AuthService.Infrastructure.Identity;
+using AuthService.Infrastructure.Options;
 using AuthService.Infrastructure.Persistence.Context;
 using AuthService.Infrastructure.Persistence.Repositories;
 using AuthService.Infrastructure.Persistence.Seeders;
@@ -69,6 +70,8 @@ builder.Services.AddScoped<TokenService>();
 // 5. Refresh token services
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection(S3StorageOptions.SectionName));
+builder.Services.AddScoped<IProfileImageStorageService, S3ProfileImageStorageService>();
 builder.Services.AddHttpClient<SupportStaffProvisioningClient>((sp, client) =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();

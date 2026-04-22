@@ -1,5 +1,6 @@
 using AuthService.Application.DTOs.Auth;
 using AuthService.Application.Interfaces;
+using AuthService.API.DTOs.Auth;
 using AuthService.Domain.Enums;
 using AuthService.API.Integrations;
 using AuthService.Infrastructure.Identity;
@@ -22,6 +23,7 @@ namespace AuthService.API.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IRefreshTokenService _refreshTokenService;
+        private readonly IProfileImageStorageService _profileImageStorageService;
         private readonly SupportStaffProvisioningClient _supportStaffProvisioningClient;
         private readonly NotificationEmailClient _notificationEmailClient;
         private readonly ILogger<AuthController> _logger;
@@ -33,6 +35,7 @@ namespace AuthService.API.Controllers
           TokenService tokenService,
           RoleManager<IdentityRole> roleManager,
           IRefreshTokenService refreshTokenService,
+          IProfileImageStorageService profileImageStorageService,
           SupportStaffProvisioningClient supportStaffProvisioningClient,
           NotificationEmailClient notificationEmailClient,
           ILogger<AuthController> logger,
@@ -43,6 +46,7 @@ namespace AuthService.API.Controllers
             _tokenService = tokenService;
             _roleManager = roleManager;
             _refreshTokenService = refreshTokenService;
+            _profileImageStorageService = profileImageStorageService;
             _supportStaffProvisioningClient = supportStaffProvisioningClient;
             _notificationEmailClient = notificationEmailClient;
             _logger = logger;
@@ -64,7 +68,7 @@ namespace AuthService.API.Controllers
                 LastName = "admin",
                 PhoneNumber = "1111",
                 Email = "admin@gmail",
-                ProfileImage = "sas",
+                ProfileImage = null,
                 CreatedAt = DateTime.UtcNow,
             };
 
@@ -99,6 +103,7 @@ namespace AuthService.API.Controllers
                 LastName = dto.LastName,
                 PhoneNumber = dto.PhoneNumber,
                 Email = dto.Email,
+                ProfileImage = dto.ProfileImage,
                 UserType = MapUserType(roleName),
                 Status = Status.Active,
                 CreatedAt = DateTime.UtcNow
@@ -140,6 +145,7 @@ namespace AuthService.API.Controllers
                     user.FirstName,
                     user.LastName,
                     user.PhoneNumber,
+                    user.ProfileImage,
                     role = roleName
                 }
             });
@@ -179,6 +185,7 @@ namespace AuthService.API.Controllers
                     user.FirstName,
                     user.LastName,
                     user.PhoneNumber,
+                    user.ProfileImage,
                     user.UserType,
                     user.Status
                 })
@@ -223,9 +230,61 @@ namespace AuthService.API.Controllers
                 user.FirstName,
                 user.LastName,
                 user.PhoneNumber,
+                user.ProfileImage,
                 user.UserType,
                 user.Status,
                 roles
+            });
+        }
+
+        [Authorize]
+        [HttpPost("users/{id}/profile-photo")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadUserProfilePhoto(string id, [FromForm] UploadUserProfilePhotoDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User id is required");
+
+            if (dto.File == null || dto.File.Length == 0)
+                return BadRequest("Profile photo file is required");
+
+            if (!_profileImageStorageService.IsSupportedImage(dto.File.FileName))
+                return BadRequest("Only PNG, JPG, JPEG, and WEBP files are supported");
+
+            const long maxFileSizeBytes = 5 * 1024 * 1024;
+            if (dto.File.Length > maxFileSizeBytes)
+                return BadRequest("Profile photo must be 5 MB or smaller");
+
+            var requesterId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                              ?? User.FindFirstValue("sub");
+            var isAdmin = User.IsInRole("admin");
+            var isSelf = !string.IsNullOrWhiteSpace(requesterId) &&
+                         string.Equals(requesterId, id, StringComparison.Ordinal);
+
+            if (!isAdmin && !isSelf)
+                return Forbid();
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound("User not found");
+
+            await using var stream = dto.File.OpenReadStream();
+            var profileImageUrl = await _profileImageStorageService.UploadProfileImageAsync(
+                stream,
+                dto.File.FileName,
+                dto.File.ContentType,
+                user.Id,
+                HttpContext.RequestAborted);
+
+            user.ProfileImage = profileImageUrl;
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+                return BadRequest(updateResult.Errors);
+
+            return Ok(new UploadUserProfilePhotoResponseDto
+            {
+                UserId = user.Id,
+                ProfileImage = profileImageUrl
             });
         }
 
@@ -384,7 +443,8 @@ namespace AuthService.API.Controllers
             return Ok(new
             {
                 accessToken,
-                refreshToken = refreshTokenEntity.Token
+                refreshToken = refreshTokenEntity.Token,
+                profileImage = user.ProfileImage
             });
         }
 
