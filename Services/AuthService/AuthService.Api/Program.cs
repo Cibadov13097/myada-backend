@@ -2,6 +2,7 @@ using AuthService.Application.Interfaces;
 using AuthService.Application.Options;
 using AuthService.Application.Services;
 using AuthService.API.Integrations;
+using AuthService.API.Security;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Options;
 using AuthService.Infrastructure.Persistence.Context;
@@ -13,7 +14,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +75,9 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection(S3StorageOptions.SectionName));
 builder.Services.AddScoped<IProfileImageStorageService, S3ProfileImageStorageService>();
+var redisConnectionString = builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379,abortConnect=false";
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnectionString));
+builder.Services.AddSingleton<IAccessTokenRevocationStore, RedisAccessTokenRevocationStore>();
 builder.Services.AddHttpClient<SupportStaffProvisioningClient>((sp, client) =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
@@ -119,6 +125,23 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new RsaSecurityKey(rsaPublic),
         ClockSkew = TimeSpan.FromSeconds(30)
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var principal = context.Principal;
+            var jti = principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value
+                      ?? principal?.FindFirst("jti")?.Value;
+
+            if (string.IsNullOrWhiteSpace(jti))
+                return;
+
+            var revocationStore = context.HttpContext.RequestServices.GetRequiredService<IAccessTokenRevocationStore>();
+            if (await revocationStore.IsRevokedAsync(jti, context.HttpContext.RequestAborted))
+                context.Fail("Token has been revoked.");
+        }
     };
 });
 

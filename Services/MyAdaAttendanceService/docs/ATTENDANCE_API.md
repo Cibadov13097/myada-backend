@@ -1,322 +1,828 @@
-# Attendance API
+# MyAdaAttendanceService API Documentation
 
-This document lists **all HTTP endpoints** that record, read, or manage attendance, across admin, instructor, student, and QR flows.
+This document describes the full MyAdaAttendanceService HTTP API exposed through your API Gateway.
 
-**Route user ids:** For `api/students/{studentId}` and `api/instructors/{instructorId}`, ids are auth-service user **GUIDs** passed in the route. In the current configuration, route/user auth matching checks are disabled.
+## 1. Base URL and Routing
 
-**JSON enums:** `AcademicSemester` (where it appears on nested lesson payloads) uses `JsonStringEnumConverter`—prefer string values `"Fall"`, `"Spring"`, `"Summer"` in JSON.
+- Public base URL: `http://13.60.31.141:5000/attendance`
+- Full endpoint format: `http://13.60.31.141:5000/attendance/api/...`
+- Internal Docker destination (via gateway): `http://myadaattendanceservice:8080/`
 
-**Attendance status strings** (used in DTOs as plain strings, not a JSON enum):
+Gateway route configuration removes `/attendance` and forwards the remaining path to the service.
 
-| Value     | Meaning   |
-|-----------|-----------|
-| `Present` | On time   |
-| `Late`    | Late      |
-| `Absent`  | Absent    |
-| `Excused` | Excused   |
+## 2. Swagger
+
+Swagger is enabled only when the attendance service runs in `Development` environment.
+
+- UI (if enabled): `http://13.60.31.141:5000/attendance/swagger/index.html`
+- OpenAPI JSON (if enabled): `http://13.60.31.141:5000/attendance/swagger/v1/swagger.json`
+
+## 3. Authentication and Authorization Notes
+
+- Send bearer token header in requests:
+  - `Authorization: Bearer <token>`
+- Current implementation has route-user checks as no-op (`EnsureRouteUserMatchesClaim` and `EnsureAuthenticatedUserMatches` do not enforce identity yet).
+- Even with disabled checks, keep sending correct IDs and token for future compatibility.
+
+## 4. Error and Status Behavior
+
+Controller base maps known exceptions to these HTTP responses:
+
+- `400 Bad Request`: `ArgumentException`, `InvalidOperationException`
+- `401 Unauthorized`: `UnauthorizedAccessException`
+- `404 Not Found`: `KeyNotFoundException`
+- `200 OK`: standard read/update responses
+- `201 Created`: specific create endpoints (course, lesson, enrollment, session)
+- `204 No Content`: void action endpoints (finalize, bulk absent, deletes)
+
+Typical error body from controller-level handling:
+
+```json
+{
+  "message": "Human readable error message"
+}
+```
+
+## 5. Data Formats and Enums
+
+### 5.1 Date/Time
+
+- `DateTime`: ISO-8601 string (`2026-04-24T10:30:00Z`)
+- `DateOnly`: `YYYY-MM-DD`
+- `TimeOnly`: `HH:mm:ss`
+
+### 5.2 Common enums
+
+- `AcademicSemester`: `Fall`, `Spring`, `Summer`
+- `AttendanceStatus`: `Present`, `Late`, `Absent`, `Excused`
+- `AttendanceMarkedSource`: `QR`, `Manual`
+- `DayOfWeek` for bulk session slots: `Sunday`..`Saturday` (or numeric enum values)
+
+## 6. Endpoint Catalog
+
+All paths below are relative to `http://13.60.31.141:5000/attendance`.
+
+### 6.1 Admin: User Directory
+
+#### POST `/api/admin/users/sync`
+
+Sync users from Auth service by roles.
+
+- Query:
+  - `roles` (optional, repeatable), example: `?roles=student&roles=instructor`
+  - Default when omitted: `student`, `instructor`
+- Response `200`: `UserSyncResultDto`
+
+#### GET `/api/admin/users/roles/{role}`
+
+Get locally synced users by role.
+
+- Response `200`: `ExternalUserDirectoryDto[]`
+
+### 6.2 Admin: Courses
+
+#### GET `/api/admin/courses`
+
+List all courses ordered by department/code.
+
+- Response `200`: `CourseDto[]`
+
+#### GET `/api/admin/courses/{courseId}`
+
+Get single course.
+
+- Response `200`: `CourseDto`
+- Response `404`: course not found
+
+#### POST `/api/admin/courses`
+
+Create course.
+
+- Body: `CreateCourseDto`
+- Response `201`: `CourseDto`
+- Validation:
+  - name, department, code required
+  - credits >= 0
+  - timesPerWeek >= 0
+  - department+code must be unique
+
+#### PUT `/api/admin/courses/{courseId}`
+
+Update course.
+
+- Body: `UpdateCourseDto`
+- Response `200`: `CourseDto`
+- Validation same as create
+
+#### DELETE `/api/admin/courses/{courseId}`
+
+Delete course.
+
+- Response `204`
+- Response `400`: if course still has lessons
+
+### 6.3 Admin: Lessons
+
+#### GET `/api/admin/courses/{courseId}/lessons`
+
+List lessons under a course.
+
+- Response `200`: `LessonDto[]`
+
+#### GET `/api/admin/instructors/{instructorId}/lessons`
+
+List lessons for a specific instructor.
+
+- Response `200`: `LessonDto[]`
+
+#### GET `/api/admin/lessons`
+
+List all lessons.
+
+- Response `200`: `LessonDto[]`
+
+#### GET `/api/admin/lessons/by-term?academicYear={year}&semester={semester}`
+
+Filter lessons by academic term.
+
+- Example: `/api/admin/lessons/by-term?academicYear=2026&semester=Spring`
+- Response `200`: `LessonDto[]`
+- Validation:
+  - academicYear between 2000 and 2100
+  - semester must be Fall/Spring/Summer
+
+#### GET `/api/admin/lessons/scheduling`
+
+Returns lesson scheduling rows for external scheduling logic.
+
+- Response `200`: `LessonSchedulingRow[]`
+
+#### GET `/api/admin/lessons/{lessonId}`
+
+Get lesson details including session short list.
+
+- Response `200`: `LessonDto`
+- Response `404`: not found
+
+#### POST `/api/admin/lessons`
+
+Create lesson.
+
+- Body: `CreateLessonDto`
+- Response `201`: `LessonDto`
+- Validation:
+  - courseId > 0
+  - instructorId required
+  - academicYear between 2000..2100
+  - semester valid
+  - maxCapacity >= 0
+
+#### PUT `/api/admin/lessons/{lessonId}`
+
+Update lesson.
+
+- Body: `UpdateLessonDto`
+- Response `200`: `LessonDto`
+
+#### DELETE `/api/admin/lessons/{lessonId}`
+
+Delete lesson.
+
+- Response `204`
+
+### 6.4 Admin: Enrollments
+
+#### GET `/api/admin/lessons/{lessonId}/enrollments`
+
+List enrollments for lesson.
+
+- Response `200`: `EnrollmentDto[]`
+
+#### POST `/api/admin/lessons/{lessonId}/enrollments`
+
+Create enrollment.
+
+- Body: `CreateEnrollmentDto`
+- Response `201`: `EnrollmentDto`
+- Validation:
+  - studentId required
+  - student cannot already be enrolled
+
+### 6.5 Admin: Sessions
+
+#### GET `/api/admin/lessons/{lessonId}/sessions`
+
+List lesson sessions with attendance rollups.
+
+- Response `200`: `SessionDto[]`
+
+#### POST `/api/admin/lessons/{lessonId}/sessions/generate`
+
+Bulk-generate sessions by weekly pattern.
+
+- Body: `BulkGenerateSessionsDto`
+- Response `200`: `BulkGenerateSessionsResponseDto`
+- Validation:
+  - fromDate <= toDate
+  - at least one weekly slot
+  - each slot startTime < endTime
+  - max date span 731 days
+  - max generated sessions per request 2000
+
+### 6.6 Admin: Attendance Corrections
+
+#### GET `/api/admin/sessions/{sessionId}/attendance`
+
+Get attendance rows for a session.
+
+- Response `200`: `AttendanceDto[]`
+
+#### PATCH `/api/admin/sessions/{sessionId}/attendance/{attendanceId}`
+
+Manually correct attendance record by attendance row ID.
+
+- Body: `AdminAttendanceCorrectionDto`
+- Response `200`: `AttendanceDto`
+- Validation:
+  - status must be one of Present/Late/Absent/Excused
+
+#### DELETE `/api/admin/sessions/{sessionId}/attendance/{attendanceId}`
+
+Delete attendance record.
+
+- Response `204`
+
+### 6.7 Instructor: Lessons and Sessions
+
+Base: `/api/instructors/{instructorId}/lessons`
+
+#### GET `/api/instructors/{instructorId}/lessons`
+
+- Response `200`: `LessonDto[]`
+
+#### GET `/api/instructors/{instructorId}/lessons/{lessonId}`
+
+- Response `200`: `LessonDto`
+
+#### GET `/api/instructors/{instructorId}/lessons/{lessonId}/sessions`
+
+- Response `200`: `SessionDto[]`
+
+#### GET `/api/instructors/{instructorId}/lessons/{lessonId}/sessions/{sessionId}`
+
+- Response `200`: `SessionDto`
+
+#### POST `/api/instructors/{instructorId}/lessons/{lessonId}/sessions`
+
+Create a single session.
+
+- Body: `CreateSessionDto`
+- Response `201`: `SessionDto`
+
+#### POST `/api/instructors/{instructorId}/lessons/{lessonId}/sessions/generate`
+
+Bulk-generate sessions (instructor-owned lesson only).
+
+- Body: `BulkGenerateSessionsDto`
+- Response `200`: `BulkGenerateSessionsResponseDto`
+
+#### PATCH `/api/instructors/{instructorId}/lessons/{lessonId}/sessions/{sessionId}`
+
+Update session start/end/topic.
+
+- Body: `UpdateSessionDto`
+- Response `200`: `SessionDto`
+
+#### DELETE `/api/instructors/{instructorId}/lessons/{lessonId}/sessions/{sessionId}`
+
+- Response `204`
+
+### 6.8 Instructor: Attendance and QR
+
+Base: `/api/instructors/{instructorId}/sessions`
+
+#### POST `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/activate/{round}`
+
+Activate attendance round.
+
+- `round` must be `1` or `2`
+- Rules:
+  - round 1 can be activated once
+  - round 2 requires closed round 1
+  - only one active round at a time
+- Response `200`: `AttendanceActivationResultDto`
+
+#### POST `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/deactivate/{round}`
+
+Deactivate active round.
+
+- `round` must match currently active round
+- Response `200`: `AttendanceActivationResultDto`
+
+#### POST `/api/instructors/{instructorId}/sessions/{sessionId}/qr-token`
+
+Issue QR JWT for currently active round.
+
+- Response `200`: `QrTokenResponseDto`
+- Important:
+  - token contains claims: `sid`, `aid`, `rnd`, `ins`, `jti`
+  - default token TTL now `120` seconds (`QrToken:LifetimeSeconds` can override)
+
+#### GET `/api/instructors/{instructorId}/sessions/{sessionId}/attendance`
+
+Get session attendance roster.
+
+- Response `200`: `AttendanceDto[]`
+
+#### GET `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary`
+
+Get attendance summary counts.
+
+- Response `200`: `AttendanceSummaryDto`
+
+#### PATCH `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/{studentId}`
+
+Manual attendance update for one student.
+
+- Body: `UpdateAttendanceDto`
+- Response `200`: `AttendanceDto`
+
+#### POST `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/finalize`
+
+Compute final attendance from accepted scan rounds for all enrolled students.
+
+- Requires no active round
+- Response `204`
+- Logic:
+  - 2 distinct rounds scanned -> Present
+  - 1 distinct round scanned -> Late
+  - 0 rounds scanned -> Absent
+  - manually adjusted records are not overwritten
+
+#### POST `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/bulk-absent`
+
+Add absent records for enrolled students without attendance rows.
+
+- Response `204`
+
+### 6.9 Student Endpoints
+
+Base: `/api/students/{studentId}`
+
+#### GET `/api/students/{studentId}/enrollments`
+
+Returns student lessons with aggregated attendance counts.
+
+- Response `200`: `StudentLessonDto[]`
+
+#### GET `/api/students/{studentId}/lessons/{lessonId}/attendance`
+
+Returns per-session attendance rows for the lesson.
+
+- Response `200`: `StudentAttendanceDto[]`
+
+#### POST `/api/students/{studentId}/attendance/scan`
+
+Submit QR scan.
+
+- Body: `QrScanRequestDto`
+- Response `200`: `QrScanResponseDto`
+
+#### POST `/api/students/{studentId}/attendance/qr/scan`
+
+Alias for `/attendance/scan`.
+
+- Body/Response identical
+
+## 7. QR Scan Behavior Details
+
+### 7.1 Request token format
+
+`token` accepts:
+
+1. Plain JWT token
+2. JWT bound to student ID using pipe suffix:
+   - `{jwt}|{studentGuid}`
+
+If bound student GUID does not match request student, request is rejected.
+
+### 7.2 Scan acceptance checks
+
+Scan is accepted only if all are true:
+
+- valid signed JWT
+- token not expired
+- session exists
+- token instructor matches session owner
+- activation exists and is currently active with same round
+- student is enrolled in session lesson
+- student has not already scanned in same round
+- token `jti` not replayed for same student/session
+
+### 7.3 QR scan error codes (`QrScanResponseDto.errorCode`)
+
+- `student_id_missing`
+- `token_missing`
+- `student_token_mismatch`
+- `invalid_token`
+- `invalid_token_format`
+- `invalid_token_signature`
+- `invalid_token_payload`
+- `token_expired`
+- `session_not_found`
+- `instructor_mismatch`
+- `activation_inactive`
+- `already_scanned_this_round`
+- `student_not_enrolled`
+- `replay_token`
+
+## 8. Request and Response Schemas
+
+### 8.1 Course
+
+`CreateCourseDto` and `UpdateCourseDto`
+
+```json
+{
+  "name": "Linear Algebra",
+  "department": "MATH",
+  "code": "201",
+  "credits": 4,
+  "timesPerWeek": 2
+}
+```
+
+`CourseDto`
+
+```json
+{
+  "id": 12,
+  "name": "Linear Algebra",
+  "department": "MATH",
+  "code": "201",
+  "credits": 4,
+  "timesPerWeek": 2
+}
+```
+
+### 8.2 Lesson
+
+`CreateLessonDto`
+
+```json
+{
+  "courseId": 12,
+  "instructorId": "11111111-1111-1111-1111-111111111111",
+  "roomId": 401,
+  "academicYear": 2026,
+  "semester": "Spring",
+  "maxCapacity": 35
+}
+```
+
+`LessonDto` (example)
+
+```json
+{
+  "id": 55,
+  "name": "Linear Algebra",
+  "code": "201",
+  "instructorId": "11111111-1111-1111-1111-111111111111",
+  "instructorDisplayName": "Ada Instructor",
+  "instructorEmail": "instructor@example.com",
+  "academicYear": 2026,
+  "semester": "Spring",
+  "crn": "20001",
+  "maxCapacity": 35,
+  "sessions": []
+}
+```
+
+### 8.3 Enrollment
+
+`CreateEnrollmentDto`
+
+```json
+{
+  "studentId": "22222222-2222-2222-2222-222222222222"
+}
+```
+
+`EnrollmentDto`
+
+```json
+{
+  "id": 99,
+  "lessonId": 55,
+  "studentId": "22222222-2222-2222-2222-222222222222",
+  "studentFullName": "Student One",
+  "studentCode": "S12345",
+  "studentEmail": "student@example.com"
+}
+```
+
+### 8.4 Session
+
+`CreateSessionDto` / `UpdateSessionDto`
+
+```json
+{
+  "startTime": "2026-05-01T09:00:00Z",
+  "endTime": "2026-05-01T10:30:00Z",
+  "topic": "Matrices"
+}
+```
+
+`BulkGenerateSessionsDto`
+
+```json
+{
+  "fromDate": "2026-05-01",
+  "toDate": "2026-06-30",
+  "weeklySlots": [
+    {
+      "dayOfWeek": "Monday",
+      "startTime": "09:00:00",
+      "endTime": "10:30:00"
+    },
+    {
+      "dayOfWeek": "Wednesday",
+      "startTime": "09:00:00",
+      "endTime": "10:30:00"
+    }
+  ],
+  "topic": "Regular Lecture"
+}
+```
+
+`BulkGenerateSessionsResponseDto`
+
+```json
+{
+  "createdCount": 12,
+  "skippedDuplicateCount": 1,
+  "createdSessions": []
+}
+```
+
+`SessionDto` (example)
+
+```json
+{
+  "id": 700,
+  "lessonId": 55,
+  "lessonName": "Linear Algebra",
+  "startTime": "2026-05-01T09:00:00Z",
+  "endTime": "2026-05-01T10:30:00Z",
+  "topic": "Matrices",
+  "isAttendanceActive": false,
+  "attendanceActivatedAt": null,
+  "attendanceDeactivatedAt": null,
+  "totalStudents": 32,
+  "presentCount": 25,
+  "lateCount": 3,
+  "absentCount": 4,
+  "excusedCount": 0
+}
+```
+
+### 8.5 Attendance
+
+`UpdateAttendanceDto`
+
+```json
+{
+  "status": "Present",
+  "instructorNote": "Came late but attended full class"
+}
+```
+
+`AdminAttendanceCorrectionDto`
+
+```json
+{
+  "status": "Excused",
+  "note": "Medical note accepted"
+}
+```
+
+`AttendanceDto` (example)
+
+```json
+{
+  "id": 301,
+  "sessionId": 700,
+  "lessonId": 55,
+  "studentId": "22222222-2222-2222-2222-222222222222",
+  "studentFullName": "Student One",
+  "studentCode": "S12345",
+  "status": "Late",
+  "markedAt": "2026-05-01T09:05:30Z",
+  "markedSource": "QR",
+  "updatedAt": "2026-05-01T09:05:30Z",
+  "updatedBy": "22222222-2222-2222-2222-222222222222",
+  "firstScanAt": "2026-05-01T09:05:30Z",
+  "lastScanAt": "2026-05-01T09:05:30Z",
+  "isManuallyAdjusted": false,
+  "instructorNote": null
+}
+```
+
+`AttendanceSummaryDto`
+
+```json
+{
+  "sessionId": 700,
+  "totalStudents": 32,
+  "presentCount": 25,
+  "lateCount": 3,
+  "absentCount": 4,
+  "excusedCount": 0
+}
+```
+
+### 8.6 QR
+
+`QrTokenResponseDto`
+
+```json
+{
+  "sessionId": 700,
+  "activationId": 41,
+  "round": 1,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiresAt": "2026-05-01T09:12:00Z"
+}
+```
+
+`QrScanRequestDto`
+
+```json
+{
+  "studentId": "22222222-2222-2222-2222-222222222222",
+  "token": "<jwt-or-jwt|studentGuid>"
+}
+```
+
+`QrScanResponseDto` success
+
+```json
+{
+  "success": true,
+  "errorCode": null,
+  "message": "Scan accepted.",
+  "studentId": "22222222-2222-2222-2222-222222222222",
+  "sessionId": 700,
+  "activationId": 41,
+  "round": 1,
+  "validScanCount": 1,
+  "status": "Late",
+  "scannedAt": "2026-05-01T09:05:30Z"
+}
+```
+
+`QrScanResponseDto` failure
+
+```json
+{
+  "success": false,
+  "errorCode": "token_expired",
+  "message": "QR token has expired.",
+  "studentId": "22222222-2222-2222-2222-222222222222",
+  "sessionId": 700,
+  "activationId": 41,
+  "round": 1,
+  "validScanCount": 0,
+  "status": null,
+  "scannedAt": "2026-05-01T09:10:00Z"
+}
+```
+
+### 8.7 Student projections
+
+`StudentLessonDto`
+
+```json
+{
+  "lessonId": 55,
+  "lessonName": "Linear Algebra",
+  "lessonCode": "201",
+  "totalSessions": 14,
+  "presentCount": 10,
+  "lateCount": 2,
+  "absentCount": 2,
+  "excusedCount": 0
+}
+```
+
+`StudentAttendanceDto`
+
+```json
+{
+  "attendanceId": 301,
+  "sessionId": 700,
+  "sessionStartTime": "2026-05-01T09:00:00Z",
+  "sessionEndTime": "2026-05-01T10:30:00Z",
+  "lessonName": "Linear Algebra",
+  "lessonCode": "201",
+  "status": "Late",
+  "firstScanAt": "2026-05-01T09:05:30Z",
+  "lastScanAt": "2026-05-01T09:05:30Z",
+  "isManuallyAdjusted": false,
+  "instructorNote": null
+}
+```
+
+### 8.8 User sync models
+
+`UserSyncResultDto`
+
+```json
+{
+  "importedCount": 340,
+  "roles": ["student", "instructor"],
+  "syncedAtUtc": "2026-04-24T09:00:00Z"
+}
+```
+
+`ExternalUserDirectoryDto`
+
+```json
+{
+  "userId": "11111111-1111-1111-1111-111111111111",
+  "role": "instructor",
+  "userName": "i12345",
+  "email": "instructor@example.com",
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "displayName": "Ada Lovelace",
+  "phoneNumber": "+123456789",
+  "userType": "Instructor",
+  "status": "Active",
+  "syncedAtUtc": "2026-04-24T09:00:00Z"
+}
+```
+
+### 8.9 Scheduling row
+
+`LessonSchedulingRow`
+
+```json
+{
+  "lessonId": 55,
+  "instructorUserId": "11111111-1111-1111-1111-111111111111",
+  "enrollment": 32,
+  "maxCapacity": 35,
+  "timesPerWeek": 2,
+  "courseCode": "MATH201",
+  "courseTitle": "Linear Algebra"
+}
+```
+
+## 9. End-to-End Attendance Flow (Recommended)
+
+1. Admin creates course and lesson.
+2. Admin enrolls students.
+3. Instructor creates or generates sessions.
+4. Instructor starts round 1:
+   - `POST /api/instructors/{instructorId}/sessions/{sessionId}/attendance/activate/1`
+5. Instructor requests QR token repeatedly as it expires (~120s default).
+6. Students scan using:
+   - `POST /api/students/{studentId}/attendance/scan`
+7. Instructor closes round 1 and opens round 2 (optional):
+   - deactivate 1 -> activate 2 -> scans -> deactivate 2
+8. Instructor finalizes:
+   - `POST /api/instructors/{instructorId}/sessions/{sessionId}/attendance/finalize`
+9. Instructor/Admin can manually correct records after finalization.
+
+## 10. Quick cURL Examples (Gateway URL)
+
+### Issue QR token
+
+```bash
+curl -X POST "http://13.60.31.141:5000/attendance/api/instructors/{instructorId}/sessions/{sessionId}/qr-token" \
+  -H "Authorization: Bearer <token>"
+```
+
+### Student scan
+
+```bash
+curl -X POST "http://13.60.31.141:5000/attendance/api/students/{studentId}/attendance/scan" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{
+    "studentId":"{studentId}",
+    "token":"<jwt>"
+  }'
+```
+
+### Get instructor attendance summary
+
+```bash
+curl "http://13.60.31.141:5000/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary" \
+  -H "Authorization: Bearer <token>"
+```
 
 ---
 
-## 1. Student (`/api/students/{studentId}`)
-
-### `GET /api/students/{studentId}/enrollments`
-
-Lists enrolled lessons with **aggregated attendance counts** per lesson.
-
-**Response:** `StudentLessonDto[]`
-
-| Field            | Type   |
-|------------------|--------|
-| `lessonId`       | int    |
-| `lessonName`     | string | Course title                         |
-| `lessonCode`     | string | Course code                          |
-| `totalSessions`  | int    |
-| `presentCount`   | int    |
-| `lateCount`      | int    |
-| `absentCount`    | int    |
-| `excusedCount`   | int    |
-
----
-
-### `GET /api/students/{studentId}/lessons/{lessonId}/attendance`
-
-Student’s **per-session** attendance rows for one lesson.
-
-**Response:** `StudentAttendanceDto[]`
-
-| Field               | Type     |
-|---------------------|----------|
-| `attendanceId`      | int      |
-| `sessionId`         | int      |
-| `sessionStartTime`  | datetime |
-| `sessionEndTime`    | datetime |
-| `lessonName`        | string   |
-| `lessonCode`        | string   |
-| `status`            | string   | `Present` / `Late` / `Absent` / `Excused` |
-| `firstScanAt`       | datetime? |
-| `lastScanAt`        | datetime? |
-| `isManuallyAdjusted`| bool     |
-| `instructorNote`    | string?  |
-
----
-
-### `POST /api/students/{studentId}/attendance/scan`
-
-Validates the **QR JWT** and records a scan for `studentId` (auth-service user **GUID** in the route). If body `studentId` is empty, the route `studentId` is used.
-
-### `POST /api/students/{studentId}/attendance/qr/scan` (alias)
-
-Alias for `POST /api/students/{studentId}/attendance/scan`. Same request/response.
-
-**Eligibility:** only students **enrolled in the session’s lesson** can scan successfully (`errorCode`: `student_not_enrolled` otherwise).
-
-**Body — `QrScanRequestDto`:**
-
-| Field         | Type    | Notes                    |
-|---------------|---------|--------------------------|
-| `studentId`   | guid    | Route id is used when omitted in body |
-| `token`       | string  | See below |
-
-**`token` field**
-
-- The value is a **signed HS256 JWT** issued by `POST .../qr-token` while a round (1 or 2) is active. All **session context** is inside the JWT (session id, activation id, **round** `1` or `2`, instructor id, `jti`, expiry). The client does not send separate `qrContext`.
-- **Binding the user (recommended):** append a pipe and the same student’s GUID as in the request so the server can double-check:  
-  `{jwt}|{studentGuid}`  
-  If present, the GUID must match the route / body `studentId` or the scan is rejected (`student_token_mismatch`).
-
-**JWT custom claims (reference):** `sid` (session id), `aid` (activation id), `rnd` (1 or 2), `ins` (instructor user id), plus standard `jti`, `exp`, `iat`. Issuer/audience default to `MyAda.Attendance.Qr` (overridable via `QrToken:Issuer` / `QrToken:Audience`).
-
-**Attendance status from scans**
-
-| Distinct successful rounds in this session (round 1 and/or 2) | `status` after scan / at finalize* |
-|----------------------------------------------------------------|--------------------------------------|
-| 2 (scanned in round 1 and round 2) | `Present` |
-| 1 (only one round scanned) | `Late` |
-| 0 | `Absent` (after finalize) |
-
-*Live `status` updates after each successful scan; `POST .../attendance/finalize` recalculates the same rules for all enrolled students.
-
-**Response — `QrScanResponseDto`:**
-
-| Field             | Type     | Notes                              |
-|-------------------|----------|------------------------------------|
-| `success`         | bool     |                                    |
-| `errorCode`       | string?  | Machine-readable reject code on failures |
-| `message`         | string   | Human-readable outcome             |
-| `studentId`       | guid     | Resolved student id for this scan  |
-| `sessionId`       | int      |                                    |
-| `activationId`    | int?     |                                    |
-| `round`           | byte?    | `1` or `2` when success |
-| `validScanCount`  | int      | **Distinct rounds** (1 or 2) completed for this student in this session |
-| `status`          | string?  | e.g. `Present` / `Late` when success |
-| `scannedAt`       | datetime? |                                  |
-
-**Typical errors:** invalid/expired token, session not found, activation inactive, not enrolled, replay token, already scanned in this round, student/token mismatch. Scans are allowed whenever an attendance round is active (no calendar window tied to session start/end).
-
----
-
-## 2. Instructor (`/api/instructors/{instructorId}/sessions`)
-
-Instructor endpoints use explicit `instructorId` route values.
-
-Base path: **`/api/instructors/{instructorId}/sessions`**
-
-### `POST /api/instructors/{instructorId}/sessions/{sessionId}/attendance/activate/{round}`
-
-Opens **one** attendance **round** for the session. `round` is **`1` or `2`**.
-
-- **Round 1** — first check-in window (e.g. on-time / first half of class). Only if round 1 has not already been completed for this session.
-- **Round 2** — second check-in window (e.g. late). Only after **round 1 is closed** (deactivated) and **round 2** has not already been completed.
-
-At most one round can be active at a time. The general flow: `activate/1` → `qr-token` (repeat as the QR refreshes) → `deactivate/1` → `activate/2` → `qr-token` → `deactivate/2` → `finalize` (see below).
-
-**Response — `AttendanceActivationResultDto`:** includes `round` (1 or 2).
-
-| Field                      | Type     |
-|----------------------------|----------|
-| `sessionId`                | int      |
-| `round`                    | byte?    | Which round was opened |
-| `isAttendanceActive`       | bool     |
-| `attendanceActivatedAt`    | datetime? |
-| `attendanceDeactivatedAt`  | datetime? |
-| `message`                  | string   |
-
----
-
-### `POST /api/instructors/{instructorId}/sessions/{sessionId}/attendance/deactivate/{round}`
-
-Closes the **currently active** round. `round` must match the active round (`1` or `2`). This does **not** run finalization; it only ends the activation so the next round can be opened (or the session can be finalized).
-
-**Response:** `AttendanceActivationResultDto` (with `round` set).
-
----
-
-### `POST /api/instructors/{instructorId}/sessions/{sessionId}/qr-token`
-
-Issues a **short-lived HS256 JWT** (standard three-part `header.payload.sig`) for display in a QR while **some** round is active. The JWT encodes the session, activation, round, instructor, and `jti`.
-
-**Response — `QrTokenResponseDto`:**
-
-| Field           | Type     |
-|-----------------|----------|
-| `sessionId`     | int      |
-| `activationId`  | int      |
-| `round`         | byte     | `1` or `2` |
-| `token`         | string   | JWT string |
-| `expiresAt`     | datetime |
-
-Configure `QrToken:Secret` (at least 32 effective bytes; shorter values are padded in development), `QrToken:Issuer`, `QrToken:Audience`, and `QrToken:LifetimeSeconds`.
-
----
-
-### `GET /api/instructors/{instructorId}/sessions/{sessionId}/attendance`
-
-Full **roster** for the session (instructor view).
-
-**Response:** `AttendanceDto[]`
-
-**`AttendanceDto` (main fields):**
-
-| Field                 | Type     |
-|-----------------------|----------|
-| `id`                  | int      |
-| `sessionId`         | int      |
-| `lessonId`          | int      |
-| `studentId`         | guid     |
-| `studentFullName`   | string   |
-| `studentCode`       | string   |
-| `status`            | string   | `Present` / `Late` / `Absent` / `Excused` |
-| `markedAt`          | datetime? |
-| `markedSource`      | string?  |
-| `updatedAt`         | datetime? |
-| `updatedBy`         | guid?    |
-| `firstScanAt`       | datetime? |
-| `lastScanAt`        | datetime? |
-| `isManuallyAdjusted`| bool     |
-| `instructorNote`    | string?  |
-
----
-
-### `GET /api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary`
-
-Rollup counts only (no per-student rows).
-
-**Response — `AttendanceSummaryDto`:**
-
-| Field           | Type |
-|-----------------|------|
-| `sessionId`     | int  |
-| `totalStudents` | int  |
-| `presentCount`  | int  |
-| `lateCount`     | int  |
-| `absentCount`   | int  |
-| `excusedCount`  | int  |
-
----
-
-### `PATCH /api/instructors/{instructorId}/sessions/{sessionId}/attendance/{studentId}`
-
-Instructor updates one **enrolled student’s** attendance row for that session.
-
-**Body — `UpdateAttendanceDto`:**
-
-| Field             | Type    | Notes                                      |
-|-------------------|---------|--------------------------------------------|
-| `status`          | string  | `Present`, `Late`, `Absent`, or `Excused` |
-| `instructorNote`  | string? | Optional                                   |
-
-**Response:** `AttendanceDto`
-
----
-
-### `POST /api/instructors/{instructorId}/sessions/{sessionId}/attendance/finalize`
-
-Finalizes attendance for the session. **No** attendance round may be active: close the current round with `deactivate` first. For each **enrolled** student, `Present` / `Late` / `Absent` is set from the number of **distinct successful rounds (1 and 2)** they scanned, as in the table above. Rows that are manually adjusted are left unchanged.
-
-**Body:** none  
-**Response:** typically `200` / no content per wrapper.
-
----
-
-### `POST /api/instructors/{instructorId}/sessions/{sessionId}/attendance/bulk-absent`
-
-Marks **non-present** enrolled students as absent in bulk for that session.
-
-**Body:** none  
-**Response:** service-defined (check Swagger/runtime).
-
----
-
-## 3. Admin (`/api/admin`)
-
-Registrar/office. **Authentication/authorization** must allow these actions in your deployment.
-
-### `GET /api/admin/sessions/{sessionId}/attendance`
-
-Same roster shape as instructor **`AttendanceDto[]`**, without instructor ownership check (`GetSessionAttendanceAdminAsync`).
-
-**Response:** `AttendanceDto[]`
-
----
-
-### `PATCH /api/admin/sessions/{sessionId}/attendance/{attendanceId}`
-
-Corrects a single attendance row by **attendance id**.
-
-**Body — `AdminAttendanceCorrectionDto`:**
-
-| Field    | Type    | Notes                                |
-|----------|---------|--------------------------------------|
-| `status` | string  | `Present`, `Late`, `Absent`, `Excused` |
-| `note`   | string? | Optional                             |
-
-**Response:** `AttendanceDto`
-
----
-
-### `DELETE /api/admin/sessions/{sessionId}/attendance/{attendanceId}`
-
-Deletes an attendance record.
-
-**Response:** success per API wrapper conventions.
-
----
-
-## 4. Related session listing (lessons)
-
-Documented in **`ADMIN_API.md`**; paths use explicit ids:
-
-| Method | Route | Notes |
-|--------|--------|--------|
-| `GET` | `/api/admin/lessons/{lessonId}/sessions` | Admin |
-| `GET` | `/api/instructors/{instructorId}/lessons/{lessonId}/sessions` | Instructor |
-| `GET` | `/api/instructors/{instructorId}/lessons/{lessonId}/sessions/{sessionId}` | Instructor |
-
-`SessionDto` includes attendance rollups per session.
-
----
-
-## Quick reference table
-
-| Method | Path | Caller |
-|--------|------|--------|
-| `GET` | `/api/students/{studentId}/enrollments` | Student |
-| `GET` | `/api/students/{studentId}/lessons/{lessonId}/attendance` | Student |
-| `POST` | `/api/students/{studentId}/attendance/scan` | Student |
-| `POST` | `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/activate/{round}` | Instructor |
-| `POST` | `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/deactivate/{round}` | Instructor |
-| `POST` | `/api/instructors/{instructorId}/sessions/{sessionId}/qr-token` | Instructor |
-| `GET` | `/api/instructors/{instructorId}/sessions/{sessionId}/attendance` | Instructor |
-| `GET` | `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary` | Instructor |
-| `PATCH` | `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/{studentId}` | Instructor |
-| `POST` | `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/finalize` | Instructor |
-| `POST` | `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/bulk-absent` | Instructor |
-| `GET` | `/api/admin/sessions/{sessionId}/attendance` | Admin |
-| `PATCH` | `/api/admin/sessions/{sessionId}/attendance/{attendanceId}` | Admin |
-| `DELETE` | `/api/admin/sessions/{sessionId}/attendance/{attendanceId}` | Admin |
-
----
-
-## Document version
-
-Aligned with `MyAdaAttendanceService.Web/Controllers` and application DTOs. Update when routes or contracts change.
+Source alignment: generated from current code in `MyAdaAttendanceService.Web/Controllers`, `MyAdaAttendanceService.Application/DTOs`, and service logic files.

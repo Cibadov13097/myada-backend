@@ -3,6 +3,7 @@ using AuthService.Application.Interfaces;
 using AuthService.API.DTOs.Auth;
 using AuthService.Domain.Enums;
 using AuthService.API.Integrations;
+using AuthService.API.Security;
 using AuthService.Infrastructure.Identity;
 using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
@@ -27,6 +29,7 @@ namespace AuthService.API.Controllers
         private readonly IProfileImageStorageService _profileImageStorageService;
         private readonly SupportStaffProvisioningClient _supportStaffProvisioningClient;
         private readonly NotificationEmailClient _notificationEmailClient;
+        private readonly IAccessTokenRevocationStore _accessTokenRevocationStore;
         private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
 
@@ -39,6 +42,7 @@ namespace AuthService.API.Controllers
           IProfileImageStorageService profileImageStorageService,
           SupportStaffProvisioningClient supportStaffProvisioningClient,
           NotificationEmailClient notificationEmailClient,
+          IAccessTokenRevocationStore accessTokenRevocationStore,
           ILogger<AuthController> logger,
           IConfiguration configuration)
         {
@@ -50,6 +54,7 @@ namespace AuthService.API.Controllers
             _profileImageStorageService = profileImageStorageService;
             _supportStaffProvisioningClient = supportStaffProvisioningClient;
             _notificationEmailClient = notificationEmailClient;
+            _accessTokenRevocationStore = accessTokenRevocationStore;
             _logger = logger;
             _configuration = configuration;
         }
@@ -494,6 +499,25 @@ namespace AuthService.API.Controllers
         public async Task<IActionResult> Logout(RefreshTokenRequestDto dto)
         {
             await _refreshTokenService.RevokeRefreshTokenAsync(dto.RefreshToken);
+
+            var jti = User.FindFirstValue(JwtRegisteredClaimNames.Jti)
+                      ?? User.FindFirstValue("jti");
+            var expRaw = User.FindFirstValue(JwtRegisteredClaimNames.Exp)
+                         ?? User.FindFirstValue("exp");
+
+            if (!string.IsNullOrWhiteSpace(jti) && long.TryParse(expRaw, out var expUnixSeconds))
+            {
+                try
+                {
+                    var expiresAtUtc = DateTimeOffset.FromUnixTimeSeconds(expUnixSeconds).UtcDateTime;
+                    await _accessTokenRevocationStore.RevokeAsync(jti, expiresAtUtc, HttpContext.RequestAborted);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to revoke access token JTI {Jti} in Redis during logout.", jti);
+                }
+            }
+
             return Ok(new { message = "Logged out successfully" });
         }
     }
