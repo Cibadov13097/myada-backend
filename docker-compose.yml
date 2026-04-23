@@ -260,7 +260,7 @@ services:
 
   myadaattendanceservice:
     build:
-      context: ./Services/MyAdaAttendanceService/MyAdaAttendanceService
+      context: ./Services/MyAdaAttendanceService
       dockerfile: Dockerfile
     container_name: myada-attendance-service
     ports:
