@@ -137,6 +137,7 @@ builder.Services.AddScoped<IEventRegistrationService, EventRegistrationService>(
 builder.Services.AddScoped<ITicketJwtService, TicketJwtService>();
 builder.Services.AddScoped<IJobVacancyService, JobVacancyService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
+builder.Services.AddScoped<IInterviewSchedulingService, InterviewSchedulingService>();
 builder.Services.AddScoped<ISubeventService, SubeventService>();
 builder.Services.AddSingleton<IClubNotificationService, ClubNotificationService>();
 builder.Services.AddSingleton<ClubAdminWorkspaceStore>();

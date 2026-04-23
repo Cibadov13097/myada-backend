@@ -252,3 +252,5 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\C
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\RabbitMQ.Client.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Contracts.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Contracts.pdb
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\AWSSDK.S3.dll

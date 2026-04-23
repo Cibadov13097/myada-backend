@@ -11,6 +11,8 @@ internal static class ClubAdminStatusMaps
         JobApplicationStatus.Approved => "Approved",
         JobApplicationStatus.Rejected => "Rejected",
         JobApplicationStatus.Cancelled => "Rejected",
+        JobApplicationStatus.InterviewInvited => "InterviewInvited",
+        JobApplicationStatus.InterviewScheduled => "InterviewScheduled",
         _ => "Pending"
     };
 
@@ -31,6 +33,8 @@ internal static class ClubAdminStatusMaps
             "reviewing" => JobApplicationStatus.Reviewing,
             "approved" => JobApplicationStatus.Approved,
             "rejected" => JobApplicationStatus.Rejected,
+            "interviewinvited" or "interview_invited" or "interview-invited" => JobApplicationStatus.InterviewInvited,
+            "interviewscheduled" or "interview_scheduled" or "interview-scheduled" => JobApplicationStatus.InterviewScheduled,
             _ => null
         };
     }
@@ -58,6 +62,7 @@ internal static class ClubAdminStatusMaps
             "approve" or "approved" => JobApplicationStatus.Approved,
             "reject" or "rejected" => JobApplicationStatus.Rejected,
             "request-changes" or "reviewing" or "changes_requested" => JobApplicationStatus.Reviewing,
+            "invite-to-interview" or "invite_to_interview" or "interview_invite" or "interview-invite" => JobApplicationStatus.InterviewInvited,
             _ => JobApplicationStatus.Pending
         };
     }

@@ -12,5 +12,9 @@ namespace ClubManagementService.Domain.Entities
         public string ExperienceLinks { get; set; } = null!;
         public string FileUrl { get; set; } = null!;
         public JobApplicationStatus Status { get; set; }
+
+        /// <summary>References <see cref="InterviewSlot.SlotId"/> when the applicant has booked a slot.</summary>
+        public string? InterviewSlotId { get; set; }
+        public InterviewSlot? InterviewSlot { get; set; }
     }
 }

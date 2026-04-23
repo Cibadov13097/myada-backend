@@ -67,7 +67,7 @@ public sealed class ClubAdminService : IClubAdminService
         var vacancies = await _jobVacancyService.GetByClubIdAsync(ctx.ClubId).ConfigureAwait(false);
         var openVacancies = vacancies.Count(v => !v.IsDraft && v.IsActive);
         var jobApps = await _jobApplicationService.GetByClubIdAsync(ctx.ClubId).ConfigureAwait(false);
-        var newApps = jobApps.Count(a => a.Status is JobApplicationStatus.Pending or JobApplicationStatus.Reviewing);
+        var newApps = jobApps.Count(a => a.Status is JobApplicationStatus.Pending or JobApplicationStatus.Reviewing or JobApplicationStatus.InterviewInvited);
         newApps += ws.MembershipApplications.Values.Count(m =>
             m.Status is "Pending" or "Reviewing");
         var events = await _eventService.GetByClubIdAsync(ctx.ClubId).ConfigureAwait(false);
@@ -188,7 +188,8 @@ public sealed class ClubAdminService : IClubAdminService
                     VacancyTitle = vacancy.Title,
                     ExperienceLinks = dto.ExperienceLinks,
                     FileUrl = dto.FileUrl,
-                    CreatedAt = dto.CreatedAt.ToUniversalTime().ToString("O")
+                    CreatedAt = dto.CreatedAt.ToUniversalTime().ToString("O"),
+                    InterviewSlotId = dto.InterviewSlotId
                 },
                 Notes = SnapshotNotesForClub(clubId, applicationId)
             };
@@ -315,6 +316,37 @@ public sealed class ClubAdminService : IClubAdminService
         return new ClubAdminApplicationActionResultDto { ApplicationId = applicationId, Status = "Reviewing" };
     }
 
+    public async Task<ClubAdminApplicationActionResultDto?> InviteToInterviewAsync(string clubRouteKey, string applicationId, CancellationToken cancellationToken = default)
+    {
+        var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
+        if (ctx == null)
+            return null;
+
+        var clubId = ctx.ClubId;
+        if (!ClubAdminApplicationId.TryParse(applicationId, out var jobId, out _) || jobId <= 0)
+            return null;
+
+        if (!await JobApplicationBelongsToClubAsync(jobId, clubId).ConfigureAwait(false))
+            return null;
+
+        var dto = await _jobApplicationService.GetByIdAsync(jobId).ConfigureAwait(false);
+        if (dto == null)
+            return null;
+
+        if (dto.Status == JobApplicationStatus.InterviewScheduled)
+            return null;
+
+        await _jobApplicationService
+            .UpdateStatusAsync(jobId, new UpdateJobApplicationStatusDto { Status = JobApplicationStatus.InterviewInvited })
+            .ConfigureAwait(false);
+
+        return new ClubAdminApplicationActionResultDto
+        {
+            ApplicationId = applicationId,
+            Status = ClubAdminStatusMaps.JobApplicationToApi(JobApplicationStatus.InterviewInvited)
+        };
+    }
+
     public async Task<ClubAdminApplicationNoteDto?> AddApplicationNoteAsync(string clubRouteKey, string applicationId, string note, CancellationToken cancellationToken = default)
     {
         var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
@@ -388,21 +420,24 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return EmptyPage<ClubAdminInterviewSlotDto>(page, limit);
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        var items = ws.InterviewSlots.Values
-            .OrderBy(s => s.StartsAt)
-            .Select(s => new ClubAdminInterviewSlotDto
-            {
-                Id = s.Id,
-                ClubId = ctx.Key,
-                StartsAt = s.StartsAt,
-                EndsAt = s.EndsAt,
-                VacancyId = s.VacancyId,
-                Capacity = s.Capacity
-            })
-            .ToList();
+        var clubId = ctx.ClubId;
+        var key = ctx.Key;
+        var p = Math.Max(page, 1);
+        var l = Math.Max(limit, 1);
+        var query = _db.InterviewSlots
+            .AsNoTracking()
+            .Where(s => s.ClubId == clubId)
+            .OrderBy(s => s.StartsAt);
 
-        return Page(items, page, limit);
+        var total = await query.CountAsync(cancellationToken).ConfigureAwait(false);
+        var rows = await query
+            .Skip((p - 1) * l)
+            .Take(l)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var items = rows.Select(s => MapInterviewSlotDto(s, key)).ToList();
+        return new ClubAdminPagedResult<ClubAdminInterviewSlotDto> { Items = items, Page = p, Limit = l, Total = total };
     }
 
     public async Task<ClubAdminPagedResult<ClubAdminInterviewSlotDto>> GenerateInterviewSlotsAsync(string clubRouteKey, GenerateInterviewSlotsInput input, CancellationToken cancellationToken = default)
@@ -411,34 +446,50 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return EmptyPage<ClubAdminInterviewSlotDto>(1, 20);
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        var created = new List<ClubAdminInterviewSlotDto>();
-        if (TryBuildSlotSeries(input, out var slots))
+        var clubId = ctx.ClubId;
+        var key = ctx.Key;
+
+        int? jobVacancyId = null;
+        if (!string.IsNullOrWhiteSpace(input.VacancyId))
         {
-            foreach (var slot in slots)
-            {
-                var id = Guid.NewGuid().ToString("D");
-                ws.InterviewSlots[id] = new InterviewSlotRow
-                {
-                    Id = id,
-                    StartsAt = slot.Start,
-                    EndsAt = slot.End,
-                    VacancyId = input.VacancyId,
-                    Capacity = 1
-                };
-                created.Add(new ClubAdminInterviewSlotDto
-                {
-                    Id = id,
-                    ClubId = ctx.Key,
-                    StartsAt = slot.Start,
-                    EndsAt = slot.End,
-                    VacancyId = input.VacancyId,
-                    Capacity = 1
-                });
-            }
+            if (!int.TryParse(input.VacancyId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var vid))
+                return EmptyPage<ClubAdminInterviewSlotDto>(1, 20);
+
+            var vacancy = await _db.JobVacancies
+                .AsNoTracking()
+                .FirstOrDefaultAsync(v => v.Id == vid && v.ClubId == clubId, cancellationToken)
+                .ConfigureAwait(false);
+            if (vacancy == null)
+                return EmptyPage<ClubAdminInterviewSlotDto>(1, 20);
+            jobVacancyId = vid;
         }
 
-        return Page(created, 1, Math.Max(created.Count, 1));
+        if (!TryBuildSlotSeries(input, out var slotTimes))
+            return EmptyPage<ClubAdminInterviewSlotDto>(1, 20);
+
+        var now = DateTime.UtcNow;
+        var created = new List<ClubAdminInterviewSlotDto>();
+        foreach (var slot in slotTimes)
+        {
+            var entity = new InterviewSlot
+            {
+                SlotId = Guid.NewGuid().ToString("D"),
+                ClubId = clubId,
+                JobVacancyId = jobVacancyId,
+                StartsAt = slot.Start,
+                EndsAt = slot.End,
+                Capacity = 1,
+                IsPublished = true,
+                CreatedAt = now,
+                IsDeleted = false
+            };
+            await _db.InterviewSlots.AddAsync(entity, cancellationToken).ConfigureAwait(false);
+            created.Add(MapInterviewSlotDto(entity, key));
+        }
+
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        var l = Math.Max(created.Count, 1);
+        return new ClubAdminPagedResult<ClubAdminInterviewSlotDto> { Items = created, Page = 1, Limit = l, Total = created.Count };
     }
 
     public async Task<ClubAdminInterviewSlotDto?> PatchInterviewSlotAsync(string clubRouteKey, string slotId, PatchInterviewSlotInput input, CancellationToken cancellationToken = default)
@@ -447,8 +498,11 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return null;
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        if (!ws.InterviewSlots.TryGetValue(slotId, out var row))
+        var clubId = ctx.ClubId;
+        var row = await _db.InterviewSlots
+            .FirstOrDefaultAsync(s => s.SlotId == slotId && s.ClubId == clubId, cancellationToken)
+            .ConfigureAwait(false);
+        if (row == null)
             return null;
 
         if (input.StartsAt.HasValue)
@@ -456,19 +510,36 @@ public sealed class ClubAdminService : IClubAdminService
         if (input.EndsAt.HasValue)
             row.EndsAt = input.EndsAt.Value;
         if (input.VacancyId != null)
-            row.VacancyId = input.VacancyId;
-        if (input.Capacity.HasValue)
-            row.Capacity = input.Capacity.Value;
-
-        return new ClubAdminInterviewSlotDto
         {
-            Id = row.Id,
-            ClubId = ctx.Key,
-            StartsAt = row.StartsAt,
-            EndsAt = row.EndsAt,
-            VacancyId = row.VacancyId,
-            Capacity = row.Capacity
-        };
+            if (string.IsNullOrWhiteSpace(input.VacancyId))
+            {
+                row.JobVacancyId = null;
+            }
+            else if (int.TryParse(input.VacancyId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var vid))
+            {
+                var vacancy = await _db.JobVacancies
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(v => v.Id == vid && v.ClubId == clubId, cancellationToken)
+                    .ConfigureAwait(false);
+                if (vacancy == null)
+                    return null;
+                row.JobVacancyId = vid;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        if (input.Capacity.HasValue)
+            row.Capacity = Math.Max(1, input.Capacity.Value);
+        if (input.IsPublished.HasValue)
+            row.IsPublished = input.IsPublished.Value;
+
+        row.ModifiedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        return MapInterviewSlotDto(row, ctx.Key);
     }
 
     public async Task<bool> DeleteInterviewSlotAsync(string clubRouteKey, string slotId, CancellationToken cancellationToken = default)
@@ -477,9 +548,30 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return false;
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        return ws.InterviewSlots.TryRemove(slotId, out _);
+        var row = await _db.InterviewSlots
+            .FirstOrDefaultAsync(s => s.SlotId == slotId && s.ClubId == ctx.ClubId, cancellationToken)
+            .ConfigureAwait(false);
+        if (row == null)
+            return false;
+
+        row.IsDeleted = true;
+        row.DeletedAt = DateTime.UtcNow;
+        row.ModifiedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return true;
     }
+
+    private static ClubAdminInterviewSlotDto MapInterviewSlotDto(InterviewSlot s, string clubRouteKey) =>
+        new()
+        {
+            Id = s.SlotId,
+            ClubId = clubRouteKey,
+            StartsAt = s.StartsAt,
+            EndsAt = s.EndsAt,
+            VacancyId = s.JobVacancyId?.ToString(CultureInfo.InvariantCulture),
+            Capacity = s.Capacity,
+            IsPublished = s.IsPublished
+        };
 
     public async Task<ClubAdminPagedResult<ClubAdminVacancyAdminDto>> GetVacanciesAsync(string clubRouteKey, string? status, int page, int limit, CancellationToken cancellationToken = default)
     {
@@ -974,20 +1066,36 @@ public sealed class ClubAdminService : IClubAdminService
         if (existing == null || existing.ClubId != clubId)
             return EmptyPage<ClubAdminAttendeeDto>(page, limit);
 
-        var items = await _db.EventRegistrations
+        var p = Math.Max(page, 1);
+        var l = Math.Max(limit, 1);
+        var query = _db.EventRegistrations
             .AsNoTracking()
             .Where(r => r.EventId == eid)
-            .OrderByDescending(r => r.CreatedAt)
-            .Select(r => new ClubAdminAttendeeDto
-            {
-                Id = r.UserId.ToString("D"),
-                EventId = eid.ToString(CultureInfo.InvariantCulture),
-                UserId = r.UserId.ToString("D"),
-                Entered = r.IsCheckedIn
-            })
+            .OrderByDescending(r => r.CreatedAt);
+
+        var total = await query.CountAsync(cancellationToken).ConfigureAwait(false);
+        var regs = await query
+            .Skip((p - 1) * l)
+            .Take(l)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
-        return Page(items, page, limit);
+
+        var eventIdStr = eid.ToString(CultureInfo.InvariantCulture);
+        var items = new List<ClubAdminAttendeeDto>(regs.Count);
+        foreach (var r in regs)
+        {
+            items.Add(new ClubAdminAttendeeDto
+            {
+                Id = r.UserId.ToString("D"),
+                EventId = eventIdStr,
+                UserId = r.UserId.ToString("D"),
+                Entered = r.IsCheckedIn,
+                TicketId = r.TicketId ?? string.Empty,
+                RegisteredAt = r.CreatedAt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture)
+            });
+        }
+
+        return new ClubAdminPagedResult<ClubAdminAttendeeDto> { Items = items, Page = p, Limit = l, Total = total };
     }
 
     public async Task<ClubAdminAttendeeDto?> PatchEventAttendeeAsync(string clubRouteKey, string eventId, string attendeeId, bool entered, CancellationToken cancellationToken = default)
@@ -1028,7 +1136,9 @@ public sealed class ClubAdminService : IClubAdminService
             Id = registration.UserId.ToString("D"),
             EventId = eid.ToString(CultureInfo.InvariantCulture),
             UserId = registration.UserId.ToString("D"),
-            Entered = registration.IsCheckedIn
+            Entered = registration.IsCheckedIn,
+            TicketId = registration.TicketId ?? string.Empty,
+            RegisteredAt = registration.CreatedAt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture)
         };
     }
 
@@ -1276,21 +1386,31 @@ public sealed class ClubAdminService : IClubAdminService
     private static bool TryBuildSlotSeries(GenerateInterviewSlotsInput input, out List<(DateTimeOffset Start, DateTimeOffset End)> slots)
     {
         slots = new List<(DateTimeOffset, DateTimeOffset)>();
-        if (!DateOnly.TryParse(input.Date, CultureInfo.InvariantCulture, DateTimeStyles.None, out var day))
+        if (!DateOnly.TryParse(input.Date, CultureInfo.InvariantCulture, DateTimeStyles.None, out var firstDay))
             return false;
         if (!TimeOnly.TryParse(input.StartTime, CultureInfo.InvariantCulture, out var startT))
             return false;
         if (!TimeOnly.TryParse(input.EndTime, CultureInfo.InvariantCulture, out var endT))
             return false;
 
-        var len = Math.Max(input.InterviewLengthMinutes, 5);
-        var cursor = new DateTimeOffset(day.ToDateTime(startT), TimeSpan.Zero);
-        var end = new DateTimeOffset(day.ToDateTime(endT), TimeSpan.Zero);
-        while (cursor.AddMinutes(len) <= end)
+        var lastDay = firstDay;
+        if (!string.IsNullOrWhiteSpace(input.EndDate)
+            && DateOnly.TryParse(input.EndDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedEnd))
         {
-            var next = cursor.AddMinutes(len);
-            slots.Add((cursor, next));
-            cursor = next;
+            lastDay = parsedEnd < firstDay ? firstDay : parsedEnd;
+        }
+
+        var len = Math.Max(input.InterviewLengthMinutes, 5);
+        for (var day = firstDay; day <= lastDay; day = day.AddDays(1))
+        {
+            var cursor = new DateTimeOffset(day.ToDateTime(startT), TimeSpan.Zero);
+            var dayEndBoundary = new DateTimeOffset(day.ToDateTime(endT), TimeSpan.Zero);
+            while (cursor.AddMinutes(len) <= dayEndBoundary)
+            {
+                var next = cursor.AddMinutes(len);
+                slots.Add((cursor, next));
+                cursor = next;
+            }
         }
 
         return slots.Count > 0;

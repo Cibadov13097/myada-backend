@@ -67,6 +67,8 @@ public class JobApplicationService : IJobApplicationService
         JobApplicationStatus.Approved => "Approved",
         JobApplicationStatus.Rejected => "Rejected",
         JobApplicationStatus.Cancelled => "Cancelled",
+        JobApplicationStatus.InterviewInvited => "InterviewInvited",
+        JobApplicationStatus.InterviewScheduled => "InterviewScheduled",
         _ => status.ToString()
     };
 

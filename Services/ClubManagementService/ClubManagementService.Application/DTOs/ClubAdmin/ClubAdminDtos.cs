@@ -78,6 +78,7 @@ public sealed class ClubAdminJobApplicationDetailDto
     public string ExperienceLinks { get; init; } = string.Empty;
     public string FileUrl { get; init; } = string.Empty;
     public string CreatedAt { get; init; } = string.Empty;
+    public string? InterviewSlotId { get; init; }
 }
 
 public sealed class ClubAdminApplicationNoteDto
@@ -126,6 +127,7 @@ public sealed class ClubAdminInterviewSlotDto
     public DateTimeOffset EndsAt { get; init; }
     public string? VacancyId { get; init; }
     public int Capacity { get; init; }
+    public bool IsPublished { get; init; } = true;
 }
 
 public sealed class ClubAdminPositionDto
@@ -183,4 +185,6 @@ public sealed class ClubAdminAttendeeDto
     public string EventId { get; init; } = string.Empty;
     public string UserId { get; init; } = string.Empty;
     public bool Entered { get; init; }
+    public string TicketId { get; init; } = string.Empty;
+    public string RegisteredAt { get; init; } = string.Empty;
 }

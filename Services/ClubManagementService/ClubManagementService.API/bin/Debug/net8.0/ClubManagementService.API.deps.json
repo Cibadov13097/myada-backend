@@ -102,6 +102,25 @@
           }
         }
       },
+      "AWSSDK.Core/3.7.401.10": {
+        "runtime": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.401.10"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.414": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.401.10"
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.414.0"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "runtime": {
           "lib/net6.0/Humanizer.dll": {
@@ -791,6 +810,7 @@
       },
       "ClubManagementService.Infrastructure/1.0.0": {
         "dependencies": {
+          "AWSSDK.S3": "3.7.414",
           "AutoMapper": "12.0.1",
           "ClubManagementService.Application": "1.0.0",
           "Microsoft.EntityFrameworkCore": "8.0.0",
@@ -873,6 +893,20 @@
       "sha512": "sha512-voHfDZSDqBdSTwJHHSLhZu61opz/5OEKqn+P+0DEa0hdOOo8FfFWXSnZQYKMjwWurKR0f5hD/InPN2h828rMag==",
       "path": "autowrapper.core/4.5.1",
       "hashPath": "autowrapper.core.4.5.1.nupkg.sha512"
+    },
+    "AWSSDK.Core/3.7.401.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-n8UJG7Vfo44JoSPZbo1wO+Fv7ZGz0jZy4kVMYOHGKsmxNFE5i/E/dlpis7ORnUHYx3dS2LCmNuX9ArhUmYKMEA==",
+      "path": "awssdk.core/3.7.401.10",
+      "hashPath": "awssdk.core.3.7.401.10.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.7.414": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nN9NVXTwVHBOqC1YjjaYKd/iaVPuHAtyM5Vv8wJH/myS2os5HCdJ1R0Pwb0H1hlfREd0mt8HYGduQXXujKp8Kw==",
+      "path": "awssdk.s3/3.7.414",
+      "hashPath": "awssdk.s3.3.7.414.nupkg.sha512"
     },
     "Humanizer.Core/2.14.1": {
       "type": "package",

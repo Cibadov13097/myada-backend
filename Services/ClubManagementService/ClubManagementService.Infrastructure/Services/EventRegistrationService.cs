@@ -257,10 +257,6 @@ public class EventRegistrationService : IEventRegistrationService
             return new CheckInResult(false, "invalid_ticket", "Ticket does not match registration.", claimTicketId, attendeeId, eventId, null);
 
         var now = DateTime.UtcNow;
-        var windowStart = reg.EventStartTimeSnapshot.ToUniversalTime().AddHours(-1);
-        var windowEnd = reg.EventEndTimeSnapshot.ToUniversalTime();
-        if (now < windowStart || now > windowEnd)
-            return new CheckInResult(false, "outside_checkin_window", "Outside check-in window.", reg.TicketId, attendeeId, eventId, reg.CheckedInAt);
 
         reg.LastScannedAt = now;
         reg.ScanCount = reg.ScanCount + 1;

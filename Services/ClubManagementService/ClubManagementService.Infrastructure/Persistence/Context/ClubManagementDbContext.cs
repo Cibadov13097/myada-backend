@@ -16,6 +16,7 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
         public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
         public DbSet<JobVacancy> JobVacancies => Set<JobVacancy>();
         public DbSet<JobApplication> JobApplications => Set<JobApplication>();
+        public DbSet<InterviewSlot> InterviewSlots => Set<InterviewSlot>();
         public DbSet<Subevent> Subevents => Set<Subevent>();
         public DbSet<ClubMembership> ClubMemberships => Set<ClubMembership>();
         public DbSet<ClubEmployee> ClubEmployees => Set<ClubEmployee>();
@@ -35,6 +36,8 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
             modelBuilder.Entity<JobVacancy>()
                 .HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<JobApplication>()
+                .HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<InterviewSlot>()
                 .HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Subevent>()
                 .HasQueryFilter(x => !x.IsDeleted);
@@ -101,6 +104,31 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
                 .HasOne(v => v.ClubPosition)
                 .WithMany()
                 .HasForeignKey(v => v.ClubPositionId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<InterviewSlot>()
+                .HasAlternateKey(x => x.SlotId);
+
+            modelBuilder.Entity<InterviewSlot>()
+                .HasIndex(x => new { x.ClubId, x.StartsAt });
+
+            modelBuilder.Entity<InterviewSlot>()
+                .HasOne(s => s.Club)
+                .WithMany()
+                .HasForeignKey(s => s.ClubId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<InterviewSlot>()
+                .HasOne(s => s.JobVacancy)
+                .WithMany()
+                .HasForeignKey(s => s.JobVacancyId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasOne(a => a.InterviewSlot)
+                .WithMany()
+                .HasForeignKey(a => a.InterviewSlotId)
+                .HasPrincipalKey(s => s.SlotId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.HasDefaultSchema("club");

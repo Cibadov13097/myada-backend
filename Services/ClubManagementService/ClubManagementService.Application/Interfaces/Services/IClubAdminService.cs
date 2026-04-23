@@ -23,6 +23,7 @@ public interface IClubAdminService
     Task<ClubAdminApplicationActionResultDto?> ApproveApplicationAsync(string clubRouteKey, string applicationId, CancellationToken cancellationToken = default);
     Task<ClubAdminApplicationActionResultDto?> RejectApplicationAsync(string clubRouteKey, string applicationId, string? reason, CancellationToken cancellationToken = default);
     Task<ClubAdminApplicationActionResultDto?> RequestChangesAsync(string clubRouteKey, string applicationId, string? changes, CancellationToken cancellationToken = default);
+    Task<ClubAdminApplicationActionResultDto?> InviteToInterviewAsync(string clubRouteKey, string applicationId, CancellationToken cancellationToken = default);
     Task<ClubAdminApplicationNoteDto?> AddApplicationNoteAsync(string clubRouteKey, string applicationId, string note, CancellationToken cancellationToken = default);
     Task<BulkDecisionResultDto> BulkDecisionAsync(string clubRouteKey, IReadOnlyList<string> applicationIds, string decision, string? reason, CancellationToken cancellationToken = default);
 
@@ -76,6 +77,8 @@ public sealed class BulkDecisionResultDto
 public sealed class GenerateInterviewSlotsInput
 {
     public string Date { get; init; } = string.Empty;
+    /// <summary>Optional inclusive end date (same time window each day). If null, only <see cref="Date"/> is used.</summary>
+    public string? EndDate { get; init; }
     public string StartTime { get; init; } = string.Empty;
     public string EndTime { get; init; } = string.Empty;
     public int InterviewLengthMinutes { get; init; }
@@ -88,6 +91,7 @@ public sealed class PatchInterviewSlotInput
     public DateTimeOffset? EndsAt { get; init; }
     public string? VacancyId { get; init; }
     public int? Capacity { get; init; }
+    public bool? IsPublished { get; init; }
 }
 
 public sealed class EmployeePositionChange

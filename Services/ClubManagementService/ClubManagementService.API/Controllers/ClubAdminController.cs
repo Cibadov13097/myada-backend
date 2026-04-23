@@ -67,6 +67,13 @@ public class ClubAdminController : ControllerBase
         return dto == null ? NotFound() : Ok(dto);
     }
 
+    [HttpPost("applications/{applicationId}/invite-to-interview")]
+    public async Task<IActionResult> InviteToInterview(string clubId, string applicationId, CancellationToken cancellationToken)
+    {
+        var dto = await _clubAdmin.InviteToInterviewAsync(clubId, applicationId, cancellationToken).ConfigureAwait(false);
+        return dto == null ? NotFound() : Ok(dto);
+    }
+
     [HttpPost("applications/{applicationId}/notes")]
     public async Task<IActionResult> AddNote(string clubId, string applicationId, [FromBody] NoteRequest request, CancellationToken cancellationToken)
     {
@@ -94,6 +101,7 @@ public class ClubAdminController : ControllerBase
         var result = await _clubAdmin.GenerateInterviewSlotsAsync(clubId, new GenerateInterviewSlotsInput
         {
             Date = request.Date,
+            EndDate = string.IsNullOrWhiteSpace(request.EndDate) ? null : request.EndDate,
             StartTime = request.StartTime,
             EndTime = request.EndTime,
             InterviewLengthMinutes = request.InterviewLength,
@@ -110,7 +118,8 @@ public class ClubAdminController : ControllerBase
             StartsAt = body.StartsAt,
             EndsAt = body.EndsAt,
             VacancyId = body.VacancyId,
-            Capacity = body.Capacity
+            Capacity = body.Capacity,
+            IsPublished = body.IsPublished
         }, cancellationToken).ConfigureAwait(false);
         return dto == null ? NotFound() : Ok(dto);
     }
@@ -398,9 +407,12 @@ public class ClubAdminController : ControllerBase
     public sealed class GenerateInterviewSlotsRequest
     {
         public string Date { get; set; } = string.Empty;
+        /// <summary>Inclusive end date (same daily window). Omit for a single day.</summary>
+        public string? EndDate { get; set; }
         public string StartTime { get; set; } = string.Empty;
         public string EndTime { get; set; } = string.Empty;
         public int InterviewLength { get; set; }
+        /// <summary>Vacancy id to scope slots, or empty for all vacancies in the club.</summary>
         public string Vacancy { get; set; } = string.Empty;
     }
 
@@ -410,6 +422,7 @@ public class ClubAdminController : ControllerBase
         public DateTimeOffset? EndsAt { get; set; }
         public string? VacancyId { get; set; }
         public int? Capacity { get; set; }
+        public bool? IsPublished { get; set; }
     }
 
     public sealed class CreateVacancyRequest

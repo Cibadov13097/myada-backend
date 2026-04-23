@@ -11,6 +11,7 @@ public class JobApplicationDto
     public string FileUrl { get; set; } = null!;
     public JobApplicationStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string? InterviewSlotId { get; set; }
 }
 
 public class CreateJobApplicationDto

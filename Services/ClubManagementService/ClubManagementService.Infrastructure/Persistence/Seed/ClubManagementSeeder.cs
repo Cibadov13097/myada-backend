@@ -479,7 +479,7 @@ public static class ClubManagementSeeder
                 ApplicantId = BuildSeedUserGuid(applicantBase + i),
                 ExperienceLinks = $"https://portfolio.ada.edu.az/seed-user-{applicantBase + i}",
                 FileUrl = $"https://files.ada.edu.az/cv/seed-{applicantBase + i}.pdf",
-                Status = (JobApplicationStatus)(i % 5),
+                Status = (JobApplicationStatus)(i % 7),
                 CreatedByUserId = BuildSeedUserGuid(applicantBase + i)
             });
         }
