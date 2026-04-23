@@ -258,11 +258,11 @@ services:
       - authservice
     restart: always
 
-  myadaattandanceservice:
+  myadaattendanceservice:
     build:
-      context: ./Services/MyAdaAttendanceService
+      context: ./Services/MyAdaAttendanceService/MyAdaAttendanceService
       dockerfile: Dockerfile
-    container_name: myada-attandance-service
+    container_name: myada-attendance-service
     ports:
       - "5009:8080"
     environment:
@@ -296,7 +296,7 @@ services:
       - callservice
       - locationservice
       - myadasupportservice
-      - myadaattandanceservice
+      - myadaattendanceservice
     restart: always
 
 volumes:

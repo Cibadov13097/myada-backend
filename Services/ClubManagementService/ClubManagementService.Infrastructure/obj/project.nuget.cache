@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YKjEOCVKf8A=",
+  "dgSpecHash": "fk5Kh0ObsrI=",
   "success": true,
   "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -36,6 +36,10 @@
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.17.0\\microsoft.identitymodel.abstractions.8.17.0.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.17.0\\microsoft.identitymodel.jsonwebtokens.8.17.0.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.identitymodel.logging\\8.17.0\\microsoft.identitymodel.logging.8.17.0.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.17.0\\microsoft.identitymodel.tokens.8.17.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\npgsql\\8.0.0\\npgsql.8.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.0\\npgsql.entityframeworkcore.postgresql.8.0.0.nupkg.sha512",
@@ -47,6 +51,7 @@
     "C:\\Users\\cavid\\.nuget\\packages\\system.composition.hosting\\6.0.0\\system.composition.hosting.6.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\system.composition.runtime\\6.0.0\\system.composition.runtime.6.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\system.composition.typedparts\\6.0.0\\system.composition.typedparts.6.0.0.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.17.0\\system.identitymodel.tokens.jwt.8.17.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\system.io.pipelines\\6.0.3\\system.io.pipelines.6.0.3.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.22\\microsoft.windowsdesktop.app.ref.8.0.22.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.22\\microsoft.netcore.app.ref.8.0.22.nupkg.sha512",
