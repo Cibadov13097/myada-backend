@@ -19,20 +19,22 @@ namespace LostFoundService.Application.DTOs.FoundItem.Admin
         [JsonPropertyOrder(3)]
         public string Description { get; set; }
         [JsonPropertyOrder(4)]
-        public int? BuildingId { get; set; }
+        public string? Location { get; set; }
         [JsonPropertyOrder(5)]
-        public int? RoomId { get; set; }
+        public int? BuildingId { get; set; }
         [JsonPropertyOrder(6)]
-        public string FoundByUserId { get; set; }
+        public int? RoomId { get; set; }
         [JsonPropertyOrder(7)]
-        public Status Status { get; set; } = Status.approved;
+        public string FoundByUserId { get; set; }
         [JsonPropertyOrder(8)]
-        public DateTime CreatedAt { get; set; }
+        public Status Status { get; set; } = Status.approved;
         [JsonPropertyOrder(9)]
-        public bool IsDeleted { get; set; }
+        public DateTime CreatedAt { get; set; }
         [JsonPropertyOrder(10)]
-        public string CreatedByUserId { get; set; }
+        public bool IsDeleted { get; set; }
         [JsonPropertyOrder(11)]
+        public string CreatedByUserId { get; set; }
+        [JsonPropertyOrder(12)]
         public string ModifiedByUserId { get; set; }
     }
 }

@@ -26,6 +26,8 @@ namespace LostFoundService.Application.Services
         {
             if (userId == null) throw new ArgumentNullException(nameof(userId));
             if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (!string.IsNullOrWhiteSpace(dto.Location) && dto.Location.Trim().Length > 400)
+                throw new ArgumentException("Location max length is 400.");
 
             if (dto.BuildingId.HasValue != dto.RoomId.HasValue)
                 throw new ArgumentException("Location requires both BuildingId and RoomId when provided.");
@@ -107,6 +109,8 @@ namespace LostFoundService.Application.Services
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             if (id <= 0) throw new ArgumentException("Invalid Id");
             if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentNullException(nameof(userId));
+            if (!string.IsNullOrWhiteSpace(dto.Location) && dto.Location.Trim().Length > 400)
+                throw new ArgumentException("Location max length is 400.");
 
             var entity = await _repository.GetByIdForUserAsync(id, userId);
             if (entity == null) throw new NotFoundException($"There is no FoundItem with id {id}");

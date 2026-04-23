@@ -18,6 +18,10 @@ namespace LostFoundService.Infrastructure.Persistence.Configurations
                    .IsRequired()
                    .HasMaxLength(1000);
 
+            builder.Property(x => x.Location)
+                   .IsRequired(false)
+                   .HasMaxLength(400);
+
             builder.Property(x => x.BuildingId).IsRequired(false);
             builder.Property(x => x.RoomId).IsRequired(false);
 

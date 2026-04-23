@@ -13,6 +13,7 @@ namespace LostFoundService.Application.DTOs.FoundItem
         [JsonIgnore]
         public string? ImageUrl { get; set; }
         public string Description { get; set; }
+        public string? Location { get; set; }
         public int? BuildingId { get; set; }
         public int? RoomId { get; set; }
         public Status Status { get; set; }

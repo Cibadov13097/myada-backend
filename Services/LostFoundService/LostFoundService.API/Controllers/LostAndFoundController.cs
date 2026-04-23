@@ -486,6 +486,7 @@ public class LostAndFoundController : ControllerBase
                 ItemName = GetForm(form, "itemName"),
                 Category = GetForm(form, "category"),
                 Description = GetForm(form, "description"),
+                Location = GetForm(form, "location") ?? GetForm(form, "customLocation"),
                 LocationType = GetForm(form, "locationType"),
                 BuildingCode = GetForm(form, "buildingCode"),
                 IsRoom = GetForm(form, "isRoom"),
@@ -633,7 +634,10 @@ public class LostAndFoundController : ControllerBase
             item.AdminStatus = LostFoundAdminStatus.Pending;
         }
 
-        item.Location = BuildLocation(item);
+        var requestedLocation = string.IsNullOrWhiteSpace(request.Location)
+            ? null
+            : request.Location.Trim();
+        item.Location = requestedLocation ?? BuildLocation(item);
         item.PrimaryImageUrl = imageUrls.FirstOrDefault();
         if (DateOnly.TryParse(request.DateLost, out var parsedDate))
         {
@@ -668,6 +672,7 @@ public class LostAndFoundController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.ItemName)) Add("itemName", "itemName is required.");
         if (string.IsNullOrWhiteSpace(request.Category)) Add("category", "category is required.");
         if (!string.IsNullOrWhiteSpace(request.Description) && request.Description.Length > 500) Add("description", "description max length is 500.");
+        if (!string.IsNullOrWhiteSpace(request.Location) && request.Location.Length > 400) Add("location", "location max length is 400.");
         if (!string.IsNullOrWhiteSpace(request.Status) && !TryParsePublicStatus(request.Status, out _))
             Add("status", "status must be Active or Pending Verification.");
         if (!string.IsNullOrWhiteSpace(request.AdminStatus) && !TryParseAdminStatus(request.AdminStatus, out _))
@@ -695,6 +700,11 @@ public class LostAndFoundController : ControllerBase
                 string.IsNullOrWhiteSpace(request.CampusLocation))
             {
                 Add("campusLocation", "campusLocation is required when locationType=campus.");
+            }
+            if (string.Equals(request.LocationType, "other", StringComparison.OrdinalIgnoreCase) &&
+                string.IsNullOrWhiteSpace(request.Location))
+            {
+                Add("location", "location is required when locationType=other.");
             }
 
             var totalPhotoCount = request.Files?.Count ?? 0;
@@ -938,7 +948,7 @@ public class LostAndFoundController : ControllerBase
         return category.Trim();
     }
 
-    private string BuildLocation(LostFoundItem item)
+    private string? BuildLocation(LostFoundItem item)
     {
         var parts = new List<string>();
         if (!string.IsNullOrWhiteSpace(item.BuildingCode)) parts.Add(item.BuildingCode);
@@ -947,7 +957,8 @@ public class LostAndFoundController : ControllerBase
         else if (!string.IsNullOrWhiteSpace(item.RoomArea)) parts.Add(item.RoomArea);
         if (!string.IsNullOrWhiteSpace(item.CampusLocation)) parts.Add(item.CampusLocation);
         if (!string.IsNullOrWhiteSpace(item.LastKnownLocation)) parts.Add(item.LastKnownLocation);
-        return string.Join(", ", parts.Where(x => !string.IsNullOrWhiteSpace(x)));
+        var location = string.Join(", ", parts.Where(x => !string.IsNullOrWhiteSpace(x)));
+        return string.IsNullOrWhiteSpace(location) ? null : location;
     }
 
     private async Task<string> SaveFileAsync(IFormFile file, string directory = "items")
@@ -1037,6 +1048,7 @@ public class LostAndFoundController : ControllerBase
         public string? ItemName { get; set; }
         public string? Category { get; set; }
         public string? Description { get; set; }
+        public string? Location { get; set; }
         public string? LocationType { get; set; }
         public string? BuildingCode { get; set; }
         public string? IsRoom { get; set; }

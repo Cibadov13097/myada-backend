@@ -23,6 +23,8 @@ namespace LostFoundService.Application.Services
         public async Task<GetFoundItemDto> AdminAddFoundItemAsync(AddFoundItemDto dto, string adminId)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (!string.IsNullOrWhiteSpace(dto.Location) && dto.Location.Trim().Length > 400)
+                throw new ArgumentException("Location max length is 400.");
 
             var entity = _mapper.Map<FoundItem>(dto);
             entity.CreatedAt = DateTime.UtcNow;
@@ -79,6 +81,8 @@ namespace LostFoundService.Application.Services
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             if (itemId <= 0) throw new ArgumentException("Invalid Id");
+            if (!string.IsNullOrWhiteSpace(dto.Location) && dto.Location.Trim().Length > 400)
+                throw new ArgumentException("Location max length is 400.");
 
             var entity = await _repository.GetByIdForAdminAsync(itemId);
             if (entity == null) throw new NotFoundException($"There is no FoundItem with id {itemId}");

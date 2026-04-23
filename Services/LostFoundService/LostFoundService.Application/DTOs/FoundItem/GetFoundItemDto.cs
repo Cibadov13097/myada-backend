@@ -14,17 +14,19 @@ namespace LostFoundService.Application.DTOs.FoundItem
         [JsonPropertyOrder(3)]
         public string? Description { get; set; }
         [JsonPropertyOrder(4)]
-        public int? BuildingId { get; set; }
+        public string? Location { get; set; }
         [JsonPropertyOrder(5)]
-        public int? RoomId { get; set; }
+        public int? BuildingId { get; set; }
         [JsonPropertyOrder(6)]
-        public string? FoundByUserId { get; set; }
+        public int? RoomId { get; set; }
         [JsonPropertyOrder(7)]
-        public Status Status { get; set; }
+        public string? FoundByUserId { get; set; }
         [JsonPropertyOrder(8)]
+        public Status Status { get; set; }
+        [JsonPropertyOrder(9)]
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        [JsonPropertyOrder(9)]
+        [JsonPropertyOrder(10)]
         public DateTime CreatedAt { get; set; }
     }
 }
