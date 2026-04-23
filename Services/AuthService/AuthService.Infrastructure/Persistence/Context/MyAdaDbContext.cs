@@ -27,6 +27,26 @@ namespace AuthService.Infrastructure.Persistence.Context
 
             builder.HasDefaultSchema("auth");
             IdentityRoleSeeder.Seed(builder);
+
+            builder.Entity<RefreshToken>()
+                .Property(x => x.UserId)
+                .HasMaxLength(450);
+
+            var applicationUserBuilder = builder.Entity<ApplicationUser>();
+            applicationUserBuilder.Property(x => x.OrganizationalId)
+                .HasMaxLength(9)
+                .IsRequired();
+
+            applicationUserBuilder.HasIndex(x => x.OrganizationalId)
+                .IsUnique()
+                .HasDatabaseName("IX_AspNetUsers_OrganizationalId");
+
+            applicationUserBuilder.ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_AspNetUsers_OrganizationalId_9Digits",
+                    "\"OrganizationalId\" ~ '^[0-9]{9}$'");
+            });
         }
     }
 }

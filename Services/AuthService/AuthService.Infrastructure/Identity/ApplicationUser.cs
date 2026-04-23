@@ -14,6 +14,7 @@ namespace AuthService.Infrastructure.Identity
         
         public string FirstName { get;  set; }
         public string LastName { get; set; }
+        public string OrganizationalId { get; set; } = null!;
         public string? ProfileImage { get; set; }
         public UserType UserType { get; set; }
 

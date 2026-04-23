@@ -132,6 +132,7 @@ public static class IdentityUserSeeder
                 EmailConfirmed = true,
                 FirstName = firstName,
                 LastName = lastName,
+                OrganizationalId = BuildSeedOrganizationalId(i),
                 UserType = userType,
                 Status = Status.Active
             };
@@ -165,5 +166,10 @@ public static class IdentityUserSeeder
     private static Guid BuildSeedUserGuid(int index)
     {
         return Guid.Parse($"00000000-0000-0000-0000-{index:000000000000}");
+    }
+
+    private static string BuildSeedOrganizationalId(int index)
+    {
+        return (100000000 + index).ToString();
     }
 }

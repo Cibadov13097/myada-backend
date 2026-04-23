@@ -123,6 +123,11 @@ namespace AuthService.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("OrganizationalId")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("character varying(9)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
@@ -160,7 +165,14 @@ namespace AuthService.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", "auth");
+                    b.HasIndex("OrganizationalId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_AspNetUsers_OrganizationalId");
+
+                    b.ToTable("AspNetUsers", "auth", t =>
+                        {
+                            t.HasCheckConstraint("CK_AspNetUsers_OrganizationalId_9Digits", "\"OrganizationalId\" ~ '^[0-9]{9}$'");
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text;
 
@@ -66,6 +67,7 @@ namespace AuthService.API.Controllers
                 UserName = "Admin",
                 FirstName = "admin",
                 LastName = "admin",
+                OrganizationalId = "900000001",
                 PhoneNumber = "1111",
                 Email = "admin@gmail",
                 ProfileImage = null,
@@ -96,11 +98,17 @@ namespace AuthService.API.Controllers
             if (existingUsername != null)
                 return BadRequest("Username is already in use");
 
+            var organizationalIdInUse = await _userManager.Users
+                .AnyAsync(x => x.OrganizationalId == dto.OrganizationalId);
+            if (organizationalIdInUse)
+                return BadRequest("OrganizationalId is already in use");
+
             var user = new ApplicationUser
             {
                 UserName = dto.Username,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
+                OrganizationalId = dto.OrganizationalId,
                 PhoneNumber = dto.PhoneNumber,
                 Email = dto.Email,
                 ProfileImage = dto.ProfileImage,
@@ -144,6 +152,7 @@ namespace AuthService.API.Controllers
                     user.Email,
                     user.FirstName,
                     user.LastName,
+                    user.OrganizationalId,
                     user.PhoneNumber,
                     user.ProfileImage,
                     role = roleName
@@ -184,6 +193,7 @@ namespace AuthService.API.Controllers
                     user.Email,
                     user.FirstName,
                     user.LastName,
+                    user.OrganizationalId,
                     user.PhoneNumber,
                     user.ProfileImage,
                     user.UserType,
@@ -229,6 +239,7 @@ namespace AuthService.API.Controllers
                 user.Email,
                 user.FirstName,
                 user.LastName,
+                user.OrganizationalId,
                 user.PhoneNumber,
                 user.ProfileImage,
                 user.UserType,
@@ -284,6 +295,7 @@ namespace AuthService.API.Controllers
             return Ok(new UploadUserProfilePhotoResponseDto
             {
                 UserId = user.Id,
+                OrganizationalId = user.OrganizationalId,
                 ProfileImage = profileImageUrl
             });
         }
@@ -444,7 +456,8 @@ namespace AuthService.API.Controllers
             {
                 accessToken,
                 refreshToken = refreshTokenEntity.Token,
-                profileImage = user.ProfileImage
+                profileImage = user.ProfileImage,
+                organizationalId = user.OrganizationalId
             });
         }
 

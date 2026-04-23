@@ -50,6 +50,7 @@ namespace AuthService.Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
                 new Claim("firstName", user.FirstName ?? string.Empty),
+                new Claim("organizationalId", user.OrganizationalId ?? string.Empty),
                 new Claim("userType", user.UserType.ToString())
             };
 
