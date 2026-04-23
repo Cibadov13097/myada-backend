@@ -285,12 +285,26 @@ public class LostAndFoundController : ControllerBase
 
     [HttpPost("upload")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> Upload(IFormFile? file, IFormFile? photo)
+    public async Task<IActionResult> Upload(
+        IFormFile? file,
+        IFormFile? photo,
+        IFormFile? image,
+        IFormFile? imageFile)
     {
-        var upload = file ?? photo;
+        var upload = file ?? photo ?? image ?? imageFile;
+        if (upload == null && Request.HasFormContentType)
+        {
+            var form = await Request.ReadFormAsync();
+            upload = form.Files.GetFile("file")
+                ?? form.Files.GetFile("photo")
+                ?? form.Files.GetFile("image")
+                ?? form.Files.GetFile("imageFile")
+                ?? form.Files.FirstOrDefault();
+        }
+
         if (upload == null)
         {
-            return BadRequest(Error("VALIDATION_ERROR", "file or photo is required."));
+            return BadRequest(Error("VALIDATION_ERROR", "file, photo, image or imageFile is required."));
         }
 
         var url = await SaveFileAsync(upload);
@@ -486,6 +500,7 @@ public class LostAndFoundController : ControllerBase
                 ItemName = GetForm(form, "itemName"),
                 Category = GetForm(form, "category"),
                 Description = GetForm(form, "description"),
+                ImageUrl = GetForm(form, "imageUrl"),
                 Location = GetForm(form, "location") ?? GetForm(form, "customLocation"),
                 LocationType = GetForm(form, "locationType"),
                 BuildingCode = GetForm(form, "buildingCode"),
@@ -541,6 +556,12 @@ public class LostAndFoundController : ControllerBase
                 }
             }
 
+            var imageUrls = ExtractImageUrlsFromForm(form);
+            if (imageUrls.Count > 0)
+            {
+                model.ImageUrls = imageUrls;
+            }
+
             return model;
         }
 
@@ -573,6 +594,14 @@ public class LostAndFoundController : ControllerBase
                 }
             }
         }
+
+        var providedImageUrls = CollectImageUrls(request);
+        if (providedImageUrls.Count > 0)
+        {
+            imageUrls.AddRange(providedImageUrls);
+        }
+
+        imageUrls = NormalizeDistinctImageUrls(imageUrls);
 
         string? intakePhotoUrl = null;
         if (request.IntakePhotoFile != null)
@@ -663,6 +692,7 @@ public class LostAndFoundController : ControllerBase
     private object? ValidateReport(ReportRequest request, LostFoundItemType type, bool isAdminCreate = false)
     {
         var details = new Dictionary<string, List<string>>();
+        var providedImageUrls = CollectImageUrls(request);
         void Add(string key, string message)
         {
             if (!details.ContainsKey(key)) details[key] = new List<string>();
@@ -679,6 +709,19 @@ public class LostAndFoundController : ControllerBase
             Add("adminStatus", "adminStatus must be Pending, Received, or Delivered.");
         if (!string.IsNullOrWhiteSpace(request.Condition) && !TryParseCondition(request.Condition, out _))
             Add("condition", "condition must be good, fair, or damaged.");
+        foreach (var imageUrl in providedImageUrls)
+        {
+            if (imageUrl.Length > 500)
+            {
+                Add("imageUrls", "image URL max length is 500.");
+                continue;
+            }
+
+            if (!IsHttpUrl(imageUrl))
+            {
+                Add("imageUrls", "image URLs must be absolute http/https URLs.");
+            }
+        }
 
         if (type == LostFoundItemType.Found)
         {
@@ -707,7 +750,7 @@ public class LostAndFoundController : ControllerBase
                 Add("location", "location is required when locationType=other.");
             }
 
-            var totalPhotoCount = request.Files?.Count ?? 0;
+            var totalPhotoCount = (request.Files?.Count ?? 0) + providedImageUrls.Count;
             if (totalPhotoCount == 0) Add("photos", "At least one photo is required for found reports.");
             if (string.IsNullOrWhiteSpace(request.CollectionPlace)) Add("collectionPlace", "collectionPlace is required for found reports.");
         }
@@ -1001,6 +1044,106 @@ public class LostAndFoundController : ControllerBase
         return form.TryGetValue(key, out var value) ? value.ToString() : null;
     }
 
+    private static List<string> ExtractImageUrlsFromForm(IFormCollection form)
+    {
+        var urls = new List<string>();
+        var keys = new[]
+        {
+            "imageUrl",
+            "imageUrls",
+            "imageUrls[]",
+            "images",
+            "images[]",
+            "photoUrls",
+            "photoUrls[]",
+            "photos",
+            "photos[]"
+        };
+
+        foreach (var key in keys)
+        {
+            if (!form.TryGetValue(key, out var values))
+            {
+                continue;
+            }
+
+            foreach (var value in values)
+            {
+                AppendImageUrlTokens(urls, value);
+            }
+        }
+
+        return NormalizeDistinctImageUrls(urls);
+    }
+
+    private static List<string> CollectImageUrls(ReportRequest request)
+    {
+        var values = new List<string>();
+        AppendImageUrlTokens(values, request.ImageUrl);
+
+        if (request.ImageUrls != null)
+        {
+            foreach (var value in request.ImageUrls)
+            {
+                AppendImageUrlTokens(values, value);
+            }
+        }
+
+        return NormalizeDistinctImageUrls(values);
+    }
+
+    private static void AppendImageUrlTokens(List<string> target, string? rawValue)
+    {
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            return;
+        }
+
+        var trimmed = rawValue.Trim();
+        if (trimmed.StartsWith("[", StringComparison.Ordinal) &&
+            trimmed.EndsWith("]", StringComparison.Ordinal))
+        {
+            try
+            {
+                var parsed = JsonSerializer.Deserialize<List<string>>(trimmed, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (parsed != null)
+                {
+                    foreach (var value in parsed)
+                    {
+                        AppendImageUrlTokens(target, value);
+                    }
+
+                    return;
+                }
+            }
+            catch
+            {
+                // fall back to storing the raw value below
+            }
+        }
+
+        target.Add(trimmed);
+    }
+
+    private static List<string> NormalizeDistinctImageUrls(IEnumerable<string> imageUrls)
+    {
+        return imageUrls
+            .Select(url => url.Trim())
+            .Where(url => !string.IsNullOrWhiteSpace(url))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private static bool IsHttpUrl(string value)
+    {
+        return Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
+               (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+    }
+
     public sealed class PatchItemRequest
     {
         public string? AdminStatus { get; set; }
@@ -1048,6 +1191,8 @@ public class LostAndFoundController : ControllerBase
         public string? ItemName { get; set; }
         public string? Category { get; set; }
         public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
+        public List<string>? ImageUrls { get; set; }
         public string? Location { get; set; }
         public string? LocationType { get; set; }
         public string? BuildingCode { get; set; }

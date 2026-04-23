@@ -70,9 +70,15 @@ Gateway prefix for all paths below:
 - `POST /reports/lost` and `POST /reports/found` accept:
   - `application/json`
   - `multipart/form-data`
+- For create payloads, images can be sent either as uploaded files (`multipart/form-data`) or as pre-uploaded URL fields:
+  - `imageUrl` (single string)
+  - `imageUrls` (array or repeated form key; `imageUrls[]`, `images`, `photos`, `photoUrls` also supported in form-data)
+- `location` is nullable in Lost/Found item models.
+- If frontend sends `locationType=other`, it must also send `location` (string).
+- For multipart forms, backend reads custom location from `location` (or fallback `customLocation`).
 - `POST /items/{id}/confirm-receipt` expects `multipart/form-data` (`[FromForm]` in code).
 - `POST /items/{id}/complete-delivery` expects `multipart/form-data` (`[FromForm]` in code).
-- `POST /upload` accepts form file field `file` or `photo`.
+- `POST /upload` accepts form file field `file`, `photo`, `image`, or `imageFile`.
 - Image validation in code allows PNG/JPG/JPEG files.
 
 ## B) Legacy User APIs (`/api/v1/lost-items`, `/api/v1/found-items`)
