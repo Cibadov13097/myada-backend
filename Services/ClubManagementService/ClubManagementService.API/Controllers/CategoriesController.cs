@@ -30,7 +30,9 @@ public class CategoriesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { version = HttpContext.GetClubApiMajorVersion(), id = created.Id }, created);
+        var version = HttpContext.GetClubApiMajorVersion();
+        var location = $"/api/v{version}/categories/{created.Id}";
+        return Created(location, created);
     }
 
     [HttpPut("{id:int}")]

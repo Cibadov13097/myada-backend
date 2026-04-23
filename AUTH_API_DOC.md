@@ -1,26 +1,26 @@
-# Auth API Documentation for Frontend
+# Auth API Documentation (Gateway First)
 
-Last updated: 2026-04-19
+Last updated: 2026-04-23
+
+This document is verified against:
+- `Services/AuthService/AuthService.Api/Controllers/AuthController.cs`
+- `Services/AuthService/AuthService.Api/Controllers/JwksController.cs`
 
 ## Base URLs
 
-Recommended for frontend (via gateway):
-- Production: `http://51.20.193.29:5000`
+Recommended for frontend (via API Gateway):
+- Production: `http://13.60.31.141:5000`
 - Local: `http://localhost:5000`
 
 Direct auth service (if bypassing gateway):
-- Production: `http://51.20.193.29:5001`
+- Production: `http://13.60.31.141:5001`
 - Local: `http://localhost:5001`
 
-Base path for auth endpoints:
-- `/api/auth`
-
-Gateway path format:
-- `http://51.20.193.29:5000/api/auth/...` (primary)
-- `http://51.20.193.29:5000/auth/...` (proxy alias used for Swagger/JWKS)
-
-Routing note:
-- Auth is the only service that works on gateway without a service prefix like `/club` or `/support`.
+Gateway routing for auth:
+- Primary auth API path: `/api/auth/...`
+- Proxy alias path: `/auth/api/auth/...`
+- JWKS path through gateway: `/auth/.well-known/jwks.json`
+- Swagger through gateway (when auth service runs in Development): `/auth/swagger/index.html`
 
 ## Token Settings
 
@@ -40,15 +40,35 @@ Routing note:
 - `userType`: user type value
 - `role`: one or more role claims
 
-## Auth Header
+## Authorization Header
 
-For protected endpoints:
+Use for protected endpoints:
 
 ```http
 Authorization: Bearer <accessToken>
 ```
 
-## Endpoints
+## Verified Endpoint Inventory
+
+| # | Method | Path | Auth | Notes |
+|---|---|---|---|---|
+| 1 | `GET` | `/api/auth/create-admin` | No | Bootstrap endpoint. |
+| 2 | `POST` | `/api/auth/create-user-with-role` | Yes (`admin`) | Creates user and assigns role. |
+| 3 | `GET` | `/api/auth/users-by-role/{role}` | Yes (`admin`) | Lists users for role. |
+| 4 | `GET` | `/api/auth/users/{id}` | Yes | Admin can fetch any user; others can fetch self. |
+| 5 | `POST` | `/api/auth/users/{id}/profile-photo` | Yes | Multipart upload endpoint. |
+| 6 | `POST` | `/api/auth/forgot-password` | No | Sends password reset email (if user exists). |
+| 7 | `POST` | `/api/auth/reset-password` | No | Resets password with reset token. |
+| 8 | `PUT` | `/api/auth/change-password` | No | Not protected in current implementation. |
+| 9 | `POST` | `/api/auth/login` | No | Returns access + refresh token. |
+| 10 | `POST` | `/api/auth/refresh` | No | Rotates refresh token and returns new pair. |
+| 11 | `POST` | `/api/auth/logout` | Yes | Revokes refresh token. |
+| 12 | `GET` | `/.well-known/jwks.json` | No | Raw auth service route (gateway alias below). |
+
+JWKS through gateway:
+- `GET /auth/.well-known/jwks.json`
+
+## Endpoint Details
 
 ### 1) Create Admin
 
@@ -63,11 +83,10 @@ Default credentials:
 - `password`: `Admin123*`
 
 Success response:
-- `200 OK`
-- Empty body
+- `200 OK` with empty body.
 
 Notes:
-- This is a bootstrap/dev-style endpoint and should not be exposed in production.
+- Bootstrap/dev endpoint. Do not expose in production.
 
 ---
 
@@ -75,14 +94,7 @@ Notes:
 
 - Method: `POST`
 - Path: `/api/auth/create-user-with-role`
-- Auth: Yes (`Bearer` access token required)
-- Required role: `admin`
-
-Headers:
-
-```http
-Authorization: Bearer <admin-access-token>
-```
+- Auth: Yes (`Bearer`, `admin` role required)
 
 Request body:
 
@@ -111,29 +123,17 @@ Success response:
     "firstName": "User",
     "lastName": "One",
     "phoneNumber": "123456789",
+    "profileImage": null,
     "role": "student"
   }
 }
 ```
 
 Error responses:
-- `400 Bad Request` -> `"Role '<role>' does not exist"`
-- `400 Bad Request` -> `"Email is already in use"`
-- `400 Bad Request` -> `"Username is already in use"`
-- `400 Bad Request` -> Identity error array (password/validation failures)
-- `502 Bad Gateway` -> support staff provisioning failed after user creation (request rolled back)
-- `401 Unauthorized` when access token is missing/invalid
-- `403 Forbidden` when authenticated user is not in `admin` role
-
-Notes:
-- `role` is normalized to lowercase before assignment.
-- `userType` is inferred from role:
-  - `student` -> `Student`
-  - `instructor` -> `Faculty`
-  - all other roles -> `Staff`
-- For support roles (`support`, `dispatcher`, `staff`, `student_services`, and roles ending with `_staff`), AuthService automatically calls SupportService and ensures a `SupportStaffStatus` row exists.
-- In that auto-provisioned row, `SupportStaffStatus.MemberId` is set to the created auth user id (`user.id` GUID), with default status `Offline`.
-- If SupportService provisioning fails, AuthService removes the role and deletes the created user before returning `502`.
+- `400 Bad Request` -> role/email/username validation failures, or Identity errors
+- `502 Bad Gateway` -> support staff provisioning failed (request rolled back)
+- `401 Unauthorized` -> missing/invalid token
+- `403 Forbidden` -> authenticated user not in `admin` role
 
 ---
 
@@ -141,17 +141,7 @@ Notes:
 
 - Method: `GET`
 - Path: `/api/auth/users-by-role/{role}`
-- Auth: Yes (`Bearer` access token required)
-- Required role: `admin`
-
-Headers:
-
-```http
-Authorization: Bearer <admin-access-token>
-```
-
-Path parameter:
-- `role` (string, required) e.g. `student`, `instructor`, `dispatcher`, `admin`
+- Auth: Yes (`Bearer`, `admin` role required)
 
 Success response:
 - `200 OK`
@@ -168,6 +158,7 @@ Success response:
       "firstName": "SeedFirst1",
       "lastName": "SeedLast1",
       "phoneNumber": null,
+      "profileImage": null,
       "userType": "Student",
       "status": "Active"
     }
@@ -175,34 +166,17 @@ Success response:
 }
 ```
 
-Error responses:
-- `400 Bad Request` -> `"Role is required"`
-- `400 Bad Request` -> `"Role '<role>' does not exist"`
-- `401 Unauthorized` when access token is missing/invalid
-- `403 Forbidden` when authenticated user is not in `admin` role
-
-Notes:
-- Role is normalized to lowercase before querying.
-
 ---
 
-### 3.1) Get User By Id
+### 4) Get User By Id
 
 - Method: `GET`
 - Path: `/api/auth/users/{id}`
-- Auth: Yes (`Bearer` access token required)
-- Access rules:
-  - `admin` can fetch any user.
-  - non-admin can fetch only their own user (`id` must match token subject).
+- Auth: Yes (`Bearer`)
 
-Headers:
-
-```http
-Authorization: Bearer <accessToken>
-```
-
-Path parameter:
-- `id` (string, required): Identity user id
+Access rules:
+- `admin` can fetch any user.
+- non-admin can fetch only their own user.
 
 Success response:
 - `200 OK`
@@ -215,21 +189,129 @@ Success response:
   "firstName": "SeedFirst1",
   "lastName": "SeedLast1",
   "phoneNumber": null,
+  "profileImage": null,
   "userType": "Student",
   "status": "Active",
   "roles": ["student"]
 }
 ```
 
-Error responses:
-- `400 Bad Request` -> `"User id is required"`
-- `403 Forbidden` when trying to fetch another user without `admin` role
-- `404 Not Found` -> `"User not found"`
-- `401 Unauthorized` when access token is missing/invalid
+---
+
+### 5) Upload User Profile Photo
+
+- Method: `POST`
+- Path: `/api/auth/users/{id}/profile-photo`
+- Auth: Yes (`Bearer`)
+- Content type: `multipart/form-data`
+
+Form field:
+- `file` (required): image file
+
+Validation:
+- Allowed extensions: `png`, `jpg`, `jpeg`, `webp`
+- Max size: `5 MB`
+
+Success response:
+- `200 OK`
+
+```json
+{
+  "userId": "<guid>",
+  "profileImage": "https://<bucket-or-cdn>/users/<file>"
+}
+```
 
 ---
 
-### 4) Login
+### 6) Forgot Password
+
+- Method: `POST`
+- Path: `/api/auth/forgot-password`
+- Auth: No
+
+Request body:
+
+```json
+{
+  "email": "admin@gmail"
+}
+```
+
+Success response:
+- `200 OK`
+
+```json
+{
+  "message": "If this email exists, password reset link sent."
+}
+```
+
+Notes:
+- Current implementation always returns the same message to avoid user enumeration.
+- Reset token is not returned in API response.
+
+---
+
+### 7) Reset Password
+
+- Method: `POST`
+- Path: `/api/auth/reset-password`
+- Auth: No
+
+Request body:
+
+```json
+{
+  "email": "admin@gmail",
+  "token": "<reset-token>",
+  "newPassword": "NewPassword123*"
+}
+```
+
+Success response:
+- `200 OK`
+
+```json
+"Password reset successfully"
+```
+
+Error responses:
+- `404 Not Found` -> `"User not found"`
+- `400 Bad Request` -> Identity error array
+
+---
+
+### 8) Change Password
+
+- Method: `PUT`
+- Path: `/api/auth/change-password`
+- Auth: No (current implementation)
+
+Request body:
+
+```json
+{
+  "email": "admin@gmail",
+  "oldPassword": "OldPassword123*",
+  "newPassword": "NewPassword123*"
+}
+```
+
+Success response:
+- `200 OK`
+
+```json
+"Password Changed successfully"
+```
+
+Error responses:
+- `404 Not Found` (empty body when user not found)
+- `400 Bad Request` -> Identity error array
+
+---
+
+### 9) Login
 
 - Method: `POST`
 - Path: `/api/auth/login`
@@ -250,20 +332,17 @@ Success response:
 ```json
 {
   "accessToken": "<jwt-access-token>",
-  "refreshToken": "<refresh-token>"
+  "refreshToken": "<refresh-token>",
+  "profileImage": "https://<bucket-or-cdn>/users/<file-or-null>"
 }
 ```
 
 Error response:
-- `401 Unauthorized`
-
-```json
-"Username or password is incorrect"
-```
+- `401 Unauthorized` -> `"Username or password is incorrect"`
 
 ---
 
-### 5) Refresh Token
+### 10) Refresh Token
 
 - Method: `POST`
 - Path: `/api/auth/refresh`
@@ -293,22 +372,13 @@ Error responses:
 - `401 Unauthorized` -> `"Refresh token revoked"`
 - `401 Unauthorized` -> empty body (if linked user no longer exists)
 
-Notes:
-- Refresh token rotation is enabled. On success, old refresh token is revoked and a new one is returned.
-
 ---
 
-### 6) Logout
+### 11) Logout
 
 - Method: `POST`
 - Path: `/api/auth/logout`
-- Auth: Yes (`Bearer` access token required)
-
-Headers:
-
-```http
-Authorization: Bearer <accessToken>
-```
+- Auth: Yes (`Bearer`)
 
 Request body:
 
@@ -327,126 +397,9 @@ Success response:
 }
 ```
 
-Error response:
-- `401 Unauthorized` when access token is missing/invalid.
-
-Notes:
-- Revocation call is effectively idempotent; if refresh token does not exist, endpoint still returns success.
-
 ---
 
-### 7) Forgot Password
-
-- Method: `POST`
-- Path: `/api/auth/forgot-password`
-- Auth: No
-
-Request body:
-
-```json
-{
-  "email": "admin@gmail"
-}
-```
-
-Success response when user exists:
-- `200 OK`
-
-```json
-{
-  "message": "If this email exists, password reset link sent.",
-  "email": "admin@gmail",
-  "token": "<reset-token>"
-}
-```
-
-Success response when user does not exist:
-- `200 OK`
-
-```json
-{
-  "message": "If this email exists, password reset link sent."
-}
-```
-
-Notes:
-- Current implementation returns reset token directly in API response for existing users.
-
----
-
-### 8) Reset Password
-
-- Method: `POST`
-- Path: `/api/auth/reset-password`
-- Auth: No
-
-Request body:
-
-```json
-{
-  "email": "admin@gmail",
-  "token": "<reset-token>",
-  "newPassword": "NewPassword123*"
-}
-```
-
-Success response:
-- `200 OK`
-
-```json
-"Password reset successfully"
-```
-
-Error responses:
-- `404 Not Found` -> `"User not found"`
-- `400 Bad Request` -> Identity error array
-
-Identity error array shape:
-
-```json
-[
-  {
-    "code": "PasswordTooShort",
-    "description": "Passwords must be at least 6 characters."
-  }
-]
-```
-
----
-
-### 9) Change Password
-
-- Method: `PUT`
-- Path: `/api/auth/change-password`
-- Auth: No (current implementation)
-
-Request body:
-
-```json
-{
-  "email": "admin@gmail",
-  "oldPassword": "OldPassword123*",
-  "newPassword": "NewPassword123*"
-}
-```
-
-Success response:
-- `200 OK`
-
-```json
-"Password Changed successfully"
-```
-
-Error responses:
-- `404 Not Found` (empty body)
-- `400 Bad Request` -> Identity error array
-
-Notes:
-- Endpoint is not protected by `[Authorize]` right now.
-
----
-
-### 10) JWKS Public Key
+### 12) JWKS Public Key
 
 - Method: `GET`
 - Direct auth path: `/.well-known/jwks.json`
@@ -472,16 +425,12 @@ Success response:
 ```
 
 Potential server error:
-- `500 Internal Server Error` -> `"JWT public key file was not found."`
-
----
+- `500 Internal Server Error` -> `"JWT public key file was not found. ..."`
 
 ## Frontend Integration Notes
 
-- Store `accessToken` in memory when possible; store `refreshToken` in secure storage strategy suitable for your app.
-- Add `Authorization: Bearer <accessToken>` to protected calls.
-- On `401` from protected APIs, call `/api/auth/refresh` once, update both tokens, then retry original request.
-- If refresh fails (`401`), clear session and redirect to login.
-- On logout, call `/api/auth/logout` with refresh token and then clear local tokens.
-- There is no open/public register endpoint. User creation is available through `POST /api/auth/create-user-with-role` for `admin` users.
-
+- Send protected requests with `Authorization: Bearer <accessToken>`.
+- On `401` from protected APIs, call `/api/auth/refresh` once, then retry original request.
+- If refresh fails, clear session and redirect to login.
+- On logout, call `/api/auth/logout` with refresh token, then clear local tokens.
+- There is no public register endpoint.
