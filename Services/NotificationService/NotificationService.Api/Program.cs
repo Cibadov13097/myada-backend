@@ -5,6 +5,7 @@ using NotificationService.Infrastructure.Messaging;
 using NotificationService.Infrastructure.Persistence;
 using NotificationService.Infrastructure.Persistence.Seed;
 using NotificationAppService = NotificationService.Application.Services.NotificationService;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +46,21 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swagger, req) =>
+        {
+            var forwardedPrefix = req.Headers["X-Forwarded-Prefix"].FirstOrDefault();
+            var basePath = string.IsNullOrWhiteSpace(forwardedPrefix)
+                ? "/"
+                : $"/{forwardedPrefix.Trim().Trim('/')}";
+
+            swagger.Servers = new List<OpenApiServer>
+            {
+                new() { Url = basePath }
+            };
+        });
+    });
     app.UseSwaggerUI();
 }
 

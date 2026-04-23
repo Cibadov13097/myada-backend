@@ -201,7 +201,21 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swagger, req) =>
+        {
+            var forwardedPrefix = req.Headers["X-Forwarded-Prefix"].FirstOrDefault();
+            var basePath = string.IsNullOrWhiteSpace(forwardedPrefix)
+                ? "/"
+                : $"/{forwardedPrefix.Trim().Trim('/')}";
+
+            swagger.Servers = new List<OpenApiServer>
+            {
+                new() { Url = basePath }
+            };
+        });
+    });
     app.UseSwaggerUI();
 }
 

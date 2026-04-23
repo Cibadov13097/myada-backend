@@ -104,7 +104,21 @@ public class Program
             AppDbContextSeed.SeedAsync(dbContext).GetAwaiter().GetResult();
         }
 
-        app.UseSwagger();
+        app.UseSwagger(c =>
+        {
+            c.PreSerializeFilters.Add((swagger, req) =>
+            {
+                var forwardedPrefix = req.Headers["X-Forwarded-Prefix"].FirstOrDefault();
+                var basePath = string.IsNullOrWhiteSpace(forwardedPrefix)
+                    ? "/"
+                    : $"/{forwardedPrefix.Trim().Trim('/')}";
+
+                swagger.Servers = new List<OpenApiServer>
+                {
+                    new() { Url = basePath }
+                };
+            });
+        });
         app.UseSwaggerUI();
         app.MapGet("/", () => Results.Redirect("/swagger"));
 
