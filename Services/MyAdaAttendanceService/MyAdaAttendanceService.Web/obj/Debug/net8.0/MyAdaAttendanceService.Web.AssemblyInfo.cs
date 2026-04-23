@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyAdaAttendanceService.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+713c456e6317e947b471ea657c1d0583133733e9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+777ddbbeb91e3f5e4de85ac1efa40dd6f287656d")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyAdaAttendanceService.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyAdaAttendanceService.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -234,11 +234,6 @@ public class AttendanceService : IAttendanceService
             return await RejectScanAsync(studentId, scannedAt, "activation_inactive", tokenPayload, null);
         }
 
-        var sessionStart = session.Date.ToDateTime(session.StartTime);
-        var sessionEnd = session.Date.ToDateTime(session.EndTime);
-        if (scannedAt < sessionStart.AddMinutes(-30) || scannedAt > sessionEnd.AddMinutes(30))
-            return await RejectScanAsync(studentId, scannedAt, "outside_attendance_window", tokenPayload, null);
-
         var isEnrolled = await _enrollmentRepository.ExistsAsync(session.LessonId, studentId);
         if (!isEnrolled)
             return await RejectScanAsync(studentId, scannedAt, "student_not_enrolled", tokenPayload, null);
@@ -490,7 +485,6 @@ public class AttendanceService : IAttendanceService
         "instructor_mismatch" => "QR token instructor does not match the session owner.",
         "activation_inactive" => "Attendance round is inactive or does not match the token.",
         "already_scanned_this_round" => "This student already scanned in this round.",
-        "outside_attendance_window" => "Scan is outside the attendance time window.",
         "student_not_enrolled" => "Student is not enrolled in this lesson.",
         "replay_token" => "This QR token was already used by this student.",
         _ => "Attendance scan could not be processed."

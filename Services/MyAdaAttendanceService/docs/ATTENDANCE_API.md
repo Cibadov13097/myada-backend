@@ -111,7 +111,7 @@ Alias for `POST /api/students/{studentId}/attendance/scan`. Same request/respons
 | `status`          | string?  | e.g. `Present` / `Late` when success |
 | `scannedAt`       | datetime? |                                  |
 
-**Typical errors:** invalid/expired token, session not found, activation inactive, outside attendance window, not enrolled, replay token, already scanned in this round, student/token mismatch.
+**Typical errors:** invalid/expired token, session not found, activation inactive, not enrolled, replay token, already scanned in this round, student/token mismatch. Scans are allowed whenever an attendance round is active (no calendar window tied to session start/end).
 
 ---
 

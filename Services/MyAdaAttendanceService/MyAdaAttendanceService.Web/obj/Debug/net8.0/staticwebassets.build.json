@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"jKwgZaBv1Z/YuMd+FHh0B05xVprAufIw+ggQXBo45rw=","Source":"MyAdaAttendanceService.Web","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "+4GBdyRgpLVdlBm1e5oZ3I7y92g3ObMrD8cQAvcp0ik=",
+  "Source": "MyAdaAttendanceService.Web",
+  "BasePath": "_content/MyAdaAttendanceService.Web",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
