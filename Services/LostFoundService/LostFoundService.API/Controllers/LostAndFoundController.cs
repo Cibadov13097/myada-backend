@@ -36,7 +36,10 @@ public class LostAndFoundController : ControllerBase
     }
 
     [HttpGet("items")]
-    public async Task<IActionResult> GetItems(
+    [ProducesResponseType(typeof(ItemListResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<ItemListResponse>> GetItems(
         [FromQuery(Name = "q")] string? q,
         [FromQuery(Name = "search")] string? search,
         [FromQuery] string? type,
@@ -121,15 +124,17 @@ public class LostAndFoundController : ControllerBase
             .Take(limit)
             .ToListAsync();
 
-        return Ok(new
+        return Ok(new ItemListResponse
         {
-            items = items.Select(x => ToItemResponse(x, isAdmin)),
-            total
+            Items = items.Select(x => ToItemResponse(x, isAdmin)).ToList(),
+            Total = total
         });
     }
 
     [HttpGet("items/{id:int}")]
-    public async Task<IActionResult> GetItemById(int id)
+    [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LostFoundItemResponse>> GetItemById(int id)
     {
         var item = await _dbContext.LostFoundItems
             .AsNoTracking()
@@ -145,22 +150,25 @@ public class LostAndFoundController : ControllerBase
     }
 
     [HttpGet("stats")]
-    public async Task<IActionResult> GetStats()
+    [ProducesResponseType(typeof(StatsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<StatsResponse>> GetStats()
     {
         var total = await _dbContext.LostFoundItems.CountAsync();
         var active = await _dbContext.LostFoundItems.CountAsync(x => x.Status == LostFoundPublicStatus.Active);
         var pending = await _dbContext.LostFoundItems.CountAsync(x => x.Status == LostFoundPublicStatus.PendingVerification);
 
-        return Ok(new
+        return Ok(new StatsResponse
         {
-            total,
-            active,
-            pendingVerification = pending
+            Total = total,
+            Active = active,
+            PendingVerification = pending
         });
     }
 
     [HttpPost("reports/lost")]
-    public async Task<IActionResult> CreateLostReport()
+    [ProducesResponseType(typeof(ReportCreatedResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ReportCreatedResponse>> CreateLostReport()
     {
         var model = await ReadReportRequestAsync();
         if (model == null)
@@ -175,17 +183,19 @@ public class LostAndFoundController : ControllerBase
         }
 
         var item = await CreateItemAsync(model, LostFoundItemType.Lost, isAdminCreate: false);
-        return StatusCode(StatusCodes.Status201Created, new
+        return StatusCode(StatusCodes.Status201Created, new ReportCreatedResponse
         {
-            id = item.Id,
-            referenceNumber = item.ReferenceNumber,
-            status = ToPublicStatusString(item.Status),
-            message = "Lost item report submitted for review."
+            Id = item.Id,
+            ReferenceNumber = item.ReferenceNumber,
+            Status = ToPublicStatusString(item.Status),
+            Message = "Lost item report submitted for review."
         });
     }
 
     [HttpPost("reports/found")]
-    public async Task<IActionResult> CreateFoundReport()
+    [ProducesResponseType(typeof(ReportCreatedResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ReportCreatedResponse>> CreateFoundReport()
     {
         var model = await ReadReportRequestAsync();
         if (model == null)
@@ -200,18 +210,21 @@ public class LostAndFoundController : ControllerBase
         }
 
         var item = await CreateItemAsync(model, LostFoundItemType.Found, isAdminCreate: false);
-        return StatusCode(StatusCodes.Status201Created, new
+        return StatusCode(StatusCodes.Status201Created, new ReportCreatedResponse
         {
-            id = item.Id,
-            referenceNumber = item.ReferenceNumber,
-            status = ToPublicStatusString(item.Status),
-            message = "Found item report submitted for review."
+            Id = item.Id,
+            ReferenceNumber = item.ReferenceNumber,
+            Status = ToPublicStatusString(item.Status),
+            Message = "Found item report submitted for review."
         });
     }
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPatch("items/{id:int}")]
-    public async Task<IActionResult> UpdateItem(int id, [FromBody] PatchItemRequest request)
+    [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LostFoundItemResponse>> UpdateItem(int id, [FromBody] PatchItemRequest request)
     {
         var item = await _dbContext.LostFoundItems.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -260,7 +273,9 @@ public class LostAndFoundController : ControllerBase
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items")]
-    public async Task<IActionResult> CreateManualItem()
+    [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<LostFoundItemResponse>> CreateManualItem()
     {
         var model = await ReadReportRequestAsync();
         if (model == null || string.IsNullOrWhiteSpace(model.Type))
@@ -285,7 +300,9 @@ public class LostAndFoundController : ControllerBase
 
     [HttpPost("upload")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> Upload(
+    [ProducesResponseType(typeof(UploadResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UploadResponse>> Upload(
         IFormFile? file,
         IFormFile? photo,
         IFormFile? image,
@@ -312,12 +329,17 @@ public class LostAndFoundController : ControllerBase
         {
             return BadRequest(Error("VALIDATION_ERROR", "Only PNG/JPG files are supported."));
         }
-        return StatusCode(StatusCodes.Status201Created, new { url });
+        return StatusCode(StatusCodes.Status201Created, new UploadResponse
+        {
+            Url = url
+        });
     }
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items/{id:int}/notify")]
-    public async Task<IActionResult> NotifyOwner(int id, [FromBody] NotifyRequest request)
+    [ProducesResponseType(typeof(NotifyResponse), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<NotifyResponse>> NotifyOwner(int id, [FromBody] NotifyRequest request)
     {
         var item = await _dbContext.LostFoundItems.FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -330,12 +352,19 @@ public class LostAndFoundController : ControllerBase
         item.ModifiedByUserId = TryGetUserId();
         await _dbContext.SaveChangesAsync();
 
-        return StatusCode(StatusCodes.Status202Accepted, new { queued = true });
+        return StatusCode(StatusCodes.Status202Accepted, new NotifyResponse
+        {
+            Queued = true
+        });
     }
 
     [Authorize]
     [HttpPost("items/{id:int}/claims")]
-    public async Task<IActionResult> CreateClaim(int id, [FromBody] CreateClaimRequest request)
+    [ProducesResponseType(typeof(ClaimCreatedResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ClaimCreatedResponse>> CreateClaim(int id, [FromBody] CreateClaimRequest request)
     {
         var item = await _dbContext.LostFoundItems.FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -367,11 +396,18 @@ public class LostAndFoundController : ControllerBase
         _dbContext.LostFoundItemClaims.Add(claim);
         await _dbContext.SaveChangesAsync();
 
-        return StatusCode(StatusCodes.Status201Created, new { claimId = claim.Id, status = ToClaimStatusString(claim.Status) });
+        return StatusCode(StatusCodes.Status201Created, new ClaimCreatedResponse
+        {
+            ClaimId = claim.Id,
+            Status = ToClaimStatusString(claim.Status)
+        });
     }
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items/{id:int}/confirm-receipt")]
-    public async Task<IActionResult> ConfirmReceipt(int id, [FromForm] ConfirmReceiptRequest request)
+    [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LostFoundItemResponse>> ConfirmReceipt(int id, [FromForm] ConfirmReceiptRequest request)
     {
         var item = await _dbContext.LostFoundItems.FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -410,7 +446,10 @@ public class LostAndFoundController : ControllerBase
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items/{id:int}/complete-delivery")]
-    public async Task<IActionResult> CompleteDelivery(int id, [FromForm] CompleteDeliveryRequest request)
+    [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LostFoundItemResponse>> CompleteDelivery(int id, [FromForm] CompleteDeliveryRequest request)
     {
         var item = await _dbContext.LostFoundItems.FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -444,7 +483,9 @@ public class LostAndFoundController : ControllerBase
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpGet("items/{id:int}/claims")]
-    public async Task<IActionResult> GetItemClaims(int id)
+    [ProducesResponseType(typeof(ItemClaimsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ItemClaimsResponse>> GetItemClaims(int id)
     {
         var itemExists = await _dbContext.LostFoundItems.AnyAsync(x => x.Id == id);
         if (!itemExists)
@@ -457,21 +498,26 @@ public class LostAndFoundController : ControllerBase
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync();
 
-        var claims = claimRows.Select(x => new
+        var claims = claimRows.Select(x => new ItemClaimResponse
         {
-            x.Id,
-            claimType = ToClaimTypeString(x.ClaimType),
-            x.Message,
-            status = ToClaimStatusString(x.Status),
-            x.UserId,
-            x.CreatedAt
-        });
+            Id = x.Id,
+            ClaimType = ToClaimTypeString(x.ClaimType),
+            Message = x.Message,
+            Status = ToClaimStatusString(x.Status),
+            UserId = x.UserId,
+            CreatedAt = x.CreatedAt
+        }).ToList();
 
-        return Ok(new { claims });
+        return Ok(new ItemClaimsResponse
+        {
+            Claims = claims
+        });
     }
 
     [HttpGet("items/{id:int}/timeline")]
-    public async Task<IActionResult> GetTimeline(int id)
+    [ProducesResponseType(typeof(TimelineResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<TimelineResponse>> GetTimeline(int id)
     {
         var item = await _dbContext.LostFoundItems.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         if (item == null)
@@ -479,14 +525,17 @@ public class LostAndFoundController : ControllerBase
             return NotFound(Error("NOT_FOUND", $"Item {id} was not found."));
         }
 
-        var events = new List<object>
+        var events = new List<TimelineEventResponse>
         {
-            new { at = item.PostedAt, label = "Report submitted", done = true },
-            new { at = item.LastNotifiedAt, label = "Owner notified", done = item.LastNotifiedAt.HasValue },
-            new { at = item.DeliveryCompletedAt, label = "Delivery completed", done = item.DeliveryCompletedAt.HasValue }
+            new() { At = item.PostedAt, Label = "Report submitted", Done = true },
+            new() { At = item.LastNotifiedAt, Label = "Owner notified", Done = item.LastNotifiedAt.HasValue },
+            new() { At = item.DeliveryCompletedAt, Label = "Delivery completed", Done = item.DeliveryCompletedAt.HasValue }
         };
 
-        return Ok(new { events });
+        return Ok(new TimelineResponse
+        {
+            Events = events
+        });
     }
 
     private async Task<ReportRequest?> ReadReportRequestAsync()
@@ -689,7 +738,7 @@ public class LostAndFoundController : ControllerBase
         return item;
     }
 
-    private object? ValidateReport(ReportRequest request, LostFoundItemType type, bool isAdminCreate = false)
+    private ErrorResponse? ValidateReport(ReportRequest request, LostFoundItemType type, bool isAdminCreate = false)
     {
         var details = new Dictionary<string, List<string>>();
         var providedImageUrls = CollectImageUrls(request);
@@ -791,53 +840,53 @@ public class LostAndFoundController : ControllerBase
         return Error("VALIDATION_ERROR", "Validation failed.", details);
     }
 
-    private object ToItemResponse(LostFoundItem item, bool includeAdminFields)
+    private LostFoundItemResponse ToItemResponse(LostFoundItem item, bool includeAdminFields)
     {
         var daysAgo = Math.Max((int)(DateTime.UtcNow.Date - item.PostedAt.Date).TotalDays, 0);
         var imageUrls = item.Images.OrderBy(x => x.SortOrder).Select(x => x.Url).ToList();
         var primary = item.PrimaryImageUrl ?? imageUrls.FirstOrDefault();
 
-        return new
+        return new LostFoundItemResponse
         {
-            id = item.Id,
-            type = ToItemTypeString(item.Type),
-            title = item.Title,
-            location = item.Location,
-            category = item.Category,
-            status = ToPublicStatusString(item.Status),
-            adminStatus = includeAdminFields ? ToAdminStatusString(item.AdminStatus) : null,
-            description = item.Description,
-            referenceNumber = item.ReferenceNumber,
-            datePosted = item.PostedAt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-            daysAgo,
-            postedAt = item.PostedAt,
-            image = primary,
-            images = imageUrls,
-            postedByUserId = item.PostedByUserId,
-            collectionPlace = item.CollectionPlace,
-            locationType = item.LocationType,
-            buildingCode = item.BuildingCode,
-            isRoom = item.IsRoom,
-            roomOrArea = item.RoomOrArea,
-            campusLocation = item.CampusLocation,
-            building = item.Building,
-            floor = item.Floor,
-            roomArea = item.RoomArea,
-            lastKnownLocation = item.LastKnownLocation,
-            dateLost = item.DateLost?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-            timeLost = item.TimeLost,
-            contactName = item.ContactName,
-            contactPhone = item.ContactPhone,
-            storageBinId = includeAdminFields ? item.StorageBinId : null,
-            condition = includeAdminFields ? ToConditionString(item.Condition) : null,
-            adminNotes = includeAdminFields ? item.AdminNotes : null,
-            reportedColor = includeAdminFields ? item.ReportedColor : null,
-            intakePhotoUrl = includeAdminFields ? item.IntakePhotoUrl : null,
-            confirmAccuracy = includeAdminFields ? item.ConfirmAccuracy : null,
-            claimantName = includeAdminFields ? item.ClaimantName : null,
-            claimantStudentId = includeAdminFields ? item.ClaimantStudentId : null,
-            studentIdVerified = includeAdminFields ? item.StudentIdVerified : null,
-            handoverProofUrl = includeAdminFields ? item.HandoverProofUrl : null
+            Id = item.Id,
+            Type = ToItemTypeString(item.Type),
+            Title = item.Title,
+            Location = item.Location,
+            Category = item.Category,
+            Status = ToPublicStatusString(item.Status),
+            AdminStatus = includeAdminFields ? ToAdminStatusString(item.AdminStatus) : null,
+            Description = item.Description,
+            ReferenceNumber = item.ReferenceNumber,
+            DatePosted = item.PostedAt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            DaysAgo = daysAgo,
+            PostedAt = item.PostedAt,
+            Image = primary,
+            Images = imageUrls,
+            PostedByUserId = item.PostedByUserId,
+            CollectionPlace = item.CollectionPlace,
+            LocationType = item.LocationType,
+            BuildingCode = item.BuildingCode,
+            IsRoom = item.IsRoom,
+            RoomOrArea = item.RoomOrArea,
+            CampusLocation = item.CampusLocation,
+            Building = item.Building,
+            Floor = item.Floor,
+            RoomArea = item.RoomArea,
+            LastKnownLocation = item.LastKnownLocation,
+            DateLost = item.DateLost?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            TimeLost = item.TimeLost,
+            ContactName = item.ContactName,
+            ContactPhone = item.ContactPhone,
+            StorageBinId = includeAdminFields ? item.StorageBinId : null,
+            Condition = includeAdminFields ? ToConditionString(item.Condition) : null,
+            AdminNotes = includeAdminFields ? item.AdminNotes : null,
+            ReportedColor = includeAdminFields ? item.ReportedColor : null,
+            IntakePhotoUrl = includeAdminFields ? item.IntakePhotoUrl : null,
+            ConfirmAccuracy = includeAdminFields ? item.ConfirmAccuracy : null,
+            ClaimantName = includeAdminFields ? item.ClaimantName : null,
+            ClaimantStudentId = includeAdminFields ? item.ClaimantStudentId : null,
+            StudentIdVerified = includeAdminFields ? item.StudentIdVerified : null,
+            HandoverProofUrl = includeAdminFields ? item.HandoverProofUrl : null
         };
     }
 
@@ -972,8 +1021,13 @@ public class LostAndFoundController : ControllerBase
         };
     }
 
-    private static object Error(string error, string message, Dictionary<string, List<string>>? details = null) =>
-        new { error, message, details };
+    private static ErrorResponse Error(string error, string message, Dictionary<string, List<string>>? details = null) =>
+        new()
+        {
+            Error = error,
+            Message = message,
+            Details = details
+        };
 
     private static string NormalizeCategory(string category)
     {
@@ -1142,6 +1196,120 @@ public class LostAndFoundController : ControllerBase
     {
         return Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+    }
+
+    public sealed class ItemListResponse
+    {
+        public List<LostFoundItemResponse> Items { get; set; } = new();
+        public int Total { get; set; }
+    }
+
+    public sealed class StatsResponse
+    {
+        public int Total { get; set; }
+        public int Active { get; set; }
+        public int PendingVerification { get; set; }
+    }
+
+    public sealed class ReportCreatedResponse
+    {
+        public int Id { get; set; }
+        public string? ReferenceNumber { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+    }
+
+    public sealed class UploadResponse
+    {
+        public string Url { get; set; } = string.Empty;
+    }
+
+    public sealed class NotifyResponse
+    {
+        public bool Queued { get; set; }
+    }
+
+    public sealed class ClaimCreatedResponse
+    {
+        public int ClaimId { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
+
+    public sealed class ItemClaimsResponse
+    {
+        public List<ItemClaimResponse> Claims { get; set; } = new();
+    }
+
+    public sealed class ItemClaimResponse
+    {
+        public int Id { get; set; }
+        public string ClaimType { get; set; } = string.Empty;
+        public string? Message { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public sealed class TimelineResponse
+    {
+        public List<TimelineEventResponse> Events { get; set; } = new();
+    }
+
+    public sealed class TimelineEventResponse
+    {
+        public DateTime? At { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public bool Done { get; set; }
+    }
+
+    public sealed class LostFoundItemResponse
+    {
+        public int Id { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string? Location { get; set; }
+        public string Category { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string? AdminStatus { get; set; }
+        public string? Description { get; set; }
+        public string? ReferenceNumber { get; set; }
+        public string DatePosted { get; set; } = string.Empty;
+        public int DaysAgo { get; set; }
+        public DateTime PostedAt { get; set; }
+        public string? Image { get; set; }
+        public List<string> Images { get; set; } = new();
+        public string? PostedByUserId { get; set; }
+        public string? CollectionPlace { get; set; }
+        public string? LocationType { get; set; }
+        public string? BuildingCode { get; set; }
+        public string? IsRoom { get; set; }
+        public string? RoomOrArea { get; set; }
+        public string? CampusLocation { get; set; }
+        public string? Building { get; set; }
+        public string? Floor { get; set; }
+        public string? RoomArea { get; set; }
+        public string? LastKnownLocation { get; set; }
+        public string? DateLost { get; set; }
+        public string? TimeLost { get; set; }
+        public string? ContactName { get; set; }
+        public string? ContactPhone { get; set; }
+        public string? StorageBinId { get; set; }
+        public string? Condition { get; set; }
+        public string? AdminNotes { get; set; }
+        public string? ReportedColor { get; set; }
+        public string? IntakePhotoUrl { get; set; }
+        public bool? ConfirmAccuracy { get; set; }
+        public string? ClaimantName { get; set; }
+        public string? ClaimantStudentId { get; set; }
+        public bool? StudentIdVerified { get; set; }
+        public string? HandoverProofUrl { get; set; }
+    }
+
+    public sealed class ErrorResponse
+    {
+        public string Error { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public Dictionary<string, List<string>>? Details { get; set; }
     }
 
     public sealed class PatchItemRequest

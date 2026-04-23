@@ -974,17 +974,19 @@ public sealed class ClubAdminService : IClubAdminService
         if (existing == null || existing.ClubId != clubId)
             return EmptyPage<ClubAdminAttendeeDto>(page, limit);
 
-        var ws = _workspace.GetOrCreate(clubId);
-        var bucket = ws.EventAttendees.GetOrAdd(AttendeeBucketKey(clubId, eid), _ => new AttendeeBucket());
-        var items = bucket.Items.Values
-            .Select(a => new ClubAdminAttendeeDto
+        var items = await _db.EventRegistrations
+            .AsNoTracking()
+            .Where(r => r.EventId == eid)
+            .OrderByDescending(r => r.CreatedAt)
+            .Select(r => new ClubAdminAttendeeDto
             {
-                Id = a.Id,
+                Id = r.UserId.ToString("D"),
                 EventId = eid.ToString(CultureInfo.InvariantCulture),
-                UserId = a.UserId,
-                Entered = a.Entered
+                UserId = r.UserId.ToString("D"),
+                Entered = r.IsCheckedIn
             })
-            .ToList();
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
         return Page(items, page, limit);
     }
 
@@ -1002,16 +1004,31 @@ public sealed class ClubAdminService : IClubAdminService
         if (existing == null || existing.ClubId != clubId)
             return null;
 
-        var ws = _workspace.GetOrCreate(clubId);
-        var bucket = ws.EventAttendees.GetOrAdd(AttendeeBucketKey(clubId, eid), _ => new AttendeeBucket());
-        var row = bucket.Items.GetOrAdd(attendeeId, _ => new AttendeeRow { Id = attendeeId, UserId = attendeeId });
-        row.Entered = entered;
+        if (!Guid.TryParse(attendeeId, out var attendeeUserId))
+            return null;
+
+        var registration = await _db.EventRegistrations
+            .FirstOrDefaultAsync(r => r.EventId == eid && r.UserId == attendeeUserId, cancellationToken)
+            .ConfigureAwait(false);
+        if (registration == null)
+            return null;
+
+        var now = DateTime.UtcNow;
+        registration.IsCheckedIn = entered;
+        registration.ModifiedAt = now;
+        registration.LastScannedAt = entered ? now : null;
+        registration.CheckedInAt = entered ? registration.CheckedInAt ?? now : null;
+        if (!entered)
+            registration.CheckedInBy = null;
+
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
         return new ClubAdminAttendeeDto
         {
-            Id = row.Id,
+            Id = registration.UserId.ToString("D"),
             EventId = eid.ToString(CultureInfo.InvariantCulture),
-            UserId = row.UserId,
-            Entered = row.Entered
+            UserId = registration.UserId.ToString("D"),
+            Entered = registration.IsCheckedIn
         };
     }
 
@@ -1029,10 +1046,21 @@ public sealed class ClubAdminService : IClubAdminService
         if (existing == null || existing.ClubId != clubId)
             return false;
 
-        var ws = _workspace.GetOrCreate(clubId);
-        if (!ws.EventAttendees.TryGetValue(AttendeeBucketKey(clubId, eid), out var bucket))
+        if (!Guid.TryParse(attendeeId, out var attendeeUserId))
             return false;
-        return bucket.Items.TryRemove(attendeeId, out _);
+
+        var registration = await _db.EventRegistrations
+            .FirstOrDefaultAsync(r => r.EventId == eid && r.UserId == attendeeUserId, cancellationToken)
+            .ConfigureAwait(false);
+        if (registration == null)
+            return false;
+
+        var now = DateTime.UtcNow;
+        registration.IsDeleted = true;
+        registration.DeletedAt = now;
+        registration.ModifiedAt = now;
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return true;
     }
 
     public async Task<ProfilePatchResultDto> PatchProfileAsync(
