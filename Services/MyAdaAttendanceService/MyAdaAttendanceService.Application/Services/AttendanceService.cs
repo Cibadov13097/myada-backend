@@ -140,7 +140,7 @@ public class AttendanceService : IAttendanceService
             ?? throw new KeyNotFoundException("No attendance round is active for this session. Activate round 1 or 2 first.");
 
         var now = DateTime.UtcNow;
-        var lifetimeSeconds = 15;
+        var lifetimeSeconds = 120;
         if (int.TryParse(_configuration["QrToken:LifetimeSeconds"], out var parsed) && parsed > 0)
             lifetimeSeconds = parsed;
         var expiresAt = now.AddSeconds(lifetimeSeconds);

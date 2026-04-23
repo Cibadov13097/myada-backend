@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyAdaSupportService.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6107a28ae6701c636a3803f0ed93304931eebff0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ec525f2eef0c51b5b838f931abc7a70d4bb6a94")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyAdaSupportService.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyAdaSupportService.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

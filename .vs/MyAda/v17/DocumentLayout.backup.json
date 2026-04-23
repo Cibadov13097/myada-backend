@@ -3,6 +3,9 @@
   "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.api\\authservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|solutionrelative:services\\authservice\\authservice.api\\authservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -21,9 +24,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.api\\clubmanagementservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.api\\clubmanagementservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\applicationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -85,7 +85,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 15,
           "Children": [
             {
               "$type": "Bookmark",
@@ -97,7 +97,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "AuthService.Api",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
@@ -110,7 +110,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Program.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Program.cs",
@@ -123,7 +123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\appsettings.json",
               "RelativeDocumentMoniker": "ApiGateway\\appsettings.json",
@@ -136,7 +136,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\Program.cs",
               "RelativeDocumentMoniker": "ApiGateway\\Program.cs",
@@ -148,7 +148,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "ClubManagementService.API.csproj",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
@@ -257,15 +257,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "Microsoft.NET.Sdk.DefaultItems.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "ToolTip": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "RelativeToolTip": "..\\..\\..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
-              "ViewState": "AgIAAHoAAAAAAAAAAAAhwIgAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAH8AAAAAAAAAAAAgwIgAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-04-21T17:31:50.309Z"
+              "WhenOpened": "2026-04-21T17:31:50.309Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
