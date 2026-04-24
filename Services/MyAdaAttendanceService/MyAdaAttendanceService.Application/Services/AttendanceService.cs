@@ -82,6 +82,7 @@ public class AttendanceService : IAttendanceService
         await _activationRepository.AddAsync(activation);
 
         session.IsAttendanceActive = true;
+        session.RoundNo = (byte)round;
         session.AttendanceActivatedAt = now;
         session.AttendanceDeactivatedAt = null;
         await _sessionRepository.UpdateAsync(session);
@@ -267,9 +268,8 @@ public class AttendanceService : IAttendanceService
         });
 
         var distinctRounds = await _scanLogRepository.CountDistinctRoundsScannedAsync(tokenPayload.SessionId, studentId);
-        var computedStatus = distinctRounds >= 2
-            ? AttendanceStatus.Present
-            : AttendanceStatus.Late;
+        var requiresSecondRound = await IsRoundTwoActivatedForSessionAsync(tokenPayload.SessionId);
+        var computedStatus = ComputeAttendanceStatus(distinctRounds, requiresSecondRound);
 
         var attendance = await _attendanceRepository.GetBySessionAndStudentAsync(tokenPayload.SessionId, studentId);
         if (attendance is null)
@@ -359,6 +359,7 @@ public class AttendanceService : IAttendanceService
             throw new InvalidOperationException("An attendance round is still active. Deactivate the current round before finalizing.");
 
         var accepted = await _scanLogRepository.GetAcceptedBySessionIdAsync(sessionId);
+        var requiresSecondRound = await IsRoundTwoActivatedForSessionAsync(sessionId);
         var roundsByStudent = accepted
             .GroupBy(x => x.StudentId)
             .ToDictionary(g => g.Key, g => g.Select(s => s.Round).Distinct().Count());
@@ -367,9 +368,7 @@ public class AttendanceService : IAttendanceService
         foreach (var enrollment in enrollments)
         {
             roundsByStudent.TryGetValue(enrollment.StudentId, out var roundCount);
-            var computedStatus = roundCount >= 2
-                ? AttendanceStatus.Present
-                : (roundCount == 1 ? AttendanceStatus.Late : AttendanceStatus.Absent);
+            var computedStatus = ComputeAttendanceStatus(roundCount, requiresSecondRound);
 
             var attendance = await _attendanceRepository.GetBySessionAndStudentAsync(sessionId, enrollment.StudentId);
             if (attendance is null)
@@ -620,6 +619,27 @@ public class AttendanceService : IAttendanceService
         IsManuallyAdjusted = record.IsManuallyAdjusted,
         InstructorNote = record.InstructorNote
     };
+
+    private async Task<bool> IsRoundTwoActivatedForSessionAsync(int sessionId)
+    {
+        var roundTwoActivations = await _activationRepository.GetAllAsync(
+            predicate: x => x.SessionId == sessionId && x.Round == 2,
+            asNoTracking: true);
+        return roundTwoActivations.Count > 0;
+    }
+
+    private static AttendanceStatus ComputeAttendanceStatus(int distinctRounds, bool requiresSecondRound)
+    {
+        if (distinctRounds <= 0)
+            return AttendanceStatus.Absent;
+
+        if (!requiresSecondRound)
+            return AttendanceStatus.Present;
+
+        return distinctRounds >= 2
+            ? AttendanceStatus.Present
+            : AttendanceStatus.Late;
+    }
 
     private sealed class QrTokenPayloadModel
     {

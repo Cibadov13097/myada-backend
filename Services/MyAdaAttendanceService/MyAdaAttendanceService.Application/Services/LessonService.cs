@@ -86,7 +86,8 @@ public class LessonService : ILessonService
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
                     Topic = s.Topic,
-                    IsAttendanceActive = s.IsAttendanceActive
+                    IsAttendanceActive = s.IsAttendanceActive,
+                    RoundNo = s.RoundNo
                 }).ToList()
         };
     }
@@ -128,7 +129,8 @@ public class LessonService : ILessonService
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
                     Topic = s.Topic,
-                    IsAttendanceActive = s.IsAttendanceActive
+                    IsAttendanceActive = s.IsAttendanceActive,
+                    RoundNo = s.RoundNo
                 }).ToList()
         };
     }

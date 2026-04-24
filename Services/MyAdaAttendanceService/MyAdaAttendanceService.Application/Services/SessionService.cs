@@ -322,6 +322,7 @@ public class SessionService : ISessionService
             EndTime = session.Date.ToDateTime(session.EndTime),
             Topic = session.Topic,
             IsAttendanceActive = session.IsAttendanceActive,
+            RoundNo = session.RoundNo,
             AttendanceActivatedAt = session.AttendanceActivatedAt,
             AttendanceDeactivatedAt = session.AttendanceDeactivatedAt,
             TotalStudents = enrollmentCount,

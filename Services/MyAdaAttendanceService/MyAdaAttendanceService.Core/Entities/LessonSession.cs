@@ -18,6 +18,7 @@ public class LessonSession
     public bool IsAttendanceActive { get; set; }
     public DateTime? AttendanceActivatedAt { get; set; }
     public DateTime? AttendanceDeactivatedAt { get; set; }
+    public byte RoundNo { get; set; } = 0;
 
     public Lesson? Lesson { get; set; }
     public ICollection<SessionAttendance> Attendances { get; set; } = new List<SessionAttendance>();

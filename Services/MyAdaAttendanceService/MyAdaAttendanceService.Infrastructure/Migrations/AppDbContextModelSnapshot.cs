@@ -290,6 +290,9 @@ namespace MyAdaAttendanceService.Infrastructure.Migrations
                     b.Property<int>("LessonId")
                         .HasColumnType("integer");
 
+                    b.Property<byte>("RoundNo")
+                        .HasColumnType("smallint");
+
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time without time zone");
 

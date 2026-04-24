@@ -52,7 +52,7 @@ public class SessionServiceTests
         var sessionRepo = new Mock<ILessonSessionRepository>();
         sessionRepo.Setup(x => x.GetByLessonIdAsync(10)).ReturnsAsync(new List<LessonSession>
         {
-            new() { Id = 1, LessonId = 10, Date = new DateOnly(2026, 4, 10), StartTime = new TimeOnly(9, 0), EndTime = new TimeOnly(10, 0) }
+            new() { Id = 1, LessonId = 10, Date = new DateOnly(2026, 4, 10), StartTime = new TimeOnly(9, 0), EndTime = new TimeOnly(10, 0), RoundNo = 2 }
         });
 
         var enrollmentRepo = new Mock<ILessonEnrollmentRepository>();
@@ -69,6 +69,7 @@ public class SessionServiceTests
         Assert.Equal(1, result[0].Id);
         Assert.Equal("Algorithms", result[0].LessonName);
         Assert.Equal(1, result[0].TotalStudents);
+        Assert.Equal(2, result[0].RoundNo);
     }
 
     [Fact]
