@@ -9,6 +9,7 @@ namespace LostFoundService.Api.Controllers
 {
     [Route("api/v1/lost-items")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Tags("Lost Items")]
 
     public class LostItemController : ControllerBase

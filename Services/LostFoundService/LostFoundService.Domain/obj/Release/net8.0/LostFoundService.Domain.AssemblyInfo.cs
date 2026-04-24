@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LostFoundService.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37de1dcbdc1c89afd7097bdc8f998f0537a6ee4b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0cf0c34c1f6c8965b12af66ae553321bff7b2cf3")]
 [assembly: System.Reflection.AssemblyProductAttribute("LostFoundService.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LostFoundService.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

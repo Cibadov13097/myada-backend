@@ -15,6 +15,7 @@ namespace LostFoundService.Api.Controllers.Admin
 {
     [Route("api/v1/admin/found-items")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Tags("Found Items - Admin")]
 
     public class AdminFoundItemController : ControllerBase

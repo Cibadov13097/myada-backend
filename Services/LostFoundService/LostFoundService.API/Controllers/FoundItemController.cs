@@ -16,6 +16,7 @@ namespace LostFoundService.Api.Controllers
 {
     [Route("api/v1/found-items")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Tags("Found Items")]
 
     public class FoundItemController : ControllerBase

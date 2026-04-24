@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LostFoundService.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5ded91cbbbcd01e0772f7dd4141a6f363376be24")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0cf0c34c1f6c8965b12af66ae553321bff7b2cf3")]
 [assembly: System.Reflection.AssemblyProductAttribute("LostFoundService.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LostFoundService.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
