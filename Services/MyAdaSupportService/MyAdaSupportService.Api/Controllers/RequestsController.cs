@@ -11,6 +11,7 @@ namespace MyAdaSupportService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Route("api/Requests")]
 [Authorize]
 public class SupportRequestsController : ControllerBase
 {

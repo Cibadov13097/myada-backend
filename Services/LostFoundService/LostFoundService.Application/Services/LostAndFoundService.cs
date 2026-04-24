@@ -176,7 +176,7 @@ public class LostAndFoundService : ILostAndFoundService
         await _repository.AddItemAsync(item);
         await _repository.SaveChangesAsync();
 
-        item.ReferenceNumber = $"LF-{item.Id:D6}";
+        await _repository.AssignUniqueReferenceNumberAsync(item);
         item.Images = imageUrls.Select((url, index) => new LostFoundItemImage
         {
             LostFoundItemId = item.Id,

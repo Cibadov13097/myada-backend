@@ -1,14 +1,14 @@
 # MyAdaSupportService API Endpoints
 
-Last updated: 2026-04-19
+Last updated: 2026-04-25
 
 Base path (service): `/api`
 
 Gateway route format (frontend):
-- `http://51.20.193.29:5000/support/api/...`
+- `http://13.60.31.141:5000/support/api/...`
 
 Direct service format (diagnostics):
-- Production: `http://51.20.193.29:5008/api/...`
+- Production: `http://13.60.31.141:5008/api/...`
 - Local: `http://localhost:5008/api/...`
 
 Common 404 rule:
@@ -232,6 +232,8 @@ Creates support staff status.
 ## Support Requests
 
 ### POST `/api/SupportRequests/uploads`
+
+Legacy alias: `POST /api/Requests/uploads`
 
 Uploads one or more support request images to the configured S3-compatible bucket.
 

@@ -16,6 +16,109 @@ namespace LostFoundService.Api.Controllers;
 [Route("api/lost-and-found")]
 public class LostAndFoundController : ControllerBase
 {
+    private static readonly HashSet<string> UserLostReportJsonFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "type",
+        "itemName",
+        "category",
+        "description",
+        "location",
+        "dateLost",
+        "timeLost",
+        "contactName",
+        "contactPhone",
+        "status"
+    };
+
+    private static readonly HashSet<string> UserLostReportFormFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "type",
+        "itemName",
+        "category",
+        "description",
+        "location",
+        "dateLost",
+        "timeLost",
+        "contactName",
+        "contactPhone",
+        "status",
+        "files",
+        "files[]"
+    };
+
+    private static readonly HashSet<string> UserLostReportFileFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "files",
+        "files[]"
+    };
+
+    private static readonly HashSet<string> ManualCreateJsonFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "type",
+        "itemName",
+        "category",
+        "description",
+        "location",
+        "locationType",
+        "buildingCode",
+        "isRoom",
+        "roomOrArea",
+        "campusLocation",
+        "building",
+        "floor",
+        "roomArea",
+        "lastKnownLocation",
+        "dateLost",
+        "timeLost",
+        "contactName",
+        "contactPhone",
+        "collectionPlace",
+        "status",
+        "adminStatus",
+        "storageBinId",
+        "condition",
+        "adminNotes",
+        "reportedColor"
+    };
+
+    private static readonly HashSet<string> ManualCreateFormFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "type",
+        "itemName",
+        "category",
+        "description",
+        "location",
+        "customLocation",
+        "locationType",
+        "buildingCode",
+        "isRoom",
+        "roomOrArea",
+        "campusLocation",
+        "building",
+        "floor",
+        "roomArea",
+        "lastKnownLocation",
+        "dateLost",
+        "timeLost",
+        "contactName",
+        "contactPhone",
+        "collectionPlace",
+        "status",
+        "adminStatus",
+        "storageBinId",
+        "condition",
+        "adminNotes",
+        "reportedColor",
+        "files",
+        "files[]"
+    };
+
+    private static readonly HashSet<string> ManualCreateFileFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "files",
+        "files[]"
+    };
+
     private readonly ILostAndFoundService _lostAndFoundService;
     private readonly IImageStorageService _imageStorageService;
     private readonly IMapper _mapper;
@@ -109,19 +212,31 @@ public class LostAndFoundController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ReportCreatedResponse>> CreateLostReport()
     {
-        var model = await ReadReportRequestAsync();
+        var (model, files, readError) = await ReadUserLostReportRequestAsync();
+        if (readError != null)
+        {
+            return BadRequest(readError);
+        }
+
         if (model == null)
         {
             return BadRequest(Error("VALIDATION_ERROR", "Invalid request payload."));
         }
 
+        var validationError = ValidateUserLostReportRequest(model);
+        if (validationError != null)
+        {
+            return BadRequest(validationError);
+        }
+
         var command = _mapper.Map<CreateLostFoundItemCommand>(model);
         command.Type = "lost";
+        command.Status = string.IsNullOrWhiteSpace(model.Status) ? "pending" : model.Status.Trim();
         command.IsAdminCreate = false;
         command.PostedByUserId = TryGetUserId();
         command.CreatedByUserId = TryGetUserId();
 
-        var fileError = await PopulateCreateCommandFilesAsync(command, model);
+        var fileError = await PopulateCreateCommandFilesAsync(command, files);
         if (fileError != null)
         {
             return BadRequest(fileError);
@@ -221,7 +336,12 @@ public class LostAndFoundController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<LostFoundItemResponse>> CreateManualItem()
     {
-        var model = await ReadReportRequestAsync();
+        var (model, files, readError) = await ReadManualCreateRequestAsync();
+        if (readError != null)
+        {
+            return BadRequest(readError);
+        }
+
         if (model == null || string.IsNullOrWhiteSpace(model.Type))
         {
             return BadRequest(Error("VALIDATION_ERROR", "type is required for manual create."));
@@ -232,7 +352,7 @@ public class LostAndFoundController : ControllerBase
         command.PostedByUserId = TryGetUserId();
         command.CreatedByUserId = TryGetUserId();
 
-        var fileError = await PopulateCreateCommandFilesAsync(command, model);
+        var fileError = await PopulateCreateCommandFilesAsync(command, files);
         if (fileError != null)
         {
             return BadRequest(fileError);
@@ -254,10 +374,10 @@ public class LostAndFoundController : ControllerBase
     [ProducesResponseType(typeof(UploadResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<UploadResponse>> Upload(
-        [FromForm] IFormFile? file,
-        [FromForm] IFormFile? photo,
-        [FromForm] IFormFile? image,
-        [FromForm] IFormFile? imageFile)
+        IFormFile? file,
+        IFormFile? photo,
+        IFormFile? image,
+        IFormFile? imageFile)
     {
         var upload = file ?? photo ?? image ?? imageFile;
         if (upload == null && Request.HasFormContentType)
@@ -470,6 +590,167 @@ public class LostAndFoundController : ControllerBase
         }
     }
 
+    private async Task<(ManualCreateItemRequest? Model, List<IFormFile> Files, ErrorResponse? Error)> ReadManualCreateRequestAsync()
+    {
+        if (Request.HasFormContentType)
+        {
+            var form = await Request.ReadFormAsync();
+            var unsupportedFields = form.Keys
+                .Where(key => !ManualCreateFormFields.Contains(key))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var unsupportedFileFields = form.Files
+                .Select(file => file.Name)
+                .Where(name => !ManualCreateFileFields.Contains(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            unsupportedFields.AddRange(
+                unsupportedFileFields.Where(name =>
+                    !unsupportedFields.Contains(name, StringComparer.OrdinalIgnoreCase)));
+
+            if (unsupportedFields.Count > 0)
+            {
+                return (null, new List<IFormFile>(), UnsupportedManualCreateFieldsError(unsupportedFields));
+            }
+
+            return (new ManualCreateItemRequest
+            {
+                Type = GetForm(form, "type"),
+                ItemName = GetForm(form, "itemName"),
+                Category = GetForm(form, "category"),
+                Description = GetForm(form, "description"),
+                Location = GetForm(form, "location") ?? GetForm(form, "customLocation"),
+                LocationType = GetForm(form, "locationType"),
+                BuildingCode = GetForm(form, "buildingCode"),
+                IsRoom = GetForm(form, "isRoom"),
+                RoomOrArea = GetForm(form, "roomOrArea"),
+                CampusLocation = GetForm(form, "campusLocation"),
+                Building = GetForm(form, "building"),
+                Floor = GetForm(form, "floor"),
+                RoomArea = GetForm(form, "roomArea"),
+                LastKnownLocation = GetForm(form, "lastKnownLocation"),
+                DateLost = GetForm(form, "dateLost"),
+                TimeLost = GetForm(form, "timeLost"),
+                ContactName = GetForm(form, "contactName"),
+                ContactPhone = GetForm(form, "contactPhone"),
+                CollectionPlace = GetForm(form, "collectionPlace"),
+                Status = GetForm(form, "status"),
+                AdminStatus = GetForm(form, "adminStatus"),
+                StorageBinId = GetForm(form, "storageBinId"),
+                Condition = GetForm(form, "condition"),
+                AdminNotes = GetForm(form, "adminNotes"),
+                ReportedColor = GetForm(form, "reportedColor")
+            }, form.Files.ToList(), null);
+        }
+
+        try
+        {
+            using var document = await JsonDocument.ParseAsync(Request.Body, cancellationToken: HttpContext.RequestAborted);
+            if (document.RootElement.ValueKind != JsonValueKind.Object)
+            {
+                return (null, new List<IFormFile>(), Error("VALIDATION_ERROR", "Invalid request payload."));
+            }
+
+            var unsupportedFields = document.RootElement
+                .EnumerateObject()
+                .Select(property => property.Name)
+                .Where(name => !ManualCreateJsonFields.Contains(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (unsupportedFields.Count > 0)
+            {
+                return (null, new List<IFormFile>(), UnsupportedManualCreateFieldsError(unsupportedFields));
+            }
+
+            var model = document.RootElement.Deserialize<ManualCreateItemRequest>(new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return (model, new List<IFormFile>(), null);
+        }
+        catch
+        {
+            return (null, new List<IFormFile>(), Error("VALIDATION_ERROR", "Invalid request payload."));
+        }
+    }
+
+    private async Task<(UserLostReportRequest? Model, List<IFormFile> Files, ErrorResponse? Error)> ReadUserLostReportRequestAsync()
+    {
+        if (Request.HasFormContentType)
+        {
+            var form = await Request.ReadFormAsync();
+            var unsupportedFields = form.Keys
+                .Where(key => !UserLostReportFormFields.Contains(key))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var unsupportedFileFields = form.Files
+                .Select(file => file.Name)
+                .Where(name => !UserLostReportFileFields.Contains(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            unsupportedFields.AddRange(
+                unsupportedFileFields.Where(name =>
+                    !unsupportedFields.Contains(name, StringComparer.OrdinalIgnoreCase)));
+
+            if (unsupportedFields.Count > 0)
+            {
+                return (null, new List<IFormFile>(), UnsupportedUserLostReportFieldsError(unsupportedFields));
+            }
+
+            return (new UserLostReportRequest
+            {
+                Type = GetForm(form, "type"),
+                ItemName = GetForm(form, "itemName"),
+                Category = GetForm(form, "category"),
+                Description = GetForm(form, "description"),
+                Location = GetForm(form, "location"),
+                DateLost = GetForm(form, "dateLost"),
+                TimeLost = GetForm(form, "timeLost"),
+                ContactName = GetForm(form, "contactName"),
+                ContactPhone = GetForm(form, "contactPhone"),
+                Status = GetForm(form, "status")
+            }, form.Files.ToList(), null);
+        }
+
+        try
+        {
+            using var document = await JsonDocument.ParseAsync(Request.Body, cancellationToken: HttpContext.RequestAborted);
+            if (document.RootElement.ValueKind != JsonValueKind.Object)
+            {
+                return (null, new List<IFormFile>(), Error("VALIDATION_ERROR", "Invalid request payload."));
+            }
+
+            var unsupportedFields = document.RootElement
+                .EnumerateObject()
+                .Select(property => property.Name)
+                .Where(name => !UserLostReportJsonFields.Contains(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (unsupportedFields.Count > 0)
+            {
+                return (null, new List<IFormFile>(), UnsupportedUserLostReportFieldsError(unsupportedFields));
+            }
+
+            var model = document.RootElement.Deserialize<UserLostReportRequest>(new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return (model, new List<IFormFile>(), null);
+        }
+        catch
+        {
+            return (null, new List<IFormFile>(), Error("VALIDATION_ERROR", "Invalid request payload."));
+        }
+    }
+
     private async Task<ReportRequest?> ReadReportRequestAsync()
     {
         if (Request.HasFormContentType)
@@ -559,45 +840,55 @@ public class LostAndFoundController : ControllerBase
         }
     }
 
+    private static ErrorResponse? ValidateUserLostReportRequest(UserLostReportRequest request)
+    {
+        var details = new Dictionary<string, List<string>>();
+
+        if (!string.IsNullOrWhiteSpace(request.Type) &&
+            !string.Equals(request.Type.Trim(), "lost", StringComparison.OrdinalIgnoreCase))
+        {
+            details["type"] = new List<string> { "type must be lost for this endpoint." };
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Status) &&
+            !string.Equals(request.Status.Trim(), "pending", StringComparison.OrdinalIgnoreCase))
+        {
+            details["status"] = new List<string> { "status must be pending for this endpoint." };
+        }
+
+        if (details.Count == 0)
+        {
+            return null;
+        }
+
+        return Error("VALIDATION_ERROR", "Validation failed.", details);
+    }
+
     private async Task<ErrorResponse?> PopulateCreateCommandFilesAsync(
         CreateLostFoundItemCommand command,
         ReportRequest request)
     {
-        var imageUrls = CollectImageUrls(request);
-
-        if (request.Files != null && request.Files.Any(file => !_imageStorageService.IsSupportedImage(file.FileName)))
+        var providedImageUrls = CollectImageUrls(request);
+        if (providedImageUrls.Count > 0)
         {
-            return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
+            return Error(
+                "VALIDATION_ERROR",
+                "Attach image files using multipart/form-data. imageUrl and imageUrls are not supported for lost-and-found items.");
         }
 
-        if (request.IntakePhotoFile != null && !_imageStorageService.IsSupportedImage(request.IntakePhotoFile.FileName))
+        var imageUploadError = await PopulateCreateCommandFilesAsync(command, request.Files);
+        if (imageUploadError != null)
         {
-            return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
+            return imageUploadError;
         }
-
-        if (request.HandoverProofFile != null && !_imageStorageService.IsSupportedImage(request.HandoverProofFile.FileName))
-        {
-            return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
-        }
-
-        if (request.Files != null)
-        {
-            foreach (var file in request.Files)
-            {
-                var uploadedUrl = await SaveFileAsync(file);
-                if (string.IsNullOrWhiteSpace(uploadedUrl))
-                {
-                    return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
-                }
-
-                imageUrls.Add(uploadedUrl);
-            }
-        }
-
-        command.ImageUrls = NormalizeDistinctImageUrls(imageUrls);
 
         if (request.IntakePhotoFile != null)
         {
+            if (!_imageStorageService.IsSupportedImage(request.IntakePhotoFile.FileName))
+            {
+                return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
+            }
+
             var intakePhotoUrl = await SaveFileAsync(request.IntakePhotoFile, "intake");
             if (string.IsNullOrWhiteSpace(intakePhotoUrl))
             {
@@ -609,6 +900,11 @@ public class LostAndFoundController : ControllerBase
 
         if (request.HandoverProofFile != null)
         {
+            if (!_imageStorageService.IsSupportedImage(request.HandoverProofFile.FileName))
+            {
+                return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
+            }
+
             var handoverProofUrl = await SaveFileAsync(request.HandoverProofFile, "handover");
             if (string.IsNullOrWhiteSpace(handoverProofUrl))
             {
@@ -618,6 +914,32 @@ public class LostAndFoundController : ControllerBase
             command.HandoverProofUrl = handoverProofUrl;
         }
 
+        return null;
+    }
+
+    private async Task<ErrorResponse?> PopulateCreateCommandFilesAsync(
+        CreateLostFoundItemCommand command,
+        IEnumerable<IFormFile>? files)
+    {
+        var uploads = files?.ToList() ?? new List<IFormFile>();
+        if (uploads.Any(file => !_imageStorageService.IsSupportedImage(file.FileName)))
+        {
+            return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
+        }
+
+        var imageUrls = new List<string>();
+        foreach (var file in uploads)
+        {
+            var uploadedUrl = await SaveFileAsync(file);
+            if (string.IsNullOrWhiteSpace(uploadedUrl))
+            {
+                return Error("VALIDATION_ERROR", "Only PNG/JPG files are supported.");
+            }
+
+            imageUrls.Add(uploadedUrl);
+        }
+
+        command.ImageUrls = NormalizeDistinctImageUrls(imageUrls);
         return null;
     }
 
@@ -666,6 +988,40 @@ public class LostAndFoundController : ControllerBase
     private static ErrorResponse ToError(ConflictException exception)
     {
         return Error(exception.ErrorCode, exception.Message);
+    }
+
+    private static ErrorResponse UnsupportedUserLostReportFieldsError(IEnumerable<string> fields)
+    {
+        var values = fields
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(field => field, StringComparer.OrdinalIgnoreCase)
+            .Select(field => $"'{field}' is not supported on the user lost report endpoint.")
+            .ToList();
+
+        return Error(
+            "VALIDATION_ERROR",
+            "Only the user lost report fields are allowed on this endpoint.",
+            new Dictionary<string, List<string>>
+            {
+                ["unsupportedFields"] = values
+            });
+    }
+
+    private static ErrorResponse UnsupportedManualCreateFieldsError(IEnumerable<string> fields)
+    {
+        var values = fields
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(field => field, StringComparer.OrdinalIgnoreCase)
+            .Select(field => $"'{field}' is not supported on the manual create endpoint.")
+            .ToList();
+
+        return Error(
+            "VALIDATION_ERROR",
+            "Only manual create fields are allowed on this endpoint.",
+            new Dictionary<string, List<string>>
+            {
+                ["unsupportedFields"] = values
+            });
     }
 
     private static bool? TryParseBool(string? value)

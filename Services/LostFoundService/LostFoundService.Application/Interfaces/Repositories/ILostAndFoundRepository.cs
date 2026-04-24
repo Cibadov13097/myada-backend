@@ -20,6 +20,7 @@ public interface ILostAndFoundRepository
     Task<int> CountItemsAsync();
     Task<int> CountItemsByStatusAsync(LostFoundPublicStatus status);
     Task AddItemAsync(LostFoundItem item);
+    Task AssignUniqueReferenceNumberAsync(LostFoundItem item);
     Task AddItemImagesAsync(IEnumerable<LostFoundItemImage> images);
     Task<bool> ItemExistsAsync(int id);
     Task<bool> ClaimExistsAsync(int itemId, string userId, LostFoundClaimType claimType);

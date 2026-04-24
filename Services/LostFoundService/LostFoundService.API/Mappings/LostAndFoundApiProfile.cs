@@ -12,8 +12,24 @@ public class LostAndFoundApiProfile : Profile
 {
     public LostAndFoundApiProfile()
     {
+        CreateMap<ManualCreateItemRequest, CreateLostFoundItemCommand>()
+            .ForMember(d => d.ImageUrls, o => o.Ignore())
+            .ForMember(d => d.IntakePhotoUrl, o => o.Ignore())
+            .ForMember(d => d.HandoverProofUrl, o => o.Ignore())
+            .ForMember(d => d.PostedByUserId, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore())
+            .ForMember(d => d.IsAdminCreate, o => o.Ignore());
+
+        CreateMap<UserLostReportRequest, CreateLostFoundItemCommand>()
+            .ForMember(d => d.ImageUrls, o => o.Ignore())
+            .ForMember(d => d.IntakePhotoUrl, o => o.Ignore())
+            .ForMember(d => d.HandoverProofUrl, o => o.Ignore())
+            .ForMember(d => d.PostedByUserId, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore())
+            .ForMember(d => d.IsAdminCreate, o => o.Ignore());
+
         CreateMap<ReportRequest, CreateLostFoundItemCommand>()
-            .ForMember(d => d.ImageUrls, o => o.MapFrom(s => s.ImageUrls ?? new List<string>()))
+            .ForMember(d => d.ImageUrls, o => o.Ignore())
             .ForMember(d => d.IntakePhotoUrl, o => o.Ignore())
             .ForMember(d => d.HandoverProofUrl, o => o.Ignore())
             .ForMember(d => d.PostedByUserId, o => o.Ignore())

@@ -1,31 +1,31 @@
 # MyAda Support API Documentation for Frontend
 
-Last updated: 2026-04-19
+Last updated: 2026-04-25
 
 ## Common 404 Mistake (Important)
 
-If you call through gateway (`http://51.20.193.29:5000`), you must include `/support` prefix.
+If you call through gateway (`http://13.60.31.141:5000`), you must include `/support` prefix.
 
-- Correct: `http://51.20.193.29:5000/support/api/...`
-- Wrong: `http://51.20.193.29:5000/api/...` (this returns 404 for Support endpoints)
+- Correct: `http://13.60.31.141:5000/support/api/...`
+- Wrong: `http://13.60.31.141:5000/api/...` (this returns 404 for Support endpoints)
 
 Direct service (no gateway prefix):
-- `http://51.20.193.29:5008/api/...`
+- `http://13.60.31.141:5008/api/...`
 
 ## Base URLs
 
 Recommended via API Gateway:
-- Production: `http://51.20.193.29:5000`
+- Production: `http://13.60.31.141:5000`
 - Local: `http://localhost:5000`
 
 Support service gateway prefix:
 - `/support`
 
 Final frontend URL format:
-- `http://51.20.193.29:5000/support/api/...`
+- `http://13.60.31.141:5000/support/api/...`
 
 Direct service (diagnostics only):
-- Production: `http://51.20.193.29:5008/api/...`
+- Production: `http://13.60.31.141:5008/api/...`
 - Local: `http://localhost:5008/api/...`
 
 ## Authentication
@@ -45,8 +45,8 @@ Token validation settings:
 
 ## Swagger
 
-- Gateway: `http://51.20.193.29:5000/support/swagger/index.html`
-- Direct: `http://51.20.193.29:5008/swagger/index.html`
+- Gateway: `http://13.60.31.141:5000/support/swagger/index.html`
+- Direct: `http://13.60.31.141:5008/swagger/index.html`
 
 ## Response Envelope
 
@@ -222,7 +222,7 @@ JWT token is required for hub access.
 ## Quick cURL Example
 
 ```bash
-curl -X GET "http://51.20.193.29:5000/support/api/Categories" \
+curl -X GET "http://13.60.31.141:5000/support/api/Categories" \
   -H "accept: application/json" \
   -H "Authorization: Bearer <accessToken>"
 ```

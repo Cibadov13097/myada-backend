@@ -3,6 +3,7 @@ using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Enums;
 using LostFoundService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace LostFoundService.Infrastructure.Persistence.Repositories;
 
@@ -112,6 +113,29 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         await _context.LostFoundItems.AddAsync(item);
     }
 
+    public async Task AssignUniqueReferenceNumberAsync(LostFoundItem item)
+    {
+        const int maxAttempts = 100;
+        var nextSequence = await GetNextReferenceSequenceAsync();
+
+        for (var attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            item.ReferenceNumber = FormatReferenceNumber(nextSequence + attempt);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return;
+            }
+            catch (DbUpdateException ex) when (IsReferenceNumberUniqueViolation(ex))
+            {
+                // Try the next available number if another row already owns this reference.
+            }
+        }
+
+        throw new InvalidOperationException("Unable to generate a unique lost and found reference number.");
+    }
+
     public async Task AddItemImagesAsync(IEnumerable<LostFoundItemImage> images)
     {
         await _context.LostFoundItemImages.AddRangeAsync(images);
@@ -146,5 +170,47 @@ public class LostAndFoundRepository : ILostAndFoundRepository
     public Task SaveChangesAsync()
     {
         return _context.SaveChangesAsync();
+    }
+
+    private async Task<int> GetNextReferenceSequenceAsync()
+    {
+        var latestReferenceNumber = await _context.LostFoundItems
+            .AsNoTracking()
+            .Where(x => x.ReferenceNumber != null && x.ReferenceNumber.StartsWith("LF-"))
+            .OrderByDescending(x => x.ReferenceNumber)
+            .Select(x => x.ReferenceNumber)
+            .FirstOrDefaultAsync();
+
+        if (!TryParseReferenceSequence(latestReferenceNumber, out var sequence))
+        {
+            return 1;
+        }
+
+        return sequence + 1;
+    }
+
+    private static string FormatReferenceNumber(int sequence)
+    {
+        return $"LF-{sequence:D6}";
+    }
+
+    private static bool TryParseReferenceSequence(string? referenceNumber, out int sequence)
+    {
+        sequence = 0;
+        if (string.IsNullOrWhiteSpace(referenceNumber) || !referenceNumber.StartsWith("LF-", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return int.TryParse(referenceNumber["LF-".Length..], out sequence);
+    }
+
+    private static bool IsReferenceNumberUniqueViolation(DbUpdateException exception)
+    {
+        return exception.InnerException is PostgresException postgresException &&
+               string.Equals(
+                   postgresException.ConstraintName,
+                   "IX_LostFoundItems_ReferenceNumber",
+                   StringComparison.Ordinal);
     }
 }
