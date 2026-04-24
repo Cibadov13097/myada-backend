@@ -1,0 +1,325 @@
+# Notification Service API Documentation
+
+Last updated: 2026-04-24
+
+## Overview
+
+The Notification Service is responsible for:
+
+- listing stored notifications
+- returning a single notification by id
+- deleting a stored notification
+- sending direct email notifications over SMTP
+- consuming queued notification messages from RabbitMQ and persisting them
+
+Supported notification channels in the domain model are:
+
+- `Email`
+- `Push`
+- `Sms`
+
+Important current behavior:
+
+- The HTTP API only creates notifications through `POST /api/v1/notifications/email`.
+- `Push` and `Sms` notifications are normally created through RabbitMQ or seeded demo data.
+- Direct email requests store `type`, `message`, `channel`, and `createdAt` in the database, but do not store recipient email or email subject.
+
+## Base URLs
+
+Use the API Gateway for frontend/public access:
+
+- Production gateway base: `http://13.60.31.141:5000/notification`
+- Local gateway base: `http://localhost:5000/notification`
+- Gateway path prefix: `/notification`
+
+Use the service directly only for local debugging or internal service-to-service calls:
+
+- Production direct base: `http://13.60.31.141:5004`
+- Local direct base: `http://localhost:5004`
+- Docker internal base: `http://notificationservice:8080`
+
+Examples:
+
+- Gateway list endpoint: `GET http://13.60.31.141:5000/notification/api/v1/notifications`
+- Direct list endpoint: `GET http://13.60.31.141:5004/api/v1/notifications`
+
+Swagger is available in Development environment only:
+
+- Production gateway swagger: `http://13.60.31.141:5000/notification/swagger/index.html`
+- Production direct swagger: `http://13.60.31.141:5004/swagger/index.html`
+- Local gateway swagger: `http://localhost:5000/notification/swagger/index.html`
+- Local direct swagger: `http://localhost:5004/swagger/index.html`
+
+Important routing note:
+
+- the deployed notification gateway route is `http://13.60.31.141:5000/notification/...`
+- `http://13.60.31.141/` by itself is not the Notification Service base URL in the current repo configuration
+
+## Authentication
+
+Notification Service currently does not configure authentication middleware and its controller does not use `[Authorize]`.
+
+That means:
+
+- notification endpoints are currently unauthenticated at the service level
+- if gateway-level restrictions are added elsewhere, they would be external to this service
+
+## Stored Notification Shape
+
+Each stored notification contains:
+
+- `id` (`Guid`)
+- `type` (`string`)
+- `message` (`string`)
+- `notificationType` (`Email | Push | Sms`)
+- `createdAt` (`DateTime`, UTC)
+
+## HTTP Endpoints
+
+### `GET /api/v1/notifications`
+
+Returns paginated notifications ordered by newest first.
+
+Query parameters:
+
+- `type` (`string`, optional, default `all`)
+- `channel` (`string`, optional, default `all`)
+- `page` (`int`, optional, default `1`, minimum effective value `1`)
+- `limit` (`int`, optional, default `20`, clamped to `1..100`)
+
+Filter behavior:
+
+- `type` uses case-insensitive substring matching
+- `channel` accepts `all`, `Email`, `Push`, or `Sms`
+- invalid `channel` returns `400 Bad Request`
+
+Example request:
+
+```http
+GET /api/v1/notifications?type=club&channel=Push&page=1&limit=10
+```
+
+Example success response:
+
+```json
+{
+  "items": [
+    {
+      "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001",
+      "type": "club",
+      "message": "ADA Entrepreneurship Club: Startup Weekend registration closes this Friday at 18:00 Baku time.",
+      "channel": "Push",
+      "createdAt": "2026-04-22T10:00:00Z"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 10
+}
+```
+
+Example invalid channel response:
+
+```json
+{
+  "error": "Invalid channel value. Allowed: all, Email, Push, Sms"
+}
+```
+
+### `GET /api/v1/notifications/{id}`
+
+Returns a single notification.
+
+Success response:
+
+```json
+{
+  "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001",
+  "type": "club",
+  "message": "ADA Entrepreneurship Club: Startup Weekend registration closes this Friday at 18:00 Baku time.",
+  "channel": "Push",
+  "createdAt": "2026-04-22T10:00:00Z"
+}
+```
+
+Status codes:
+
+- `200 OK` when found
+- `404 Not Found` when no notification exists for the id
+
+### `DELETE /api/v1/notifications/{id}`
+
+Deletes a stored notification.
+
+Status codes:
+
+- `204 No Content` when deleted
+- `404 Not Found` when no notification exists for the id
+
+### `POST /api/v1/notifications/email`
+
+Sends a plain-text email through SMTP and also stores a notification record with channel `Email`.
+
+Request body:
+
+```json
+{
+  "type": "auth.password_reset",
+  "toEmail": "student@example.com",
+  "subject": "Reset your password",
+  "message": "Use the link in the app to reset your password."
+}
+```
+
+Request fields:
+
+- `type` (`string`, optional)
+- `toEmail` (`string`, required, must be a valid email address)
+- `subject` (`string`, required, max length `200`)
+- `message` (`string`, required, max length `4000`)
+
+Behavior:
+
+- leading and trailing whitespace is trimmed from `toEmail`, `subject`, and `message`
+- if `type` is missing or blank, stored notification type becomes `Direct Email`
+- email body is sent as plain text, not HTML
+
+Success response:
+
+```json
+{
+  "message": "Email notification sent successfully."
+}
+```
+
+Common error cases:
+
+- `400 Bad Request` for invalid model shape, invalid email format, or oversized fields
+- `400 Bad Request` with a custom error object when required fields become empty after trimming
+- `500 Internal Server Error` if SMTP configuration is invalid or SMTP sending fails
+
+## Internal Queue-Based Notifications
+
+The service also runs a hosted RabbitMQ consumer for internal notifications.
+
+Queue details:
+
+- queue name: `notification-queue`
+- host config key: `RabbitMQ:Host`
+
+Primary message contract:
+
+```json
+{
+  "type": "club.event_created",
+  "message": "New event is now open for registration.",
+  "channel": "Email",
+  "source": "ClubManagementService",
+  "action": "Created",
+  "entityType": "Event",
+  "entityId": "123",
+  "actorUserId": "11111111-1111-1111-1111-111111111111",
+  "recipientUserId": "22222222-2222-2222-2222-222222222222",
+  "recipientEmail": "student@example.com",
+  "emailSubject": "New event available",
+  "occurredAtUtc": "2026-04-24T09:00:00Z"
+}
+```
+
+Message contract fields:
+
+- `type`
+- `message`
+- `channel`
+- `source`
+- `action`
+- `entityType`
+- `entityId`
+- `actorUserId`
+- `recipientUserId`
+- `recipientEmail`
+- `emailSubject`
+- `occurredAtUtc`
+
+Queue resolution rules:
+
+- if `channel` is a valid enum value, that channel is used
+- otherwise, if `recipientEmail` is present, the notification resolves to `Email`
+- otherwise, the notification resolves to `Push`
+
+Queue processing behavior:
+
+- every supported queue message is first persisted to the `Notifications` table
+- if the resolved channel is `Email`, the service then attempts SMTP delivery
+- if SMTP delivery fails, the notification stays persisted and the failure is only logged
+- if an `Email` notification has no `recipientEmail`, the notification is persisted and email sending is skipped
+- unsupported payloads are acknowledged and logged as warnings
+
+Legacy compatibility:
+
+- the consumer still supports `LostItemCreatedEvent`
+- legacy lost-and-found messages are converted to a `Push` notification with type `New Lost Item`
+
+## Current Service Integrations
+
+Known integrations in this repo:
+
+- `AuthService` calls `POST /api/v1/notifications/email` for password reset email flows
+- `ClubManagementService` publishes `NotificationQueueMessage` payloads to RabbitMQ
+
+## Startup and Seeding
+
+On startup, Notification Service:
+
+- applies Entity Framework migrations automatically
+- seeds sample notifications if the `Notifications` table is empty
+
+The seed currently inserts demo notifications such as:
+
+- club
+- academic
+- campus
+- system
+
+## Runtime Configuration
+
+Main configuration keys:
+
+- `ConnectionStrings:Develop`
+- `RabbitMQ:Host`
+- `Smtp:Host`
+- `Smtp:Port`
+- `Smtp:Username`
+- `Smtp:Password`
+- `Smtp:FromEmail`
+- `Smtp:FromName`
+- `Smtp:EnableSsl`
+- `Smtp:UseDefaultCredentials`
+
+SMTP rules from the current implementation:
+
+- `Smtp:Host` must be set
+- `Smtp:Port` must be greater than `0`
+- if `Smtp:UseDefaultCredentials=false`, both `Smtp:Username` and `Smtp:Password` are required
+- if `Smtp:FromEmail` is empty, the service falls back to `Smtp:Username`
+
+Docker compose mapping in this repo:
+
+- host port `5004` -> container port `8080`
+- gateway prefix `/notification` -> Notification Service
+
+## Quick Test Examples
+
+List notifications through gateway:
+
+```bash
+curl "http://13.60.31.141:5000/notification/api/v1/notifications?page=1&limit=20"
+```
+
+Send email directly to the service:
+
+```bash
+curl -X POST "http://13.60.31.141:5004/api/v1/notifications/email" \
+  -H "Content-Type: application/json" \
+  -d "{\"type\":\"manual.test\",\"toEmail\":\"student@example.com\",\"subject\":\"Test\",\"message\":\"Hello from Notification Service\"}"
+```
