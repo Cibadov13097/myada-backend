@@ -1,6 +1,7 @@
 using LostFoundService.Application.DTOs.LostItem;
 using LostFoundService.Application.Extensions;
 using LostFoundService.Application.Interfaces.Services;
+using LostFoundService.Api.Models.LostItem.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,9 +46,9 @@ namespace LostFoundService.Api.Controllers
         [Authorize]
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Create([FromForm] AddLostItemDto dto, IFormFile? imageFile)
+        public async Task<IActionResult> Create([FromForm] CreateLostItemFormRequest request)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items", imageFile);
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items", request.ImageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
@@ -58,7 +59,15 @@ namespace LostFoundService.Api.Controllers
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "imageFile is required." });
             }
 
-            dto.Image = uploadedImageUrl;
+            var dto = new AddLostItemDto
+            {
+                Title = request.Title,
+                Description = request.Description,
+                BuildingId = request.BuildingId,
+                RoomId = request.RoomId,
+                CategoryId = request.CategoryId,
+                Image = uploadedImageUrl
+            };
             var created = await _service.AddLostItemAsync(dto, User.GetUserId());
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -67,17 +76,26 @@ namespace LostFoundService.Api.Controllers
         [Authorize]
         [HttpPut("{id}")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Update(int id, [FromForm] UpdateLostItemDto dto, IFormFile? imageFile)
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateLostItemFormRequest request)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items", imageFile);
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/lost-items", request.ImageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
             }
 
-            // Ignore manual URL updates; image changes must come from uploaded file.
-            dto.Image = string.IsNullOrWhiteSpace(uploadedImageUrl) ? null : uploadedImageUrl;
+            var dto = new UpdateLostItemDto
+            {
+                Id = request.Id,
+                Title = request.Title,
+                Description = request.Description,
+                BuildingId = request.BuildingId,
+                RoomId = request.RoomId,
+                CategoryId = request.CategoryId,
+                Image = string.IsNullOrWhiteSpace(uploadedImageUrl) ? null : uploadedImageUrl
+            };
 
+            // Ignore manual URL updates; image changes must come from uploaded file.
             return Ok(await _service.UpdateLostItemAsync(id, dto, User.GetUserId()));
         }
 

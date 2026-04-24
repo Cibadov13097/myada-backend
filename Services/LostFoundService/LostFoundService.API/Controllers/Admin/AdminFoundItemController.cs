@@ -2,6 +2,7 @@
 using LostFoundService.Application.DTOs.FoundItem;
 using LostFoundService.Application.Extensions;
 using LostFoundService.Application.Interfaces.Services;
+using LostFoundService.Api.Models.FoundItem.Requests;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Exceptions;
 using LostFoundService.Infrastructure.Services;
@@ -60,9 +61,9 @@ namespace LostFoundService.Api.Controllers.Admin
         [Authorize(Roles = "lost_found_leader,admin")]
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto, IFormFile? imageFile)
+        public async Task<IActionResult> Create([FromForm] CreateFoundItemFormRequest request)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin", imageFile);
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin", request.ImageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
@@ -73,7 +74,16 @@ namespace LostFoundService.Api.Controllers.Admin
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "imageFile is required." });
             }
 
-            dto.ImageUrl = uploadedImageUrl;
+            var dto = new AddFoundItemDto
+            {
+                Description = request.Description,
+                Location = request.Location,
+                BuildingId = request.BuildingId,
+                RoomId = request.RoomId,
+                Status = request.Status,
+                CategoryId = request.CategoryId,
+                ImageUrl = uploadedImageUrl
+            };
 
             if (!ModelState.IsValid)
             {
@@ -94,17 +104,26 @@ namespace LostFoundService.Api.Controllers.Admin
         [Authorize(Roles = "lost_found_leader,admin")]
         [HttpPut("{id}")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Update(int id,[FromForm] UpdateFoundItemDto dto, IFormFile? imageFile)
+        public async Task<IActionResult> Update(int id,[FromForm] UpdateFoundItemFormRequest request)
         {
-            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin", imageFile);
+            var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items/admin", request.ImageFile);
             if (uploadedImageUrl == string.Empty)
             {
                 return BadRequest(new { error = "VALIDATION_ERROR", message = "Only PNG/JPG files are supported." });
             }
 
-            // Ignore manual URL updates; image changes must come from uploaded file.
-            dto.ImageUrl = string.IsNullOrWhiteSpace(uploadedImageUrl) ? null : uploadedImageUrl;
+            var dto = new UpdateFoundItemDto
+            {
+                Description = request.Description,
+                Location = request.Location,
+                BuildingId = request.BuildingId,
+                RoomId = request.RoomId,
+                Status = request.Status,
+                CategoryId = request.CategoryId,
+                ImageUrl = string.IsNullOrWhiteSpace(uploadedImageUrl) ? null : uploadedImageUrl
+            };
 
+            // Ignore manual URL updates; image changes must come from uploaded file.
           
             var adminId = User.GetUserId();
 
