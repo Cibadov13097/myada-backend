@@ -1,4 +1,4 @@
-# Club Management API Documentation for Frontend
+﻿# Club Management API Documentation for Frontend
 
 Last updated: 2026-04-19
 

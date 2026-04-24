@@ -10,4 +10,5 @@ public class SessionShortDto
 
     public string? Topic { get; set; }
     public bool IsAttendanceActive { get; set; }
+    public byte RoundNo { get; set; }
 }

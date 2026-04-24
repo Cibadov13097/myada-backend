@@ -11,6 +11,7 @@ public class SessionDto
 
     public string? Topic { get; set; }
     public bool IsAttendanceActive { get; set; }
+    public byte RoundNo { get; set; }
     public DateTime? AttendanceActivatedAt { get; set; }
     public DateTime? AttendanceDeactivatedAt { get; set; }
 
