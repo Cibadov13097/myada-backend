@@ -4,6 +4,8 @@ public sealed class ClubProfileUploadHintsDto
 {
     public bool HasLogo { get; init; }
     public bool HasBackground { get; init; }
+    public string? LogoUrl { get; init; }
+    public string? BackgroundUrl { get; init; }
 }
 
 public sealed class ClubAdminPagedResult<T>

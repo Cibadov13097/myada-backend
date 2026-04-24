@@ -121,7 +121,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\ClubManagementService.API.pdb
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\ClubManagementService.API.genruntimeconfig.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\ref\ClubManagementService.API.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\appsettings.json
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\ClubManagementService.API.exe
@@ -254,3 +253,15 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\C
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Contracts.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\AWSSDK.Core.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\AWSSDK.S3.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Asp.Versioning.Abstractions.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Asp.Versioning.Http.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Asp.Versioning.Mvc.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Asp.Versioning.Mvc.ApiExplorer.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\AutoWrapper.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\AWSSDK.S3.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Contracts.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\swae.build.ex.cache

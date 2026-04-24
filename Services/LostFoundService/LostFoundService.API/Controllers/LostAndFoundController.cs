@@ -150,7 +150,6 @@ public class LostAndFoundController : ControllerBase
     {
         try
         {
-            var includeAdminFields = IsAdmin();
             var result = await _lostAndFoundService.GetItemsAsync(new LostFoundItemSearchQuery
             {
                 Q = q,
@@ -163,12 +162,12 @@ public class LostAndFoundController : ControllerBase
                 Page = page,
                 Limit = limit,
                 CurrentUserId = TryGetUserId(),
-                IncludeAdminFields = includeAdminFields
+                IncludeAdminFields = false
             });
 
             return Ok(new ItemListResponse
             {
-                Items = result.Items.Select(item => MapItemResponse(item, includeAdminFields)).ToList(),
+                Items = result.Items.Select(item => MapItemResponse(item, includeAdminFields: false)).ToList(),
                 Total = result.Total
             });
         }
@@ -190,7 +189,7 @@ public class LostAndFoundController : ControllerBase
         try
         {
             var item = await _lostAndFoundService.GetItemByIdAsync(id);
-            return Ok(MapItemResponse(item, IsAdmin()));
+            return Ok(MapItemResponse(item, includeAdminFields: false));
         }
         catch (NotFoundException ex)
         {

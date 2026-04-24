@@ -337,7 +337,9 @@ public class ClubAdminController : ControllerBase
         var hints = new ClubProfileUploadHintsDto
         {
             HasLogo = request.LogoFile is { Length: > 0 },
-            HasBackground = request.BackgroundFile is { Length: > 0 }
+            HasBackground = request.BackgroundFile is { Length: > 0 },
+            LogoUrl = logoUrl,
+            BackgroundUrl = backgroundUrl
         };
         var result = await _clubAdmin.PatchProfileAsync(
             clubId,
@@ -352,6 +354,7 @@ public class ClubAdminController : ControllerBase
             result.ClubId,
             result.Updated,
             result.PendingReview,
+            result.ProfileImageUrl,
             result.FocusAreas,
             result.Email,
             result.SocialLinks,

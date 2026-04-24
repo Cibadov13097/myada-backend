@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ClubManagementService.API.Extensions;
+using ClubManagementService.API.Responses;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
@@ -57,10 +58,11 @@ public class ClubsController : ControllerBase
         var total = filtered.Count();
         var items = filtered.Skip(Math.Max(page - 1, 0) * Math.Max(limit, 1)).Take(Math.Max(limit, 1)).Select(c => new
         {
+            profileImageUrl = ClubImageResponse.Normalize(c.ProfileImageUrl),
             id = c.Id,
             name = c.Name,
             category = c.CategoryName ?? "General",
-            image = "/clubs/default.png",
+            image = ClubImageResponse.ResolveDisplayImage(c.ProfileImageUrl),
             tags = Array.Empty<string>(),
             members = 0,
             about = c.Description,
@@ -98,6 +100,7 @@ public class ClubsController : ControllerBase
     {
         var links = dto.SocialLinks;
         var resources = dto.Resources ?? new List<ClubResourceItemDto>();
+        var profileImageUrl = ClubImageResponse.Normalize(dto.ProfileImageUrl);
         var hasSocial = links != null && (
             !string.IsNullOrWhiteSpace(links.Website) ||
             !string.IsNullOrWhiteSpace(links.Instagram) ||
@@ -110,6 +113,8 @@ public class ClubsController : ControllerBase
             id = dto.Id,
             name = dto.Name,
             category = dto.CategoryName ?? "General",
+            profileImageUrl,
+            image = ClubImageResponse.ResolveDisplayImage(profileImageUrl),
             about = dto.Description,
             focusAreas = dto.FocusAreas,
             officers,

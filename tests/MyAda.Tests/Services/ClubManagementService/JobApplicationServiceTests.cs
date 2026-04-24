@@ -1,5 +1,6 @@
 using global::ClubManagementService.Application.DTOs.JobApplication;
 using global::ClubManagementService.Application.Interfaces.Repositories;
+using global::ClubManagementService.Application.Interfaces.Services;
 using global::ClubManagementService.Domain.Entities;
 using global::ClubManagementService.Domain.Enums;
 using FluentAssertions;
@@ -11,13 +12,15 @@ namespace MyAda.Tests.Services.ClubManagementService;
 public class JobApplicationServiceTests
 {
     private readonly Mock<IJobApplicationRepository> _repositoryMock = new();
+    private readonly Mock<IClubNotificationService> _notificationServiceMock = new();
     private readonly global::ClubManagementService.Infrastructure.Services.JobApplicationService _service;
 
     public JobApplicationServiceTests()
     {
         _service = new global::ClubManagementService.Infrastructure.Services.JobApplicationService(
             _repositoryMock.Object,
-            ClubManagementMapperFactory.Create());
+            ClubManagementMapperFactory.Create(),
+            _notificationServiceMock.Object);
     }
 
     [Fact]

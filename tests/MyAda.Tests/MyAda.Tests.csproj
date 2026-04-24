@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\Services\AuthService\AuthService.Application\AuthService.Application.csproj" />
     <ProjectReference Include="..\..\Services\AuthService\AuthService.Domain\AuthService.Domain.csproj" />
     <ProjectReference Include="..\..\Services\ClubManagementService\ClubManagementService.Application\ClubManagementService.Application.csproj" />
+    <ProjectReference Include="..\..\Services\ClubManagementService\ClubManagementService.API\ClubManagementService.API.csproj" />
     <ProjectReference Include="..\..\Services\ClubManagementService\ClubManagementService.Domain\ClubManagementService.Domain.csproj" />
     <ProjectReference Include="..\..\Services\ClubManagementService\ClubManagementService.Infrastructure\ClubManagementService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Services\LostFoundService\LostFoundService.Application\LostFoundService.Application.csproj" />

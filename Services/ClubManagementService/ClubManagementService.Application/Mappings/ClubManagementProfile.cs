@@ -42,6 +42,7 @@ public class ClubManagementProfile : Profile
             .ForMember(d => d.FocusAreas, o => o.Ignore())
             .ForMember(d => d.SocialLinks, o => o.Ignore())
             .ForMember(d => d.Resources, o => o.Ignore())
+            .ForMember(d => d.Documents, o => o.Ignore())
             .AfterMap((s, d) =>
             {
                 d.FocusAreas = ClubFocusAreasJson.ParseForRead(s.FocusAreasJson);
@@ -55,7 +56,9 @@ public class ClubManagementProfile : Profile
             .ForMember(d => d.FocusAreasJson, o => o.Ignore())
             .ForMember(d => d.SocialLinksJson, o => o.Ignore())
             .ForMember(d => d.Email, o => o.Ignore())
-            .ForMember(d => d.ResourcesJson, o => o.Ignore());
+            .ForMember(d => d.ResourcesJson, o => o.Ignore())
+            .ForMember(d => d.ProfileImageUrl, o => o.Ignore())
+            .ForMember(d => d.ProposedProfileImageUrl, o => o.Ignore());
         CreateMap<UpdateClubDto, Club>()
             .IgnoreAuditableBase()
             .ForMember(d => d.ApprovedBy, o => o.Ignore())
@@ -64,7 +67,9 @@ public class ClubManagementProfile : Profile
             .ForMember(d => d.FocusAreasJson, o => o.Ignore())
             .ForMember(d => d.SocialLinksJson, o => o.Ignore())
             .ForMember(d => d.Email, o => o.Ignore())
-            .ForMember(d => d.ResourcesJson, o => o.Ignore());
+            .ForMember(d => d.ResourcesJson, o => o.Ignore())
+            .ForMember(d => d.ProfileImageUrl, o => o.Ignore())
+            .ForMember(d => d.ProposedProfileImageUrl, o => o.Ignore());
 
         CreateMap<Event, EventDto>();
         CreateMap<CreateEventDto, Event>()
@@ -78,7 +83,20 @@ public class ClubManagementProfile : Profile
         CreateMap<EventRegistration, EventRegistrationDto>();
         CreateMap<CreateEventRegistrationDto, EventRegistration>()
             .IgnoreAuditableBase()
-            .ForMember(d => d.Event, o => o.Ignore());
+            .ForMember(d => d.Event, o => o.Ignore())
+            .ForMember(d => d.TicketId, o => o.Ignore())
+            .ForMember(d => d.RegistrationJwt, o => o.Ignore())
+            .ForMember(d => d.EventNameSnapshot, o => o.Ignore())
+            .ForMember(d => d.EventImageUrlSnapshot, o => o.Ignore())
+            .ForMember(d => d.EventStartTimeSnapshot, o => o.Ignore())
+            .ForMember(d => d.EventEndTimeSnapshot, o => o.Ignore())
+            .ForMember(d => d.EventLocationSnapshot, o => o.Ignore())
+            .ForMember(d => d.EventSeatLimitSnapshot, o => o.Ignore())
+            .ForMember(d => d.IsCheckedIn, o => o.Ignore())
+            .ForMember(d => d.CheckedInAt, o => o.Ignore())
+            .ForMember(d => d.CheckedInBy, o => o.Ignore())
+            .ForMember(d => d.ScanCount, o => o.Ignore())
+            .ForMember(d => d.LastScannedAt, o => o.Ignore());
 
         CreateMap<JobVacancy, JobVacancyDto>()
             .ForMember(d => d.ClubName, o => o.MapFrom(s => s.Club != null ? s.Club.Name : null))
@@ -105,7 +123,9 @@ public class ClubManagementProfile : Profile
         CreateMap<CreateJobApplicationDto, JobApplication>()
             .IgnoreAuditableBase()
             .ForMember(d => d.Status, o => o.Ignore())
-            .ForMember(d => d.JobVacancy, o => o.Ignore());
+            .ForMember(d => d.JobVacancy, o => o.Ignore())
+            .ForMember(d => d.InterviewSlotId, o => o.Ignore())
+            .ForMember(d => d.InterviewSlot, o => o.Ignore());
 
         CreateMap<Subevent, SubeventDto>();
         CreateMap<CreateSubeventDto, Subevent>().IgnoreAuditableBase();

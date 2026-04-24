@@ -1203,6 +1203,7 @@ public sealed class ClubAdminService : IClubAdminService
                 Updated = false,
                 PendingReview = false,
                 FocusAreas = new List<ClubFocusAreaItemDto>(),
+                ProfileImageUrl = null,
                 Email = null,
                 SocialLinks = null,
                 Resources = new List<ClubResourceItemDto>()
@@ -1218,6 +1219,7 @@ public sealed class ClubAdminService : IClubAdminService
                 Updated = false,
                 PendingReview = false,
                 FocusAreas = new List<ClubFocusAreaItemDto>(),
+                ProfileImageUrl = null,
                 Email = null,
                 SocialLinks = null,
                 Resources = new List<ClubResourceItemDto>()
@@ -1274,6 +1276,17 @@ public sealed class ClubAdminService : IClubAdminService
             modified = true;
         }
 
+        var logoUrl = uploadHints?.LogoUrl;
+        if (!string.IsNullOrWhiteSpace(logoUrl))
+        {
+            var normalizedLogoUrl = logoUrl.Trim();
+            if (!string.Equals(entity.ProfileImageUrl, normalizedLogoUrl, StringComparison.Ordinal))
+            {
+                entity.ProfileImageUrl = normalizedLogoUrl;
+                modified = true;
+            }
+        }
+
         if (modified)
         {
             entity.ModifiedAt = DateTime.UtcNow;
@@ -1293,6 +1306,7 @@ public sealed class ClubAdminService : IClubAdminService
             Updated = modified,
             PendingReview = false,
             FocusAreas = publishedFocus,
+            ProfileImageUrl = entity.ProfileImageUrl,
             Email = entity.Email,
             SocialLinks = publishedSocial,
             Resources = publishedResources

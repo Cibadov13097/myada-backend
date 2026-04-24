@@ -1,5 +1,6 @@
 using global::ClubManagementService.Application.DTOs.JobVacancy;
 using global::ClubManagementService.Application.Interfaces.Repositories;
+using global::ClubManagementService.Application.Interfaces.Services;
 using global::ClubManagementService.Domain.Entities;
 using FluentAssertions;
 using Moq;
@@ -10,13 +11,15 @@ namespace MyAda.Tests.Services.ClubManagementService;
 public class JobVacancyServiceTests
 {
     private readonly Mock<IJobVacancyRepository> _repositoryMock = new();
+    private readonly Mock<IClubNotificationService> _notificationServiceMock = new();
     private readonly global::ClubManagementService.Infrastructure.Services.JobVacancyService _service;
 
     public JobVacancyServiceTests()
     {
         _service = new global::ClubManagementService.Infrastructure.Services.JobVacancyService(
             _repositoryMock.Object,
-            ClubManagementMapperFactory.Create());
+            ClubManagementMapperFactory.Create(),
+            _notificationServiceMock.Object);
     }
 
     [Fact]

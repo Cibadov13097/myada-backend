@@ -1,11 +1,1 @@
-{
-  "Version": 1,
-  "Hash": "pV4WJb7b/ri6k+k5FsSGyxJ3YgSirJS4h9TC6Exrd/M=",
-  "Source": "ClubManagementService.API",
-  "BasePath": "_content/ClubManagementService.API",
-  "Mode": "Default",
-  "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
-}
+{"Version":1,"Hash":"eBoubBnTgZ/ezVP15Bl9ZnV7eZxdAc8Zaux7fRSQfCk=","Source":"ClubManagementService.API","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}

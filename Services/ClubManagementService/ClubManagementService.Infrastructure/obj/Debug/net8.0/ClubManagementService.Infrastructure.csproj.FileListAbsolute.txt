@@ -40,3 +40,5 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\C
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\obj\Debug\net8.0\ref\ClubManagementService.Infrastructure.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.pdb

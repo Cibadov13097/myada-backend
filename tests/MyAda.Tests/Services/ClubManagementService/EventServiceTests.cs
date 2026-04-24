@@ -1,5 +1,6 @@
 using global::ClubManagementService.Application.DTOs.Event;
 using global::ClubManagementService.Application.Interfaces.Repositories;
+using global::ClubManagementService.Application.Interfaces.Services;
 using global::ClubManagementService.Domain.Entities;
 using global::ClubManagementService.Domain.Enums;
 using FluentAssertions;
@@ -11,13 +12,15 @@ namespace MyAda.Tests.Services.ClubManagementService;
 public class EventServiceTests
 {
     private readonly Mock<IEventRepository> _repositoryMock = new();
+    private readonly Mock<IClubNotificationService> _notificationServiceMock = new();
     private readonly global::ClubManagementService.Infrastructure.Services.EventService _service;
 
     public EventServiceTests()
     {
         _service = new global::ClubManagementService.Infrastructure.Services.EventService(
             _repositoryMock.Object,
-            ClubManagementMapperFactory.Create());
+            ClubManagementMapperFactory.Create(),
+            _notificationServiceMock.Object);
     }
 
     [Fact]

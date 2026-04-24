@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using ClubManagementService.API.Responses;
 using ClubManagementService.API.Security;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.Contracts;
@@ -65,6 +66,7 @@ public class StudentServicesController : ControllerBase
             .Take(Math.Max(limit, 1))
             .Select(c => new
             {
+                profileImageUrl = ClubImageResponse.Normalize(c.ProfileImageUrl),
                 id = c.Id,
                 name = c.Name,
                 category = c.CategoryName ?? "General",
@@ -74,9 +76,8 @@ public class StudentServicesController : ControllerBase
                 members = 0,
                 president = (string?)null,
                 presidentId = (string?)null,
-                profileImageUrl = c.ProfileImageUrl,
-                image = "/clubs/default.png",
-                proposedProfileImageUrl = c.ProposedProfileImageUrl
+                image = ClubImageResponse.ResolveDisplayImage(c.ProfileImageUrl),
+                proposedProfileImageUrl = ClubImageResponse.Normalize(c.ProposedProfileImageUrl)
             })
             .ToList();
 

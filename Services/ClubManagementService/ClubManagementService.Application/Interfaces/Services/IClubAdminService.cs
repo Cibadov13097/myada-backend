@@ -120,6 +120,8 @@ public sealed class ProfilePatchResultDto
 
     public List<ClubFocusAreaItemDto> FocusAreas { get; init; } = new();
 
+    public string? ProfileImageUrl { get; init; }
+
     public string? Email { get; init; }
 
     public ClubSocialLinksDto? SocialLinks { get; init; }
