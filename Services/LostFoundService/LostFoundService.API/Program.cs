@@ -1,4 +1,5 @@
 using AutoMapper;
+using LostFoundService.Api.Mappings;
 using LostFoundService.Api.Middlewares;
 using LostFoundService.Api.Security;
 using LostFoundService.Api.Swagger;
@@ -138,6 +139,7 @@ builder.Services.AddAutoMapper(opt =>
     opt.AddProfile(new LostItemProfile());
     opt.AddProfile(new FoundItemProfile());
     opt.AddProfile(new CategoryProfile());
+    opt.AddProfile(new LostAndFoundApiProfile());
 }); 
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -149,6 +151,8 @@ builder.Services.AddScoped<ILostItemAdminService, LostItemAdminService>();
 
 builder.Services.AddScoped<ILostItemService, LostItemService>();
 builder.Services.AddScoped<ILostItemRepository,LostItemRepository>();
+builder.Services.AddScoped<ILostAndFoundService, LostAndFoundService>();
+builder.Services.AddScoped<ILostAndFoundRepository, LostAndFoundRepository>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();

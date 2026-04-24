@@ -25,19 +25,16 @@ public static class LostFoundDbSeeder
     {
         var categoryIdByName = await EnsureCategoriesAsync(db, cancellationToken).ConfigureAwait(false);
 
-        async Task<int> GetCategoryIdAsync(params string[] preferredNames)
+        async Task<int> GetCategoryIdAsync(string categoryName)
         {
-            foreach (var name in preferredNames)
+            if (categoryIdByName.TryGetValue(categoryName, out var existingId))
             {
-                if (categoryIdByName.TryGetValue(name, out var existingId))
-                {
-                    return existingId;
-                }
+                return existingId;
             }
 
             var created = new Category
             {
-                Name = preferredNames[0].Trim(),
+                Name = categoryName.Trim(),
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -50,7 +47,7 @@ public static class LostFoundDbSeeder
 
         var electronics = await GetCategoryIdAsync("Electronics").ConfigureAwait(false);
         var documents = await GetCategoryIdAsync("Documents").ConfigureAwait(false);
-        var accessories = await GetCategoryIdAsync("Accessories", "Other").ConfigureAwait(false);
+        var accessories = await GetCategoryIdAsync("Accessories").ConfigureAwait(false);
 
         await SeedLegacyLostItemsAsync(db, electronics, accessories, cancellationToken).ConfigureAwait(false);
         await SeedLegacyFoundItemsAsync(db, electronics, documents, accessories, cancellationToken).ConfigureAwait(false);

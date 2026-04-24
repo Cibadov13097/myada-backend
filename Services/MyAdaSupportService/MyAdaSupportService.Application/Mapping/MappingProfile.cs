@@ -17,7 +17,9 @@ public class MappingProfile : Profile
 
         CreateMap<CreateAssignedTaskDto, Request>();
 
-        CreateMap<UpdateSupportRequestDto, Request>();
+        CreateMap<UpdateSupportRequestDto, Request>()
+            .ForMember(dest => dest.ImgUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.Attachments, opt => opt.Ignore());
 
         CreateMap<Request, SupportRequestCreatedDto>()
             .ForMember(dest => dest.Status,
@@ -67,7 +69,7 @@ public class MappingProfile : Profile
 
         CreateMap<Attachment, AttachmentDto>().ReverseMap();
         CreateMap<Attachment, AttachmentCreateDto>().ReverseMap();
-        CreateMap<Attachment, AttachmentUpdateDto>().ReverseMap();
+        CreateMap<Attachment, AttachmentUpdateDto>();
 
         CreateMap<Category, CategoryDto>().ReverseMap();
         CreateMap<Category, CategoryCreateDto>().ReverseMap();

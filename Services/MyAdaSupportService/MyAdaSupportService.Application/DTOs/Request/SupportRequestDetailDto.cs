@@ -29,6 +29,7 @@ public class SupportRequestDetailDto
     public DateTime? CompletedAt { get; set; }
     public string? CancelReason { get; set; }
     public int? Rating { get; set; }
+    public string? ImgUrl { get; set; }
 
     public ReporterInfoDto? Reporter { get; set; }     // dispatcher/staff view
     public List<AttachmentDto> Attachments { get; set; } = new();

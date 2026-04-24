@@ -253,6 +253,17 @@ services:
       Auth__Issuer: myada-auth
       Auth__Audience: myada-api
       InternalAuth__ProvisioningKey: myada-internal-key
+      S3__BucketName: ${SUPPORT_S3_BUCKET_NAME:-myada-app}
+      S3__Region: ${SUPPORT_S3_REGION:-eu-north-1}
+      S3__AccessKey: ${SUPPORT_S3_ACCESS_KEY:-}
+      S3__SecretKey: ${SUPPORT_S3_SECRET_KEY:-}
+      AWS_ACCESS_KEY_ID: ${SUPPORT_S3_ACCESS_KEY:-}
+      AWS_SECRET_ACCESS_KEY: ${SUPPORT_S3_SECRET_KEY:-}
+      S3__ServiceUrl: ${SUPPORT_S3_SERVICE_URL:-}
+      S3__ForcePathStyle: ${SUPPORT_S3_FORCE_PATH_STYLE:-false}
+      S3__PublicBaseUrl: ${SUPPORT_S3_PUBLIC_BASE_URL:-}
+      S3__KeyPrefix: ${SUPPORT_S3_KEY_PREFIX:-support}
+      S3__AutoCreateBucket: ${SUPPORT_S3_AUTO_CREATE_BUCKET:-false}
     depends_on:
       - myada
       - authservice

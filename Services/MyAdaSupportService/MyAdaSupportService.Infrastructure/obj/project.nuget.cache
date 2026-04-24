@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "MrHM39kbzlI=",
+  "dgSpecHash": "39phtb20WMc=",
   "success": true,
   "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cavid\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\awssdk.core\\3.7.400.51\\awssdk.core.3.7.400.51.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\awssdk.s3\\3.7.406\\awssdk.s3.3.7.406.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.3\\microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",

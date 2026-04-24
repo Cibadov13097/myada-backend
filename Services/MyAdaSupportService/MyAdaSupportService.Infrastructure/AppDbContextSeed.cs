@@ -95,8 +95,10 @@ public static class AppDbContextSeed
                 };
 
                 attachments.ForEach(x => x.SetCreated(seedUserId));
+                savedRequest.ImgUrl = attachments[0].Url;
 
                 await context.Attachments.AddRangeAsync(attachments);
+                context.Requests.Update(savedRequest);
                 await context.SaveChangesAsync();
             }
         }

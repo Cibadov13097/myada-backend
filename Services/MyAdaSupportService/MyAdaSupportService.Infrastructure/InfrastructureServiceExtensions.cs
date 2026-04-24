@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyAdaSupportService.Application.Abstractions;
 using MyAdaSupportService.Application.Services;
+using MyAdaSupportService.Infrastructure.Options;
 using MyAdaSupportService.Application.ServicesInterfaces;
 using MyAdaSupportService.Application.ServicesInterfaces.CrudServiceInterface;
 using MyAdaSupportService.Infrastructure.Repositories;
@@ -16,8 +17,10 @@ public static class InfrastructureServiceExtensions
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        services.Configure<S3StorageOptions>(configuration.GetSection(S3StorageOptions.SectionName));
 
         services.AddScoped(typeof(IRepository<>), typeof(EfCoreRepository<>));
+        services.AddSingleton<IFileStorageService, S3FileStorageService>();
 
         services.AddScoped<IAttachmentRepository, AttachmentRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();

@@ -21,18 +21,21 @@ public class SupportRequestService
     private readonly IMapper _mapper;
     private readonly ILocationService _locationService;
     private readonly ISupportRealtimeNotifier _realtimeNotifier;
+    private readonly IFileStorageService _fileStorageService;
 
     public SupportRequestService(
         IRequestRepository requestRepository,
         IMapper mapper,
         ILocationService locationService,
-        ISupportRealtimeNotifier realtimeNotifier)
+        ISupportRealtimeNotifier realtimeNotifier,
+        IFileStorageService fileStorageService)
         : base(requestRepository, mapper)
     {
         _requestRepository = requestRepository;
         _mapper = mapper;
         _locationService = locationService;
         _realtimeNotifier = realtimeNotifier;
+        _fileStorageService = fileStorageService;
     }
 
     public async Task<SupportRequestDetailDto> CreateRequestAsync(CreateSupportRequestDto dto, Guid memberId)
@@ -40,6 +43,7 @@ public class SupportRequestService
         var entity = _mapper.Map<Request>(dto);
         entity.CreatedUserId = memberId;
         entity.Status = RequestStatus.New;
+        ApplyAttachmentUrls(entity, dto.AttachmentUrls, memberId);
 
         var created = await _requestRepository.AddAsync(entity);
 
@@ -340,5 +344,42 @@ public class SupportRequestService
             request.IsRoom,
             request.RoomId,
             request.AreaDetails);
+    }
+
+    private void ApplyAttachmentUrls(Request entity, IEnumerable<string>? attachmentUrls, Guid userId)
+    {
+        var normalizedUrls = NormalizeAttachmentUrls(attachmentUrls);
+        if (normalizedUrls.Count == 0)
+        {
+            entity.ImgUrl = null;
+            entity.Attachments = new List<Attachment>();
+            return;
+        }
+
+        var unsupportedUrl = normalizedUrls.FirstOrDefault(url => !_fileStorageService.IsManagedImageUrl(url));
+        if (unsupportedUrl != null)
+        {
+            throw new InvalidOperationException("Attachment URLs must be uploaded image URLs from SupportRequests uploads.");
+        }
+
+        entity.ImgUrl = normalizedUrls[0];
+        entity.Attachments = normalizedUrls
+            .Select(url =>
+            {
+                var attachment = new Attachment { Url = url };
+                attachment.SetCreated(userId);
+                return attachment;
+            })
+            .ToList();
+    }
+
+    private static List<string> NormalizeAttachmentUrls(IEnumerable<string>? attachmentUrls)
+    {
+        return attachmentUrls?
+            .Where(url => !string.IsNullOrWhiteSpace(url))
+            .Select(url => url.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList()
+            ?? new List<string>();
     }
 }

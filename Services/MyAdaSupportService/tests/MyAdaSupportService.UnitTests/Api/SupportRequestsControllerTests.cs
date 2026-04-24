@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using MyAdaSupportService.Api.Controllers;
+using MyAdaSupportService.Application.Abstractions;
 using MyAdaSupportService.Application.DTOs.Dispatcher;
 using MyAdaSupportService.Application.DTOs.Request;
 using MyAdaSupportService.Application.ServicesInterfaces;
@@ -13,15 +14,19 @@ public class SupportRequestsControllerTests
     private static SupportRequestsController CreateController(
         Mock<ISupportRequestService>? support = null,
         Mock<IAssignmentService>? assign = null,
-        Mock<IRequestStatusService>? status = null)
+        Mock<IRequestStatusService>? status = null,
+        Mock<IFileStorageService>? storage = null)
     {
         support ??= new Mock<ISupportRequestService>();
         assign ??= new Mock<IAssignmentService>();
         status ??= new Mock<IRequestStatusService>();
-        var env = new Mock<IWebHostEnvironment>();
-        env.SetupGet(x => x.WebRootPath).Returns("wwwroot");
-        env.SetupGet(x => x.ContentRootPath).Returns(".");
-        return new SupportRequestsController(support.Object, assign.Object, status.Object, env.Object);
+        storage ??= new Mock<IFileStorageService>();
+        var controller = new SupportRequestsController(support.Object, assign.Object, status.Object, storage.Object);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        return controller;
     }
 
     [Fact]
@@ -116,5 +121,34 @@ public class SupportRequestsControllerTests
         var result = await controller.MarkAsCompleted(1, staffId);
 
         Assert.IsType<NoContentResult>(result);
+    }
+
+    [Fact]
+    public async Task UploadFiles_returns_uploaded_bucket_urls()
+    {
+        var storage = new Mock<IFileStorageService>();
+        storage.Setup(s => s.IsSupportedImage("issue-photo.png")).Returns(true);
+        storage.Setup(s => s.UploadImageAsync(
+                It.IsAny<Stream>(),
+                "issue-photo.png",
+                "image/png",
+                "requests/attachments",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync("https://bucket.example.com/support/requests/attachments/issue-photo.png");
+
+        var controller = CreateController(storage: storage);
+        var stream = new MemoryStream(new byte[] { 1, 2, 3 });
+        var file = new FormFile(stream, 0, stream.Length, "files", "issue-photo.png")
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = "image/png"
+        };
+
+        var result = await controller.UploadFiles(new List<IFormFile> { file });
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var urls = Assert.IsType<List<string>>(ok.Value);
+        Assert.Single(urls);
+        Assert.Equal("https://bucket.example.com/support/requests/attachments/issue-photo.png", urls[0]);
     }
 }

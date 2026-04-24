@@ -15,6 +15,4 @@ public class UpdateSupportRequestDto
     public string? AreaDetails { get; set; }
 
     public bool IsUrgent { get; set; }
-
-    public string? ImgUrl { get; set; }
 }

@@ -121,12 +121,14 @@ Deletes a category.
 
 Adds an attachment to a request.
 
+Upload the image first through `POST /api/SupportRequests/uploads`, then pass the returned bucket URL here.
+
 - Request body (`AttachmentCreateDto`):
 
 ```json
 {
   "requestId": 123,
-  "url": "https://example.com/image.jpg"
+  "url": "https://my-bucket.s3.eu-north-1.amazonaws.com/support/requests/attachments/abc123.png"
 }
 ```
 
@@ -135,7 +137,7 @@ Adds an attachment to a request.
 ```json
 {
   "id": 55,
-  "url": "https://example.com/image.jpg"
+  "url": "https://my-bucket.s3.eu-north-1.amazonaws.com/support/requests/attachments/abc123.png"
 }
 ```
 
@@ -229,6 +231,16 @@ Creates support staff status.
 
 ## Support Requests
 
+### POST `/api/SupportRequests/uploads`
+
+Uploads one or more support request images to the configured S3-compatible bucket.
+
+- Content type: `multipart/form-data`
+- Form field: `files`
+- Accepted file types: `jpg`, `jpeg`, `png`, `webp`, `gif`
+- Max file size: `10 MB` per file
+- Response `200 OK` result: `string[]` of uploaded bucket URLs
+
 ### POST `/api/SupportRequests/member/{memberId}`
 
 Creates a support request.
@@ -249,7 +261,7 @@ Creates a support request.
   "description": "Projector is not turning on",
   "urgency": "standard",
   "attachmentUrls": [
-    "https://example.com/photo1.jpg"
+    "https://my-bucket.s3.eu-north-1.amazonaws.com/support/requests/attachments/photo1.jpg"
   ]
 }
 ```

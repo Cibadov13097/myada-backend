@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyAdaSupportService.Application.Abstractions;
 using MyAdaSupportService.Application.DTOs.Dispatcher;
 using MyAdaSupportService.Application.DTOs.Filter;
 using MyAdaSupportService.Application.DTOs.Request;
 using MyAdaSupportService.Application.ServicesInterfaces;
-using System.Text.RegularExpressions;
 
 namespace MyAdaSupportService.Api.Controllers;
 
@@ -27,18 +27,18 @@ public class SupportRequestsController : ControllerBase
     private readonly ISupportRequestService _supportRequestService;
     private readonly IAssignmentService _assignmentService;
     private readonly IRequestStatusService _requestStatusService;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IFileStorageService _fileStorageService;
 
     public SupportRequestsController(
         ISupportRequestService supportRequestService,
         IAssignmentService assignmentService,
         IRequestStatusService requestStatusService,
-        IWebHostEnvironment environment)
+        IFileStorageService fileStorageService)
     {
         _supportRequestService = supportRequestService;
         _assignmentService = assignmentService;
         _requestStatusService = requestStatusService;
-        _environment = environment;
+        _fileStorageService = fileStorageService;
     }
 
     [HttpPost("uploads")]
@@ -47,15 +47,6 @@ public class SupportRequestsController : ControllerBase
     {
         if (files == null || files.Count == 0 || files.All(x => x.Length == 0))
             return BadRequest("No files were uploaded.");
-
-        var webRoot = _environment.WebRootPath;
-        if (string.IsNullOrWhiteSpace(webRoot))
-        {
-            webRoot = Path.Combine(_environment.ContentRootPath, "wwwroot");
-        }
-
-        var uploadDirectory = Path.Combine(webRoot, "support-ticket-uploads");
-        Directory.CreateDirectory(uploadDirectory);
 
         var uploadedPaths = new List<string>();
 
@@ -68,17 +59,18 @@ public class SupportRequestsController : ControllerBase
                 return BadRequest($"File '{file.FileName}' exceeds the 10 MB size limit.");
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (!AllowedExtensions.Contains(extension))
+            if (!AllowedExtensions.Contains(extension) || !_fileStorageService.IsSupportedImage(file.FileName))
                 return BadRequest($"Unsupported file type '{extension}'. Allowed types: jpg, jpeg, png, webp, gif.");
 
-            var safeBaseName = SanitizeFileBaseName(Path.GetFileNameWithoutExtension(file.FileName));
-            var generatedName = GenerateUniqueFileName(uploadDirectory, safeBaseName, extension);
-            var fullPath = Path.Combine(uploadDirectory, generatedName);
+            await using var stream = file.OpenReadStream();
+            var uploadedUrl = await _fileStorageService.UploadImageAsync(
+                stream,
+                file.FileName,
+                file.ContentType,
+                "requests/attachments",
+                HttpContext.RequestAborted);
 
-            await using var stream = new FileStream(fullPath, FileMode.CreateNew);
-            await file.CopyToAsync(stream);
-
-            uploadedPaths.Add($"/support-ticket-uploads/{generatedName}");
+            uploadedPaths.Add(uploadedUrl);
         }
 
         return Ok(uploadedPaths);
@@ -187,25 +179,5 @@ public class SupportRequestsController : ControllerBase
     {
         await _requestStatusService.MarkAsCompletedAsync(requestId, staffId);
         return NoContent();
-    }
-
-    private static string SanitizeFileBaseName(string originalBaseName)
-    {
-        var lowered = originalBaseName.ToLowerInvariant();
-        var replaced = Regex.Replace(lowered, "[^a-z0-9]+", "-");
-        var trimmed = replaced.Trim('-');
-        return string.IsNullOrWhiteSpace(trimmed) ? "file" : trimmed;
-    }
-
-    private static string GenerateUniqueFileName(string directoryPath, string safeBaseName, string extension)
-    {
-        while (true)
-        {
-            var randomKey = Path.GetRandomFileName().Replace(".", string.Empty)[..8].ToLowerInvariant();
-            var candidateName = $"{safeBaseName}-{randomKey}{extension}";
-            var candidatePath = Path.Combine(directoryPath, candidateName);
-            if (!System.IO.File.Exists(candidatePath))
-                return candidateName;
-        }
     }
 }

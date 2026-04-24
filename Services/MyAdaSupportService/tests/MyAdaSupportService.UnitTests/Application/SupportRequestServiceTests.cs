@@ -13,12 +13,15 @@ public class SupportRequestServiceTests
 {
     private static SupportRequestService CreateSut(
         Mock<IRequestRepository> repo,
-        Mock<ILocationService>? location = null)
+        Mock<ILocationService>? location = null,
+        Mock<IFileStorageService>? fileStorage = null)
     {
         var loc = location ?? new Mock<ILocationService>();
+        fileStorage ??= new Mock<IFileStorageService>();
         var realtime = new Mock<ISupportRealtimeNotifier>();
         realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
+        fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(true);
         loc.Setup(l => l.ResolveLocationAsync(
                 It.IsAny<bool>(),
                 It.IsAny<int?>(),
@@ -26,7 +29,7 @@ public class SupportRequestServiceTests
                 It.IsAny<int?>(),
                 It.IsAny<string?>()))
             .ReturnsAsync("Resolved");
-        return new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object);
+        return new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
     }
 
     private static Request RequestWithCategory(int id, Guid createdUserId, Guid? staffId = null) => new()
@@ -55,7 +58,9 @@ public class SupportRequestServiceTests
         var realtime = new Mock<ISupportRealtimeNotifier>();
         realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
-        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object);
+        var fileStorage = new Mock<IFileStorageService>();
+        fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(true);
+        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
         var dto = new CreateSupportRequestDto
         {
             CategoryId = 1,
@@ -71,6 +76,79 @@ public class SupportRequestServiceTests
         Assert.Equal(3, result.Id);
         Assert.Equal("Here", result.Location);
         repo.Verify(r => r.AddAsync(It.Is<Request>(x => x.CreatedUserId == memberId && x.Status == RequestStatus.New)), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateRequestAsync_persists_managed_attachments_and_primary_image()
+    {
+        var repo = new Mock<IRequestRepository>();
+        var loc = new Mock<ILocationService>();
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        var fileStorage = new Mock<IFileStorageService>();
+
+        loc.Setup(l => l.ResolveLocationAsync(false, null, false, null, null)).ReturnsAsync("Here");
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
+        fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(true);
+        repo.Setup(r => r.AddAsync(It.IsAny<Request>()))
+            .ReturnsAsync((Request r) =>
+            {
+                r.Id = 11;
+                r.Category = new Category { Name = "Cat", Module = SupportArea.IT };
+                return r;
+            });
+
+        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
+        var dto = new CreateSupportRequestDto
+        {
+            CategoryId = 1,
+            Description = "Help",
+            Area = "it",
+            LocationType = "campus",
+            Urgency = "standard",
+            AttachmentUrls = new List<string>
+            {
+                "https://bucket.example.com/support/requests/attachments/a.png",
+                "https://bucket.example.com/support/requests/attachments/b.png"
+            }
+        };
+
+        await sut.CreateRequestAsync(dto, Guid.NewGuid());
+
+        repo.Verify(r => r.AddAsync(It.Is<Request>(x =>
+            x.ImgUrl == "https://bucket.example.com/support/requests/attachments/a.png" &&
+            x.Attachments.Count == 2 &&
+            x.Attachments.All(a => !string.IsNullOrWhiteSpace(a.Url)))), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateRequestAsync_rejects_non_image_bucket_url()
+    {
+        var repo = new Mock<IRequestRepository>();
+        var loc = new Mock<ILocationService>();
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        var fileStorage = new Mock<IFileStorageService>();
+
+        loc.Setup(l => l.ResolveLocationAsync(false, null, false, null, null)).ReturnsAsync("Here");
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
+        fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(false);
+
+        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            sut.CreateRequestAsync(new CreateSupportRequestDto
+            {
+                CategoryId = 1,
+                Description = "Help",
+                Area = "it",
+                LocationType = "campus",
+                Urgency = "standard",
+                AttachmentUrls = new List<string>
+                {
+                    "https://bucket.example.com/support/requests/attachments/file.pdf"
+                }
+            }, Guid.NewGuid()));
     }
 
     [Fact]

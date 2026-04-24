@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "Pq55kxk5bgU=",
+  "dgSpecHash": "EHNHLHtE5Rs=",
   "success": true,
   "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\tests\\MyAdaSupportService.UnitTests\\MyAdaSupportService.UnitTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cavid\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\autowrapper.core\\4.5.1\\autowrapper.core.4.5.1.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\awssdk.core\\3.7.400.51\\awssdk.core.3.7.400.51.nupkg.sha512",
+    "C:\\Users\\cavid\\.nuget\\packages\\awssdk.s3\\3.7.406\\awssdk.s3.3.7.406.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\coverlet.collector\\6.0.2\\coverlet.collector.6.0.2.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.11\\microsoft.aspnetcore.authentication.jwtbearer.8.0.11.nupkg.sha512",
