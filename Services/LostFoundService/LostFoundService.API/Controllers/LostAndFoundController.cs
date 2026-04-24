@@ -166,6 +166,7 @@ public class LostAndFoundController : ControllerBase
     }
 
     [HttpPost("reports/lost")]
+    [Consumes("application/json", "multipart/form-data")]
     [ProducesResponseType(typeof(ReportCreatedResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ReportCreatedResponse>> CreateLostReport()
@@ -193,6 +194,7 @@ public class LostAndFoundController : ControllerBase
     }
 
     [HttpPost("reports/found")]
+    [Consumes("application/json", "multipart/form-data")]
     [ProducesResponseType(typeof(ReportCreatedResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ReportCreatedResponse>> CreateFoundReport()
@@ -273,6 +275,7 @@ public class LostAndFoundController : ControllerBase
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items")]
+    [Consumes("application/json", "multipart/form-data")]
     [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<LostFoundItemResponse>> CreateManualItem()
@@ -303,10 +306,10 @@ public class LostAndFoundController : ControllerBase
     [ProducesResponseType(typeof(UploadResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<UploadResponse>> Upload(
-        IFormFile? file,
-        IFormFile? photo,
-        IFormFile? image,
-        IFormFile? imageFile)
+        [FromForm] IFormFile? file,
+        [FromForm] IFormFile? photo,
+        [FromForm] IFormFile? image,
+        [FromForm] IFormFile? imageFile)
     {
         var upload = file ?? photo ?? image ?? imageFile;
         if (upload == null && Request.HasFormContentType)
@@ -404,6 +407,7 @@ public class LostAndFoundController : ControllerBase
     }
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items/{id:int}/confirm-receipt")]
+    [Consumes("multipart/form-data")]
     [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -446,6 +450,7 @@ public class LostAndFoundController : ControllerBase
 
     [Authorize(Roles = "admin,lost_found_leader")]
     [HttpPost("items/{id:int}/complete-delivery")]
+    [Consumes("multipart/form-data")]
     [ProducesResponseType(typeof(LostFoundItemResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]

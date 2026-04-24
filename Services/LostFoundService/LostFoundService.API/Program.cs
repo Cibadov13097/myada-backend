@@ -1,6 +1,7 @@
 using AutoMapper;
 using LostFoundService.Api.Middlewares;
 using LostFoundService.Api.Security;
+using LostFoundService.Api.Swagger;
 using LostFoundService.Application.Interfaces;
 using LostFoundService.Application.Interfaces.Repositories;
 using LostFoundService.Application.Interfaces.Services;
@@ -71,6 +72,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
     c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+    c.OperationFilter<LostAndFoundRequestBodyOperationFilter>();
     c.CustomOperationIds(apiDescription =>
     {
         var controller = apiDescription.ActionDescriptor.RouteValues["controller"] ?? "UnknownController";

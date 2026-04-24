@@ -93,7 +93,8 @@ namespace LostFoundService.Api.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto, IFormFile? imageFile)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Create([FromForm] AddFoundItemDto dto, [FromForm] IFormFile? imageFile)
         {
             var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items", imageFile);
             if (uploadedImageUrl == string.Empty)
@@ -133,7 +134,8 @@ namespace LostFoundService.Api.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] UpdateFoundItemDto dto, IFormFile? imageFile)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateFoundItemDto dto, [FromForm] IFormFile? imageFile)
         {
             var uploadedImageUrl = await UploadFormImageIfPresentAsync("legacy/found-items", imageFile);
             if (uploadedImageUrl == string.Empty)
