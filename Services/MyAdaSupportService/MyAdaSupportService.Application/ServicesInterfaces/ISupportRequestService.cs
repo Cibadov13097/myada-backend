@@ -6,11 +6,11 @@ namespace MyAdaSupportService.Application.ServicesInterfaces;
 
 public interface ISupportRequestService
 {
-    Task<SupportRequestDetailDto> CreateRequestAsync(CreateSupportRequestDto dto, int memberId);
+    Task<SupportRequestDetailDto> CreateRequestAsync(CreateSupportRequestDto dto, Guid memberId);
 
-    Task<List<SupportRequestListItemDto>> GetMyRequestsAsync(int memberId);
+    Task<List<SupportRequestListItemDto>> GetMyRequestsAsync(Guid memberId);
 
-    Task<List<SupportRequestListItemDto>> GetAssignedRequestsAsync(int staffId);
+    Task<List<SupportRequestListItemDto>> GetAssignedRequestsAsync(Guid staffId);
 
     Task<List<SupportRequestListItemDto>> GetAllRequestsAsync(RequestFilterDto filter);
 
@@ -18,5 +18,5 @@ public interface ISupportRequestService
 
     Task<List<TimelineItemDto>> GetRequestTimelineAsync(int requestId);
 
-    Task CancelRequestAsync(int requestId, int memberId, CancelRequestDto dto);
+    Task CancelRequestAsync(int requestId, Guid memberId, CancelRequestDto dto);
 }

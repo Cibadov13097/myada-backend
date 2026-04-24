@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.*">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <ProjectReference Include="..\MyAdaSupportService.Application\MyAdaSupportService.Application.csproj" />
     <ProjectReference Include="..\MyAdaSupportService.Infrastructure\MyAdaSupportService.Infrastructure.csproj" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />

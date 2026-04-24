@@ -16,6 +16,9 @@ public class SupportRequestServiceTests
         Mock<ILocationService>? location = null)
     {
         var loc = location ?? new Mock<ILocationService>();
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
         loc.Setup(l => l.ResolveLocationAsync(
                 It.IsAny<bool>(),
                 It.IsAny<int?>(),
@@ -23,10 +26,10 @@ public class SupportRequestServiceTests
                 It.IsAny<int?>(),
                 It.IsAny<string?>()))
             .ReturnsAsync("Resolved");
-        return new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object);
+        return new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object);
     }
 
-    private static Request RequestWithCategory(int id, int createdUserId, int? staffId = null) => new()
+    private static Request RequestWithCategory(int id, Guid createdUserId, Guid? staffId = null) => new()
     {
         Id = id,
         CreatedUserId = createdUserId,
@@ -49,7 +52,10 @@ public class SupportRequestServiceTests
                 r.Category = new Category { Name = "Cat", Module = SupportArea.IT };
                 return r;
             });
-        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object);
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
+        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object);
         var dto = new CreateSupportRequestDto
         {
             CategoryId = 1,
@@ -59,22 +65,24 @@ public class SupportRequestServiceTests
             Urgency = "standard"
         };
 
-        var result = await sut.CreateRequestAsync(dto, memberId: 99);
+        var memberId = Guid.NewGuid();
+        var result = await sut.CreateRequestAsync(dto, memberId);
 
         Assert.Equal(3, result.Id);
         Assert.Equal("Here", result.Location);
-        repo.Verify(r => r.AddAsync(It.Is<Request>(x => x.CreatedUserId == 99 && x.Status == RequestStatus.New)), Times.Once);
+        repo.Verify(r => r.AddAsync(It.Is<Request>(x => x.CreatedUserId == memberId && x.Status == RequestStatus.New)), Times.Once);
     }
 
     [Fact]
     public async Task GetMyRequestsAsync_maps_each_item_with_location()
     {
         var repo = new Mock<IRequestRepository>();
-        var requests = new List<Request> { RequestWithCategory(1, 5) };
-        repo.Setup(r => r.GetRequestsByMemberIdAsync(5)).ReturnsAsync(requests);
+        var memberId = Guid.NewGuid();
+        var requests = new List<Request> { RequestWithCategory(1, memberId) };
+        repo.Setup(r => r.GetRequestsByMemberIdAsync(memberId)).ReturnsAsync(requests);
         var sut = CreateSut(repo);
 
-        var result = await sut.GetMyRequestsAsync(5);
+        var result = await sut.GetMyRequestsAsync(memberId);
 
         Assert.Single(result);
         Assert.Equal("Resolved", result[0].Location);
@@ -84,10 +92,12 @@ public class SupportRequestServiceTests
     public async Task GetAssignedRequestsAsync_returns_list()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetRequestsByStaffIdAsync(2)).ReturnsAsync(new List<Request> { RequestWithCategory(1, 9, 2) });
+        var staffId = Guid.NewGuid();
+        repo.Setup(r => r.GetRequestsByStaffIdAsync(staffId))
+            .ReturnsAsync(new List<Request> { RequestWithCategory(1, Guid.NewGuid(), staffId) });
         var sut = CreateSut(repo);
 
-        var result = await sut.GetAssignedRequestsAsync(2);
+        var result = await sut.GetAssignedRequestsAsync(staffId);
 
         Assert.Single(result);
     }
@@ -96,14 +106,10 @@ public class SupportRequestServiceTests
     public async Task GetAllRequestsAsync_applies_filter_and_orders()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetAllAsync(
-                It.IsAny<System.Linq.Expressions.Expression<Func<Request, bool>>>(),
-                It.IsAny<Func<IQueryable<Request>, IQueryable<Request>>?>(),
-                It.IsAny<Func<IQueryable<Request>, IOrderedQueryable<Request>>?>(),
-                It.IsAny<bool>()))
-            .ReturnsAsync(new List<Request> { RequestWithCategory(1, 1) });
+        repo.Setup(r => r.GetAllWithDetailsAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Request, bool>>>()))
+            .ReturnsAsync(new List<Request> { RequestWithCategory(1, Guid.NewGuid()) });
         var sut = CreateSut(repo);
-        var filter = new RequestFilterDto { MemberId = 0, StaffId = 0 };
+        var filter = new RequestFilterDto { MemberId = null, StaffId = null };
 
         var result = await sut.GetAllRequestsAsync(filter);
 
@@ -114,7 +120,7 @@ public class SupportRequestServiceTests
     public async Task GetRequestDetailAsync_returns_detail_when_found()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(7)).ReturnsAsync(RequestWithCategory(7, 1));
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(7)).ReturnsAsync(RequestWithCategory(7, Guid.NewGuid()));
         var sut = CreateSut(repo);
 
         var result = await sut.GetRequestDetailAsync(7);
@@ -127,7 +133,7 @@ public class SupportRequestServiceTests
     public async Task GetRequestDetailAsync_throws_when_missing()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(404)).ReturnsAsync((Request?)null);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(404)).ReturnsAsync((Request?)null);
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() => sut.GetRequestDetailAsync(404));
@@ -137,12 +143,13 @@ public class SupportRequestServiceTests
     public async Task CancelRequestAsync_updates_status_when_owner_matches()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 10);
+        var memberId = Guid.NewGuid();
+        var req = RequestWithCategory(1, memberId);
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
-        await sut.CancelRequestAsync(1, 10, new CancelRequestDto { Reason = "No longer needed" });
+        await sut.CancelRequestAsync(1, memberId, new CancelRequestDto { Reason = "No longer needed" });
 
         Assert.Equal(RequestStatus.Cancelled, req.Status);
         Assert.Equal("No longer needed", req.CancelReason);
@@ -152,11 +159,11 @@ public class SupportRequestServiceTests
     public async Task CancelRequestAsync_throws_when_wrong_member()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, 10));
+        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, Guid.NewGuid()));
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() =>
-            sut.CancelRequestAsync(1, 99, new CancelRequestDto { Reason = "x" }));
+            sut.CancelRequestAsync(1, Guid.NewGuid(), new CancelRequestDto { Reason = "x" }));
     }
 
     [Fact]
@@ -167,21 +174,22 @@ public class SupportRequestServiceTests
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() =>
-            sut.CancelRequestAsync(2, 1, new CancelRequestDto { Reason = "x" }));
+            sut.CancelRequestAsync(2, Guid.NewGuid(), new CancelRequestDto { Reason = "x" }));
     }
 
     [Fact]
     public async Task AssignRequestAsync_sets_staff_and_status()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 1);
+        var req = RequestWithCategory(1, Guid.NewGuid());
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
-        await sut.AssignRequestAsync(1, new AssignRequestDto { StaffId = 5 }, dispatcherId: 2);
+        var assignedStaffId = Guid.NewGuid();
+        await sut.AssignRequestAsync(1, new AssignRequestDto { StaffId = assignedStaffId }, dispatcherId: Guid.NewGuid());
 
-        Assert.Equal(5, req.StaffId);
+        Assert.Equal(assignedStaffId, req.StaffId);
         Assert.Equal(RequestStatus.Assigned, req.Status);
     }
 
@@ -193,33 +201,35 @@ public class SupportRequestServiceTests
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() =>
-            sut.AssignRequestAsync(9, new AssignRequestDto { StaffId = 1 }, dispatcherId: 1));
+            sut.AssignRequestAsync(9, new AssignRequestDto { StaffId = Guid.NewGuid() }, dispatcherId: Guid.NewGuid()));
     }
 
     [Fact]
     public async Task ReassignRequestAsync_updates_staff()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 1, staffId: 3);
+        var originalStaffId = Guid.NewGuid();
+        var req = RequestWithCategory(1, Guid.NewGuid(), staffId: originalStaffId);
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
-        await sut.ReassignRequestAsync(1, new AssignRequestDto { StaffId = 8 }, dispatcherId: 1);
+        var newStaffId = Guid.NewGuid();
+        await sut.ReassignRequestAsync(1, new AssignRequestDto { StaffId = newStaffId }, dispatcherId: Guid.NewGuid());
 
-        Assert.Equal(8, req.StaffId);
+        Assert.Equal(newStaffId, req.StaffId);
     }
 
     [Fact]
     public async Task AddDispatcherInstructionsAsync_persists_text()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 1);
+        var req = RequestWithCategory(1, Guid.NewGuid());
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
-        await sut.AddDispatcherInstructionsAsync(1, new DispatcherInstructionDto { DispatcherInstructions = "Go left" }, 9);
+        await sut.AddDispatcherInstructionsAsync(1, new DispatcherInstructionDto { DispatcherInstructions = "Go left" }, Guid.NewGuid());
 
         Assert.Equal("Go left", req.DispatcherInstructions);
     }
@@ -228,23 +238,25 @@ public class SupportRequestServiceTests
     public async Task MarkAsStartedAsync_requires_matching_staff()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 1, staffId: 5);
+        var assignedStaffId = Guid.NewGuid();
+        var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         var sut = CreateSut(repo);
 
-        await Assert.ThrowsAsync<Exception>(() => sut.MarkAsStartedAsync(1, staffId: 99));
+        await Assert.ThrowsAsync<Exception>(() => sut.MarkAsStartedAsync(1, staffId: Guid.NewGuid()));
     }
 
     [Fact]
     public async Task MarkAsStartedAsync_sets_in_progress_when_staff_matches()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 1, staffId: 5);
+        var assignedStaffId = Guid.NewGuid();
+        var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
-        await sut.MarkAsStartedAsync(1, staffId: 5);
+        await sut.MarkAsStartedAsync(1, staffId: assignedStaffId);
 
         Assert.Equal(RequestStatus.InProgress, req.Status);
     }
@@ -253,22 +265,24 @@ public class SupportRequestServiceTests
     public async Task MarkAsInProgressAsync_throws_when_staff_mismatch()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, 1, staffId: 5));
+        var assignedStaffId = Guid.NewGuid();
+        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId));
         var sut = CreateSut(repo);
 
-        await Assert.ThrowsAsync<Exception>(() => sut.MarkAsInProgressAsync(1, staffId: 6));
+        await Assert.ThrowsAsync<Exception>(() => sut.MarkAsInProgressAsync(1, staffId: Guid.NewGuid()));
     }
 
     [Fact]
     public async Task MarkAsInProgressAsync_sets_in_progress_when_staff_matches()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 1, staffId: 5);
+        var assignedStaffId = Guid.NewGuid();
+        var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
-        await sut.MarkAsInProgressAsync(1, staffId: 5);
+        await sut.MarkAsInProgressAsync(1, staffId: assignedStaffId);
 
         Assert.Equal(RequestStatus.InProgress, req.Status);
     }
@@ -277,12 +291,13 @@ public class SupportRequestServiceTests
     public async Task MarkAsCompletedAsync_sets_completed_when_staff_matches()
     {
         var repo = new Mock<IRequestRepository>();
-        var req = RequestWithCategory(1, 1, staffId: 5);
+        var assignedStaffId = Guid.NewGuid();
+        var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
         repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
-        await sut.MarkAsCompletedAsync(1, staffId: 5);
+        await sut.MarkAsCompletedAsync(1, staffId: assignedStaffId);
 
         Assert.Equal(RequestStatus.Completed, req.Status);
     }

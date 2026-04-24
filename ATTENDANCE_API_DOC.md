@@ -1,6 +1,6 @@
 # MyAda Attendance Service API Documentation
 
-Last updated: 2026-04-22
+Last updated: 2026-04-24
 
 ## Base URL
 
@@ -103,8 +103,8 @@ Base path: `/attendance/api/instructors/{instructorId}/sessions`
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/activate` | Open attendance for session. |
-| `POST` | `/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/deactivate` | Close attendance for session. |
+| `POST` | `/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/activate/{round}` | Open attendance round (`round` = `1` or `2`) and update session `roundNo`. |
+| `POST` | `/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/deactivate/{round}` | Close the currently active attendance round. |
 | `POST` | `/attendance/api/instructors/{instructorId}/sessions/{sessionId}/qr-token` | Issue QR token for check-in. |
 | `GET` | `/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance` | Get full attendance roster. |
 | `GET` | `/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary` | Get attendance summary counts. |
@@ -196,6 +196,25 @@ Base path: `/attendance/api/students/{studentId}`
   }
 }
 ```
+
+## Attendance Round Behavior
+
+- `LessonSessions` now stores `roundNo` for each session.
+- Default `roundNo` is `0`.
+- When round 1 is activated, `roundNo` becomes `1`.
+- When round 2 is activated, `roundNo` becomes `2`.
+- Session APIs return `roundNo` in both session list/detail payloads so frontend can resume from the last active/completed round state.
+
+## Finalization / Status Rules
+
+- If round 2 was ever activated for the session:
+  - `2` distinct rounds scanned -> `Present`
+  - `1` distinct round scanned -> `Late`
+  - `0` scan -> `Absent`
+- If round 2 was never activated:
+  - `1` (or more) distinct scanned round -> `Present`
+  - `0` scan -> `Absent`
+- Manually adjusted attendance rows are not overwritten during finalize.
 
 ## Attendance Status Values
 

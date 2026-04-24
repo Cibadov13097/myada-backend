@@ -25,7 +25,7 @@ public class RequestRepository
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 
-    public async Task<List<Request>> GetRequestsByMemberIdAsync(int memberId)
+    public async Task<List<Request>> GetRequestsByMemberIdAsync(Guid memberId)
     {
         return await _dbSet
             .Where(r => r.CreatedUserId == memberId)
@@ -35,7 +35,7 @@ public class RequestRepository
             .ToListAsync();
     }
 
-    public async Task<List<Request>> GetRequestsByStaffIdAsync(int staffId)
+    public async Task<List<Request>> GetRequestsByStaffIdAsync(Guid staffId)
     {
         return await _dbSet
             .Where(r => r.StaffId == staffId)

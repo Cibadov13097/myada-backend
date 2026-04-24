@@ -4,8 +4,8 @@ public abstract class BaseAuditedEntity : BaseEntity, IAuditedEntity
 {
     public DateTime CreatedAt { get; set; }
     public DateTime? ModifiedAt { get; set; }
-    public int CreatedUserId { get; set; }
-    public int? ModifiedUserId { get; set; }
+    public Guid CreatedUserId { get; set; }
+    public Guid? ModifiedUserId { get; set; }
 
     // public void ClearAudit()
     // {
@@ -14,7 +14,7 @@ public abstract class BaseAuditedEntity : BaseEntity, IAuditedEntity
     //     ModifiedAt = null;
     //     ModifiedUserId = default;
     // }
-    public void SetCreated(int userId)
+    public void SetCreated(Guid userId)
     {
         CreatedUserId = userId;
         CreatedAt = DateTime.UtcNow;

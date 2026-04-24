@@ -2,7 +2,7 @@
 
 public interface IRequestStatusService
 {
-    Task MarkAsStartedAsync(int requestId, int staffId);
-    Task MarkAsInProgressAsync(int requestId, int staffId);
-    Task MarkAsCompletedAsync(int requestId, int staffId);
+    Task MarkAsStartedAsync(int requestId, Guid staffId);
+    Task MarkAsInProgressAsync(int requestId, Guid staffId);
+    Task MarkAsCompletedAsync(int requestId, Guid staffId);
 }

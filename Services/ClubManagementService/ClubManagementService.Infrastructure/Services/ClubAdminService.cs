@@ -839,8 +839,19 @@ public sealed class ClubAdminService : IClubAdminService
         if (ctx == null)
             return false;
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        return ws.Members.TryRemove(memberId, out _);
+        // List members use user id (GUID) as DTO id; remove the real club membership row.
+        if (!Guid.TryParse(memberId, out var userId) || userId == Guid.Empty)
+            return false;
+
+        var row = await _db.ClubMemberships
+            .FirstOrDefaultAsync(m => m.ClubId == ctx.ClubId && m.UserId == userId, cancellationToken)
+            .ConfigureAwait(false);
+        if (row == null)
+            return false;
+
+        row.IsDeleted = true;
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return true;
     }
 
     public async Task<ClubAdminPagedResult<ClubAdminEmployeeDto>> GetEmployeesAsync(string clubRouteKey, int page, int limit, CancellationToken cancellationToken = default)

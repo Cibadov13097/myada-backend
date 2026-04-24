@@ -9,10 +9,11 @@ public class BaseAuditedEntityTests
     {
         var category = new Category();
         var before = DateTime.UtcNow.AddSeconds(-2);
+        var userId = Guid.NewGuid();
 
-        category.SetCreated(42);
+        category.SetCreated(userId);
 
-        Assert.Equal(42, category.CreatedUserId);
+        Assert.Equal(userId, category.CreatedUserId);
         Assert.True(category.CreatedAt >= before);
         Assert.Null(category.ModifiedAt);
         Assert.Null(category.ModifiedUserId);

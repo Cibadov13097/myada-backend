@@ -84,24 +84,24 @@ public class SupportRequestsController : ControllerBase
         return Ok(uploadedPaths);
     }
 
-    [HttpPost("member/{memberId:int}")]
+    [HttpPost("member/{memberId:guid}")]
     public async Task<ActionResult<SupportRequestDetailDto>> CreateRequest(
-        int memberId,
+        Guid memberId,
         [FromBody] CreateSupportRequestDto dto)
     {
         var result = await _supportRequestService.CreateRequestAsync(dto, memberId);
         return Ok(result);
     }
 
-    [HttpGet("member/{memberId:int}")]
-    public async Task<ActionResult<List<SupportRequestListItemDto>>> GetMyRequests(int memberId)
+    [HttpGet("member/{memberId:guid}")]
+    public async Task<ActionResult<List<SupportRequestListItemDto>>> GetMyRequests(Guid memberId)
     {
         var result = await _supportRequestService.GetMyRequestsAsync(memberId);
         return Ok(result);
     }
 
-    [HttpGet("staff/{staffId:int}")]
-    public async Task<ActionResult<List<SupportRequestListItemDto>>> GetAssignedRequests(int staffId)
+    [HttpGet("staff/{staffId:guid}")]
+    public async Task<ActionResult<List<SupportRequestListItemDto>>> GetAssignedRequests(Guid staffId)
     {
         var result = await _supportRequestService.GetAssignedRequestsAsync(staffId);
         return Ok(result);
@@ -128,62 +128,62 @@ public class SupportRequestsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("{requestId:int}/cancel/member/{memberId:int}")]
+    [HttpPut("{requestId:int}/cancel/member/{memberId:guid}")]
     public async Task<IActionResult> CancelRequest(
         int requestId,
-        int memberId,
+        Guid memberId,
         [FromBody] CancelRequestDto dto)
     {
         await _supportRequestService.CancelRequestAsync(requestId, memberId, dto);
         return NoContent();
     }
 
-    [HttpPut("{requestId:int}/assign/dispatcher/{dispatcherId:int}")]
+    [HttpPut("{requestId:int}/assign/dispatcher/{dispatcherId:guid}")]
     public async Task<IActionResult> AssignRequest(
         int requestId,
-        int dispatcherId,
+        Guid dispatcherId,
         [FromBody] AssignRequestDto dto)
     {
         await _assignmentService.AssignRequestAsync(requestId, dto, dispatcherId);
         return NoContent();
     }
 
-    [HttpPut("{requestId:int}/reassign/dispatcher/{dispatcherId:int}")]
+    [HttpPut("{requestId:int}/reassign/dispatcher/{dispatcherId:guid}")]
     public async Task<IActionResult> ReassignRequest(
         int requestId,
-        int dispatcherId,
+        Guid dispatcherId,
         [FromBody] AssignRequestDto dto)
     {
         await _assignmentService.ReassignRequestAsync(requestId, dto, dispatcherId);
         return NoContent();
     }
 
-    [HttpPut("{requestId:int}/dispatcher-instructions/dispatcher/{dispatcherId:int}")]
+    [HttpPut("{requestId:int}/dispatcher-instructions/dispatcher/{dispatcherId:guid}")]
     public async Task<IActionResult> AddDispatcherInstructions(
         int requestId,
-        int dispatcherId,
+        Guid dispatcherId,
         [FromBody] DispatcherInstructionDto dto)
     {
         await _assignmentService.AddDispatcherInstructionsAsync(requestId, dto, dispatcherId);
         return NoContent();
     }
 
-    [HttpPut("{requestId:int}/start/staff/{staffId:int}")]
-    public async Task<IActionResult> MarkAsStarted(int requestId, int staffId)
+    [HttpPut("{requestId:int}/start/staff/{staffId:guid}")]
+    public async Task<IActionResult> MarkAsStarted(int requestId, Guid staffId)
     {
         await _requestStatusService.MarkAsStartedAsync(requestId, staffId);
         return NoContent();
     }
 
-    [HttpPut("{requestId:int}/in-progress/staff/{staffId:int}")]
-    public async Task<IActionResult> MarkAsInProgress(int requestId, int staffId)
+    [HttpPut("{requestId:int}/in-progress/staff/{staffId:guid}")]
+    public async Task<IActionResult> MarkAsInProgress(int requestId, Guid staffId)
     {
         await _requestStatusService.MarkAsInProgressAsync(requestId, staffId);
         return NoContent();
     }
 
-    [HttpPut("{requestId:int}/complete/staff/{staffId:int}")]
-    public async Task<IActionResult> MarkAsCompleted(int requestId, int staffId)
+    [HttpPut("{requestId:int}/complete/staff/{staffId:guid}")]
+    public async Task<IActionResult> MarkAsCompleted(int requestId, Guid staffId)
     {
         await _requestStatusService.MarkAsCompletedAsync(requestId, staffId);
         return NoContent();

@@ -4,7 +4,7 @@ namespace MyAdaSupportService.Application.DTOs.Staff;
 
 public class StaffWorkloadDto
 {
-    public int StaffId { get; set; }
+    public Guid StaffId { get; set; }
     public string StaffName { get; set; }
     public string Area { get; set; }
     public string Status { get; set; }

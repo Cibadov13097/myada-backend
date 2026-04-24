@@ -23,10 +23,10 @@ public class Request : BaseAuditedEntity
 
     public string? ImgUrl { get; set; }
 
-    public int? StaffId { get; set; }
+    public Guid? StaffId { get; set; }
 
     public DateTime? AssignedAt { get; set; }
-    public int? AssignedBy { get; set; }
+    public Guid? AssignedBy { get; set; }
 
     public DateTime? StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }

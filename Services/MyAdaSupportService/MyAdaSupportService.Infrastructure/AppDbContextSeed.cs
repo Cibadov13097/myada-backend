@@ -10,7 +10,9 @@ public static class AppDbContextSeed
     {
         await context.Database.MigrateAsync();
 
-        const int seedUserId = 1;
+        var seedUserId = Guid.Empty;
+        var seededStaffId = Guid.Parse("00000000-0000-0000-0000-000000002001");
+        var seededDispatcherId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
         if (!await context.Categories.AnyAsync())
         {
@@ -65,8 +67,8 @@ public static class AppDbContextSeed
                     RoomId = 305,
                     AreaDetails = "MSB-305 (third floor, corridor B)",
                     Status = RequestStatus.Assigned,
-                    StaffId = 2001,
-                    AssignedBy = 1,
+                    StaffId = seededStaffId,
+                    AssignedBy = seededDispatcherId,
                     AssignedAt = DateTime.UtcNow,
                     IsUrgent = false,
                     DispatcherInstructions = "Please inspect before 12:00 Baku time; lab session at 14:00."

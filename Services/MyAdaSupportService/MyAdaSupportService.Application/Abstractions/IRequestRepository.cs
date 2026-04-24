@@ -7,8 +7,8 @@ public interface IRequestRepository : IRepository<Request>
 {
     Task<Request?> GetByIdOrDefaultAsync(int id);
 
-    Task<List<Request>> GetRequestsByMemberIdAsync(int memberId);
-    Task<List<Request>> GetRequestsByStaffIdAsync(int staffId);
+    Task<List<Request>> GetRequestsByMemberIdAsync(Guid memberId);
+    Task<List<Request>> GetRequestsByStaffIdAsync(Guid staffId);
     Task<List<Request>> GetOpenRequestsAsync();
     Task<List<Request>> GetCompletedRequestsAsync();
     Task<List<Request>> GetCancelledRequestsAsync();

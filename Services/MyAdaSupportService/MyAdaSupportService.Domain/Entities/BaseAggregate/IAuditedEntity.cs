@@ -4,10 +4,10 @@ public interface IAuditedEntity
 {
     public DateTime CreatedAt { get; set; }
     public DateTime? ModifiedAt { get; set; }
-    public int CreatedUserId { get; set; }
-    public int? ModifiedUserId { get; set; }
+    public Guid CreatedUserId { get; set; }
+    public Guid? ModifiedUserId { get; set; }
 
-    public void SetCreated(int userId)
+    public void SetCreated(Guid userId)
     {
         CreatedUserId = userId;
         CreatedAt = DateTime.UtcNow;
@@ -15,7 +15,7 @@ public interface IAuditedEntity
         ModifiedAt = null;
     }
 
-    public void SetModified(int userId)
+    public void SetModified(Guid userId)
     {
         ModifiedUserId = userId;
         ModifiedAt = DateTime.UtcNow;

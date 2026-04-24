@@ -35,7 +35,7 @@ public class SupportRequestService
         _realtimeNotifier = realtimeNotifier;
     }
 
-    public async Task<SupportRequestDetailDto> CreateRequestAsync(CreateSupportRequestDto dto, int memberId)
+    public async Task<SupportRequestDetailDto> CreateRequestAsync(CreateSupportRequestDto dto, Guid memberId)
     {
         var entity = _mapper.Map<Request>(dto);
         entity.CreatedUserId = memberId;
@@ -50,13 +50,13 @@ public class SupportRequestService
         return result;
     }
 
-    public async Task<List<SupportRequestListItemDto>> GetMyRequestsAsync(int memberId)
+    public async Task<List<SupportRequestListItemDto>> GetMyRequestsAsync(Guid memberId)
     {
         var requests = await _requestRepository.GetRequestsByMemberIdAsync(memberId);
         return await MapListDtosWithLocationAsync(requests.OrderByDescending(x => x.CreatedAt).ToList());
     }
 
-    public async Task<List<SupportRequestListItemDto>> GetAssignedRequestsAsync(int staffId)
+    public async Task<List<SupportRequestListItemDto>> GetAssignedRequestsAsync(Guid staffId)
     {
         var requests = await _requestRepository.GetRequestsByStaffIdAsync(staffId);
         return await MapListDtosWithLocationAsync(requests);
@@ -80,8 +80,8 @@ public class SupportRequestService
 
         var requests = await _requestRepository.GetAllWithDetailsAsync(
             x =>
-                (filter.MemberId == 0 || x.CreatedUserId == filter.MemberId) &&
-                (filter.StaffId == 0 || x.StaffId == filter.StaffId) &&
+                (!filter.MemberId.HasValue || x.CreatedUserId == filter.MemberId.Value) &&
+                (!filter.StaffId.HasValue || x.StaffId == filter.StaffId.Value) &&
                 (filter.CategoryId == null || x.CategoryId == filter.CategoryId) &&
                 (includeOpenStatuses
                     ? (x.Status != RequestStatus.Completed && x.Status != RequestStatus.Cancelled)
@@ -111,7 +111,7 @@ public class SupportRequestService
         return BuildTimeline(request);
     }
 
-    public async Task CancelRequestAsync(int requestId, int memberId, CancelRequestDto dto)
+    public async Task CancelRequestAsync(int requestId, Guid memberId, CancelRequestDto dto)
     {
         var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
 
@@ -129,7 +129,7 @@ public class SupportRequestService
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "cancelled");
     }
 
-    public async Task AssignRequestAsync(int requestId, AssignRequestDto dto, int dispatcherId)
+    public async Task AssignRequestAsync(int requestId, AssignRequestDto dto, Guid dispatcherId)
     {
         var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
 
@@ -150,7 +150,7 @@ public class SupportRequestService
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "assigned");
     }
 
-    public async Task ReassignRequestAsync(int requestId, AssignRequestDto dto, int dispatcherId)
+    public async Task ReassignRequestAsync(int requestId, AssignRequestDto dto, Guid dispatcherId)
     {
         var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
 
@@ -171,7 +171,7 @@ public class SupportRequestService
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "reassigned");
     }
 
-    public async Task AddDispatcherInstructionsAsync(int requestId, DispatcherInstructionDto dto, int dispatcherId)
+    public async Task AddDispatcherInstructionsAsync(int requestId, DispatcherInstructionDto dto, Guid dispatcherId)
     {
         var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
 
@@ -187,7 +187,7 @@ public class SupportRequestService
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "dispatcher-instructions-updated");
     }
 
-    public async Task MarkAsStartedAsync(int requestId, int staffId)
+    public async Task MarkAsStartedAsync(int requestId, Guid staffId)
     {
         var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
 
@@ -203,7 +203,7 @@ public class SupportRequestService
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "started");
     }
 
-    public async Task MarkAsInProgressAsync(int requestId, int staffId)
+    public async Task MarkAsInProgressAsync(int requestId, Guid staffId)
     {
         var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
 
@@ -219,7 +219,7 @@ public class SupportRequestService
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "in-progress");
     }
 
-    public async Task MarkAsCompletedAsync(int requestId, int staffId)
+    public async Task MarkAsCompletedAsync(int requestId, Guid staffId)
     {
         var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
 

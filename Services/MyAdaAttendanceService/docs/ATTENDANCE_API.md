@@ -310,6 +310,7 @@ Activate attendance round.
   - round 1 can be activated once
   - round 2 requires closed round 1
   - only one active round at a time
+  - session `roundNo` is set to the activated round value (`1` or `2`)
 - Response `200`: `AttendanceActivationResultDto`
 
 #### POST `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/deactivate/{round}`
@@ -354,8 +355,11 @@ Compute final attendance from accepted scan rounds for all enrolled students.
 - Requires no active round
 - Response `204`
 - Logic:
-  - 2 distinct rounds scanned -> Present
-  - 1 distinct round scanned -> Late
+  - if round 2 was activated:
+    - 2 distinct rounds scanned -> Present
+    - 1 distinct round scanned -> Late
+  - if round 2 was never activated:
+    - 1+ distinct scanned rounds -> Present
   - 0 rounds scanned -> Absent
   - manually adjusted records are not overwritten
 
@@ -419,7 +423,17 @@ Scan is accepted only if all are true:
 - student has not already scanned in same round
 - token `jti` not replayed for same student/session
 
-### 7.3 QR scan error codes (`QrScanResponseDto.errorCode`)
+### 7.3 Scan status behavior
+
+Computed status depends on whether round 2 was ever activated for the session:
+
+- if round 2 exists:
+  - one scanned round -> `Late`
+  - two scanned rounds -> `Present`
+- if round 2 does not exist:
+  - one scanned round -> `Present`
+
+### 7.4 QR scan error codes (`QrScanResponseDto.errorCode`)
 
 - `student_id_missing`
 - `token_missing`
@@ -576,6 +590,7 @@ Scan is accepted only if all are true:
   "endTime": "2026-05-01T10:30:00Z",
   "topic": "Matrices",
   "isAttendanceActive": false,
+  "roundNo": 0,
   "attendanceActivatedAt": null,
   "attendanceDeactivatedAt": null,
   "totalStudents": 32,
@@ -793,6 +808,7 @@ Scan is accepted only if all are true:
    - deactivate 1 -> activate 2 -> scans -> deactivate 2
 8. Instructor finalizes:
    - `POST /api/instructors/{instructorId}/sessions/{sessionId}/attendance/finalize`
+   - if round 2 was skipped, a valid round-1 scan finalizes as `Present`
 9. Instructor/Admin can manually correct records after finalization.
 
 ## 10. Quick cURL Examples (Gateway URL)

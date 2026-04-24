@@ -2,6 +2,6 @@
 
 public class CreateAssignedTaskDto : CreateSupportRequestDto
 {
-    public int StaffId { get; set; }
+    public Guid StaffId { get; set; }
     public string? DispatcherInstructions { get; set; }
 }

@@ -17,7 +17,7 @@ public class SupportRequestListItemDto
     public string Status { get; set; }
     public string Urgency { get; set; }
     public bool IsUrgent { get; set; }
-    public int? AssignedStaffId { get; set; }
+    public Guid? AssignedStaffId { get; set; }
     public string? AssignedTo { get; set; }
     public bool Unseen { get; set; }
     public DateTime CreatedAt { get; set; }

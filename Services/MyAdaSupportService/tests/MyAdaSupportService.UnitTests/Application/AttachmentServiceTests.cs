@@ -12,10 +12,13 @@ public class AttachmentServiceTests
     public async Task AddAttachmentAsync_persists_through_repository()
     {
         var repo = new Mock<IAttachmentRepository>();
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
         var mapper = TestMapperFactory.Create();
         repo.Setup(r => r.AddAsync(It.IsAny<Attachment>()))
             .ReturnsAsync((Attachment a) => { a.Id = 5; return a; });
-        var sut = new AttachmentService(repo.Object, mapper);
+        var sut = new AttachmentService(repo.Object, mapper, realtime.Object);
         var dto = new AttachmentCreateDto { RequestId = 1, Url = "https://x/file.pdf" };
 
         var result = await sut.AddAttachmentAsync(dto);
@@ -28,6 +31,9 @@ public class AttachmentServiceTests
     public async Task GetRequestAttachmentsAsync_maps_repository_results()
     {
         var repo = new Mock<IAttachmentRepository>();
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
         var mapper = TestMapperFactory.Create();
         repo.Setup(r => r.GetByRequestIdAsync(9))
             .ReturnsAsync(new List<Attachment>
@@ -35,7 +41,7 @@ public class AttachmentServiceTests
                 new() { Id = 1, RequestId = 9, Url = "a" },
                 new() { Id = 2, RequestId = 9, Url = "b" }
             });
-        var sut = new AttachmentService(repo.Object, mapper);
+        var sut = new AttachmentService(repo.Object, mapper, realtime.Object);
 
         var result = await sut.GetRequestAttachmentsAsync(9);
 
@@ -47,11 +53,14 @@ public class AttachmentServiceTests
     public async Task RemoveAttachmentAsync_deletes_when_found()
     {
         var repo = new Mock<IAttachmentRepository>();
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
         var mapper = new Mock<AutoMapper.IMapper>().Object;
         var entity = new Attachment { Id = 2, RequestId = 1, Url = "u" };
         repo.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(entity);
         repo.Setup(r => r.RemoveAsync(entity)).Returns(Task.CompletedTask);
-        var sut = new AttachmentService(repo.Object, mapper);
+        var sut = new AttachmentService(repo.Object, mapper, realtime.Object);
 
         await sut.RemoveAttachmentAsync(2);
 

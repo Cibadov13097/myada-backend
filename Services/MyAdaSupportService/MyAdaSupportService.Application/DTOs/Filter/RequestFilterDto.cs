@@ -10,6 +10,6 @@ public class RequestFilterDto
     public string? SortBy { get; set; }        // newest | oldest
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;
-    public int MemberId { get; set; }
-    public int StaffId { get; set; }
+    public Guid? MemberId { get; set; }
+    public Guid? StaffId { get; set; }
 }

@@ -21,7 +21,7 @@ public class SupportRequestDetailDto
     public string Status { get; set; }
     public bool IsUrgent { get; set; }
     public string Priority { get; set; }
-    public int? AssignedStaffId { get; set; }
+    public Guid? AssignedStaffId { get; set; }
     public string? AssignedTo { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? AssignedAt { get; set; }
@@ -39,7 +39,7 @@ public class SupportRequestDetailDto
 
 public class ReporterInfoDto
 {
-    public int MemberId { get; set; }
+    public Guid MemberId { get; set; }
     public string FullName { get; set; }
     public string Email { get; set; }
 }

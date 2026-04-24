@@ -209,12 +209,20 @@ No controller-level **`[Authorize]`**.
 
 ## Applications (interview) — `api/v1/applications`
 
-**`[Authorize]`**. Stub flows for interview scheduling.
+**`[Authorize]`**. Real interview-booking flow for applicants (application id maps to interview id).
 
 | Method | Path | Body | Description |
 |--------|------|------|-------------|
-| `GET` | `/api/v1/applications/{applicationId}/interview-slots` | — | Empty `items`. |
-| `POST` | `/api/v1/applications/{applicationId}/interview-slot` | `{ "slotId": string }` | Returns scheduled status. |
+| `GET` | `/api/v1/applications/{applicationId}/interview-slots` | — | List available slots for that application (filters: `from`, `to`, `date`, `includeFull`). |
+| `POST` | `/api/v1/applications/{applicationId}/interview-slot` | `{ "slotId": string }` | Book one slot; application status moves to `InterviewScheduled`. |
+
+Canonical equivalents:
+- `GET /api/v1/interviews/{interviewId}/slots`
+- `POST /api/v1/interviews/{interviewId}/bookings`
+- `GET /api/v1/interviews/{interviewId}/my-booking`
+
+Frontend implementation guide (all interview parts):
+- See **`INTERVIEW_FRONTEND_DOC.md`** in repository root.
 
 ---
 
