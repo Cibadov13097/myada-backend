@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text.Json;
+using CallService.Api.Persistence;
 using CallService.Api.Realtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -14,6 +15,7 @@ public class CallHub : Hub
     private const string DefaultDispatcherInboxPrefix = "dispatcher-inbox-";
 
     private readonly ICallStateStore _stateStore;
+    private readonly ICallHistoryService _callHistoryService;
     private readonly IHubContext<CallHub> _hubContext;
     private readonly ILogger<CallHub> _logger;
     private readonly CallRuntimeOptions _options;
@@ -21,12 +23,14 @@ public class CallHub : Hub
 
     public CallHub(
         ICallStateStore stateStore,
+        ICallHistoryService callHistoryService,
         IHubContext<CallHub> hubContext,
         IIceConfigurationProvider iceConfigurationProvider,
         IOptions<CallRuntimeOptions> options,
         ILogger<CallHub> logger)
     {
         _stateStore = stateStore;
+        _callHistoryService = callHistoryService;
         _hubContext = hubContext;
         _iceConfigurationProvider = iceConfigurationProvider;
         _logger = logger;
@@ -95,6 +99,12 @@ public class CallHub : Hub
                     disconnected.Connection.ConnectionId,
                     disconnected.Connection.UserId,
                     disconnected.Connection.DisplayName));
+
+            await TryFinalizeAcceptedCallAfterDepartureAsync(
+                disconnected.RoomId,
+                disconnected.Connection.UserId,
+                disconnected.Connection.ConnectionId,
+                "Call ended because a participant disconnected.");
         }
 
         await base.OnDisconnectedAsync(exception);
@@ -124,6 +134,10 @@ public class CallHub : Hub
         if (!dispatcherConnections.Any(x => x.IsDispatcher))
             throw new HubException("Target user does not have dispatcher role.");
 
+        var dispatcherDisplayName = dispatcherConnections
+            .FirstOrDefault(x => x.IsDispatcher)?.DisplayName
+            ?? dispatcherUserId;
+
         var nowUtc = DateTime.UtcNow;
         var timeout = TimeSpan.FromSeconds(GetInviteTimeoutSeconds());
         var expiresAtUtc = nowUtc.Add(timeout);
@@ -144,6 +158,10 @@ public class CallHub : Hub
         };
 
         await _stateStore.CreatePendingCallAsync(pendingCall);
+        await _callHistoryService.CreatePendingCallAsync(
+            pendingCall,
+            dispatcherDisplayName,
+            CancellationToken.None);
 
         _logger.LogInformation(
             "Pending call state saved. CallId={CallId}, RoomId={RoomId}, Caller={CallerUserId}, Dispatcher={DispatcherUserId}, ExpiresAtUtc={ExpiresAtUtc:o}",
@@ -210,7 +228,13 @@ public class CallHub : Hub
                 DateTime.UtcNow);
 
             if (timedOut is not null)
+            {
+                await _callHistoryService.UpdateCallStatusAsync(
+                    timedOut,
+                    dispatcher.DisplayName,
+                    CancellationToken.None);
                 await BroadcastTimedOutAsync(timedOut);
+            }
 
             throw new HubException("Call request expired.");
         }
@@ -226,6 +250,11 @@ public class CallHub : Hub
 
         if (accepted is null)
             throw new HubException("Call request state changed. Please refresh and try again.");
+
+        await _callHistoryService.UpdateCallStatusAsync(
+            accepted,
+            dispatcher.DisplayName,
+            CancellationToken.None);
 
         var callerConnection = await _stateStore.GetConnectionAsync(accepted.CallerConnectionId);
         if (callerConnection is null)
@@ -246,7 +275,13 @@ public class CallHub : Hub
                 DateTime.UtcNow);
 
             if (cancelled is not null)
+            {
+                await _callHistoryService.UpdateCallStatusAsync(
+                    cancelled,
+                    dispatcher.DisplayName,
+                    CancellationToken.None);
                 await BroadcastCancelledAsync(cancelled);
+            }
 
             throw new HubException("Caller is no longer online.");
         }
@@ -308,6 +343,10 @@ public class CallHub : Hub
         if (rejected is null)
             throw new HubException("Call request state changed. Please refresh and try again.");
 
+        await _callHistoryService.UpdateCallStatusAsync(
+            rejected,
+            dispatcher.DisplayName,
+            CancellationToken.None);
         await BroadcastRejectedAsync(rejected);
     }
 
@@ -336,6 +375,10 @@ public class CallHub : Hub
         if (cancelled is null)
             throw new HubException("Call request state changed. Please refresh and try again.");
 
+        await _callHistoryService.UpdateCallStatusAsync(
+            cancelled,
+            await GetDispatcherDisplayNameAsync(cancelled.DispatcherUserId),
+            CancellationToken.None);
         await BroadcastCancelledAsync(cancelled);
     }
 
@@ -357,6 +400,12 @@ public class CallHub : Hub
         await Clients.OthersInGroup(roomId).SendAsync(
             "ParticipantLeft",
             new ParticipantDto(connection.ConnectionId, connection.UserId, connection.DisplayName));
+
+        await TryFinalizeAcceptedCallAfterDepartureAsync(
+            roomId,
+            connection.UserId,
+            connection.ConnectionId,
+            "Call ended because a participant left.");
     }
 
     public async Task SendOffer(string targetConnectionId, string sdp)
@@ -446,6 +495,7 @@ public class CallHub : Hub
         var sender = await GetCurrentConnectionOrThrowAsync();
         var roomId = await GetCurrentRoomOrThrowAsync(sender.ConnectionId);
         var participants = await _stateStore.GetRoomParticipantsAsync(roomId);
+        var endedAtUtc = DateTime.UtcNow;
 
         _logger.LogInformation(
             "Ending call. RoomId={RoomId}, EndedByConnectionId={ConnectionId}, ParticipantCount={ParticipantCount}",
@@ -453,12 +503,20 @@ public class CallHub : Hub
             sender.ConnectionId,
             participants.Count);
 
+        await _callHistoryService.TryCompleteAcceptedCallAsync(
+            roomId,
+            sender.UserId,
+            sender.ConnectionId,
+            endedAtUtc,
+            "Call ended explicitly.",
+            CancellationToken.None);
+
         await _hubContext.Clients.Group(roomId).SendAsync("CallEnded", new
         {
             roomId,
             endedByConnectionId = sender.ConnectionId,
             endedByUserId = sender.UserId,
-            endedAtUtc = DateTime.UtcNow
+            endedAtUtc
         });
 
         foreach (var participant in participants)
@@ -656,6 +714,52 @@ public class CallHub : Hub
         return new[] { trimmed };
     }
 
+    private async Task<string> GetDispatcherDisplayNameAsync(string dispatcherUserId)
+    {
+        var dispatcherConnections = await _stateStore.GetUserConnectionsAsync(dispatcherUserId);
+        return dispatcherConnections.FirstOrDefault(x => x.IsDispatcher)?.DisplayName ?? dispatcherUserId;
+    }
+
+    private async Task TryFinalizeAcceptedCallAfterDepartureAsync(
+        string roomId,
+        string endedByUserId,
+        string? endedByConnectionId,
+        string reason)
+    {
+        var remainingParticipants = await _stateStore.GetRoomParticipantsAsync(roomId);
+        if (remainingParticipants.Count > 1)
+            return;
+
+        var endedAtUtc = DateTime.UtcNow;
+        var completedCall = await _callHistoryService.TryCompleteAcceptedCallAsync(
+            roomId,
+            endedByUserId,
+            endedByConnectionId,
+            endedAtUtc,
+            reason,
+            CancellationToken.None);
+
+        if (completedCall is null)
+            return;
+
+        if (remainingParticipants.Count > 0)
+        {
+            await _hubContext.Clients.Group(roomId).SendAsync("CallEnded", new
+            {
+                roomId,
+                endedByConnectionId,
+                endedByUserId,
+                endedAtUtc
+            });
+        }
+
+        foreach (var participant in remainingParticipants)
+        {
+            await _stateStore.RemoveConnectionFromRoomAsync(participant.ConnectionId);
+            await Groups.RemoveFromGroupAsync(participant.ConnectionId, roomId);
+        }
+    }
+
     private int GetInviteTimeoutSeconds()
     {
         if (_options.InviteTimeoutSeconds < 10)
@@ -685,6 +789,10 @@ public class CallHub : Hub
             if (timedOut is null)
                 return;
 
+            await _callHistoryService.UpdateCallStatusAsync(
+                timedOut,
+                await GetDispatcherDisplayNameAsync(timedOut.DispatcherUserId),
+                CancellationToken.None);
             await BroadcastTimedOutAsync(timedOut);
         }
         catch (Exception ex)

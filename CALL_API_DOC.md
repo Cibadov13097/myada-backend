@@ -138,6 +138,37 @@ Token validation settings:
 - WebRTC signaling methods require both connections to be in the same accepted room.
 - `dispatcherUserId` in `RequestCall(dispatcherUserId)` must be the target dispatcher's JWT `sub`.
 
+## Persisted Call History
+
+CallService now saves call history to PostgreSQL.
+
+Saved fields include:
+- call id and room id
+- caller user id + display name
+- dispatcher user id + display name
+- request status (`pending`, `accepted`, `rejected`, `cancelled`, `timed-out`)
+- requested / accepted / resolved timestamps
+- call end time and duration in seconds for accepted calls
+- resolve reason and end reason when present
+
+Status behavior:
+- Accepted calls keep status `accepted` in history.
+- When an accepted call finishes, `endedAtUtc` and `durationSeconds` are filled.
+- Rejected, cancelled, and timed-out requests are also persisted.
+
+REST history endpoints:
+- `GET /call/api/call-history`
+- `GET /call/api/call-history/{callId}`
+- Alias route also works: `GET /call/api/calls/history`
+
+History query options:
+- `status` = `pending`, `accepted`, `rejected`, `cancelled`, or `timed-out`
+- `limit` = max number of rows to return, default `50`
+
+History endpoint auth:
+- Requires JWT bearer token.
+- Returns only calls where current user is the caller or dispatcher.
+
 ## Dispatcher Inbox Routing
 
 - On hub connect, users with `dispatcher` role are automatically joined to:

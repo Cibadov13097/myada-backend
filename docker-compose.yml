@@ -201,6 +201,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__CallService: Host=myada;Port=5432;Database=CallDb;Username=postgres;Password=123
       Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
       Auth__Issuer: myada-auth
       Auth__Audience: myada-api
@@ -217,6 +218,7 @@ services:
     restart: always
     depends_on:
       - authservice
+      - myada
       - myada-redis
       - coturn
 

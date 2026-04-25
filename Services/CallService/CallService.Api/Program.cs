@@ -1,10 +1,12 @@
 using System.Security.Claims;
 using System.Text.Json;
 using CallService.Api.Hubs;
+using CallService.Api.Persistence;
 using CallService.Api.Realtime;
 using CallService.Api.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -25,15 +27,20 @@ var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
 var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
 var redisConnectionString = builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";
 var redisChannelPrefix = builder.Configuration["Redis:ChannelPrefix"] ?? "myada:call";
+var callHistoryConnectionString = builder.Configuration.GetConnectionString("CallService")
+    ?? "Host=localhost;Port=5432;Database=CallDb;Username=postgres;Password=123";
 
 builder.Services.Configure<CallRuntimeOptions>(builder.Configuration.GetSection("Call"));
 builder.Services.Configure<TurnOptions>(builder.Configuration.GetSection("Turn"));
 builder.Services.AddHostedService<JwksRefreshHostedService>();
+builder.Services.AddDbContextFactory<CallHistoryDbContext>(options =>
+    options.UseNpgsql(callHistoryConnectionString));
 
 builder.Services.AddSingleton<IUserIdProvider, SubClaimUserIdProvider>();
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnectionString));
 builder.Services.AddSingleton<ICallStateStore, RedisCallStateStore>();
 builder.Services.AddSingleton<IIceConfigurationProvider, CoturnIceConfigurationProvider>();
+builder.Services.AddSingleton<ICallHistoryService, CallHistoryService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -102,6 +109,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddControllers();
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(redisConnectionString, options =>
     {
@@ -152,6 +160,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<CallHistoryDbContext>>();
+    await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+    await CallHistorySchemaInitializer.InitializeAsync(dbContext);
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(c =>
@@ -191,6 +206,7 @@ app.MapGet("/health", () => Results.Ok(new
 app.MapGet("/webrtc/ice-servers", GetIceServers).RequireAuthorization();
 app.MapGet("/call/webrtc/ice-servers", GetIceServers).RequireAuthorization();
 
+app.MapControllers();
 app.MapHub<CallHub>("/hub").RequireAuthorization();
 
 app.Run();
