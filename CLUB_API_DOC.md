@@ -129,13 +129,47 @@ Auth: Bearer required for all routes in this controller
 
 | Method | Path | Notes |
 |--------|------|-------|
-| `GET` | `/api/v1/clubs` | Query: `search`, `category`, `page`, `limit` (default `12`). |
-| `GET` | `/api/v1/clubs/{clubId}` | Public-style club detail projection with focus areas, social links, resources, and officers. |
+| `GET` | `/api/v1/clubs` | Query: `search`, `category`, `page`, `limit` (default `12`). Includes image fields. |
+| `GET` | `/api/v1/clubs/{clubId}` | Public-style club detail projection with focus areas, social links, resources, officers, and image fields. |
 | `GET` | `/api/v1/clubs/{clubId}/members` | Returns `{ items: [{ userId }] }`. |
 | `POST` | `/api/v1/clubs/{clubId}/join-applications` | `multipart/form-data`. See form fields below. |
 | `POST` | `/api/v1/clubs` | Body: `CreateClubDto`. |
 | `PATCH` | `/api/v1/clubs/{clubId}` | Body: `UpdateClubDto`. |
 | `DELETE` | `/api/v1/clubs/{clubId}` | Delete club. |
+
+Image behavior on club `GET` routes:
+
+- `profileImageUrl` is read from the club row in the database.
+- If that stored value is an S3/bucket URL, the API returns that same absolute URL.
+- If that stored value is a relative local upload path, the API returns that relative path.
+- `image` is the display-safe field: it returns `profileImageUrl` when present, otherwise `/clubs/default.png`.
+- Public club detail does not expose `proposedProfileImageUrl`; that pending image is only surfaced on student-services routes.
+
+Representative list item:
+
+```json
+{
+  "id": 1,
+  "name": "Robotics Club",
+  "category": "Technology",
+  "profileImageUrl": "https://bucket.example/clubs/robotics/logo.png",
+  "image": "https://bucket.example/clubs/robotics/logo.png",
+  "tags": [],
+  "members": 0,
+  "about": "Build and learn",
+  "status": "Approved"
+}
+```
+
+Representative detail fields:
+
+- `profileImageUrl`
+- `image`
+- `focusAreas`
+- `socialLinks`
+- `resources`
+- `documents`
+- `officers`
 
 Join application form fields:
 
@@ -437,8 +471,8 @@ Most routes in this controller also require the caller to be a MyAda administrat
 | Method | Path | Notes |
 |--------|------|-------|
 | `GET` | `/api/v1/student-services/dashboard` | Admin-only. |
-| `GET` | `/api/v1/student-services/clubs` | Admin-only. Query: `search`, `page`, `limit`. |
-| `GET` | `/api/v1/student-services/clubs/{clubId}` | Admin-only. |
+| `GET` | `/api/v1/student-services/clubs` | Admin-only. Query: `search`, `page`, `limit`. Includes `profileImageUrl`, `image`, and `proposedProfileImageUrl`. |
+| `GET` | `/api/v1/student-services/clubs/{clubId}` | Admin-only. Returns `ClubDto`, including image fields from the club row. |
 | `GET` | `/api/v1/student-services/events` | Admin-only. |
 | `POST` | `/api/v1/student-services/events` | Admin-only. Body: `CreateEventRequest`. |
 | `PATCH` | `/api/v1/student-services/events/{eventId}` | Admin-only. Body: `UpdateEventDto`. |
@@ -487,6 +521,16 @@ Most routes in this controller also require the caller to be a MyAda administrat
 | `POST` | `/api/v1/student-services/clubs/{clubId}/employees` | Admin-only. Body: `{ "userId": guid, "positionId": string|null }`. |
 | `PATCH` | `/api/v1/student-services/clubs/{clubId}/employees/{employeeId}` | Admin-only. Body: `{ "positionId": string|null }`. |
 | `DELETE` | `/api/v1/student-services/clubs/{clubId}/employees/{employeeId}` | Admin-only. |
+
+Image behavior on student-services club routes:
+
+- `GET /api/v1/student-services/clubs` returns:
+  - `profileImageUrl`: approved/public image currently stored on the club row
+  - `image`: same value as `profileImageUrl` when present, otherwise `/clubs/default.png`
+  - `proposedProfileImageUrl`: pending student-services upload when one exists
+- `GET /api/v1/student-services/clubs/{clubId}` returns the mapped `ClubDto`, so clients should expect `ProfileImageUrl` and `ProposedProfileImageUrl`.
+- `POST /api/v1/student-services/clubs/{clubId}/profile-image` stores a pending image path in `ProposedProfileImageUrl`.
+- `POST /api/v1/student-services/clubs/{clubId}/profile-image/approve` moves that pending value into `ProfileImageUrl`.
 
 ---
 
@@ -564,8 +608,27 @@ Auth: Bearer required
 
 | Method | Path | Notes |
 |--------|------|-------|
-| `PATCH` | `/api/v1/club-admin/{clubId}/profile` | `multipart/form-data`. Fields: `socialLinks`, `focusAreasJson`, `email`, `resourcesJson`, `logoFile`, `backgroundFile`. |
+| `PATCH` | `/api/v1/club-admin/{clubId}/profile` | `multipart/form-data`. Fields: `socialLinks`, `focusAreasJson`, `email`, `resourcesJson`, `logoFile`, `backgroundFile`. Uploaded `logoFile` is persisted into the club's `ProfileImageUrl`, so later club `GET` endpoints return it. |
 | `POST` | `/api/v1/club-admin/{clubId}/announcements` | Body: `{ "title": string, "message": string }`. |
+
+Current profile patch response highlights:
+
+- `clubId`
+- `updated`
+- `pendingReview`
+- `profileImageUrl`
+- `focusAreas`
+- `email`
+- `socialLinks`
+- `resources`
+- `logoUrl`
+- `backgroundUrl`
+
+Important image note:
+
+- `logoUrl` is the direct uploaded file URL returned from storage for that request.
+- `profileImageUrl` is the value persisted onto the club row and is what public club `GET` endpoints now read.
+- `backgroundUrl` is returned when uploaded, but current public club `GET` endpoints do not expose a background image field.
 
 ---
 

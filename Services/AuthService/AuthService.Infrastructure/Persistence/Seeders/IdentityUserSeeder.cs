@@ -161,6 +161,8 @@ public static class IdentityUserSeeder
                 throw new InvalidOperationException($"Failed to assign role '{roleName}' to '{userName}': {errors}");
             }
         }
+
+        await StudentUserSeeder.SeedAsync(userManager, roleManager, cancellationToken);
     }
 
     private static Guid BuildSeedUserGuid(int index)
