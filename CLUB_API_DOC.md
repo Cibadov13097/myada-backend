@@ -4,10 +4,10 @@ Last updated: 2026-04-25
 
 This document was verified against:
 
-- Live gateway base: `http://13.60.31.141:5000/club`
-- Live Swagger UI: `http://13.60.31.141:5000/club/swagger/index.html`
-- Live OpenAPI JSON: `http://13.60.31.141:5000/club/swagger/v1/swagger.json`
-- Live sample endpoint: `GET http://13.60.31.141:5000/club/api/v1/categories`
+- Live gateway base: `http://13.60.31.141:500/club`
+- Live Swagger UI: `http://13.60.31.141:500/club/swagger/index.html`
+- Live OpenAPI JSON: `http://13.60.31.141:500/club/swagger/v1/swagger.json`
+- Live sample endpoint: `GET http://13.60.31.141:500/club/api/v1/categories`
 - Source controllers under `Services/ClubManagementService/ClubManagementService.API/Controllers`
 
 The Club Management service uses URL versioning. The main path format is:
@@ -16,7 +16,7 @@ The Club Management service uses URL versioning. The main path format is:
 
 Use this gateway base in frontend and integration code:
 
-`{base} = http://13.60.31.141:5000/club`
+`{base} = http://13.60.31.141:500/club`
 
 ---
 
@@ -24,21 +24,21 @@ Use this gateway base in frontend and integration code:
 
 | Environment | Base URL | Notes |
 |-------------|----------|-------|
-| Gateway (verified) | `http://13.60.31.141:5000/club` | Recommended production entrypoint. |
+| Gateway (verified) | `http://13.60.31.141:500/club` | Recommended production entrypoint. |
 | Local service | `http://localhost:5003` | Local docker/service port. |
-| Swagger UI | `http://13.60.31.141:5000/club/swagger/index.html` | Available on the live gateway. |
-| OpenAPI JSON | `http://13.60.31.141:5000/club/swagger/v1/swagger.json` | Best machine-readable source of truth. |
+| Swagger UI | `http://13.60.31.141:500/club/swagger/index.html` | Available on the live gateway. |
+| OpenAPI JSON | `http://13.60.31.141:500/club/swagger/v1/swagger.json` | Best machine-readable source of truth. |
 
 Examples:
 
-- Categories: `http://13.60.31.141:5000/club/api/v1/categories`
-- Club detail: `http://13.60.31.141:5000/club/api/v1/clubs/1`
-- Swagger: `http://13.60.31.141:5000/club/swagger/index.html`
+- Categories: `http://13.60.31.141:500/club/api/v1/categories`
+- Club detail: `http://13.60.31.141:500/club/api/v1/clubs/1`
+- Swagger: `http://13.60.31.141:500/club/swagger/index.html`
 
 Important gateway rule:
 
-- Correct: `http://13.60.31.141:5000/club/api/v1/categories`
-- Wrong: `http://13.60.31.141:5000/api/v1/categories`
+- Correct: `http://13.60.31.141:500/club/api/v1/categories`
+- Wrong: `http://13.60.31.141:500/api/v1/categories`
 
 The gateway strips `/club` before forwarding to the club service.
 
@@ -93,8 +93,8 @@ Do not assume the controller payload is returned raw.
 
 ## Current differences from older docs
 
-- The verified production gateway host is now `13.60.31.141:5000`, not `51.20.193.29:5000`.
-- `POST /api/v1/club-proposals` is now JSON-based and anonymous, not authenticated multipart upload.
+- The verified production gateway host is now `13.60.31.141:500`, not the older `13.60.31.141:5000` or `51.20.193.29:5000` examples from previous docs.
+- `POST /api/v1/club-proposals` is anonymous and supports both `application/json` and `multipart/form-data`; use `multipart/form-data` for direct file attachments and S3 upload flow.
 - Student-services proposal routes are:
   - `/api/v1/student-services/clubs/proposals/...`
   - `/api/v1/student-services/events/proposals/...`
@@ -365,9 +365,51 @@ Auth: anonymous
 |--------|------|-------|
 | `POST` | `/api/v1/club-proposals` | Accepts `multipart/form-data` for direct file upload to S3, or `application/json` when file fields are already URLs/references. |
 
-Current request body fields:
+Swagger / OpenAPI note:
 
-- `id`
+- In Swagger UI, choose `multipart/form-data` in the request body content-type dropdown if you want file attach controls for `logoFile` and `constitutionFile`.
+- If Swagger UI is set to `application/json`, those fields are plain strings because JSON mode expects already-uploaded URLs, not binary files.
+
+Multipart form fields:
+
+| Field | Required | Type | Notes |
+|------|----------|------|-------|
+| `organizationId` | Yes | string | Submitter organization id, exactly 9 digits |
+| `name` | Yes | string | Club name |
+| `description` | Yes in legacy mode | string | Full proposal text |
+| `logoFile` | Yes | file | Uploaded to S3 by backend |
+| `constitutionFile` | Yes | file | Uploaded to S3 by backend |
+| `presidentStudentId` | No | string | Structured mode field, exactly 9 digits |
+| `vicePresidentStudentId` | No | string | Structured mode field, exactly 9 digits |
+| `otherMembersJson` | No | repeated string field | Send one 9-digit user organization id per field |
+| `commitment` | No | string | Usually `"yes"` in structured mode |
+| `shortDesc` | No | string | Structured mode field |
+| `uniqueDesc` | No | string | Structured mode field |
+| `goals` | No | string | Structured mode field |
+| `activities` | No | string | Structured mode field |
+| `alignment` | No | string | Structured mode field |
+| `vision` | No | string | Structured mode field |
+
+Multipart example:
+
+```bash
+curl -X POST "{CLUB_API_BASE}/api/v1/club-proposals" \
+  -H "Content-Type: multipart/form-data" \
+  -F "organizationId=123456789" \
+  -F "name=Robotics Club" \
+  -F "description=Club proposal description" \
+  -F "logoFile=@logo.png" \
+  -F "constitutionFile=@constitution.pdf" \
+  -F "presidentStudentId=123456780" \
+  -F "vicePresidentStudentId=876543210" \
+  -F "otherMembersJson=123456781" \
+  -F "otherMembersJson=123456782" \
+  -F "commitment=yes"
+```
+
+JSON request body fields:
+
+- `organizationId`
 - `name`
 - `description`
 - `logoFile`
@@ -383,12 +425,38 @@ Current request body fields:
 - `alignment`
 - `vision`
 
+JSON example:
+
+```json
+{
+  "organizationId": "123456789",
+  "name": "Robotics Club",
+  "description": "Club proposal description",
+  "logoFile": "https://bucket.example/club-proposals/logo.png",
+  "constitutionFile": "https://bucket.example/club-proposals/constitution.pdf",
+  "presidentStudentId": "123456780",
+  "vicePresidentStudentId": "876543210",
+  "otherMembersJson": [
+    "123456781",
+    "123456782"
+  ],
+  "commitment": "yes",
+  "shortDesc": "short text",
+  "uniqueDesc": "unique text",
+  "goals": "goals text",
+  "activities": "activities text",
+  "alignment": "alignment text",
+  "vision": "vision text"
+}
+```
+
 Important:
 
 - In multipart mode, `logoFile` and `constitutionFile` are uploaded files and the backend stores them in S3.
 - In JSON mode, `logoFile` and `constitutionFile` are string fields and should contain an already-uploaded URL/reference.
-- `otherMembersJson` is now a list of user ids (`guid` strings), not a stringified JSON blob.
-- When a proposal is approved, `otherMembersJson` users are added to club memberships.
+- `organizationId`, `presidentStudentId`, `vicePresidentStudentId`, and each `otherMembersJson` item must be exactly 9 digits.
+- `otherMembersJson` is now a list of user organization ids, not a stringified JSON blob.
+- When a proposal is approved, matching `otherMembersJson` users are resolved from Auth and added to club memberships.
 
 ---
 
@@ -667,7 +735,7 @@ If you are building new frontend code, prefer the versioned `/api/v1/...` routes
 
 Use:
 
-`http://13.60.31.141:5000/club`
+`http://13.60.31.141:500/club`
 
 Then append one of:
 
@@ -684,7 +752,7 @@ Then append one of:
 
 For exact live schemas and tags, use:
 
-- Swagger UI: `http://13.60.31.141:5000/club/swagger/index.html`
-- OpenAPI JSON: `http://13.60.31.141:5000/club/swagger/v1/swagger.json`
+- Swagger UI: `http://13.60.31.141:500/club/swagger/index.html`
+- OpenAPI JSON: `http://13.60.31.141:500/club/swagger/v1/swagger.json`
 
 This markdown file is the human-readable summary. The OpenAPI document is the canonical live contract.

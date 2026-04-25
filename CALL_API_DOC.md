@@ -1,33 +1,33 @@
 # Call Service Realtime (SignalR) Documentation for Frontend
 
-Last updated: 2026-04-20
+Last updated: 2026-04-25
 
 ## What Frontend Should Use
 
 Use API Gateway for realtime call signaling:
-- Base URL: `http://51.20.193.29:5000`
+- Base URL: `http://13.60.31.141:500`
 - Gateway prefix: `/call`
-- Hub URL: `http://51.20.193.29:5000/call/hub`
+- Hub URL: `http://13.60.31.141:500/call/hub`
 
 Direct service (diagnostics only):
-- `http://51.20.193.29:5006/hub`
+- `http://13.60.31.141:5006/hub`
 
 Local equivalents:
 - Gateway hub: `http://localhost:5000/call/hub`
 - Direct call hub: `http://localhost:5006/hub`
 
 Common 404 rule:
-- If host is gateway (`:5000`), call endpoints must include `/call`.
-- Correct: `http://51.20.193.29:5000/call/hub`
-- Wrong: `http://51.20.193.29:5000/hub`
+- If host is the deployed gateway (`:500`), call endpoints must include `/call`.
+- Correct: `http://13.60.31.141:500/call/hub`
+- Wrong: `http://13.60.31.141:500/hub`
 
 ## ICE Server Configuration (STUN/TURN)
 
 CallService now issues short-lived TURN credentials for cross-network WebRTC calls.
 
 HTTP endpoint (recommended):
-- Gateway: `GET http://51.20.193.29:5000/call/webrtc/ice-servers`
-- Direct service: `GET http://51.20.193.29:5006/webrtc/ice-servers`
+- Gateway: `GET http://13.60.31.141:500/call/webrtc/ice-servers`
+- Direct service: `GET http://13.60.31.141:5006/webrtc/ice-servers`
 - Local gateway: `GET http://localhost:5000/call/webrtc/ice-servers`
 - Local direct: `GET http://localhost:5006/webrtc/ice-servers`
 
@@ -46,9 +46,9 @@ Payload example:
   "iceServers": [
     {
       "urls": [
-        "stun:51.20.193.29:3478",
-        "turn:51.20.193.29:3478?transport=udp",
-        "turn:51.20.193.29:3478?transport=tcp"
+        "stun:13.60.31.141:3478",
+        "turn:13.60.31.141:3478?transport=udp",
+        "turn:13.60.31.141:3478?transport=tcp"
       ],
       "username": "1760944800:user-guid",
       "credential": "base64-hmac-value"
@@ -248,9 +248,9 @@ Payload:
     "iceServers": [
       {
         "urls": [
-          "stun:51.20.193.29:3478",
-          "turn:51.20.193.29:3478?transport=udp",
-          "turn:51.20.193.29:3478?transport=tcp"
+          "stun:13.60.31.141:3478",
+          "turn:13.60.31.141:3478?transport=udp",
+          "turn:13.60.31.141:3478?transport=tcp"
         ],
         "username": "1760944800:user-guid",
         "credential": "base64-hmac-value"
@@ -474,7 +474,7 @@ import * as signalR from "@microsoft/signalr";
 const accessToken = "<JWT_ACCESS_TOKEN>";
 
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("http://51.20.193.29:5000/call/hub", {
+  .withUrl("http://13.60.31.141:500/call/hub", {
     accessTokenFactory: () => accessToken
   })
   .withAutomaticReconnect()
@@ -491,7 +491,7 @@ connection.on("JoinedRoom", ({ roomId, otherParticipants }) => {
   console.log("Joined room:", roomId, otherParticipants);
 });
 
-const iceResponse = await fetch("http://51.20.193.29:5000/call/webrtc/ice-servers", {
+const iceResponse = await fetch("http://13.60.31.141:500/call/webrtc/ice-servers", {
   headers: {
     Authorization: `Bearer ${accessToken}`
   }
@@ -527,7 +527,7 @@ Dispatcher id note:
 ## Health Endpoints
 
 - Gateway health route for call service container reachability test:
-  - `GET http://51.20.193.29:5000/call/health`
+  - `GET http://13.60.31.141:500/call/health`
 - Direct call service:
-  - `GET http://51.20.193.29:5006/health`
+  - `GET http://13.60.31.141:5006/health`
 

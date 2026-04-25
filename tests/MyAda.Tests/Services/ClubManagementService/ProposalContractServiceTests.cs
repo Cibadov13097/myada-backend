@@ -1,4 +1,5 @@
 using ClubManagementService.Application.DTOs.Club;
+using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
@@ -6,6 +7,7 @@ using ClubManagementService.Infrastructure.Persistence.Context;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using System.Text.Json;
 
 namespace MyAda.Tests.Services.ClubManagementService;
 
@@ -14,6 +16,8 @@ public class ProposalContractServiceTests
     [Fact]
     public async Task ApproveClubProposalAsync_ShouldCreateMembershipsForOtherMembers()
     {
+        const string organizationId1 = "123456781";
+        const string organizationId2 = "123456782";
         var additionalMember1 = Guid.NewGuid();
         var additionalMember2 = Guid.NewGuid();
         var actorUserId = Guid.NewGuid();
@@ -24,7 +28,7 @@ public class ProposalContractServiceTests
         {
             Id = Guid.NewGuid().ToString("D"),
             ProposalId = "PROP-2026-001",
-            SubmittedByUserId = "submitter-1",
+            SubmittedByOrganizationId = "123456789",
             Name = "Robotics Club",
             Description = "Club description",
             SubmittedAt = DateTimeOffset.UtcNow,
@@ -38,8 +42,8 @@ public class ProposalContractServiceTests
             },
             OtherMembers = new List<global::ClubManagementService.Infrastructure.Services.OtherOfficer>
             {
-                new() { UserId = additionalMember1.ToString("D"), Status = "Pending" },
-                new() { UserId = additionalMember2.ToString("D"), Status = "Pending" }
+                new() { UserId = organizationId1, Status = "Pending" },
+                new() { UserId = organizationId2, Status = "Pending" }
             }
         });
 
@@ -62,6 +66,17 @@ public class ProposalContractServiceTests
             .Returns(Task.CompletedTask);
         membershipRepository.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
 
+        var authUserLookupService = new Mock<IAuthUserLookupService>();
+        authUserLookupService
+            .Setup(x => x.GetUserIdsByOrganizationalIdsAsync(
+                It.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { organizationId1, organizationId2 })),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Dictionary<string, Guid>
+            {
+                [organizationId1] = additionalMember1,
+                [organizationId2] = additionalMember2
+            });
+
         var dbOptions = new DbContextOptionsBuilder<ClubManagementDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
             .Options;
@@ -72,6 +87,7 @@ public class ProposalContractServiceTests
             clubService.Object,
             Mock.Of<IEventService>(),
             membershipRepository.Object,
+            authUserLookupService.Object,
             dbContext);
 
         var result = await service.ApproveClubProposalAsync("PROP-2026-001", actorUserId, CancellationToken.None);
@@ -81,5 +97,44 @@ public class ProposalContractServiceTests
         createdMemberships.Select(x => x.UserId).Should().BeEquivalentTo(new[] { additionalMember1, additionalMember2 });
         createdMemberships.Should().OnlyContain(x => x.ClubId == 42 && x.CreatedByUserId == actorUserId);
         membershipRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task SubmitClubProposalAsync_ShouldRejectIdentifiersThatAreNotNineDigits()
+    {
+        var dbOptions = new DbContextOptionsBuilder<ClubManagementDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
+            .Options;
+        await using var dbContext = new ClubManagementDbContext(dbOptions);
+
+        var service = new global::ClubManagementService.Infrastructure.Services.ProposalContractService(
+            new global::ClubManagementService.Infrastructure.Services.ProposalStateStore(),
+            Mock.Of<IClubService>(),
+            Mock.Of<IEventService>(),
+            Mock.Of<IClubMembershipRepository>(),
+            Mock.Of<IAuthUserLookupService>(),
+            dbContext);
+
+        var submission = new ClubProposalSubmissionDto
+        {
+            OrganizationId = "123",
+            Name = "Robotics Club",
+            LogoFile = "https://bucket.example/logo.png",
+            ConstitutionFile = "https://bucket.example/constitution.pdf",
+            PresidentStudentId = "12345678",
+            VicePresidentStudentId = "1234567890",
+            OtherMembersJson = new List<string> { "abc123" },
+            Commitment = "yes",
+            ShortDesc = "short text"
+        };
+
+        var result = await service.SubmitClubProposalAsync(submission.OrganizationId, submission, CancellationToken.None);
+
+        result.Success.Should().BeFalse();
+        var errorJson = JsonSerializer.Serialize(result.ErrorBody);
+        errorJson.Should().Contain("Organization id must be exactly 9 digits.");
+        errorJson.Should().Contain("President student id must be exactly 9 digits.");
+        errorJson.Should().Contain("Vice president student id must be exactly 9 digits.");
+        errorJson.Should().Contain("otherMembersJson must be a list of valid 9-digit user ids.");
     }
 }

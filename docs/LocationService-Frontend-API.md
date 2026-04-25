@@ -1,26 +1,26 @@
 # LocationService Frontend API Documentation
 
-Last updated: 2026-04-19
+Last updated: 2026-04-25
 
 ## Base URLs
 
-- API Gateway (recommended): `http://51.20.193.29:5000`
+- API Gateway (recommended): `http://13.60.31.141:500`
 - Gateway route prefix for LocationService: `/location`
 - LocationService API base path: `/api/v1`
 - Direct service (diagnostics only):
-  - Production: `http://51.20.193.29:5005`
+  - Production: `http://13.60.31.141:5005`
   - Local: `http://localhost:5005`
 
 Frontend should use:
 
-- **`http://51.20.193.29:5000/location/api/v1`**
+- **`http://13.60.31.141:500/location/api/v1`**
 
 ## Common 404 Mistake (Important)
 
-If you call through gateway (`:5000`), you must include `/location`.
+If you call through the deployed gateway (`:500`), you must include `/location`.
 
-- Correct: `http://51.20.193.29:5000/location/api/v1/buildings`
-- Wrong: `http://51.20.193.29:5000/api/v1/buildings` (returns 404 on gateway)
+- Correct: `http://13.60.31.141:500/location/api/v1/buildings`
+- Wrong: `http://13.60.31.141:500/api/v1/buildings` (returns 404 on gateway)
 
 ---
 
@@ -96,7 +96,7 @@ RoomType values:
 
 - Method: `GET`
 - URL: `/buildings`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/buildings`
+- Full URL: `http://13.60.31.141:500/location/api/v1/buildings`
 - Auth: Optional
 
 Response:
@@ -111,7 +111,7 @@ Response:
 
 - Method: `GET`
 - URL: `/buildings/{id}`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/buildings/{id}`
+- Full URL: `http://13.60.31.141:500/location/api/v1/buildings/{id}`
 - Auth: Optional
 
 Response:
@@ -126,7 +126,7 @@ If not found: `404`
 
 - Method: `POST`
 - URL: `/buildings`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/buildings`
+- Full URL: `http://13.60.31.141:500/location/api/v1/buildings`
 - Auth: Required (`admin`)
 
 Body:
@@ -141,7 +141,7 @@ Response: `201 Created`
 
 - Method: `PUT`
 - URL: `/buildings/{id}`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/buildings/{id}`
+- Full URL: `http://13.60.31.141:500/location/api/v1/buildings/{id}`
 - Auth: Required (`admin`)
 
 Body:
@@ -156,7 +156,7 @@ Response: `200 OK`
 
 - Method: `DELETE`
 - URL: `/buildings/{id}`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/buildings/{id}`
+- Full URL: `http://13.60.31.141:500/location/api/v1/buildings/{id}`
 - Auth: Required (`admin`)
 
 Response: `204 No Content`
@@ -169,7 +169,7 @@ Response: `204 No Content`
 
 - Method: `GET`
 - URL: `/rooms`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/rooms`
+- Full URL: `http://13.60.31.141:500/location/api/v1/rooms`
 - Auth: Optional
 
 Response:
@@ -192,7 +192,7 @@ Response:
 
 - Method: `GET`
 - URL: `/rooms/{id}`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/rooms/{id}`
+- Full URL: `http://13.60.31.141:500/location/api/v1/rooms/{id}`
 - Auth: Optional
 
 Response:
@@ -215,7 +215,7 @@ If not found: `404`
 
 - Method: `GET`
 - URL: `/rooms/by-building/{buildingId}`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/rooms/by-building/{buildingId}`
+- Full URL: `http://13.60.31.141:500/location/api/v1/rooms/by-building/{buildingId}`
 - Auth: Optional
 
 Response: array of `RoomDto`
@@ -224,7 +224,7 @@ Response: array of `RoomDto`
 
 - Method: `POST`
 - URL: `/rooms`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/rooms`
+- Full URL: `http://13.60.31.141:500/location/api/v1/rooms`
 - Auth: Required (`admin`)
 
 Body:
@@ -245,7 +245,7 @@ Response: `201 Created`
 
 - Method: `PUT`
 - URL: `/rooms/{id}`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/rooms/{id}`
+- Full URL: `http://13.60.31.141:500/location/api/v1/rooms/{id}`
 - Auth: Required (`admin`)
 
 Body:
@@ -266,7 +266,7 @@ Response: `200 OK`
 
 - Method: `DELETE`
 - URL: `/rooms/{id}`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/rooms/{id}`
+- Full URL: `http://13.60.31.141:500/location/api/v1/rooms/{id}`
 - Auth: Required (`admin`)
 
 Response: `204 No Content`
@@ -279,7 +279,7 @@ Response: `204 No Content`
 
 - Method: `POST`
 - URL: `/locations/validate-room-location`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/locations/validate-room-location`
+- Full URL: `http://13.60.31.141:500/location/api/v1/locations/validate-room-location`
 - Auth: Optional
 
 Body:
@@ -303,7 +303,7 @@ Returns `false` if room/building does not exist or relation is invalid.
 
 - Method: `GET`
 - URL: `/locations/details`
-- Full URL: `http://51.20.193.29:5000/location/api/v1/locations/details`
+- Full URL: `http://13.60.31.141:500/location/api/v1/locations/details`
 - Auth: Optional
 
 Current implementation returns `200 OK` with empty body.

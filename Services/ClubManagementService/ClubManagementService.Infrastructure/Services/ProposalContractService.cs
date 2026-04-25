@@ -16,12 +16,13 @@ namespace ClubManagementService.Infrastructure.Services;
 
 public sealed class ProposalContractService : IProposalContractService
 {
-    private static readonly Regex EightDigitStudent = new(@"^\d{8}$", RegexOptions.Compiled);
+    private static readonly Regex NineDigitOrganizationId = new(@"^\d{9}$", RegexOptions.Compiled);
 
     private readonly ProposalStateStore _store;
     private readonly IClubService _clubService;
     private readonly IEventService _eventService;
     private readonly IClubMembershipRepository _clubMembershipRepository;
+    private readonly IAuthUserLookupService _authUserLookupService;
     private readonly ClubManagementDbContext _db;
 
     public ProposalContractService(
@@ -29,12 +30,14 @@ public sealed class ProposalContractService : IProposalContractService
         IClubService clubService,
         IEventService eventService,
         IClubMembershipRepository clubMembershipRepository,
+        IAuthUserLookupService authUserLookupService,
         ClubManagementDbContext db)
     {
         _store = store;
         _clubService = clubService;
         _eventService = eventService;
         _clubMembershipRepository = clubMembershipRepository;
+        _authUserLookupService = authUserLookupService;
         _db = db;
     }
 
@@ -45,10 +48,16 @@ public sealed class ProposalContractService : IProposalContractService
     {
         cancellationToken.ThrowIfCancellationRequested();
         var errors = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        var organizationId = submission.OrganizationId?.Trim() ?? userId?.Trim() ?? string.Empty;
 
         var name = submission.Name?.Trim() ?? string.Empty;
         if (string.IsNullOrEmpty(name))
             AddErr(errors, nameof(submission.Name), "Club name is required.");
+
+        if (string.IsNullOrWhiteSpace(organizationId))
+            AddErr(errors, "organizationId", "Organization id is required.");
+        else if (!NineDigitOrganizationId.IsMatch(organizationId))
+            AddErr(errors, "organizationId", "Organization id must be exactly 9 digits.");
 
         var description = submission.Description?.Trim() ?? string.Empty;
         EnrichFromDescription(submission.Description, submission);
@@ -121,7 +130,7 @@ public sealed class ProposalContractService : IProposalContractService
         {
             Id = id,
             ProposalId = proposalId,
-            SubmittedByUserId = userId?.Trim() ?? string.Empty,
+            SubmittedByOrganizationId = organizationId,
             Name = name,
             Description = description,
             ShortDesc = shortDesc,
@@ -552,7 +561,7 @@ public sealed class ProposalContractService : IProposalContractService
 
     private static object MapClubProposal(ClubProposalRecord r)
     {
-        var submittedBy = string.IsNullOrWhiteSpace(r.SubmittedByUserId) ? "User" : r.SubmittedByUserId;
+        var submittedBy = string.IsNullOrWhiteSpace(r.SubmittedByOrganizationId) ? "User" : r.SubmittedByOrganizationId;
         return new
         {
             id = r.Id,
@@ -594,10 +603,14 @@ public sealed class ProposalContractService : IProposalContractService
         if (members.Count == 0)
             return;
 
+        var userLookup = await _authUserLookupService
+            .GetUserIdsByOrganizationalIdsAsync(members.Select(m => m.UserId), cancellationToken)
+            .ConfigureAwait(false);
+
         var existingUserIds = await _clubMembershipRepository.GetUserIdsByClubAsync(clubId, cancellationToken).ConfigureAwait(false);
         var existing = new HashSet<Guid>(existingUserIds);
         var toInsert = members
-            .Select(m => Guid.TryParse(m.UserId, out var userId) ? userId : Guid.Empty)
+            .Select(m => userLookup.TryGetValue(m.UserId, out var userId) ? userId : Guid.Empty)
             .Where(userId => userId != Guid.Empty && !existing.Contains(userId))
             .Distinct()
             .ToList();
@@ -710,13 +723,13 @@ public sealed class ProposalContractService : IProposalContractService
     {
         if (string.IsNullOrWhiteSpace(s.PresidentStudentId))
             AddErr(errors, "presidentStudentId", "President student id is required when submitting structured officer data.");
-        else if (!EightDigitStudent.IsMatch(s.PresidentStudentId.Trim()))
-            AddErr(errors, "presidentStudentId", "President student id must be exactly 8 digits.");
+        else if (!NineDigitOrganizationId.IsMatch(s.PresidentStudentId.Trim()))
+            AddErr(errors, "presidentStudentId", "President student id must be exactly 9 digits.");
 
         if (string.IsNullOrWhiteSpace(s.VicePresidentStudentId))
             AddErr(errors, "vicePresidentStudentId", "Vice president student id is required when submitting structured officer data.");
-        else if (!EightDigitStudent.IsMatch(s.VicePresidentStudentId.Trim()))
-            AddErr(errors, "vicePresidentStudentId", "Vice president student id must be exactly 8 digits.");
+        else if (!NineDigitOrganizationId.IsMatch(s.VicePresidentStudentId.Trim()))
+            AddErr(errors, "vicePresidentStudentId", "Vice president student id must be exactly 9 digits.");
 
         if (!string.Equals(s.Commitment?.Trim(), "yes", StringComparison.OrdinalIgnoreCase))
             AddErr(errors, "commitment", "Commitment must be \"yes\" when submitting structured data.");
@@ -729,7 +742,7 @@ public sealed class ProposalContractService : IProposalContractService
             }
             catch
             {
-                AddErr(errors, "otherMembersJson", "otherMembersJson must be a list of valid user ids.");
+                AddErr(errors, "otherMembersJson", "otherMembersJson must be a list of valid 9-digit user ids.");
             }
         }
     }
@@ -743,21 +756,22 @@ public sealed class ProposalContractService : IProposalContractService
             return new List<OtherOfficer>();
 
         var result = new List<OtherOfficer>();
-        var seen = new HashSet<Guid>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
         foreach (var member in members)
         {
             if (string.IsNullOrWhiteSpace(member))
                 continue;
 
-            if (!Guid.TryParse(member.Trim(), out var userId) || userId == Guid.Empty)
-                throw new FormatException("otherMembersJson must contain only valid user ids.");
+            var organizationId = member.Trim();
+            if (!NineDigitOrganizationId.IsMatch(organizationId))
+                throw new FormatException("otherMembersJson must contain only valid 9-digit user ids.");
 
-            if (!seen.Add(userId))
+            if (!seen.Add(organizationId))
                 continue;
 
             result.Add(new OtherOfficer
             {
-                UserId = userId.ToString("D"),
+                UserId = organizationId,
                 Status = "Pending"
             });
         }

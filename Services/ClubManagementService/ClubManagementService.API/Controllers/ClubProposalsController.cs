@@ -5,6 +5,8 @@ using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Primitives;
+using System.Text.Json;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -14,6 +16,8 @@ namespace ClubManagementService.API.Controllers;
 [Tags("Club Proposals")]
 public class ClubProposalsController : ControllerBase
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
     private readonly IProposalContractService _proposalContract;
     private readonly IImageStorageService _imageStorageService;
 
@@ -49,12 +53,11 @@ public class ClubProposalsController : ControllerBase
         }
         else
         {
-            body = await Request.ReadFromJsonAsync<ClubProposalSubmissionDto>(cancellationToken: cancellationToken).ConfigureAwait(false)
-                   ?? new ClubProposalSubmissionDto();
+            body = await ReadJsonBodyAsync(cancellationToken).ConfigureAwait(false);
         }
 
         var result = await _proposalContract
-            .SubmitClubProposalAsync(body.Id, body, cancellationToken)
+            .SubmitClubProposalAsync(body.OrganizationId, body, cancellationToken)
             .ConfigureAwait(false);
         if (!result.Success)
             return BadRequest(result.ErrorBody);
@@ -67,7 +70,7 @@ public class ClubProposalsController : ControllerBase
     private static ClubProposalMultipartForm ToMultipartForm(IFormCollection form) =>
         new()
         {
-            Id = form["id"],
+            OrganizationId = FirstNonEmpty(form["organizationId"], form["id"]),
             Name = form["name"],
             Description = form["description"],
             LogoFile = form.Files.GetFile("logoFile"),
@@ -83,6 +86,37 @@ public class ClubProposalsController : ControllerBase
             Alignment = form["alignment"],
             Vision = form["vision"]
         };
+
+    private async Task<ClubProposalSubmissionDto> ReadJsonBodyAsync(CancellationToken cancellationToken)
+    {
+        using var document = await JsonDocument.ParseAsync(Request.Body, cancellationToken: cancellationToken).ConfigureAwait(false);
+        if (document.RootElement.ValueKind != JsonValueKind.Object)
+            return new ClubProposalSubmissionDto();
+
+        var dto = document.RootElement.Deserialize<ClubProposalSubmissionDto>(JsonOptions)
+                  ?? new ClubProposalSubmissionDto();
+
+        if (string.IsNullOrWhiteSpace(dto.OrganizationId)
+            && document.RootElement.TryGetProperty("id", out var legacyId)
+            && legacyId.ValueKind == JsonValueKind.String)
+        {
+            dto.OrganizationId = legacyId.GetString();
+        }
+
+        return dto;
+    }
+
+    private static string? FirstNonEmpty(params StringValues[] values)
+    {
+        foreach (var value in values)
+        {
+            var trimmed = value.ToString().Trim();
+            if (!string.IsNullOrWhiteSpace(trimmed))
+                return trimmed;
+        }
+
+        return null;
+    }
 
     private async Task<string?> UploadFileIfPresentAsync(string directory, IFormFile? file, CancellationToken cancellationToken)
     {

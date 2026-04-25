@@ -17,34 +17,39 @@ Errors often surface as `{ "message": "..." }` and sometimes `{ "errors": { "fie
 
 ## 2. Club proposals (student submit + staff queue)
 
-### 2.1 Submit club proposal (JSON body)
+### 2.1 Submit club proposal (multipart or JSON body)
 
 **Endpoint**
 
 - `POST /api/v1/club-proposals`  
   - Preferred: `Content-Type: multipart/form-data`  
   - Also accepts: `Content-Type: application/json` when `logoFile` and `constitutionFile` are already uploaded URLs  
-  - **No auth required** (submitter is read from request body field `id`; no backend format validation currently).
+  - **No auth required** (submitter is read from request body field `organizationId`, which must be exactly 9 digits).
+
+**Swagger UI note**
+
+- If you want `logoFile` and `constitutionFile` to appear as file attachments in Swagger, choose `multipart/form-data` in the request body content-type selector.
+- If Swagger is set to `application/json`, those fields are expected to be URL strings, so Swagger shows text inputs instead of file pickers.
 
 **Request body fields**
 
 | Field | Required | Notes |
 |-----------|----------|--------|
-| `id` | Optional | Submitter id as raw string (currently not validated) |
+| `organizationId` | Yes | Submitter organization id, exactly **9 digits** |
 | `name` | Yes | Club name |
 | `description` | Yes for “legacy” mode | Single block (e.g. sections joined with `\n\n`), max **12000** chars. Prefixes used in UI: `Summary:`, `Uniqueness:`, `Goals:`, `Activities:`, `Mission alignment:`, `Vision:` |
-| `logoFile` | Yes | In multipart mode: image/document file uploaded to S3 by backend. In JSON mode: already-uploaded URL/reference string |
-| `constitutionFile` | Yes | In multipart mode: file uploaded to S3 by backend. In JSON mode: already-uploaded URL/reference string |
-| `presidentStudentId` | Optional | Exactly **8 digits** if structured path |
-| `vicePresidentStudentId` | Optional | Exactly **8 digits** if structured path |
-| `otherMembersJson` | Optional | List of user ids (`guid` strings). In multipart mode send repeated form fields using the same key |
+| `logoFile` | Yes | In multipart mode: file attachment uploaded to S3 by backend. In JSON mode: already-uploaded URL/reference string |
+| `constitutionFile` | Yes | In multipart mode: file attachment uploaded to S3 by backend. In JSON mode: already-uploaded URL/reference string |
+| `presidentStudentId` | Optional | Exactly **9 digits** if structured path |
+| `vicePresidentStudentId` | Optional | Exactly **9 digits** if structured path |
+| `otherMembersJson` | Optional | List of user organization ids, each exactly **9 digits**. In multipart mode send repeated form fields using the same key |
 | `commitment` | Optional | `"yes"` when structured officer data is used |
 | `shortDesc`, `uniqueDesc`, `goals`, `activities`, `alignment`, `vision` | Optional | Plain strings; avoid relying on parsing `description` only |
 
 **Behavior**
 
 - **Legacy mode**: `name` + `description` + valid files; no structured officer fields required.
-- **Structured mode**: if any structured / extra text field is present, **president**, **vice president**, and **`commitment: "yes"`** are validated with the **8-digit** rule where applicable.
+- **Structured mode**: if any structured / extra text field is present, **president**, **vice president**, and every `otherMembersJson` item are validated as **9-digit** ids, and **`commitment: "yes"`** is required.
 - Empty title+description rows are normalized out server-side when building stored list from structured parts.
 
 **Example multipart payload**
@@ -52,15 +57,15 @@ Errors often surface as `{ "message": "..." }` and sometimes `{ "errors": { "fie
 Use repeated `otherMembersJson` fields for the user list:
 
 ```text
-id=00000000-0000-0000-0000-000000000001
+organizationId=123456789
 name=Club Propose
 description=Good to go
 logoFile=<binary file>
 constitutionFile=<binary file>
-presidentStudentId=12345678
-vicePresidentStudentId=87654321
-otherMembersJson=11111111-1111-1111-1111-111111111111
-otherMembersJson=22222222-2222-2222-2222-222222222222
+presidentStudentId=123456780
+vicePresidentStudentId=876543210
+otherMembersJson=123456781
+otherMembersJson=123456782
 commitment=yes
 shortDesc=short text
 uniqueDesc=unique text
@@ -70,20 +75,37 @@ alignment=alignment text
 vision=vision text
 ```
 
+**Example multipart cURL**
+
+```bash
+curl -X POST "{CLUB_API_BASE}/api/v1/club-proposals" \
+  -H "Content-Type: multipart/form-data" \
+  -F "organizationId=123456789" \
+  -F "name=Club Propose" \
+  -F "description=Good to go" \
+  -F "logoFile=@logo.png" \
+  -F "constitutionFile=@constitution.pdf" \
+  -F "presidentStudentId=123456780" \
+  -F "vicePresidentStudentId=876543210" \
+  -F "otherMembersJson=123456781" \
+  -F "otherMembersJson=123456782" \
+  -F "commitment=yes"
+```
+
 **Example JSON request body**
 
 ```json
 {
-  "id": "00000000-0000-0000-0000-000000000001",
+  "organizationId": "123456789",
   "name": "Club Propose",
   "description": "Good to go",
   "logoFile": "https://bucket.example/club-proposals/logo.png",
   "constitutionFile": "https://bucket.example/club-proposals/constitution.pdf",
-  "presidentStudentId": "12345678",
-  "vicePresidentStudentId": "87654321",
+  "presidentStudentId": "123456780",
+  "vicePresidentStudentId": "876543210",
   "otherMembersJson": [
-    "11111111-1111-1111-1111-111111111111",
-    "22222222-2222-2222-2222-222222222222"
+    "123456781",
+    "123456782"
   ],
   "commitment": "yes",
   "shortDesc": "short text",
@@ -600,7 +622,7 @@ Notes:
 |------|--------|
 | Proposals | Use canonical URLs; keep legacy aliases as fallback during rollout |
 | unwrap | Read `result` / `data` from AutoWrapper |
-| Club submit | JSON body: `id`, `name`, `description`, `logoFile`, `constitutionFile`; optional structured fields |
+| Club submit | Prefer `multipart/form-data` for direct file attachment uploads; use JSON only when `logoFile` and `constitutionFile` are already uploaded URLs |
 | SS queues | Use `page` / `limit` / `totalCount` for proposals and event proposals |
 | Event approve | Send `assignments` covering every `subEventIndex` when `subEvents.length > 0` |
 | Focus areas | `PATCH` with `focusAreasJson` only for card save; send full array; max 6; icon whitelist |

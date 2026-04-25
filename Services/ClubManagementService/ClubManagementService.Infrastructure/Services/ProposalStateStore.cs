@@ -93,7 +93,7 @@ public sealed class ClubProposalRecord
 {
     public string Id { get; init; } = string.Empty;
     public string ProposalId { get; init; } = string.Empty;
-    public string SubmittedByUserId { get; init; } = string.Empty;
+    public string SubmittedByOrganizationId { get; init; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string? ShortDesc { get; set; }

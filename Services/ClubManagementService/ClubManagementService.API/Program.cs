@@ -144,6 +144,7 @@ builder.Services.AddSingleton<ClubAdminWorkspaceStore>();
 builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection(S3StorageOptions.SectionName));
 builder.Services.AddSingleton<IImageStorageService, S3ImageStorageService>();
 builder.Services.AddSingleton<ProposalStateStore>();
+builder.Services.AddScoped<IAuthUserLookupService, AuthUserLookupService>();
 builder.Services.AddScoped<IProposalContractService, ProposalContractService>();
 builder.Services.AddScoped<IClubAdminService, ClubAdminService>();
 

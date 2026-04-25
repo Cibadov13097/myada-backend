@@ -5,14 +5,14 @@ Last updated: 2026-04-25
 Base path (service): `/api`
 
 Gateway route format (frontend):
-- `http://13.60.31.141:5000/support/api/...`
+- `http://13.60.31.141:500/support/api/...`
 
 Direct service format (diagnostics):
 - Production: `http://13.60.31.141:5008/api/...`
 - Local: `http://localhost:5008/api/...`
 
 Common 404 rule:
-- If host is gateway (`:5000`), `/support` prefix is required.
+- If host is the deployed gateway (`:500`), `/support` prefix is required.
 
 Authentication: Bearer JWT is required for all endpoints.
 

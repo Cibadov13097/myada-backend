@@ -15,15 +15,17 @@ public class ClubProposalsControllerTests
     [Fact]
     public async Task CreateMultipart_ShouldUploadFilesAndSubmitUserList()
     {
-        var userId1 = Guid.NewGuid().ToString("D");
-        var userId2 = Guid.NewGuid().ToString("D");
+        const string organizationId = "123456789";
+        const string userId1 = "123456781";
+        const string userId2 = "123456782";
 
         var proposalContract = new Mock<IProposalContractService>();
         proposalContract
             .Setup(x => x.SubmitClubProposalAsync(
-                "submitter-1",
+                organizationId,
                 It.Is<ClubProposalSubmissionDto>(dto =>
-                    dto.LogoFile == "https://bucket.example/logo.png"
+                    dto.OrganizationId == organizationId
+                    && dto.LogoFile == "https://bucket.example/logo.png"
                     && dto.ConstitutionFile == "https://bucket.example/constitution.pdf"
                     && dto.LogoFilePart != null
                     && dto.LogoFilePart.FileName == "logo.png"
@@ -66,7 +68,7 @@ public class ClubProposalsControllerTests
         };
         var form = new FormCollection(new Dictionary<string, StringValues>
         {
-            ["id"] = "submitter-1",
+            ["organizationId"] = organizationId,
             ["name"] = "Robotics Club",
             ["description"] = "Club proposal description",
             ["otherMembersJson"] = new StringValues(new[] { userId1, userId2 })

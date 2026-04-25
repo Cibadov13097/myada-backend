@@ -1,6 +1,6 @@
 # Notification Service API Documentation
 
-Last updated: 2026-04-24
+Last updated: 2026-04-25
 
 ## Overview
 
@@ -28,7 +28,7 @@ Important current behavior:
 
 Use the API Gateway for frontend/public access:
 
-- Production gateway base: `http://13.60.31.141:5000/notification`
+- Production gateway base: `http://13.60.31.141:500/notification`
 - Local gateway base: `http://localhost:5000/notification`
 - Gateway path prefix: `/notification`
 
@@ -40,19 +40,19 @@ Use the service directly only for local debugging or internal service-to-service
 
 Examples:
 
-- Gateway list endpoint: `GET http://13.60.31.141:5000/notification/api/v1/notifications`
+- Gateway list endpoint: `GET http://13.60.31.141:500/notification/api/v1/notifications`
 - Direct list endpoint: `GET http://13.60.31.141:5004/api/v1/notifications`
 
 Swagger is available in Development environment only:
 
-- Production gateway swagger: `http://13.60.31.141:5000/notification/swagger/index.html`
+- Production gateway swagger: `http://13.60.31.141:500/notification/swagger/index.html`
 - Production direct swagger: `http://13.60.31.141:5004/swagger/index.html`
 - Local gateway swagger: `http://localhost:5000/notification/swagger/index.html`
 - Local direct swagger: `http://localhost:5004/swagger/index.html`
 
 Important routing note:
 
-- the deployed notification gateway route is `http://13.60.31.141:5000/notification/...`
+- the deployed notification gateway route is `http://13.60.31.141:500/notification/...`
 - `http://13.60.31.141/` by itself is not the Notification Service base URL in the current repo configuration
 
 ## Authentication
@@ -313,7 +313,7 @@ Docker compose mapping in this repo:
 List notifications through gateway:
 
 ```bash
-curl "http://13.60.31.141:5000/notification/api/v1/notifications?page=1&limit=20"
+curl "http://13.60.31.141:500/notification/api/v1/notifications?page=1&limit=20"
 ```
 
 Send email directly to the service:

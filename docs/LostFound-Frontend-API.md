@@ -1,6 +1,6 @@
 # LostFound API Documentation (Gateway First)
 
-Last updated: 2026-04-23
+Last updated: 2026-04-25
 
 This document covers only the LostFound service (`Services/LostFoundService`) and is aligned with:
 - `Services/LostFoundService/LostFoundService.API/Controllers/LostAndFoundController.cs`
@@ -12,21 +12,21 @@ This document covers only the LostFound service (`Services/LostFoundService`) an
 
 ## Base URLs
 
-- Gateway (recommended): `http://13.60.31.141:5000`
+- Gateway (recommended): `http://13.60.31.141:500`
 - Gateway prefix for LostFound: `/lostfound`
-- Effective gateway base: `http://13.60.31.141:5000/lostfound`
+- Effective gateway base: `http://13.60.31.141:500/lostfound`
 
 Direct service (diagnostics only):
 - Production direct: `http://13.60.31.141:5002`
 - Local direct: `http://localhost:5002`
 
 Swagger:
-- Gateway: `http://13.60.31.141:5000/lostfound/swagger/index.html`
+- Gateway: `http://13.60.31.141:500/lostfound/swagger/index.html`
 - Direct: `http://13.60.31.141:5002/swagger/index.html`
 
 Important gateway rule:
-- Correct: `http://13.60.31.141:5000/lostfound/api/lost-and-found/items`
-- Wrong: `http://13.60.31.141:5000/api/lost-and-found/items` (gateway 404)
+- Correct: `http://13.60.31.141:500/lostfound/api/lost-and-found/items`
+- Wrong: `http://13.60.31.141:500/api/lost-and-found/items` (gateway 404)
 
 ## Authentication and Roles
 
@@ -62,7 +62,7 @@ Legacy APIs:
 ## 1) Modern API: `/api/lost-and-found`
 
 Gateway prefix for all paths in this section:
-- `http://13.60.31.141:5000/lostfound`
+- `http://13.60.31.141:500/lostfound`
 
 ### 1.1 Endpoint Matrix
 
@@ -569,4 +569,3 @@ Content-Type: multipart/form-data
 
 Form field:
 - `imageFile`: `<binary>`
-

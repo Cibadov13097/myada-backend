@@ -1,6 +1,6 @@
 # Auth API Documentation (Gateway First)
 
-Last updated: 2026-04-23
+Last updated: 2026-04-25
 
 This document is verified against:
 - `Services/AuthService/AuthService.Api/Controllers/AuthController.cs`
@@ -9,7 +9,7 @@ This document is verified against:
 ## Base URLs
 
 Recommended for frontend (via API Gateway):
-- Production: `http://13.60.31.141:5000`
+- Production: `http://13.60.31.141:500`
 - Local: `http://localhost:5000`
 
 Direct auth service (if bypassing gateway):

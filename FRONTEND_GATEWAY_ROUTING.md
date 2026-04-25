@@ -1,30 +1,32 @@
 # Frontend Gateway Routing Guide (Avoid 404)
 
-Last updated: 2026-04-19
+Last updated: 2026-04-25
 
 ## Why 404 happens
 
 Most 404 issues come from mixing:
-- Gateway host: `http://51.20.193.29:5000`
+- Gateway host: `http://13.60.31.141:500`
 - Direct service paths like `/api/...`
 
-If you use gateway host (`:5000`), you must use the correct gateway prefix per service.
+If you use the deployed gateway host (`:500`), you must use the correct gateway prefix per service.
 
 ## Base URLs
 
-- API Gateway (recommended for frontend): `http://51.20.193.29:5000`
+- API Gateway (recommended for frontend): `http://13.60.31.141:500`
 - Direct services (diagnostics only):
-  - Auth: `http://51.20.193.29:5001`
-  - LostFound: `http://51.20.193.29:5002`
-  - Club: `http://51.20.193.29:5003`
-  - Notification: `http://51.20.193.29:5004`
-  - Location: `http://51.20.193.29:5005`
-  - Call: `http://51.20.193.29:5006`
-  - Support: `http://51.20.193.29:5008`
+  - Auth: `http://13.60.31.141:5001`
+  - LostFound: `http://13.60.31.141:5002`
+  - Club: `http://13.60.31.141:5003`
+  - Notification: `http://13.60.31.141:5004`
+  - Location: `http://13.60.31.141:5005`
+  - Call: `http://13.60.31.141:5006`
+  - Support: `http://13.60.31.141:5008`
+
+These direct service URLs are for diagnostics only and may vary by environment. Frontend traffic should use the gateway base above.
 
 ## Gateway route map
 
-When host is `http://51.20.193.29:5000`, use:
+When host is `http://13.60.31.141:500`, use:
 
 - Auth:
   - `/api/auth/...` (supported)
@@ -41,61 +43,61 @@ When host is `http://51.20.193.29:5000`, use:
 ### Support Staff Statuses
 
 Direct service:
-- `http://51.20.193.29:5008/api/SupportStaffStatuses/member/{memberId}`
+- `http://13.60.31.141:5008/api/SupportStaffStatuses/member/{memberId}`
 
 Gateway equivalent:
-- `http://51.20.193.29:5000/support/api/SupportStaffStatuses/member/{memberId}`
+- `http://13.60.31.141:500/support/api/SupportStaffStatuses/member/{memberId}`
 
 Wrong (will 404 on gateway):
-- `http://51.20.193.29:5000/api/SupportStaffStatuses/member/{memberId}`
+- `http://13.60.31.141:500/api/SupportStaffStatuses/member/{memberId}`
 
 ### Call Hub
 
 Gateway:
-- `http://51.20.193.29:5000/call/hub`
+- `http://13.60.31.141:500/call/hub`
 
 Direct:
-- `http://51.20.193.29:5006/hub`
+- `http://13.60.31.141:5006/hub`
 
 ### Auth users-by-role
 
 Gateway:
-- `http://51.20.193.29:5000/api/auth/users-by-role/{role}`
+- `http://13.60.31.141:500/api/auth/users-by-role/{role}`
 
 Direct:
-- `http://51.20.193.29:5001/api/auth/users-by-role/{role}`
+- `http://13.60.31.141:5001/api/auth/users-by-role/{role}`
 
 ### LostFound and Club (common 404 case)
 
 Wrong on gateway (missing service prefix):
-- `http://51.20.193.29:5000/api/v1/found-items`
-- `http://51.20.193.29:5000/api/v1/categories`
+- `http://13.60.31.141:500/api/v1/found-items`
+- `http://13.60.31.141:500/api/v1/categories`
 
 Correct on gateway:
-- `http://51.20.193.29:5000/lostfound/api/v1/found-items` (if endpoint exists in service)
-- `http://51.20.193.29:5000/club/api/v1/categories`
+- `http://13.60.31.141:500/lostfound/api/v1/found-items` (if endpoint exists in service)
+- `http://13.60.31.141:500/club/api/v1/categories`
 
 Direct service examples:
-- `http://51.20.193.29:5002/api/v1/found-items`
-- `http://51.20.193.29:5003/api/v1/categories`
+- `http://13.60.31.141:5002/api/v1/found-items`
+- `http://13.60.31.141:5003/api/v1/categories`
 
 ## Swagger URLs
 
 - Gateway Swagger:
-  - Auth: `http://51.20.193.29:5000/auth/swagger/index.html`
-  - Support: `http://51.20.193.29:5000/support/swagger/index.html`
-  - Call: `http://51.20.193.29:5000/call/swagger/index.html`
+  - Auth: `http://13.60.31.141:500/auth/swagger/index.html`
+  - Support: `http://13.60.31.141:500/support/swagger/index.html`
+  - Call: `http://13.60.31.141:500/call/swagger/index.html`
 - Direct Swagger:
-  - Auth: `http://51.20.193.29:5001/swagger/index.html`
-  - Support: `http://51.20.193.29:5008/swagger/index.html`
-  - Call: `http://51.20.193.29:5006/swagger/index.html`
+  - Auth: `http://13.60.31.141:5001/swagger/index.html`
+  - Support: `http://13.60.31.141:5008/swagger/index.html`
+  - Call: `http://13.60.31.141:5006/swagger/index.html`
 
 ## Frontend config recommendation
 
 Use one gateway base URL and service-specific prefixes.
 
 ```ts
-const GATEWAY_BASE = "http://51.20.193.29:5000";
+const GATEWAY_BASE = "http://13.60.31.141:500";
 
 export const endpoints = {
   auth: `${GATEWAY_BASE}/api/auth`,
@@ -110,7 +112,7 @@ export const endpoints = {
 
 ## 404 troubleshooting checklist
 
-1. Confirm host is correct (`:5000` gateway vs direct service port).
+1. Confirm host is correct (`:500` deployed gateway vs direct service port).
 2. If using gateway, confirm service prefix exists (`/support`, `/call`, etc.).
 3. Do not copy direct service path into gateway URL without adding gateway prefix.
 4. For protected endpoints, ensure `Authorization: Bearer <token>` is present (otherwise 401/403, not 404).

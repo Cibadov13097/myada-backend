@@ -119,12 +119,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\appsettings.json
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Api\bin\Debug\net8.0\LocationService.Api.exe

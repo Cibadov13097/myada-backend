@@ -4,16 +4,16 @@ Documentation for the Location microservice (`Services/LocationService`), includ
 
 ## Base URL (example deployment)
 
-- **Gateway host:** `http://51.20.193.29:5000`
+- **Gateway host:** `http://13.60.31.141:500`
 - **Path pattern:** `{gateway}/location` + service routes `/api/v1/...`
 
 The gateway strips the `/location` prefix when forwarding to the service, so clients call:
 
-`http://51.20.193.29:5000/location/api/v1/...`
+`http://13.60.31.141:500/location/api/v1/...`
 
 **Example**
 
-- `GET http://51.20.193.29:5000/location/api/v1/rooms` — list all rooms.
+- `GET http://13.60.31.141:500/location/api/v1/rooms` — list all rooms.
 
 ---
 
@@ -40,8 +40,8 @@ The gateway strips the `/location` prefix when forwarding to the service, so cli
 
 ### Gateway URLs (prefix `/location`)
 
-- `http://51.20.193.29:5000/location/api/v1/buildings`
-- `http://51.20.193.29:5000/location/api/v1/buildings/{id}`
+- `http://13.60.31.141:500/location/api/v1/buildings`
+- `http://13.60.31.141:500/location/api/v1/buildings/{id}`
 
 ### Request bodies
 
@@ -87,9 +87,9 @@ The gateway strips the `/location` prefix when forwarding to the service, so cli
 
 ### Gateway URLs (examples)
 
-- `http://51.20.193.29:5000/location/api/v1/rooms`
-- `http://51.20.193.29:5000/location/api/v1/rooms/{id}`
-- `http://51.20.193.29:5000/location/api/v1/rooms/by-building/{buildingId}`
+- `http://13.60.31.141:500/location/api/v1/rooms`
+- `http://13.60.31.141:500/location/api/v1/rooms/{id}`
+- `http://13.60.31.141:500/location/api/v1/rooms/by-building/{buildingId}`
 
 ### Response shape — `RoomDto`
 
@@ -158,7 +158,7 @@ Same fields as create:
 
 **Gateway example**
 
-`POST http://51.20.193.29:5000/location/api/v1/locations/validate-room-location`
+`POST http://13.60.31.141:500/location/api/v1/locations/validate-room-location`
 
 **Body** — `ValidateRoomLocationDto`
 

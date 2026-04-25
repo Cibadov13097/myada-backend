@@ -1,11 +1,13 @@
 # MyAdaAttendanceService API Documentation
 
+Last updated: 2026-04-25
+
 This document describes the full MyAdaAttendanceService HTTP API exposed through your API Gateway.
 
 ## 1. Base URL and Routing
 
-- Public base URL: `http://13.60.31.141:5000/attendance`
-- Full endpoint format: `http://13.60.31.141:5000/attendance/api/...`
+- Public base URL: `http://13.60.31.141:500/attendance`
+- Full endpoint format: `http://13.60.31.141:500/attendance/api/...`
 - Internal Docker destination (via gateway): `http://myadaattendanceservice:8080/`
 
 Gateway route configuration removes `/attendance` and forwards the remaining path to the service.
@@ -14,8 +16,8 @@ Gateway route configuration removes `/attendance` and forwards the remaining pat
 
 Swagger is enabled only when the attendance service runs in `Development` environment.
 
-- UI (if enabled): `http://13.60.31.141:5000/attendance/swagger/index.html`
-- OpenAPI JSON (if enabled): `http://13.60.31.141:5000/attendance/swagger/v1/swagger.json`
+- UI (if enabled): `http://13.60.31.141:500/attendance/swagger/index.html`
+- OpenAPI JSON (if enabled): `http://13.60.31.141:500/attendance/swagger/v1/swagger.json`
 
 ## 3. Authentication and Authorization Notes
 
@@ -60,7 +62,7 @@ Typical error body from controller-level handling:
 
 ## 6. Endpoint Catalog
 
-All paths below are relative to `http://13.60.31.141:5000/attendance`.
+All paths below are relative to `http://13.60.31.141:500/attendance`.
 
 ### 6.1 Admin: User Directory
 
@@ -816,14 +818,14 @@ Computed status depends on whether round 2 was ever activated for the session:
 ### Issue QR token
 
 ```bash
-curl -X POST "http://13.60.31.141:5000/attendance/api/instructors/{instructorId}/sessions/{sessionId}/qr-token" \
+curl -X POST "http://13.60.31.141:500/attendance/api/instructors/{instructorId}/sessions/{sessionId}/qr-token" \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Student scan
 
 ```bash
-curl -X POST "http://13.60.31.141:5000/attendance/api/students/{studentId}/attendance/scan" \
+curl -X POST "http://13.60.31.141:500/attendance/api/students/{studentId}/attendance/scan" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -835,7 +837,7 @@ curl -X POST "http://13.60.31.141:5000/attendance/api/students/{studentId}/atten
 ### Get instructor attendance summary
 
 ```bash
-curl "http://13.60.31.141:5000/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary" \
+curl "http://13.60.31.141:500/attendance/api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary" \
   -H "Authorization: Bearer <token>"
 ```
 

@@ -1,15 +1,15 @@
 # MyAda Attendance Service API Documentation
 
-Last updated: 2026-04-24
+Last updated: 2026-04-25
 
 ## Base URL
 
-- Gateway base URL: `http://13.60.31.141:5000/`
+- Gateway base URL: `http://13.60.31.141:500/`
 - Attendance gateway prefix: `/attendance`
-- Effective attendance base: `http://13.60.31.141:5000/attendance`
+- Effective attendance base: `http://13.60.31.141:500/attendance`
 
 Swagger:
-- Gateway: `http://13.60.31.141:5000/attendance/swagger/index.html`
+- Gateway: `http://13.60.31.141:500/attendance/swagger/index.html`
 - Direct service (if exposed): `http://13.60.31.141:5009/swagger/index.html`
 
 ## Auth Header
@@ -25,8 +25,8 @@ Authorization: Bearer <accessToken>
 Always include `/attendance` when calling through gateway.
 
 Example:
-- Correct: `http://13.60.31.141:5000/attendance/api/admin/courses`
-- Wrong: `http://13.60.31.141:5000/api/admin/courses`
+- Correct: `http://13.60.31.141:500/attendance/api/admin/courses`
+- Wrong: `http://13.60.31.141:500/api/admin/courses`
 
 ## Endpoint Groups
 

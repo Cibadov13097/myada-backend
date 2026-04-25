@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 namespace ClubManagementService.Application.DTOs.Contracts;
 
 public sealed class ClubProposalSubmissionDto
 {
-    public string? Id { get; set; }
+    [RegularExpression(@"^\d{9}$", ErrorMessage = "OrganizationId must be exactly 9 digits.")]
+    [JsonPropertyName("organizationId")]
+    public string? OrganizationId { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public string? LogoFile { get; set; }
@@ -10,7 +15,9 @@ public sealed class ClubProposalSubmissionDto
     public string? ConstitutionFile { get; set; }
     public ClubProposalFilePart? ConstitutionFilePart { get; set; }
 
+    [RegularExpression(@"^\d{9}$", ErrorMessage = "PresidentStudentId must be exactly 9 digits.")]
     public string? PresidentStudentId { get; set; }
+    [RegularExpression(@"^\d{9}$", ErrorMessage = "VicePresidentStudentId must be exactly 9 digits.")]
     public string? VicePresidentStudentId { get; set; }
     public List<string> OtherMembersJson { get; set; } = new();
     public string? Commitment { get; set; }

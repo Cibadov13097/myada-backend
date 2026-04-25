@@ -4,10 +4,10 @@ Last updated: 2026-04-25
 
 ## Common 404 Mistake (Important)
 
-If you call through gateway (`http://13.60.31.141:5000`), you must include `/support` prefix.
+If you call through gateway (`http://13.60.31.141:500`), you must include `/support` prefix.
 
-- Correct: `http://13.60.31.141:5000/support/api/...`
-- Wrong: `http://13.60.31.141:5000/api/...` (this returns 404 for Support endpoints)
+- Correct: `http://13.60.31.141:500/support/api/...`
+- Wrong: `http://13.60.31.141:500/api/...` (this returns 404 for Support endpoints)
 
 Direct service (no gateway prefix):
 - `http://13.60.31.141:5008/api/...`
@@ -15,14 +15,14 @@ Direct service (no gateway prefix):
 ## Base URLs
 
 Recommended via API Gateway:
-- Production: `http://13.60.31.141:5000`
+- Production: `http://13.60.31.141:500`
 - Local: `http://localhost:5000`
 
 Support service gateway prefix:
 - `/support`
 
 Final frontend URL format:
-- `http://13.60.31.141:5000/support/api/...`
+- `http://13.60.31.141:500/support/api/...`
 
 Direct service (diagnostics only):
 - Production: `http://13.60.31.141:5008/api/...`
@@ -45,7 +45,7 @@ Token validation settings:
 
 ## Swagger
 
-- Gateway: `http://13.60.31.141:5000/support/swagger/index.html`
+- Gateway: `http://13.60.31.141:500/support/swagger/index.html`
 - Direct: `http://13.60.31.141:5008/swagger/index.html`
 
 ## Response Envelope
@@ -222,7 +222,7 @@ JWT token is required for hub access.
 ## Quick cURL Example
 
 ```bash
-curl -X GET "http://13.60.31.141:5000/support/api/Categories" \
+curl -X GET "http://13.60.31.141:500/support/api/Categories" \
   -H "accept: application/json" \
   -H "Authorization: Bearer <accessToken>"
 ```

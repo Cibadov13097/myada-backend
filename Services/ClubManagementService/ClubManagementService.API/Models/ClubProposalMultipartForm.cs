@@ -7,7 +7,7 @@ namespace ClubManagementService.API.Models;
 
 public sealed class ClubProposalMultipartForm
 {
-    public string? Id { get; set; }
+    public string? OrganizationId { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public IFormFile? LogoFile { get; set; }
@@ -29,7 +29,7 @@ public sealed class ClubProposalMultipartForm
     public ClubProposalSubmissionDto ToSubmissionDto() =>
         new()
         {
-            Id = Id,
+            OrganizationId = OrganizationId,
             Name = Name,
             Description = Description,
             LogoFilePart = ToLogoPart(),

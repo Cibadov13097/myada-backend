@@ -1,5 +1,4 @@
 using ClubManagementService.API.Controllers;
-using ClubManagementService.Application.DTOs.Contracts;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -15,13 +14,13 @@ public sealed class ClubProposalCreateRequestBodyOperationFilter : IOperationFil
             return;
         }
 
-        var jsonSchema = context.SchemaGenerator.GenerateSchema(typeof(ClubProposalSubmissionDto), context.SchemaRepository);
+        var jsonSchema = BuildJsonSchema();
         var multipartSchema = BuildMultipartSchema();
 
         operation.RequestBody = new OpenApiRequestBody
         {
             Required = true,
-            Description = "Use application/json for existing file URLs, or multipart/form-data to upload logoFile and constitutionFile directly. For multipart requests, send otherMembersJson as repeated form fields.",
+            Description = "Use application/json for existing file URLs, or multipart/form-data to upload logoFile and constitutionFile directly. organizationId, presidentStudentId, vicePresidentStudentId, and each otherMembersJson item must be exactly 9 digits. For multipart requests, send otherMembersJson as repeated form fields.",
             Content = new Dictionary<string, OpenApiMediaType>()
         };
 
@@ -50,25 +49,25 @@ public sealed class ClubProposalCreateRequestBodyOperationFilter : IOperationFil
             Type = "object",
             Required = new HashSet<string>
             {
+                "organizationId",
                 "name",
-                "description",
                 "logoFile",
                 "constitutionFile"
             },
             Properties = new Dictionary<string, OpenApiSchema>
             {
-                ["id"] = StringSchema(),
+                ["organizationId"] = NineDigitSchema("Submitter organization id. Must be exactly 9 digits."),
                 ["name"] = StringSchema(),
                 ["description"] = StringSchema(),
                 ["logoFile"] = BinarySchema(),
                 ["constitutionFile"] = BinarySchema(),
-                ["presidentStudentId"] = StringSchema(),
-                ["vicePresidentStudentId"] = StringSchema(),
+                ["presidentStudentId"] = NineDigitSchema("President student id. Must be exactly 9 digits."),
+                ["vicePresidentStudentId"] = NineDigitSchema("Vice president student id. Must be exactly 9 digits."),
                 ["otherMembersJson"] = new()
                 {
                     Type = "array",
-                    Items = StringSchema(),
-                    Description = "Repeat this field for each user id when submitting multipart/form-data."
+                    Items = NineDigitSchema("Club member organization id. Must be exactly 9 digits."),
+                    Description = "Repeat this field for each 9-digit user organization id when submitting multipart/form-data."
                 },
                 ["commitment"] = StringSchema(),
                 ["shortDesc"] = StringSchema(),
@@ -80,9 +79,52 @@ public sealed class ClubProposalCreateRequestBodyOperationFilter : IOperationFil
             }
         };
 
-    private static OpenApiSchema StringSchema() => new()
+    private static OpenApiSchema BuildJsonSchema() =>
+        new()
+        {
+            Type = "object",
+            Required = new HashSet<string>
+            {
+                "organizationId",
+                "name",
+                "logoFile",
+                "constitutionFile"
+            },
+            Properties = new Dictionary<string, OpenApiSchema>
+            {
+                ["organizationId"] = NineDigitSchema("Submitter organization id. Must be exactly 9 digits."),
+                ["name"] = StringSchema(),
+                ["description"] = StringSchema(),
+                ["logoFile"] = StringSchema("Already-uploaded logo URL/reference."),
+                ["constitutionFile"] = StringSchema("Already-uploaded constitution URL/reference."),
+                ["presidentStudentId"] = NineDigitSchema("President student id. Must be exactly 9 digits."),
+                ["vicePresidentStudentId"] = NineDigitSchema("Vice president student id. Must be exactly 9 digits."),
+                ["otherMembersJson"] = new()
+                {
+                    Type = "array",
+                    Items = NineDigitSchema("Club member organization id. Must be exactly 9 digits.")
+                },
+                ["commitment"] = StringSchema(),
+                ["shortDesc"] = StringSchema(),
+                ["uniqueDesc"] = StringSchema(),
+                ["goals"] = StringSchema(),
+                ["activities"] = StringSchema(),
+                ["alignment"] = StringSchema(),
+                ["vision"] = StringSchema()
+            }
+        };
+
+    private static OpenApiSchema StringSchema(string? description = null) => new()
     {
-        Type = "string"
+        Type = "string",
+        Description = description
+    };
+
+    private static OpenApiSchema NineDigitSchema(string? description = null) => new()
+    {
+        Type = "string",
+        Pattern = @"^\d{9}$",
+        Description = description
     };
 
     private static OpenApiSchema BinarySchema() => new()

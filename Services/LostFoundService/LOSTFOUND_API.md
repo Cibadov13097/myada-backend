@@ -1,14 +1,16 @@
 # LostFound API Documentation
 
+Last updated: 2026-04-25
+
 ## Base URLs
 
-- Through API Gateway: `http://13.60.31.141:5000/lostfound`
+- Through API Gateway: `http://13.60.31.141:500/lostfound`
 - Direct service: `http://13.60.31.141:5002`
 
 Examples below use the gateway form, so `/api/lost-and-found/items` becomes:
 
 ```text
-http://13.60.31.141:5000/lostfound/api/lost-and-found/items
+http://13.60.31.141:500/lostfound/api/lost-and-found/items
 ```
 
 ## Authentication
@@ -302,7 +304,7 @@ Rules:
 Recommended multipart example:
 
 ```bash
-curl -X POST "http://13.60.31.141:5000/lostfound/api/lost-and-found/reports/found" \
+curl -X POST "http://13.60.31.141:500/lostfound/api/lost-and-found/reports/found" \
   -F "itemName=AirPods Pro Case" \
   -F "category=Electronics" \
   -F "description=White charging case with small scratches" \
@@ -494,7 +496,7 @@ Rules:
 Example:
 
 ```bash
-curl -X POST "http://13.60.31.141:5000/lostfound/api/lost-and-found/items/25/confirm-receipt" \
+curl -X POST "http://13.60.31.141:500/lostfound/api/lost-and-found/items/25/confirm-receipt" \
   -H "Authorization: Bearer <jwt>" \
   -F "storageBinId=B-12" \
   -F "condition=good" \

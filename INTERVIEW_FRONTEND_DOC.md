@@ -1,6 +1,6 @@
 # Interview Logic for Frontend
 
-Last updated: 2026-04-24
+Last updated: 2026-04-25
 
 This guide documents the full interview flow implemented in `ClubManagementService` for frontend integration.
 
@@ -14,7 +14,7 @@ This guide documents the full interview flow implemented in `ClubManagementServi
 ## Base URLs
 
 - Local: `http://localhost:5003`
-- Gateway: `http://51.20.193.29:5000/club`
+- Gateway: `http://13.60.31.141:500/club`
 - Relative API paths below are `api/v1/...`
 
 ## Core Concepts
