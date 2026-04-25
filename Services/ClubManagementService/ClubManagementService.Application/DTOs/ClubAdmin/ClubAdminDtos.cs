@@ -172,7 +172,11 @@ public sealed class ClubAdminEmployeeDto
     public string Id { get; init; } = string.Empty;
     public string ClubId { get; init; } = string.Empty;
     public string StudentId { get; init; } = string.Empty;
-    public string PositionId { get; init; } = string.Empty;
+    public string? PositionId { get; init; }
+    /// <summary>Human-readable role title such as President or Vice President.</summary>
+    public string? PositionTitle { get; init; }
+    /// <summary>Same as <see cref="PositionTitle"/>; kept for older clients.</summary>
+    public string? PositionName { get; init; }
 }
 
 public sealed class ClubAdminAnnouncementDto

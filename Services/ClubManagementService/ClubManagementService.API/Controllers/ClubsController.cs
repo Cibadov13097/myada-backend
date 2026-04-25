@@ -80,15 +80,19 @@ public class ClubsController : ControllerBase
         if (dto == null)
             return NotFound();
 
-        var employees = await _db.ClubEmployees
-            .AsNoTracking()
-            .Where(e => e.ClubId == clubId)
-            .OrderBy(e => e.Id)
-            .Select(e => new
+        var employees = await (
+            from e in _db.ClubEmployees.AsNoTracking()
+            where e.ClubId == clubId
+            join p in _db.ClubPositions.AsNoTracking() on e.PositionId equals (int?)p.Id into positions
+            from p in positions.DefaultIfEmpty()
+            orderby e.Id
+            select new
             {
                 id = e.Id.ToString(),
                 userId = e.UserId.ToString("D"),
-                positionId = e.PositionId == null ? null : e.PositionId.Value.ToString()
+                positionId = e.PositionId == null ? null : e.PositionId.Value.ToString(),
+                positionTitle = p == null ? null : p.Title,
+                positionName = p == null ? null : p.Title
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

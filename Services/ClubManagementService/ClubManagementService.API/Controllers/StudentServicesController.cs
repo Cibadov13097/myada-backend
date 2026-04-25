@@ -559,6 +559,15 @@ public class StudentServicesController : ControllerBase
 
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
+        var positionTitle = positionId.HasValue
+            ? await _db.ClubPositions
+                .AsNoTracking()
+                .Where(p => p.ClubId == clubId && p.Id == positionId.Value)
+                .Select(p => p.Title)
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false)
+            : null;
+
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Employee Added",
@@ -575,7 +584,9 @@ public class StudentServicesController : ControllerBase
             employeeId = existing.Id.ToString(),
             clubId = clubId.ToString(),
             userId = existing.UserId.ToString("D"),
-            positionId = existing.PositionId?.ToString()
+            positionId = existing.PositionId?.ToString(),
+            positionTitle,
+            positionName = positionTitle
         });
     }
 
@@ -605,6 +616,15 @@ public class StudentServicesController : ControllerBase
         existing.PositionId = positionId;
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
+        var positionTitle = positionId.HasValue
+            ? await _db.ClubPositions
+                .AsNoTracking()
+                .Where(p => p.ClubId == clubId && p.Id == positionId.Value)
+                .Select(p => p.Title)
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false)
+            : null;
+
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Club Employee Updated",
@@ -621,7 +641,9 @@ public class StudentServicesController : ControllerBase
             employeeId = existing.Id.ToString(),
             clubId = clubId.ToString(),
             userId = existing.UserId.ToString("D"),
-            positionId = existing.PositionId?.ToString()
+            positionId = existing.PositionId?.ToString(),
+            positionTitle,
+            positionName = positionTitle
         });
     }
 

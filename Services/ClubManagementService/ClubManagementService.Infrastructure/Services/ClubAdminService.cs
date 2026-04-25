@@ -860,12 +860,20 @@ public sealed class ClubAdminService : IClubAdminService
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
+        var positionTitlesById = await _db.ClubPositions
+            .AsNoTracking()
+            .Where(p => p.ClubId == ctx.ClubId)
+            .ToDictionaryAsync(p => p.Id, p => p.Title, cancellationToken)
+            .ConfigureAwait(false);
+
         var items = rows.Select(e => new ClubAdminEmployeeDto
         {
             Id = e.Id.ToString(CultureInfo.InvariantCulture),
             ClubId = ctx.Key,
             StudentId = e.UserId.ToString("D"),
-            PositionId = e.PositionId?.ToString(CultureInfo.InvariantCulture)
+            PositionId = e.PositionId?.ToString(CultureInfo.InvariantCulture),
+            PositionTitle = e.PositionId.HasValue && positionTitlesById.TryGetValue(e.PositionId.Value, out var title) ? title : null,
+            PositionName = e.PositionId.HasValue && positionTitlesById.TryGetValue(e.PositionId.Value, out var legacyTitle) ? legacyTitle : null
         }).ToList();
         return Page(items, page, limit);
     }
@@ -879,6 +887,7 @@ public sealed class ClubAdminService : IClubAdminService
             throw new ArgumentException("studentId must be a valid GUID user id.");
 
         int? pidOrNull = null;
+        string? positionTitle = null;
         if (int.TryParse(positionId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var pid))
         {
             var pos = await _positionRepository
@@ -887,6 +896,7 @@ public sealed class ClubAdminService : IClubAdminService
             if (pos == null)
                 throw new ArgumentException("Position not found for this club.");
             pidOrNull = pid;
+            positionTitle = pos.Title;
         }
 
         var existing = await _db.ClubEmployees
@@ -908,7 +918,9 @@ public sealed class ClubAdminService : IClubAdminService
             Id = existing.Id.ToString(CultureInfo.InvariantCulture),
             ClubId = ctx.Key,
             StudentId = existing.UserId.ToString("D"),
-            PositionId = existing.PositionId?.ToString(CultureInfo.InvariantCulture)
+            PositionId = existing.PositionId?.ToString(CultureInfo.InvariantCulture),
+            PositionTitle = positionTitle,
+            PositionName = positionTitle
         };
     }
 
