@@ -256,6 +256,13 @@ namespace AuthService.API.Controllers
         [Authorize]
         [HttpPost("users/{id}/profile-photo")]
         [Consumes("multipart/form-data")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(UploadUserProfilePhotoResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status502BadGateway)]
         public async Task<IActionResult> UploadUserProfilePhoto(string id, [FromForm] UploadUserProfilePhotoDto dto)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -284,13 +291,29 @@ namespace AuthService.API.Controllers
             if (user == null)
                 return NotFound("User not found");
 
-            await using var stream = dto.File.OpenReadStream();
-            var profileImageUrl = await _profileImageStorageService.UploadProfileImageAsync(
-                stream,
-                dto.File.FileName,
-                dto.File.ContentType,
-                user.Id,
-                HttpContext.RequestAborted);
+            string profileImageUrl;
+            try
+            {
+                await using var stream = dto.File.OpenReadStream();
+                profileImageUrl = await _profileImageStorageService.UploadProfileImageAsync(
+                    stream,
+                    dto.File.FileName,
+                    dto.File.ContentType,
+                    user.Id,
+                    HttpContext.RequestAborted);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to upload profile photo for user {UserId}. Verify Auth service S3 bucket credentials and bucket access.",
+                    user.Id);
+
+                return Problem(
+                    title: "Profile photo upload failed",
+                    detail: "The Auth service could not store the profile photo in S3. Verify the Auth service S3 bucket credentials and bucket access.",
+                    statusCode: StatusCodes.Status502BadGateway);
+            }
 
             user.ProfileImage = profileImageUrl;
             var updateResult = await _userManager.UpdateAsync(user);
