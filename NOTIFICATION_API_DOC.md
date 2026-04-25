@@ -196,7 +196,8 @@ Common error cases:
 
 - `400 Bad Request` for invalid model shape, invalid email format, or oversized fields
 - `400 Bad Request` with a custom error object when required fields become empty after trimming
-- `500 Internal Server Error` if SMTP configuration is invalid or SMTP sending fails
+- `502 Bad Gateway` if SMTP configuration is invalid
+- `502 Bad Gateway` if the SMTP server rejects authentication or sender details
 
 ## Internal Queue-Based Notifications
 
@@ -307,6 +308,11 @@ Docker compose mapping in this repo:
 
 - host port `5004` -> container port `8080`
 - gateway prefix `/notification` -> Notification Service
+
+SMTP deployment note:
+
+- this repo's Docker stack expects SMTP values from environment variables such as `NOTIFICATION_SMTP_HOST`, `NOTIFICATION_SMTP_PORT`, `NOTIFICATION_SMTP_USERNAME`, `NOTIFICATION_SMTP_PASSWORD`, and `NOTIFICATION_SMTP_FROM_EMAIL`
+- for Gmail, `NOTIFICATION_SMTP_PASSWORD` must be an app password, not the normal mailbox password
 
 ## Quick Test Examples
 
