@@ -56,14 +56,16 @@ Authorization: Bearer <accessToken>
 | 2 | `POST` | `/api/auth/create-user-with-role` | Yes (`admin`) | Creates user and assigns role. |
 | 3 | `GET` | `/api/auth/users-by-role/{role}` | Yes (`admin`) | Lists users for role. |
 | 4 | `GET` | `/api/auth/users/{id}` | Yes | Admin can fetch any user; others can fetch self. |
-| 5 | `POST` | `/api/auth/users/{id}/profile-photo` | Yes | Multipart upload endpoint. |
-| 6 | `POST` | `/api/auth/forgot-password` | No | Sends password reset email (if user exists). |
-| 7 | `POST` | `/api/auth/reset-password` | No | Resets password with reset token. |
-| 8 | `PUT` | `/api/auth/change-password` | No | Not protected in current implementation. |
-| 9 | `POST` | `/api/auth/login` | No | Returns access + refresh token. |
-| 10 | `POST` | `/api/auth/refresh` | No | Rotates refresh token and returns new pair. |
-| 11 | `POST` | `/api/auth/logout` | Yes | Revokes refresh token. |
-| 12 | `GET` | `/.well-known/jwks.json` | No | Raw auth service route (gateway alias below). |
+| 5 | `GET` | `/api/auth/users/by-organizational-id/{organizationalId}` | Yes | Admin can fetch any user; others can fetch self by organizationalId. |
+| 6 | `POST` | `/api/auth/users/{id}/profile-photo` | Yes | Multipart upload endpoint. |
+| 7 | `PATCH` | `/api/auth/users/{id}/profile-photo` | Yes | Multipart profile-photo update alias. |
+| 8 | `POST` | `/api/auth/forgot-password` | No | Sends password reset email (if user exists). |
+| 9 | `POST` | `/api/auth/reset-password` | No | Resets password with reset token. |
+| 10 | `PUT` | `/api/auth/change-password` | No | Not protected in current implementation. |
+| 11 | `POST` | `/api/auth/login` | No | Returns access + refresh token. |
+| 12 | `POST` | `/api/auth/refresh` | No | Rotates refresh token and returns new pair. |
+| 13 | `POST` | `/api/auth/logout` | Yes | Revokes refresh token. |
+| 14 | `GET` | `/.well-known/jwks.json` | No | Raw auth service route (gateway alias below). |
 
 JWKS through gateway:
 - `GET /auth/.well-known/jwks.json`
@@ -198,7 +200,38 @@ Success response:
 
 ---
 
-### 5) Upload User Profile Photo
+### 5) Get User By OrganizationalId
+
+- Method: `GET`
+- Path: `/api/auth/users/by-organizational-id/{organizationalId}`
+- Auth: Yes (`Bearer`)
+
+Access rules:
+- `admin` can fetch any user.
+- non-admin can fetch only their own user by matching the JWT `organizationalId` claim.
+
+Success response:
+- `200 OK`
+
+```json
+{
+  "id": "<guid>",
+  "userName": "seed.user01",
+  "email": "seed.user01@myada.local",
+  "firstName": "SeedFirst1",
+  "lastName": "SeedLast1",
+  "organizationalId": "100000001",
+  "phoneNumber": null,
+  "profileImage": null,
+  "userType": "Student",
+  "status": "Active",
+  "roles": ["student"]
+}
+```
+
+---
+
+### 6) Upload User Profile Photo
 
 - Method: `POST`
 - Path: `/api/auth/users/{id}/profile-photo`
@@ -218,13 +251,38 @@ Success response:
 ```json
 {
   "userId": "<guid>",
+  "organizationalId": "100000001",
   "profileImage": "https://<bucket-or-cdn>/users/<file>"
 }
 ```
 
 ---
 
-### 6) Forgot Password
+### 7) Update User Profile Photo
+
+- Method: `PATCH`
+- Path: `/api/auth/users/{id}/profile-photo`
+- Auth: Yes (`Bearer`)
+- Content type: `multipart/form-data`
+
+Behavior:
+- Uses the same validation and S3 upload flow as the `POST` variant.
+- Intended for clients that prefer a partial-update verb for changing the existing profile photo.
+
+Success response:
+- `200 OK`
+
+```json
+{
+  "userId": "<guid>",
+  "organizationalId": "100000001",
+  "profileImage": "https://<bucket-or-cdn>/users/<file>"
+}
+```
+
+---
+
+### 8) Forgot Password
 
 - Method: `POST`
 - Path: `/api/auth/forgot-password`
@@ -253,7 +311,7 @@ Notes:
 
 ---
 
-### 7) Reset Password
+### 9) Reset Password
 
 - Method: `POST`
 - Path: `/api/auth/reset-password`
@@ -282,7 +340,7 @@ Error responses:
 
 ---
 
-### 8) Change Password
+### 10) Change Password
 
 - Method: `PUT`
 - Path: `/api/auth/change-password`
@@ -311,7 +369,7 @@ Error responses:
 
 ---
 
-### 9) Login
+### 11) Login
 
 - Method: `POST`
 - Path: `/api/auth/login`
@@ -342,7 +400,7 @@ Error response:
 
 ---
 
-### 10) Refresh Token
+### 12) Refresh Token
 
 - Method: `POST`
 - Path: `/api/auth/refresh`
@@ -374,7 +432,7 @@ Error responses:
 
 ---
 
-### 11) Logout
+### 13) Logout
 
 - Method: `POST`
 - Path: `/api/auth/logout`
@@ -399,7 +457,7 @@ Success response:
 
 ---
 
-### 12) JWKS Public Key
+### 14) JWKS Public Key
 
 - Method: `GET`
 - Direct auth path: `/.well-known/jwks.json`

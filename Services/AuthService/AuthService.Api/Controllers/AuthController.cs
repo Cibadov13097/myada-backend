@@ -254,6 +254,45 @@ namespace AuthService.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("users/by-organizational-id/{organizationalId}")]
+        public async Task<IActionResult> GetUserByOrganizationalId(string organizationalId)
+        {
+            if (string.IsNullOrWhiteSpace(organizationalId))
+                return BadRequest("OrganizationalId is required");
+
+            var normalizedOrganizationalId = organizationalId.Trim();
+            var requesterOrganizationalId = User.FindFirstValue("organizationalId");
+            var isAdmin = User.IsInRole("admin");
+            var isSelf = !string.IsNullOrWhiteSpace(requesterOrganizationalId) &&
+                         string.Equals(requesterOrganizationalId, normalizedOrganizationalId, StringComparison.Ordinal);
+
+            if (!isAdmin && !isSelf)
+                return Forbid();
+
+            var user = await _userManager.Users
+                .FirstOrDefaultAsync(item => item.OrganizationalId == normalizedOrganizationalId);
+            if (user == null)
+                return NotFound("User not found");
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return Ok(new
+            {
+                user.Id,
+                user.UserName,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.OrganizationalId,
+                user.PhoneNumber,
+                user.ProfileImage,
+                user.UserType,
+                user.Status,
+                roles
+            });
+        }
+
+        [Authorize]
         [HttpPost("users/{id}/profile-photo")]
         [Consumes("multipart/form-data")]
         [Produces("application/json")]
@@ -264,6 +303,26 @@ namespace AuthService.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status502BadGateway)]
         public async Task<IActionResult> UploadUserProfilePhoto(string id, [FromForm] UploadUserProfilePhotoDto dto)
+        {
+            return await SaveUserProfilePhotoAsync(id, dto);
+        }
+
+        [Authorize]
+        [HttpPatch("users/{id}/profile-photo")]
+        [Consumes("multipart/form-data")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(UploadUserProfilePhotoResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status502BadGateway)]
+        public async Task<IActionResult> UpdateUserProfilePhoto(string id, [FromForm] UploadUserProfilePhotoDto dto)
+        {
+            return await SaveUserProfilePhotoAsync(id, dto);
+        }
+
+        private async Task<IActionResult> SaveUserProfilePhotoAsync(string id, UploadUserProfilePhotoDto dto)
         {
             if (string.IsNullOrWhiteSpace(id))
                 return BadRequest("User id is required");
