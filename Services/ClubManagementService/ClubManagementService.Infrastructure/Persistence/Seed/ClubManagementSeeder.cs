@@ -8,36 +8,179 @@ namespace ClubManagementService.Infrastructure.Persistence.Seed;
 /// <summary>Development/demo seed data themed for ADA University (Baku, Azerbaijan).</summary>
 public static class ClubManagementSeeder
 {
+    private static readonly SeedClubDefinition[] ClubSeeds =
+    {
+        new(
+            "Tech Innovators Club",
+            "Software, startups, hackathons",
+            "STEM & Computing",
+            new[]
+            {
+                new SeedEmployeeDefinition("Rauf Məmmədov", "President"),
+                new SeedEmployeeDefinition("Nihat Əliyev", "Vice President"),
+                new SeedEmployeeDefinition("Orxan Hüseynov", "Tech Lead"),
+                new SeedEmployeeDefinition("Elvin Quliyev", "Marketing Lead"),
+                new SeedEmployeeDefinition("Kamran Abbasov", "Event Manager")
+            },
+            new[]
+            {
+                "Aysel Əliyeva",
+                "Nigar Həsənova",
+                "Fidan Quliyeva",
+                "Ləman Məmmədova",
+                "Günay Əliyeva",
+                "Tural İbrahimov",
+                "Murad Əliyev",
+                "Samir Həsənov",
+                "Vüqar Rzayev",
+                "Elşən Məmmədov"
+            }),
+        new(
+            "Business & Entrepreneurship Club",
+            "Startups, leadership, networking",
+            "Entrepreneurship",
+            new[]
+            {
+                new SeedEmployeeDefinition("Emil Qasımov", "President"),
+                new SeedEmployeeDefinition("Tural Əliyev", "Vice President"),
+                new SeedEmployeeDefinition("Rəşad Qurbanov", "Finance Lead"),
+                new SeedEmployeeDefinition("Nicat Hüseynov", "Marketing Lead"),
+                new SeedEmployeeDefinition("Zaur Məmmədov", "Event Manager")
+            },
+            new[]
+            {
+                "Nərmin Həsənova",
+                "Şəbnəm Quliyeva",
+                "Səidə Əliyeva",
+                "İlkin Məmmədli",
+                "Kənan Əliyev",
+                "Elnur Abbasov",
+                "Emin Əliyev",
+                "Vüsal Quliyev",
+                "Cavid Hüseynov",
+                "Anar Məmmədov"
+            }),
+        new(
+            "AI & Data Science Club",
+            "Machine learning, analytics",
+            "STEM & Computing",
+            new[]
+            {
+                new SeedEmployeeDefinition("Elvin Məmmədli", "President"),
+                new SeedEmployeeDefinition("Murad Rzayev", "Vice President"),
+                new SeedEmployeeDefinition("Kamal Əliyev", "Tech Lead"),
+                new SeedEmployeeDefinition("Fərid Quliyev", "Data Lead"),
+                new SeedEmployeeDefinition("Ramin Hüseynov", "Event Manager")
+            },
+            new[]
+            {
+                "Aytac Əliyeva",
+                "Ləman Qasımova",
+                "Günel Məmmədova",
+                "Səbinə Əliyeva",
+                "Nərgiz Hüseynova",
+                "Rauf Əliyev",
+                "Samir Qasımov",
+                "Tural Hüseynov",
+                "Vüqar Məmmədov",
+                "Elşad Əliyev"
+            }),
+        new(
+            "Cyber Security Club",
+            "Ethical hacking, security",
+            "STEM & Computing",
+            new[]
+            {
+                new SeedEmployeeDefinition("Nurlan Əliyev", "President"),
+                new SeedEmployeeDefinition("Elnur Quliyev", "Vice President"),
+                new SeedEmployeeDefinition("Samir Hüseynov", "Security Lead"),
+                new SeedEmployeeDefinition("Orxan Məmmədov", "Tech Lead"),
+                new SeedEmployeeDefinition("Kənan Rzayev", "Event Manager")
+            },
+            new[]
+            {
+                "Günay Quliyeva",
+                "Aysu Məmmədova",
+                "Nigar Əliyeva",
+                "Ləman Hüseynova",
+                "Fidan Əliyeva",
+                "Rəşad Hüseynov",
+                "Zaur Quliyev",
+                "Nicat Məmmədov",
+                "Emin Hüseynov",
+                "Tural Rzayev"
+            }),
+        new(
+            "Debate & Public Speaking Club",
+            "Communication, debates",
+            "Media & Communications",
+            new[]
+            {
+                new SeedEmployeeDefinition("Rəşad Əliyev", "President"),
+                new SeedEmployeeDefinition("Vüsal Məmmədov", "Vice President"),
+                new SeedEmployeeDefinition("Anar Hüseynov", "Content Lead"),
+                new SeedEmployeeDefinition("Cavid Quliyev", "Marketing Lead"),
+                new SeedEmployeeDefinition("Elşən Əliyev", "Event Manager")
+            },
+            new[]
+            {
+                "Nərmin Əliyeva",
+                "Şəbnəm Məmmədova",
+                "Səbinə Hüseynova",
+                "Günel Əliyeva",
+                "Ləman Quliyeva",
+                "İlkin Hüseynov",
+                "Kamran Əliyev",
+                "Murad Quliyev",
+                "Samir Məmmədov",
+                "Vüqar Əliyev"
+            })
+    };
+
+    private static readonly IReadOnlyDictionary<string, Guid> ClubSeedUserIds = BuildClubSeedUserIds();
+
     public static async Task SeedAsync(ClubManagementDbContext dbContext, CancellationToken cancellationToken = default)
     {
         await SeedCategoriesAsync(dbContext, cancellationToken).ConfigureAwait(false);
 
-        var categoryIds = await dbContext.Categories
-            .OrderBy(x => x.Id)
-            .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
+        var categoryIdsByName = (await dbContext.Categories
+                .AsNoTracking()
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false))
+            .ToDictionary(x => x.Name, x => x.Id, StringComparer.OrdinalIgnoreCase);
 
-        await SeedClubsAsync(dbContext, categoryIds, cancellationToken).ConfigureAwait(false);
+        await SeedClubsAsync(dbContext, categoryIdsByName, cancellationToken).ConfigureAwait(false);
+
+        var seededClubNames = ClubSeeds.Select(x => x.Name).ToArray();
+        var seededClubsByName = (await dbContext.Clubs
+                .Where(x => seededClubNames.Contains(x.Name))
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false))
+            .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
+
+        await SeedClubPositionsAsync(dbContext, seededClubsByName, cancellationToken).ConfigureAwait(false);
+        await SeedClubEmployeesAsync(dbContext, seededClubsByName, cancellationToken).ConfigureAwait(false);
+        await SeedClubMembershipsAsync(dbContext, seededClubsByName, cancellationToken).ConfigureAwait(false);
 
         var clubIds = await dbContext.Clubs
             .OrderBy(x => x.Id)
             .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
-
-        await SeedClubPositionsAsync(dbContext, clubIds, categoryIds, cancellationToken).ConfigureAwait(false);
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         var positionIds = await dbContext.ClubPositions
             .OrderBy(x => x.Id)
             .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
 
-        await SeedClubMembershipsAsync(dbContext, clubIds, cancellationToken).ConfigureAwait(false);
         await SeedEventsAsync(dbContext, clubIds, cancellationToken).ConfigureAwait(false);
 
         var eventIds = await dbContext.Events
             .OrderBy(x => x.Id)
             .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         await SeedSubeventsAsync(dbContext, eventIds, cancellationToken).ConfigureAwait(false);
         await SeedEventRegistrationsAsync(dbContext, eventIds, cancellationToken).ConfigureAwait(false);
@@ -46,16 +189,14 @@ public static class ClubManagementSeeder
         var vacancyIds = await dbContext.JobVacancies
             .OrderBy(x => x.Id)
             .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         await SeedJobApplicationsAsync(dbContext, vacancyIds, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task SeedCategoriesAsync(ClubManagementDbContext dbContext, CancellationToken cancellationToken)
     {
-        if (await dbContext.Categories.AnyAsync(cancellationToken).ConfigureAwait(false))
-            return;
-
         var categoryNames = new[]
         {
             "STEM & Computing",
@@ -70,7 +211,14 @@ public static class ClubManagementSeeder
             "Entrepreneurship"
         };
 
+        var existingNames = await dbContext.Categories
+            .AsNoTracking()
+            .Select(x => x.Name)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
         var categories = categoryNames
+            .Where(name => !existingNames.Contains(name, StringComparer.OrdinalIgnoreCase))
             .Select((name, i) => new Category
             {
                 Name = name,
@@ -78,212 +226,274 @@ public static class ClubManagementSeeder
             })
             .ToList();
 
+        if (categories.Count == 0)
+            return;
+
         await dbContext.Categories.AddRangeAsync(categories, cancellationToken).ConfigureAwait(false);
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task SeedClubsAsync(
         ClubManagementDbContext dbContext,
-        IReadOnlyList<int> categoryIds,
+        IReadOnlyDictionary<string, int> categoryIdsByName,
         CancellationToken cancellationToken)
     {
-        if (categoryIds.Count == 0 || await dbContext.Clubs.AnyAsync(cancellationToken).ConfigureAwait(false))
+        if (categoryIdsByName.Count == 0)
             return;
 
-        var clubs = new[]
+        var seededClubNames = ClubSeeds.Select(x => x.Name).ToArray();
+        var existingClubsByName = (await dbContext.Clubs
+                .Where(x => seededClubNames.Contains(x.Name))
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false))
+            .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
+
+        var saveChanges = false;
+        foreach (var seed in ClubSeeds)
         {
-            ("ADA Computer Science Society", "Workshops on algorithms, competitive programming, and hackathons at ADA University."),
-            ("ADA IEEE Student Branch", "Technical talks, industry visits, and IEEE programming contests for engineering students."),
-            ("ADA Model United Nations (MUN)", "Diplomacy simulations, public speaking, and preparation for international MUN conferences."),
-            ("ADA Entrepreneurship Club", "Startup weekends, pitch nights, and mentoring with founders in Azerbaijan’s growing tech ecosystem."),
-            ("ADA Photography & Visual Arts", "Campus life coverage, exhibitions, and collaboration with Arts & Culture events in Baku."),
-            ("ADA Chess Club", "Rated tournaments, blitz nights, and friendly matches across schools at ADA."),
-            ("ADA Dance Ensemble", "Contemporary and folk performances for university ceremonies and city cultural events."),
-            ("ADA Music & Performance", "Open mics, ensemble practice, and support for ADA’s annual talent showcases."),
-            ("Green ADA — Environmental Action", "Campus sustainability, recycling drives, and field trips to the Greater Caucasus foothills."),
-            ("ADA Book & Literature Circle", "Discussions in English and Azerbaijani, author talks, and World Book Day celebrations."),
-            ("ADA Film & Cinema Society", "Screenings, short-film festivals, and critique nights at ADA’s learning hub."),
-            ("ADA Architecture & Urbanism Forum", "Sketch walks in Baku, guest lectures on Caspian waterfront development, and design charrettes."),
-            ("ADA Women in Tech", "Mentoring circles, meetups with women leaders in ICT, and outreach to schools in Azerbaijan."),
-            ("ADA Debate Society", "British parliamentary format training and inter-university tournaments in English."),
-            ("ADA Volunteer Corps", "Community service in Baku neighbourhoods, blood drives, and support for refugee education NGOs."),
-            ("ADA Sports Union", "Intramural football and basketball, fitness challenges, and Shamakhi campus outdoor activities."),
-            ("ADA Turkish–Azerbaijani Cultural Exchange", "Language tables, Nowruz events, and joint programming with partner universities."),
-            ("ADA Data Science & AI Club", "Kaggle teams, ML reading groups, and ethics discussions on AI in Azerbaijani public sector."),
-            ("ADA Finance & Investment Society", "Bloomberg basics, CFA info sessions, and case studies on the Baku Stock Exchange."),
-            ("ADA Psychology & Mental Health Advocates", "Peer listening, stress-management workshops during exam periods at ADA."),
-            ("ADA International Students Association", "Welcome weeks, buddy programmes, and trips introducing newcomers to Azerbaijan."),
-            ("ADA Azerbaijani Culture & Heritage", "Mugham evenings, carpet-weaving demos, and talks on UNESCO sites across the country."),
-            ("ADA Robotics & Maker Lab", "ROS tutorials, drone regulations in AZ, and preparation for Eurobot-style competitions."),
-            ("ADA Marketing & Design Studio", "Branding help for student startups, Canva/Figma clinics, and social media best practices.")
-        };
+            var presidentUserId = GetClubSeedUserId(seed.Employees[0].FullName);
+            if (!categoryIdsByName.TryGetValue(seed.CategoryName, out var categoryId))
+                categoryId = categoryIdsByName.Values.First();
 
-        var rows = clubs
-            .Select((pair, idx) => new Club
+            if (existingClubsByName.TryGetValue(seed.Name, out var existing))
             {
-                Name = pair.Item1,
-                Description = pair.Item2,
-                ApprovedBy = BuildSeedUserGuid((idx % 40) + 1),
-                Status = idx % 7 == 0 ? ClubStatus.Pending : ClubStatus.Approved,
-                CategoryId = categoryIds[idx % categoryIds.Count],
-                CreatedByUserId = BuildSeedUserGuid((idx % 40) + 1)
-            })
-            .ToList();
+                var changed = false;
+                if (!string.Equals(existing.Description, seed.Description, StringComparison.Ordinal))
+                {
+                    existing.Description = seed.Description;
+                    changed = true;
+                }
 
-        await dbContext.Clubs.AddRangeAsync(rows, cancellationToken).ConfigureAwait(false);
+                if (existing.CategoryId != categoryId)
+                {
+                    existing.CategoryId = categoryId;
+                    changed = true;
+                }
+
+                if (existing.Status != ClubStatus.Approved)
+                {
+                    existing.Status = ClubStatus.Approved;
+                    changed = true;
+                }
+
+                if (existing.ApprovedBy != presidentUserId)
+                {
+                    existing.ApprovedBy = presidentUserId;
+                    changed = true;
+                }
+
+                if (existing.CreatedByUserId is null)
+                {
+                    existing.CreatedByUserId = presidentUserId;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    existing.ModifiedAt = DateTime.UtcNow;
+                    existing.ModifiedByUserId = presidentUserId;
+                    saveChanges = true;
+                }
+
+                continue;
+            }
+
+            await dbContext.Clubs.AddAsync(new Club
+            {
+                Name = seed.Name,
+                Description = seed.Description,
+                ApprovedBy = presidentUserId,
+                Status = ClubStatus.Approved,
+                CategoryId = categoryId,
+                CreatedByUserId = presidentUserId
+            }, cancellationToken).ConfigureAwait(false);
+
+            saveChanges = true;
+        }
+
+        if (!saveChanges)
+            return;
+
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task SeedClubPositionsAsync(
         ClubManagementDbContext dbContext,
-        IReadOnlyList<int> clubIds,
-        IReadOnlyList<int> categoryIds,
+        IReadOnlyDictionary<string, Club> clubsByName,
         CancellationToken cancellationToken)
     {
-        if (clubIds.Count == 0 || categoryIds.Count == 0 ||
-            await dbContext.ClubPositions.AnyAsync(cancellationToken).ConfigureAwait(false))
+        if (clubsByName.Count == 0)
             return;
 
-        var templates = new (int ClubIndex, string Title, int CategoryIndex, string[] Requirements)[]
-        {
-            (0, "Outreach Coordinator", 0, new[]
-            {
-                "Strong written English; Azerbaijani is a plus for local school visits.",
-                "Comfort speaking to prospective students at ADA open days."
-            }),
-            (0, "Technical Workshop Lead", 0, new[]
-            {
-                "Completed CS201 or equivalent; experience mentoring peers.",
-                "Availability for two evening sessions per month on campus."
-            }),
-            (1, "Events Vice-Chair", 5, new[]
-            {
-                "Organized at least one medium-sized student event before.",
-                "Familiarity with ADA room-booking and safety guidelines."
-            }),
-            (2, "Delegate Training Officer", 7, new[]
-            {
-                "Prior MUN or debate experience; research skills using UN documents.",
-                "Willingness to coach first-time delegates in English."
-            }),
-            (3, "Startup Pitch Curator", 9, new[]
-            {
-                "Interest in Azerbaijan’s startup ecosystem and early-stage investing.",
-                "Can commit to screening 5–8 pitch decks per semester."
-            }),
-            (4, "Exhibition Coordinator", 1, new[]
-            {
-                "Portfolio of photography or digital art; respect for model releases.",
-                "Experience with print labs or gallery hanging in Baku is helpful."
-            }),
-            (5, "Tournament Director", 3, new[]
-            {
-                "National chess federation ID or ELO > 1500 preferred.",
-                "Fair-play mindset and knowledge of FIDE rapid rules."
-            }),
-            (6, "Choreography Assistant", 1, new[]
-            {
-                "Dance background (folk or contemporary); ADA sports clearance form.",
-                "Teamwork during rehearsals before Founders’ Day and graduation."
-            }),
-            (7, "Sound & Stage Manager", 5, new[]
-            {
-                "Basic live-sound mixing; can coordinate with ADA facilities office.",
-                "Evening availability for concerts in the student center."
-            }),
-            (8, "Sustainability Metrics Analyst", 4, new[]
-            {
-                "Interest in campus waste audits and carbon footprint tracking.",
-                "Spreadsheet skills; environmental science or engineering major preferred."
-            }),
-            (9, "Reading Group Facilitator", 1, new[]
-            {
-                "Leads one monthly discussion in English; Azerbaijani titles welcome.",
-                "Coordinates with ADA library for room and display copies."
-            }),
-            (10, "Projection & Subtitles Lead", 5, new[]
-            {
-                "Care for AV equipment; subtitles in AZ/EN/TR as needed for screenings.",
-                "Copyright awareness for licensed films."
-            }),
-            (11, "Urban Sketching Captain", 6, new[]
-            {
-                "Sketchbooks from Icherisheher and modern Baku waterfront walks.",
-                "Shares supplies with beginners; posts highlights on club socials."
-            }),
-            (12, "Mentorship Pairing Coordinator", 0, new[]
-            {
-                "Matches mentors and mentees across ADA schools; GDPR-style discretion.",
-                "One-year commitment with mid-semester check-ins."
-            }),
-            (13, "Community Project Liaison", 4, new[]
-            {
-                "Fluent Azerbaijani for NGO communication; valid volunteer insurance.",
-                "Documents hours for ADA’s service-learning recognition."
-            }),
-            (14, "Intramurals Referee", 3, new[]
-            {
-                "Fair officiating; first-aid awareness; weekend slots at ADA gym.",
-                "Respects ADA code of conduct for spectators and players."
-            })
-        };
+        var clubIds = clubsByName.Values.Select(x => x.Id).Distinct().ToArray();
+        var existingPositionRows = await dbContext.ClubPositions
+            .AsNoTracking()
+            .Where(x => clubIds.Contains(x.ClubId))
+            .Select(x => new { x.ClubId, x.Title })
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var existingKeys = new HashSet<string>(
+            existingPositionRows.Select(x => BuildClubPositionKey(x.ClubId, x.Title)),
+            StringComparer.Ordinal);
 
         var positions = new List<ClubPosition>();
-        foreach (var t in templates)
+        foreach (var seed in ClubSeeds)
         {
-            var clubIndex = Math.Min(t.ClubIndex, clubIds.Count - 1);
-            var catIndex = Math.Min(t.CategoryIndex, categoryIds.Count - 1);
-            var pos = new ClubPosition
-            {
-                ClubId = clubIds[clubIndex],
-                Title = t.Title,
-                CategoryId = categoryIds[catIndex],
-                CreatedByUserId = BuildSeedUserGuid(200 + positions.Count)
-            };
-            var order = 0;
-            foreach (var line in t.Requirements)
-            {
-                pos.Requirements.Add(new ClubPositionRequirement
-                {
-                    SortOrder = order++,
-                    Text = line
-                });
-            }
+            if (!clubsByName.TryGetValue(seed.Name, out var club))
+                continue;
 
-            positions.Add(pos);
+            var createdByUserId = GetClubSeedUserId(seed.Employees[0].FullName);
+            foreach (var title in seed.Employees
+                         .Select(x => x.PositionTitle)
+                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                var key = BuildClubPositionKey(club.Id, title);
+                if (!existingKeys.Add(key))
+                    continue;
+
+                var position = new ClubPosition
+                {
+                    ClubId = club.Id,
+                    Title = title,
+                    Category = MapPositionCategory(title),
+                    CreatedByUserId = createdByUserId
+                };
+
+                var requirements = BuildPositionRequirements(title);
+                for (var i = 0; i < requirements.Length; i++)
+                {
+                    position.Requirements.Add(new ClubPositionRequirement
+                    {
+                        SortOrder = i,
+                        Text = requirements[i]
+                    });
+                }
+
+                positions.Add(position);
+            }
         }
+
+        if (positions.Count == 0)
+            return;
 
         await dbContext.ClubPositions.AddRangeAsync(positions, cancellationToken).ConfigureAwait(false);
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task SeedClubMembershipsAsync(
+    private static async Task SeedClubEmployeesAsync(
         ClubManagementDbContext dbContext,
-        IReadOnlyList<int> clubIds,
+        IReadOnlyDictionary<string, Club> clubsByName,
         CancellationToken cancellationToken)
     {
-        if (clubIds.Count == 0 || await dbContext.ClubMemberships.AnyAsync(cancellationToken).ConfigureAwait(false))
+        if (clubsByName.Count == 0)
             return;
 
-        var memberships = new List<ClubMembership>();
-        var used = new HashSet<(int ClubId, Guid UserId)>();
-        var userStart = 1;
-        foreach (var clubId in clubIds.Take(Math.Min(12, clubIds.Count)))
+        var clubIds = clubsByName.Values.Select(x => x.Id).Distinct().ToArray();
+        var positions = await dbContext.ClubPositions
+            .AsNoTracking()
+            .Where(x => clubIds.Contains(x.ClubId))
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var positionIdsByKey = positions
+            .GroupBy(x => BuildClubPositionKey(x.ClubId, x.Title), StringComparer.Ordinal)
+            .ToDictionary(x => x.Key, x => x.OrderBy(y => y.Id).First().Id, StringComparer.Ordinal);
+
+        var existingEmployees = await dbContext.ClubEmployees
+            .Where(x => clubIds.Contains(x.ClubId))
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var employeesByKey = existingEmployees.ToDictionary(x => (x.ClubId, x.UserId));
+        var saveChanges = false;
+
+        foreach (var seed in ClubSeeds)
         {
-            for (var k = 0; k < 4; k++)
+            if (!clubsByName.TryGetValue(seed.Name, out var club))
+                continue;
+
+            var presidentUserId = GetClubSeedUserId(seed.Employees[0].FullName);
+            foreach (var employee in seed.Employees)
             {
-                var uid = BuildSeedUserGuid(userStart++);
-                var key = (clubId, uid);
-                if (!used.Add(key))
+                var userId = GetClubSeedUserId(employee.FullName);
+                var positionId = positionIdsByKey[BuildClubPositionKey(club.Id, employee.PositionTitle)];
+
+                if (employeesByKey.TryGetValue((club.Id, userId), out var existing))
+                {
+                    if (existing.PositionId == positionId)
+                        continue;
+
+                    existing.PositionId = positionId;
+                    existing.ModifiedAt = DateTime.UtcNow;
+                    existing.ModifiedByUserId = presidentUserId;
+                    saveChanges = true;
                     continue;
+                }
+
+                var row = new ClubEmployee
+                {
+                    ClubId = club.Id,
+                    UserId = userId,
+                    PositionId = positionId,
+                    CreatedByUserId = presidentUserId
+                };
+
+                await dbContext.ClubEmployees.AddAsync(row, cancellationToken).ConfigureAwait(false);
+                employeesByKey[(club.Id, userId)] = row;
+                saveChanges = true;
+            }
+        }
+
+        if (!saveChanges)
+            return;
+
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task SeedClubMembershipsAsync(
+        ClubManagementDbContext dbContext,
+        IReadOnlyDictionary<string, Club> clubsByName,
+        CancellationToken cancellationToken)
+    {
+        if (clubsByName.Count == 0)
+            return;
+
+        var clubIds = clubsByName.Values.Select(x => x.Id).Distinct().ToArray();
+        var existingMembershipRows = await dbContext.ClubMemberships
+            .AsNoTracking()
+            .Where(x => clubIds.Contains(x.ClubId))
+            .Select(x => new { x.ClubId, x.UserId })
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var existingKeys = new HashSet<(int ClubId, Guid UserId)>(
+            existingMembershipRows.Select(x => (x.ClubId, x.UserId)));
+
+        var memberships = new List<ClubMembership>();
+        foreach (var seed in ClubSeeds)
+        {
+            if (!clubsByName.TryGetValue(seed.Name, out var club))
+                continue;
+
+            foreach (var memberName in seed.Members)
+            {
+                var userId = GetClubSeedUserId(memberName);
+                var key = (club.Id, userId);
+                if (!existingKeys.Add(key))
+                    continue;
+
                 memberships.Add(new ClubMembership
                 {
-                    ClubId = clubId,
-                    UserId = uid,
-                    CreatedByUserId = uid
+                    ClubId = club.Id,
+                    UserId = userId,
+                    CreatedByUserId = userId
                 });
             }
         }
+
+        if (memberships.Count == 0)
+            return;
 
         await dbContext.ClubMemberships.AddRangeAsync(memberships, cancellationToken).ConfigureAwait(false);
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -300,18 +510,18 @@ public static class ClubManagementSeeder
         var now = DateTime.UtcNow;
         var events = new[]
         {
-            ("Founders’ Day Open Campus", "Guided tours, dean’s welcome, and student club fair at ADA University main campus.", "ADA University — Main Atrium", 120),
-            ("Baku Tech Talks: Caspian Cloud", "Industry panel with local SaaS founders and coffee networking.", "ADA Learning Hub — Auditorium B", 80),
+            ("Founders Day Open Campus", "Guided tours, dean's welcome, and student club fair at ADA University main campus.", "ADA University - Main Atrium", 120),
+            ("Baku Tech Talks: Caspian Cloud", "Industry panel with local SaaS founders and coffee networking.", "ADA Learning Hub - Auditorium B", 80),
             ("Nowruz Spring Celebration", "Haft-sin display, traditional music, and student performances.", "ADA Outdoor Plaza", 200),
-            ("MUN Crisis Simulation: Energy Security", "Double-delegate crisis committee focused on South Caucasus scenarios.", "ADA — Conference Room 3", 40),
+            ("MUN Crisis Simulation: Energy Security", "Double-delegate crisis committee focused on South Caucasus scenarios.", "ADA - Conference Room 3", 40),
             ("Green ADA: Khizi Tree Planting", "Day trip to foothills; transportation departs 08:00 from ADA parking.", "Khizi Forest (chartered bus from ADA)", 35),
             ("IEEE Embedded Workshop", "Hands-on STM32 labs; kits sponsored by partner companies in Baku.", "ADA Maker Lab", 25),
             ("International Food Evening", "Student booths representing home countries at ADA.", "ADA Student Center", 150),
-            ("Chess Simul with Guest Master", "Simultaneous exhibition; beginners welcome on boards 21–30.", "ADA Library Reading Room", 32),
+            ("Chess Simul with Guest Master", "Simultaneous exhibition; beginners welcome on boards 21-30.", "ADA Library Reading Room", 32),
             ("Film Night: Azerbaijani New Wave", "Screening + Q&A with local director; subtitles in English.", "ADA Cinema Corner", 60),
-            ("Startup Pitch Night — Fall", "Five-minute pitches; judges from ADA faculty and accelerators.", "ADA Innovation Studio", 70),
+            ("Startup Pitch Night - Fall", "Five-minute pitches; judges from ADA faculty and accelerators.", "ADA Innovation Studio", 70),
             ("Architecture Walk: Icherisheher", "Measured drawings and photo ethics briefing before Old City walk.", "Meet at ADA main gate", 22),
-            ("Volunteer Day: Children’s Library", "Reading buddies in Nasimi district; Azerbaijani or English.", "Nasimi Public Library (ADA shuttle)", 18)
+            ("Volunteer Day: Children's Library", "Reading buddies in Nasimi district; Azerbaijani or English.", "Nasimi Public Library (ADA shuttle)", 18)
         };
 
         var rows = events
@@ -422,17 +632,17 @@ public static class ClubManagementSeeder
 
         var specs = new (string Title, string Description, bool LinkPosition, bool Draft)[]
         {
-            ("Design Lead — club branding", "Lead visual identity for ADA Entrepreneurship Club pitch nights and social templates. Minimum 100 characters: collaborate with founders on decks, maintain Figma libraries, and ensure accessibility contrast for bilingual AZ/EN materials.", true, false),
+            ("Design Lead - club branding", "Lead visual identity for ADA Entrepreneurship Club pitch nights and social templates. Minimum 100 characters: collaborate with founders on decks, maintain Figma libraries, and ensure accessibility contrast for bilingual AZ/EN materials.", true, false),
             ("Treasurer (IEEE)", "Track IEEE branch dues, receipts in AZN, and reimbursement forms through ADA finance office procedures.", true, false),
             ("Social media intern", "Short-form video from campus events; knowledge of Instagram/TikTok trends in Azerbaijan.", false, false),
             ("MUN research analyst", "Write background guides for crisis committees; cite UN and regional sources.", true, false),
             ("Volunteer photographer", "Weekend coverage for Green ADA and sports; release forms required.", false, true),
             ("Hackathon logistics lead", "Sponsor swag, catering, and judge schedules for ADA CS Society spring hackathon.", true, false),
-            ("Peer tutor — calculus", "Hold drop-in hours for MATH151 in ADA library; training provided.", false, false),
+            ("Peer tutor - calculus", "Hold drop-in hours for MATH151 in ADA library; training provided.", false, false),
             ("Events DJ assistant", "Assist with soundchecks for ADA Music showcases; lifting equipment up to 15 kg.", false, true),
             ("Corporate relations officer", "Cold outreach to Baku tech firms for IEEE guest lectures.", true, false),
             ("Content editor (Azerbaijani)", "Proofread AZ copy for International Students Association newsletters.", false, false),
-            ("Safety marshal — intramurals", "First-aid basics; enforce ADA gym rules during matches.", true, false),
+            ("Safety marshal - intramurals", "First-aid basics; enforce ADA gym rules during matches.", true, false),
             ("Alumni liaison", "Coordinate LinkedIn lives with ADA graduates in London and Istanbul hubs.", false, false)
         };
 
@@ -492,4 +702,113 @@ public static class ClubManagementSeeder
     {
         return Guid.Parse($"00000000-0000-0000-0000-{index:000000000000}");
     }
+
+    private static Guid GetClubSeedUserId(string fullName)
+    {
+        if (ClubSeedUserIds.TryGetValue(fullName, out var userId))
+            return userId;
+
+        throw new InvalidOperationException($"No deterministic seed user id is configured for '{fullName}'.");
+    }
+
+    private static IReadOnlyDictionary<string, Guid> BuildClubSeedUserIds()
+    {
+        var result = new Dictionary<string, Guid>(StringComparer.Ordinal);
+        var nextIndex = 1000;
+
+        foreach (var name in ClubSeeds
+                     .SelectMany(x => x.Employees.Select(e => e.FullName).Concat(x.Members))
+                     .Distinct(StringComparer.Ordinal))
+        {
+            result[name] = BuildSeedUserGuid(nextIndex++);
+        }
+
+        return result;
+    }
+
+    private static string BuildClubPositionKey(int clubId, string title)
+    {
+        return $"{clubId}:{title.Trim().ToUpperInvariant()}";
+    }
+
+    private static ClubPositionCategory MapPositionCategory(string title)
+    {
+        return title.Trim() switch
+        {
+            "Tech Lead" => ClubPositionCategory.Technology,
+            "Data Lead" => ClubPositionCategory.Technology,
+            "Security Lead" => ClubPositionCategory.Technology,
+            "Marketing Lead" => ClubPositionCategory.Marketing,
+            "Event Manager" => ClubPositionCategory.Events,
+            "Finance Lead" => ClubPositionCategory.Finance,
+            "Content Lead" => ClubPositionCategory.Content,
+            _ => ClubPositionCategory.Other
+        };
+    }
+
+    private static string[] BuildPositionRequirements(string title)
+    {
+        return title.Trim() switch
+        {
+            "President" => new[]
+            {
+                "Lead the club strategy, represent the team in official meetings, and keep semester goals on track.",
+                "Coordinate officers, delegate responsibilities clearly, and review weekly progress with the team."
+            },
+            "Vice President" => new[]
+            {
+                "Support the president in day-to-day coordination and step in when leadership coverage is needed.",
+                "Help align officer tasks, follow up on deadlines, and keep internal operations moving smoothly."
+            },
+            "Tech Lead" => new[]
+            {
+                "Guide technical sessions, project work, and hands-on learning activities for club members.",
+                "Mentor contributors, review implementation plans, and help the club ship demos with quality."
+            },
+            "Data Lead" => new[]
+            {
+                "Support data workflows, analytics tasks, and project organization for club initiatives.",
+                "Help members work with datasets responsibly and turn findings into clear outputs."
+            },
+            "Security Lead" => new[]
+            {
+                "Lead safe cybersecurity practice sessions and promote ethical handling of tools and exercises.",
+                "Help members understand secure workflows, responsible disclosure, and defensive thinking."
+            },
+            "Marketing Lead" => new[]
+            {
+                "Plan club promotion, publish event messaging, and maintain a consistent public voice.",
+                "Coordinate campaign content, social posts, and outreach materials before major activities."
+            },
+            "Finance Lead" => new[]
+            {
+                "Track budgets, event expenses, and sponsorship-related planning with reliable documentation.",
+                "Prepare simple cost estimates and help the club make practical spending decisions."
+            },
+            "Content Lead" => new[]
+            {
+                "Prepare educational material, session outlines, and speaking content for club programs.",
+                "Keep content clear, structured, and aligned with the club's learning goals."
+            },
+            "Event Manager" => new[]
+            {
+                "Own event logistics, timelines, and execution details from planning through wrap-up.",
+                "Coordinate rooms, checklists, and day-of operations so events run smoothly."
+            },
+            _ => new[]
+            {
+                "Contribute consistently to club planning, communication, and execution in the assigned role.",
+                "Collaborate with the leadership team and follow through on responsibilities before deadlines."
+            }
+        };
+    }
+
+    private sealed record SeedClubDefinition(
+        string Name,
+        string Description,
+        string CategoryName,
+        IReadOnlyList<SeedEmployeeDefinition> Employees,
+        IReadOnlyList<string> Members);
+
+    private sealed record SeedEmployeeDefinition(string FullName, string PositionTitle);
 }

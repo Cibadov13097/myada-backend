@@ -4,6 +4,7 @@ using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.JobVacancy;
 using ClubManagementService.Application.Interfaces.Services;
+using ClubManagementService.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -200,7 +201,7 @@ public class ClubAdminController : ControllerBase
         var created = await _clubAdmin.CreatePositionAsync(clubId, new ClubPositionCreateDto
         {
             Title = title,
-            CategoryId = request.CategoryId,
+            Category = request.Category,
             Requirements = request.Requirements ?? new List<string>()
         }, cancellationToken).ConfigureAwait(false);
         return Ok(created);
@@ -215,7 +216,7 @@ public class ClubAdminController : ControllerBase
         var updated = await _clubAdmin.PatchPositionAsync(clubId, positionId, new ClubPositionUpdateDto
         {
             Title = title,
-            CategoryId = request.CategoryId,
+            Category = request.Category,
             Requirements = request.Requirements ?? new List<string>()
         }, cancellationToken).ConfigureAwait(false);
         return updated == null ? NotFound() : Ok(updated);
@@ -451,7 +452,7 @@ public class ClubAdminController : ControllerBase
     {
         public string Title { get; set; } = string.Empty;
         public string? Name { get; set; }
-        public int CategoryId { get; set; }
+        public ClubPositionCategory Category { get; set; }
         public List<string> Requirements { get; set; } = new();
     }
 
@@ -459,7 +460,7 @@ public class ClubAdminController : ControllerBase
     {
         public string Title { get; set; } = string.Empty;
         public string? Name { get; set; }
-        public int CategoryId { get; set; }
+        public ClubPositionCategory Category { get; set; }
         public List<string> Requirements { get; set; } = new();
     }
 

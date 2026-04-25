@@ -1,22 +1,22 @@
 # Club Management API Documentation
 
-Last updated: 2026-04-25
+Last updated: 2026-04-26
 
-This document was verified against:
+This document is based on the current source code and gateway configuration in this repository.
 
-- Live gateway base: `http://13.60.31.141:500/club`
-- Live Swagger UI: `http://13.60.31.141:500/club/swagger/index.html`
-- Live OpenAPI JSON: `http://13.60.31.141:500/club/swagger/v1/swagger.json`
-- Live sample endpoint: `GET http://13.60.31.141:500/club/api/v1/categories`
-- Source controllers under `Services/ClubManagementService/ClubManagementService.API/Controllers`
+Remote reachability note:
+
+- On 2026-04-26, direct HTTP checks to `http://13.60.31.141/`, `/club/swagger/index.html`, and `/club/swagger/v1/swagger.json` were not reachable from this environment.
+- The route prefix and endpoint paths below are therefore derived from source, especially `ApiGateway/appsettings.json` and controllers under `Services/ClubManagementService/ClubManagementService.API/Controllers`.
+- Club position categories are defined by `ClubPositionCategory` in `Services/ClubManagementService/ClubManagementService.Domain/Enums/ClubPositionCategory.cs`.
 
 The Club Management service uses URL versioning. The main path format is:
 
 `/api/v1/...`
 
-Use this gateway base in frontend and integration code:
+Use this gateway path pattern in frontend and integration code:
 
-`{base} = http://13.60.31.141:500/club`
+`{base} = {gatewayHost}/club`
 
 ---
 
@@ -24,21 +24,22 @@ Use this gateway base in frontend and integration code:
 
 | Environment | Base URL | Notes |
 |-------------|----------|-------|
-| Gateway (verified) | `http://13.60.31.141:500/club` | Recommended production entrypoint. |
+| Gateway host shared in this thread | `http://13.60.31.141/club` | Use this if the gateway is exposed on the host's default HTTP port. |
+| Repo-local gateway | `http://localhost:5000/club` | From `docker-compose.yml` (`apigateway` maps `5000:8080`). |
 | Local service | `http://localhost:5003` | Local docker/service port. |
-| Swagger UI | `http://13.60.31.141:500/club/swagger/index.html` | Available on the live gateway. |
-| OpenAPI JSON | `http://13.60.31.141:500/club/swagger/v1/swagger.json` | Best machine-readable source of truth. |
+| Swagger UI | `{gatewayHost}/club/swagger/index.html` | Swagger path configured behind the `/club` gateway prefix. |
+| OpenAPI JSON | `{gatewayHost}/club/swagger/v1/swagger.json` | Machine-readable contract when the deployed gateway is reachable. |
 
 Examples:
 
-- Categories: `http://13.60.31.141:500/club/api/v1/categories`
-- Club detail: `http://13.60.31.141:500/club/api/v1/clubs/1`
-- Swagger: `http://13.60.31.141:500/club/swagger/index.html`
+- Categories: `http://13.60.31.141/club/api/v1/categories`
+- Club detail: `http://13.60.31.141/club/api/v1/clubs/1`
+- Swagger: `http://13.60.31.141/club/swagger/index.html`
 
 Important gateway rule:
 
-- Correct: `http://13.60.31.141:500/club/api/v1/categories`
-- Wrong: `http://13.60.31.141:500/api/v1/categories`
+- Correct: `http://13.60.31.141/club/api/v1/categories`
+- Wrong: `http://13.60.31.141/api/v1/categories`
 
 The gateway strips `/club` before forwarding to the club service.
 
@@ -93,13 +94,15 @@ Do not assume the controller payload is returned raw.
 
 ## Current differences from older docs
 
-- The verified production gateway host is now `13.60.31.141:500`, not the older `13.60.31.141:5000` or `51.20.193.29:5000` examples from previous docs.
+- The gateway route prefix is `/club`. The host and port are deployment-specific; for the host shared in this thread, the production-style base is `http://13.60.31.141/club` if that host serves the gateway directly.
+- Older docs that hard-coded `http://13.60.31.141:500/club` were not re-verifiable from this environment on 2026-04-26.
 - `POST /api/v1/club-proposals` is anonymous and supports both `application/json` and `multipart/form-data`; use `multipart/form-data` for direct file attachments and S3 upload flow.
 - Student-services proposal routes are:
   - `/api/v1/student-services/clubs/proposals/...`
   - `/api/v1/student-services/events/proposals/...`
 - `GET /api/v1/users/me/event-registrations` exists as a shortcut route.
 - Legacy event aliases under `/api/events/...` are still live.
+- Club-admin position payloads now use a string enum `category`, not `categoryId`.
 
 ---
 
@@ -207,7 +210,7 @@ Auth: Bearer required
 | `PATCH` | `/api/v1/events/{eventId}` | Body: `UpdateEventDto`. |
 | `DELETE` | `/api/v1/events/{eventId}` | Delete event. |
 
-Live legacy aliases also exposed by the same controller:
+Compatibility aliases also exposed by the same controller:
 
 - `GET /api/events`
 - `GET /api/events/{eventId}`
@@ -649,9 +652,57 @@ Auth: Bearer required
 |--------|------|-------|
 | `GET` | `/api/v1/club-admin/{clubId}/positions` | Query: `page`, `limit`. |
 | `GET` | `/api/v1/club-admin/{clubId}/positions/{positionId}` | Position detail. |
-| `POST` | `/api/v1/club-admin/{clubId}/positions` | Body: `{ "title", "name"?, "categoryId", "requirements": string[] }`. |
+| `POST` | `/api/v1/club-admin/{clubId}/positions` | Body: `{ "title", "name"?, "category", "requirements": string[] }`. `name` is a legacy alias for `title`. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/positions/{positionId}` | Same body shape as create. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/positions/{positionId}` | Delete position. |
+
+Position category enum values:
+
+- `Marketing`
+- `Technology`
+- `Events`
+- `Finance`
+- `Outreach`
+- `Content`
+- `Other`
+
+Important contract notes:
+
+- `categoryId` is no longer part of the request DTOs or service layer.
+- `category` is serialized as a JSON string enum (`ClubPositionCategory`).
+- Invalid enum values are rejected with `400` and message `Invalid position category.`
+- Position responses include both `category` and `categoryName` (currently the same enum label).
+- Position responses also include both `title` and `name`; `name` is kept for older clients and mirrors `title`.
+
+Create / patch example:
+
+```json
+{
+  "title": "Head of Outreach",
+  "category": "Outreach",
+  "requirements": [
+    "Strong communication skills",
+    "Can coordinate cross-club partnerships"
+  ]
+}
+```
+
+Representative position response:
+
+```json
+{
+  "id": "12",
+  "clubId": "5",
+  "name": "Head of Outreach",
+  "title": "Head of Outreach",
+  "category": "Outreach",
+  "categoryName": "Outreach",
+  "requirements": [
+    "Strong communication skills",
+    "Can coordinate cross-club partnerships"
+  ]
+}
+```
 
 ### Members and employees
 
@@ -719,7 +770,7 @@ Auth: Bearer required
 
 ## Legacy and compatibility routes
 
-The live swagger currently exposes these compatibility routes in addition to the main `/api/v1/...` surface:
+The current controller surface also exposes these compatibility routes in addition to the main `/api/v1/...` routes:
 
 - `/api/events`
 - `/api/events/{eventId}`
@@ -736,7 +787,7 @@ If you are building new frontend code, prefer the versioned `/api/v1/...` routes
 
 Use:
 
-`http://13.60.31.141:500/club`
+`http://13.60.31.141/club`
 
 Then append one of:
 
@@ -753,7 +804,9 @@ Then append one of:
 
 For exact live schemas and tags, use:
 
-- Swagger UI: `http://13.60.31.141:500/club/swagger/index.html`
-- OpenAPI JSON: `http://13.60.31.141:500/club/swagger/v1/swagger.json`
+- Swagger UI: `http://13.60.31.141/club/swagger/index.html`
+- OpenAPI JSON: `http://13.60.31.141/club/swagger/v1/swagger.json`
 
-This markdown file is the human-readable summary. The OpenAPI document is the canonical live contract.
+If that host is not exposed on the default HTTP port in your deployment, keep the same `/club` prefix and swap in the deployed gateway host:port.
+
+This markdown file is the human-readable summary. The OpenAPI document is the canonical deployed contract when the target gateway is reachable.

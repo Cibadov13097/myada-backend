@@ -15,7 +15,6 @@ public class ClubPositionRepository : IClubPositionRepository
     {
         return await _db.ClubPositions
             .Include(p => p.Requirements)
-            .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == id && p.ClubId == clubId, cancellationToken);
     }
 
@@ -24,7 +23,6 @@ public class ClubPositionRepository : IClubPositionRepository
         return await _db.ClubPositions
             .AsNoTracking()
             .Include(p => p.Requirements)
-            .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == id && p.ClubId == clubId, cancellationToken);
     }
 
@@ -33,7 +31,6 @@ public class ClubPositionRepository : IClubPositionRepository
         return await _db.ClubPositions
             .AsNoTracking()
             .Include(p => p.Requirements)
-            .Include(p => p.Category)
             .Where(p => p.ClubId == clubId)
             .OrderBy(p => p.Title)
             .ToListAsync(cancellationToken);

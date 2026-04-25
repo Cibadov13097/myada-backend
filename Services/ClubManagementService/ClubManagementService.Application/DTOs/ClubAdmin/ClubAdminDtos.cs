@@ -1,3 +1,5 @@
+using ClubManagementService.Domain.Enums;
+
 namespace ClubManagementService.Application.DTOs.ClubAdmin;
 
 public sealed class ClubProfileUploadHintsDto
@@ -139,22 +141,22 @@ public sealed class ClubAdminPositionDto
     /// <summary>Same as title; kept for older clients.</summary>
     public string Name { get; init; } = string.Empty;
     public string Title { get; init; } = string.Empty;
-    public int CategoryId { get; init; }
-    public string? CategoryName { get; init; }
+    public ClubPositionCategory Category { get; init; }
+    public string CategoryName { get; init; } = string.Empty;
     public IReadOnlyList<string> Requirements { get; init; } = Array.Empty<string>();
 }
 
 public sealed class ClubPositionCreateDto
 {
     public string Title { get; set; } = string.Empty;
-    public int CategoryId { get; set; }
+    public ClubPositionCategory Category { get; set; }
     public List<string> Requirements { get; set; } = new();
 }
 
 public sealed class ClubPositionUpdateDto
 {
     public string Title { get; set; } = string.Empty;
-    public int CategoryId { get; set; }
+    public ClubPositionCategory Category { get; set; }
     public List<string> Requirements { get; set; } = new();
 }
 

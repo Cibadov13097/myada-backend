@@ -229,8 +229,10 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<int>("ClubId")
                         .HasColumnType("integer");
@@ -261,8 +263,6 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ClubId");
 
@@ -774,19 +774,11 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ClubManagementService.Domain.Entities.ClubPosition", b =>
                 {
-                    b.HasOne("ClubManagementService.Domain.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("ClubManagementService.Domain.Entities.Club", "Club")
                         .WithMany()
                         .HasForeignKey("ClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("Club");
                 });

@@ -1,4 +1,5 @@
 using ClubManagementService.Domain.Common;
+using ClubManagementService.Domain.Enums;
 
 namespace ClubManagementService.Domain.Entities;
 
@@ -8,7 +9,6 @@ public class ClubPosition : AuditableEntity
     public int ClubId { get; set; }
     public Club? Club { get; set; }
     public string Title { get; set; } = null!;
-    public int CategoryId { get; set; }
-    public Category? Category { get; set; }
+    public ClubPositionCategory Category { get; set; }
     public ICollection<ClubPositionRequirement> Requirements { get; set; } = new List<ClubPositionRequirement>();
 }

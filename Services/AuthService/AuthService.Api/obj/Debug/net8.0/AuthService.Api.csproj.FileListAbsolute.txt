@@ -605,3 +605,4 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\ref\AuthService.Api.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AWSSDK.Core.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AWSSDK.S3.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\swae.build.ex.cache

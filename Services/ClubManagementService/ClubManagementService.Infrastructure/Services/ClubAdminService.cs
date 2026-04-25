@@ -24,7 +24,6 @@ public sealed class ClubAdminService : IClubAdminService
     private readonly IJobApplicationService _jobApplicationService;
     private readonly IEventService _eventService;
     private readonly IClubPositionRepository _positionRepository;
-    private readonly ICategoryRepository _categoryRepository;
     private readonly ClubAdminWorkspaceStore _workspace;
     private readonly IProposalContractService _proposalContract;
     private readonly IClubRepository _clubRepository;
@@ -37,7 +36,6 @@ public sealed class ClubAdminService : IClubAdminService
         IJobApplicationService jobApplicationService,
         IEventService eventService,
         IClubPositionRepository positionRepository,
-        ICategoryRepository categoryRepository,
         ClubAdminWorkspaceStore workspace,
         IProposalContractService proposalContract,
         IClubRepository clubRepository,
@@ -49,7 +47,6 @@ public sealed class ClubAdminService : IClubAdminService
         _jobApplicationService = jobApplicationService;
         _eventService = eventService;
         _positionRepository = positionRepository;
-        _categoryRepository = categoryRepository;
         _workspace = workspace;
         _proposalContract = proposalContract;
         _clubRepository = clubRepository;
@@ -741,9 +738,7 @@ public sealed class ClubAdminService : IClubAdminService
         if (string.IsNullOrWhiteSpace(dto.Title))
             throw new ArgumentException("Position title is required.");
 
-        var category = await _categoryRepository.GetByIdAsync(dto.CategoryId).ConfigureAwait(false);
-        if (category == null)
-            throw new ArgumentException("Invalid category.");
+        var category = EnsureValidPositionCategory(dto.Category);
 
         var clubId = ctx.ClubId;
         var key = ctx.Key;
@@ -751,7 +746,7 @@ public sealed class ClubAdminService : IClubAdminService
         {
             ClubId = clubId,
             Title = dto.Title.Trim(),
-            CategoryId = dto.CategoryId
+            Category = category
         };
         var order = 0;
         foreach (var line in dto.Requirements.Where(x => !string.IsNullOrWhiteSpace(x)))
@@ -779,13 +774,11 @@ public sealed class ClubAdminService : IClubAdminService
         if (entity == null)
             return null;
 
-        var category = await _categoryRepository.GetByIdAsync(dto.CategoryId).ConfigureAwait(false);
-        if (category == null)
-            throw new ArgumentException("Invalid category.");
+        var category = EnsureValidPositionCategory(dto.Category);
 
         if (!string.IsNullOrWhiteSpace(dto.Title))
             entity.Title = dto.Title.Trim();
-        entity.CategoryId = dto.CategoryId;
+        entity.Category = category;
         await _positionRepository.ReplaceRequirementsAsync(entity.Id, dto.Requirements, cancellationToken).ConfigureAwait(false);
         await _positionRepository.UpdateAsync(entity, cancellationToken).ConfigureAwait(false);
         await _positionRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -1365,11 +1358,22 @@ public sealed class ClubAdminService : IClubAdminService
             ClubId = clubRouteKey,
             Name = p.Title,
             Title = p.Title,
-            CategoryId = p.CategoryId,
-            CategoryName = p.Category?.Name,
+            Category = p.Category,
+            CategoryName = GetPositionCategoryName(p.Category),
             Requirements = reqs
         };
     }
+
+    private static ClubPositionCategory EnsureValidPositionCategory(ClubPositionCategory category)
+    {
+        if (!Enum.IsDefined(category))
+            throw new ArgumentException("Invalid position category.");
+
+        return category;
+    }
+
+    private static string GetPositionCategoryName(ClubPositionCategory category) =>
+        Enum.IsDefined(category) ? category.ToString() : ClubPositionCategory.Other.ToString();
 
     private async Task<ClubRouteContext?> TryResolveClubAsync(string clubRouteKey, CancellationToken cancellationToken)
     {

@@ -86,10 +86,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ClubPosition>()
-                .HasOne(p => p.Category)
-                .WithMany()
-                .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .Property(p => p.Category)
+                .HasConversion<string>()
+                .HasMaxLength(32);
 
             modelBuilder.Entity<ClubPositionRequirement>()
                 .HasQueryFilter(r => r.ClubPosition != null && !r.ClubPosition.IsDeleted);

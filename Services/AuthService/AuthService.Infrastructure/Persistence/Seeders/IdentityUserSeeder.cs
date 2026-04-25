@@ -163,6 +163,7 @@ public static class IdentityUserSeeder
         }
 
         await StudentUserSeeder.SeedAsync(userManager, roleManager, cancellationToken);
+        await ClubRosterStudentSeeder.SeedAsync(userManager, roleManager, cancellationToken);
         await InstructorUserSeeder.SeedAsync(userManager, roleManager, cancellationToken);
     }
 
