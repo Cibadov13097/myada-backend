@@ -363,7 +363,7 @@ Auth: anonymous
 
 | Method | Path | Notes |
 |--------|------|-------|
-| `POST` | `/api/v1/club-proposals` | `application/json`. Body uses `ClubProposalSubmissionDto`. |
+| `POST` | `/api/v1/club-proposals` | Accepts `multipart/form-data` for direct file upload to S3, or `application/json` when file fields are already URLs/references. |
 
 Current request body fields:
 
@@ -385,8 +385,10 @@ Current request body fields:
 
 Important:
 
-- This route is no longer multipart in the current controller.
-- `logoFile` and `constitutionFile` are JSON string fields in the DTO, not uploaded files.
+- In multipart mode, `logoFile` and `constitutionFile` are uploaded files and the backend stores them in S3.
+- In JSON mode, `logoFile` and `constitutionFile` are string fields and should contain an already-uploaded URL/reference.
+- `otherMembersJson` is now a list of user ids (`guid` strings), not a stringified JSON blob.
+- When a proposal is approved, `otherMembersJson` users are added to club memberships.
 
 ---
 

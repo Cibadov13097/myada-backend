@@ -250,4 +250,3 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\Locatio
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Api\obj\Debug\net8.0\LocationService.Api.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Api\obj\Debug\net8.0\LocationService.Api.genruntimeconfig.cache
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Api\obj\Debug\net8.0\ref\LocationService.Api.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LocationService\LocationService.Api\obj\Debug\net8.0\swae.build.ex.cache

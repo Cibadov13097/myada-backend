@@ -1,10 +1,12 @@
 using System.Globalization;
+using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using ClubManagementService.Application.ClubAdmin;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Event;
+using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
 using ClubManagementService.Infrastructure.Persistence.Context;
@@ -19,13 +21,20 @@ public sealed class ProposalContractService : IProposalContractService
     private readonly ProposalStateStore _store;
     private readonly IClubService _clubService;
     private readonly IEventService _eventService;
+    private readonly IClubMembershipRepository _clubMembershipRepository;
     private readonly ClubManagementDbContext _db;
 
-    public ProposalContractService(ProposalStateStore store, IClubService clubService, IEventService eventService, ClubManagementDbContext db)
+    public ProposalContractService(
+        ProposalStateStore store,
+        IClubService clubService,
+        IEventService eventService,
+        IClubMembershipRepository clubMembershipRepository,
+        ClubManagementDbContext db)
     {
         _store = store;
         _clubService = clubService;
         _eventService = eventService;
+        _clubMembershipRepository = clubMembershipRepository;
         _db = db;
     }
 
@@ -125,13 +134,13 @@ public sealed class ProposalContractService : IProposalContractService
             PrimaryOfficers = primary,
             OtherMembers = others,
             SubmittedAt = now,
-            LogoUrl = $"/media/club-proposals/{id}/logo",
+            LogoUrl = submission.LogoFile!.Trim(),
             ConstitutionDoc = new ConstitutionDoc
             {
-                Name = string.IsNullOrWhiteSpace(submission.ConstitutionFile) ? "constitution.pdf" : submission.ConstitutionFile.Trim(),
-                SizeBytes = 0,
+                Name = ResolveAttachmentName(submission.ConstitutionFilePart, submission.ConstitutionFile, "constitution.pdf"),
+                SizeBytes = submission.ConstitutionFilePart?.SizeBytes ?? 0,
                 UploadedAt = now,
-                Url = $"/files/club-proposals/{id}/constitution"
+                Url = submission.ConstitutionFile!.Trim()
             }
         };
 
@@ -213,6 +222,8 @@ public sealed class ProposalContractService : IProposalContractService
             ApprovedBy = actorUserId,
             CategoryId = categoryId
         }).ConfigureAwait(false);
+
+        await AddOtherMembersToClubAsync(created.Id, r.OtherMembers, actorUserId, cancellationToken).ConfigureAwait(false);
 
         r.Status = "approved";
         r.ApprovedClubId = created.Id;
@@ -558,7 +569,7 @@ public sealed class ProposalContractService : IProposalContractService
             submittedAt = r.SubmittedAt.ToUniversalTime().ToString("O"),
             status = r.Status,
             primaryOfficers = r.PrimaryOfficers.Select(o => new { role = o.Role, studentId = o.StudentId }).ToList(),
-            otherMembers = r.OtherMembers.Select(o => new { studentId = o.StudentId, position = o.Position, status = o.Status }).ToList(),
+            otherMembers = r.OtherMembers.Select(o => new { userId = o.UserId, status = o.Status }).ToList(),
             alignment = r.Alignment ?? string.Empty,
             vision = r.Vision ?? string.Empty,
             commitment = r.Commitment ?? string.Empty,
@@ -571,6 +582,38 @@ public sealed class ProposalContractService : IProposalContractService
             },
             logoUrl = r.LogoUrl
         };
+    }
+
+    private async Task AddOtherMembersToClubAsync(
+        int clubId,
+        IReadOnlyCollection<OtherOfficer> members,
+        Guid actorUserId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (members.Count == 0)
+            return;
+
+        var existingUserIds = await _clubMembershipRepository.GetUserIdsByClubAsync(clubId, cancellationToken).ConfigureAwait(false);
+        var existing = new HashSet<Guid>(existingUserIds);
+        var toInsert = members
+            .Select(m => Guid.TryParse(m.UserId, out var userId) ? userId : Guid.Empty)
+            .Where(userId => userId != Guid.Empty && !existing.Contains(userId))
+            .Distinct()
+            .ToList();
+
+        foreach (var userId in toInsert)
+        {
+            await _clubMembershipRepository.AddAsync(new ClubMembership
+            {
+                ClubId = clubId,
+                UserId = userId,
+                CreatedByUserId = actorUserId
+            }).ConfigureAwait(false);
+        }
+
+        if (toInsert.Count > 0)
+            await _clubMembershipRepository.SaveChangesAsync().ConfigureAwait(false);
     }
 
     private static object MapEventProposal(EventProposal r)
@@ -686,65 +729,40 @@ public sealed class ProposalContractService : IProposalContractService
             }
             catch
             {
-                AddErr(errors, "otherMembersJson", "otherMembersJson must be a JSON array of { studentId, position }.");
+                AddErr(errors, "otherMembersJson", "otherMembersJson must be a list of valid user ids.");
             }
         }
     }
 
-    private static bool HasOtherMembers(JsonElement? json)
-    {
-        if (!json.HasValue)
-            return false;
+    private static bool HasOtherMembers(IReadOnlyCollection<string>? members) =>
+        members is { Count: > 0 } && members.Any(m => !string.IsNullOrWhiteSpace(m));
 
-        return json.Value.ValueKind switch
-        {
-            JsonValueKind.Array => json.Value.GetArrayLength() > 0,
-            JsonValueKind.String => !string.IsNullOrWhiteSpace(json.Value.GetString()),
-            JsonValueKind.Null => false,
-            JsonValueKind.Undefined => false,
-            _ => true
-        };
-    }
-
-    private static List<OtherOfficer> ParseOtherMembers(JsonElement? json)
+    private static List<OtherOfficer> ParseOtherMembers(IEnumerable<string>? members)
     {
-        if (!json.HasValue || json.Value.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
+        if (members == null)
             return new List<OtherOfficer>();
 
-        List<OtherMemberJson> rows;
-        if (json.Value.ValueKind == JsonValueKind.Array)
+        var result = new List<OtherOfficer>();
+        var seen = new HashSet<Guid>();
+        foreach (var member in members)
         {
-            rows = JsonSerializer.Deserialize<List<OtherMemberJson>>(json.Value.GetRawText(), ProposalJson.Options)
-                   ?? new List<OtherMemberJson>();
-        }
-        else if (json.Value.ValueKind == JsonValueKind.String)
-        {
-            var text = json.Value.GetString();
-            if (string.IsNullOrWhiteSpace(text))
-                return new List<OtherOfficer>();
-            rows = JsonSerializer.Deserialize<List<OtherMemberJson>>(text, ProposalJson.Options)
-                   ?? new List<OtherMemberJson>();
-        }
-        else
-        {
-            throw new JsonException("otherMembersJson must be an array or a JSON-encoded array string.");
-        }
+            if (string.IsNullOrWhiteSpace(member))
+                continue;
 
-        return rows
-            .Where(x => !string.IsNullOrWhiteSpace(x.StudentId))
-            .Select(x => new OtherOfficer
+            if (!Guid.TryParse(member.Trim(), out var userId) || userId == Guid.Empty)
+                throw new FormatException("otherMembersJson must contain only valid user ids.");
+
+            if (!seen.Add(userId))
+                continue;
+
+            result.Add(new OtherOfficer
             {
-                StudentId = x.StudentId!.Trim(),
-                Position = (x.Position ?? "Other").Trim(),
-                Status = "Verified"
-            })
-            .ToList();
-    }
+                UserId = userId.ToString("D"),
+                Status = "Pending"
+            });
+        }
 
-    private sealed class OtherMemberJson
-    {
-        public string? StudentId { get; set; }
-        public string? Position { get; set; }
+        return result;
     }
 
     private static void ValidateLogo(Dictionary<string, List<string>> errors, string? logoFile)
@@ -757,6 +775,21 @@ public sealed class ProposalContractService : IProposalContractService
     {
         if (string.IsNullOrWhiteSpace(constitutionFile))
             AddErr(errors, "constitutionFile", "Constitution PDF is required.");
+    }
+
+    private static string ResolveAttachmentName(ClubProposalFilePart? filePart, string? fileReference, string fallbackName)
+    {
+        if (!string.IsNullOrWhiteSpace(filePart?.FileName))
+            return filePart.FileName.Trim();
+
+        if (!string.IsNullOrWhiteSpace(fileReference))
+        {
+            var fileName = Path.GetFileName(fileReference.Trim());
+            if (!string.IsNullOrWhiteSpace(fileName))
+                return fileName;
+        }
+
+        return fallbackName;
     }
 
     private static void AddErr(Dictionary<string, List<string>> errors, string key, string message)

@@ -453,7 +453,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\StackExchange.Redis.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\System.IO.Hashing.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Api\obj\Debug\net8.0\swae.build.ex.cache
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\appsettings.json
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AuthService.Api.exe

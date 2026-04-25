@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace ClubManagementService.Application.DTOs.Contracts;
 
 public sealed class ClubProposalSubmissionDto
@@ -8,11 +6,13 @@ public sealed class ClubProposalSubmissionDto
     public string? Name { get; set; }
     public string? Description { get; set; }
     public string? LogoFile { get; set; }
+    public ClubProposalFilePart? LogoFilePart { get; set; }
     public string? ConstitutionFile { get; set; }
+    public ClubProposalFilePart? ConstitutionFilePart { get; set; }
 
     public string? PresidentStudentId { get; set; }
     public string? VicePresidentStudentId { get; set; }
-    public JsonElement? OtherMembersJson { get; set; }
+    public List<string> OtherMembersJson { get; set; } = new();
     public string? Commitment { get; set; }
 
     public string? ShortDesc { get; set; }

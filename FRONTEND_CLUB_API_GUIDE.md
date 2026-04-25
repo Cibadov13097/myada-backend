@@ -22,7 +22,8 @@ Errors often surface as `{ "message": "..." }` and sometimes `{ "errors": { "fie
 **Endpoint**
 
 - `POST /api/v1/club-proposals`  
-  - `Content-Type: application/json`  
+  - Preferred: `Content-Type: multipart/form-data`  
+  - Also accepts: `Content-Type: application/json` when `logoFile` and `constitutionFile` are already uploaded URLs  
   - **No auth required** (submitter is read from request body field `id`; no backend format validation currently).
 
 **Request body fields**
@@ -32,11 +33,11 @@ Errors often surface as `{ "message": "..." }` and sometimes `{ "errors": { "fie
 | `id` | Optional | Submitter id as raw string (currently not validated) |
 | `name` | Yes | Club name |
 | `description` | Yes for “legacy” mode | Single block (e.g. sections joined with `\n\n`), max **12000** chars. Prefixes used in UI: `Summary:`, `Uniqueness:`, `Goals:`, `Activities:`, `Mission alignment:`, `Vision:` |
-| `logoFile` | Yes | String placeholder/path (file upload stream is not used in this JSON contract) |
-| `constitutionFile` | Yes | String placeholder/path (file upload stream is not used in this JSON contract) |
+| `logoFile` | Yes | In multipart mode: image/document file uploaded to S3 by backend. In JSON mode: already-uploaded URL/reference string |
+| `constitutionFile` | Yes | In multipart mode: file uploaded to S3 by backend. In JSON mode: already-uploaded URL/reference string |
 | `presidentStudentId` | Optional | Exactly **8 digits** if structured path |
 | `vicePresidentStudentId` | Optional | Exactly **8 digits** if structured path |
-| `otherMembersJson` | Optional | Accepts either an array of `{ "studentId", "position" }` objects or a JSON-encoded string containing that array |
+| `otherMembersJson` | Optional | List of user ids (`guid` strings). In multipart mode send repeated form fields using the same key |
 | `commitment` | Optional | `"yes"` when structured officer data is used |
 | `shortDesc`, `uniqueDesc`, `goals`, `activities`, `alignment`, `vision` | Optional | Plain strings; avoid relying on parsing `description` only |
 
@@ -46,19 +47,43 @@ Errors often surface as `{ "message": "..." }` and sometimes `{ "errors": { "fie
 - **Structured mode**: if any structured / extra text field is present, **president**, **vice president**, and **`commitment: "yes"`** are validated with the **8-digit** rule where applicable.
 - Empty title+description rows are normalized out server-side when building stored list from structured parts.
 
-**Example request body**
+**Example multipart payload**
+
+Use repeated `otherMembersJson` fields for the user list:
+
+```text
+id=00000000-0000-0000-0000-000000000001
+name=Club Propose
+description=Good to go
+logoFile=<binary file>
+constitutionFile=<binary file>
+presidentStudentId=12345678
+vicePresidentStudentId=87654321
+otherMembersJson=11111111-1111-1111-1111-111111111111
+otherMembersJson=22222222-2222-2222-2222-222222222222
+commitment=yes
+shortDesc=short text
+uniqueDesc=unique text
+goals=goals text
+activities=activities text
+alignment=alignment text
+vision=vision text
+```
+
+**Example JSON request body**
 
 ```json
 {
   "id": "00000000-0000-0000-0000-000000000001",
   "name": "Club Propose",
   "description": "Good to go",
-  "logoFile": "logo.png",
-  "constitutionFile": "constitution.pdf",
+  "logoFile": "https://bucket.example/club-proposals/logo.png",
+  "constitutionFile": "https://bucket.example/club-proposals/constitution.pdf",
   "presidentStudentId": "12345678",
   "vicePresidentStudentId": "87654321",
   "otherMembersJson": [
-    { "studentId": "12345679", "position": "Member" }
+    "11111111-1111-1111-1111-111111111111",
+    "22222222-2222-2222-2222-222222222222"
   ],
   "commitment": "yes",
   "shortDesc": "short text",

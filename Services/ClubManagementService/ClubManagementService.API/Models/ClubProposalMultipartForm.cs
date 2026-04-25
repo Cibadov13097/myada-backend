@@ -1,6 +1,7 @@
-using System.Text.Json;
 using ClubManagementService.Application.DTOs.Contracts;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace ClubManagementService.API.Models;
 
@@ -14,7 +15,8 @@ public sealed class ClubProposalMultipartForm
 
     public string? PresidentStudentId { get; set; }
     public string? VicePresidentStudentId { get; set; }
-    public string? OtherMembersJson { get; set; }
+    [FromForm(Name = "otherMembersJson")]
+    public List<string> OtherMembersJson { get; set; } = new();
     public string? Commitment { get; set; }
 
     public string? ShortDesc { get; set; }
@@ -30,6 +32,8 @@ public sealed class ClubProposalMultipartForm
             Id = Id,
             Name = Name,
             Description = Description,
+            LogoFilePart = ToLogoPart(),
+            ConstitutionFilePart = ToConstitutionPart(),
             PresidentStudentId = PresidentStudentId,
             VicePresidentStudentId = VicePresidentStudentId,
             OtherMembersJson = ParseOtherMembersJson(OtherMembersJson),
@@ -42,13 +46,37 @@ public sealed class ClubProposalMultipartForm
             Vision = Vision
         };
 
-    private static JsonElement? ParseOtherMembersJson(string? value)
+    private static List<string> ParseOtherMembersJson(List<string>? values)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            return null;
+        if (values is not { Count: > 0 })
+            return new List<string>();
 
-        using var doc = JsonDocument.Parse(value);
-        return doc.RootElement.Clone();
+        var result = new List<string>();
+        foreach (var value in values)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                continue;
+
+            var trimmed = value.Trim();
+            if (trimmed.StartsWith("[", StringComparison.Ordinal))
+            {
+                try
+                {
+                    var parsed = JsonSerializer.Deserialize<List<string>>(trimmed)
+                                 ?? new List<string>();
+                    result.AddRange(parsed.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
+                    continue;
+                }
+                catch (JsonException)
+                {
+                    // Let downstream validation surface malformed input consistently.
+                }
+            }
+
+            result.Add(trimmed);
+        }
+
+        return result;
     }
 
     public ClubProposalFilePart ToLogoPart() =>

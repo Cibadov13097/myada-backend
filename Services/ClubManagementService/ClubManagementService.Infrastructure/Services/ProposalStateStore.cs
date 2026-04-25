@@ -121,8 +121,7 @@ public sealed class PrimaryOfficer
 
 public sealed class OtherOfficer
 {
-    public string StudentId { get; init; } = string.Empty;
-    public string Position { get; init; } = string.Empty;
+    public string UserId { get; init; } = string.Empty;
     public string Status { get; init; } = "Pending";
 }
 
