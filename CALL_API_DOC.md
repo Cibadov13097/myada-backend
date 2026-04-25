@@ -1,4 +1,4 @@
-# Call Service Realtime (SignalR) Documentation for Frontend
+# Call Service API Documentation for Frontend
 
 Last updated: 2026-04-25
 
@@ -168,6 +168,138 @@ History query options:
 History endpoint auth:
 - Requires JWT bearer token.
 - Returns only calls where current user is the caller or dispatcher.
+
+## Call History REST API
+
+Recommended gateway URLs:
+- List history: `GET http://13.60.31.141:500/call/api/call-history`
+- Get single call: `GET http://13.60.31.141:500/call/api/call-history/{callId}`
+- Alias list route: `GET http://13.60.31.141:500/call/api/calls/history`
+
+Direct service URLs:
+- List history: `GET http://13.60.31.141:5006/api/call-history`
+- Get single call: `GET http://13.60.31.141:5006/api/call-history/{callId}`
+- Alias list route: `GET http://13.60.31.141:5006/api/calls/history`
+
+Local equivalents:
+- Gateway list history: `GET http://localhost:5000/call/api/call-history`
+- Gateway single call: `GET http://localhost:5000/call/api/call-history/{callId}`
+- Direct list history: `GET http://localhost:5006/api/call-history`
+- Direct single call: `GET http://localhost:5006/api/call-history/{callId}`
+
+### `GET /api/call-history`
+Returns call history for the authenticated user.
+
+Query parameters:
+- `status` (`string`, optional): `pending`, `accepted`, `rejected`, `cancelled`, `timed-out`
+- `limit` (`number`, optional): default `50`, min `1`, max `200`
+
+Auth:
+- JWT bearer token required
+
+Behavior:
+- Returns calls where current user is either the caller or dispatcher
+- Ordered by newest `requestedAtUtc` first
+
+Example request:
+
+```http
+GET /call/api/call-history?status=accepted&limit=20 HTTP/1.1
+Authorization: Bearer <accessToken>
+```
+
+Example response:
+
+```json
+[
+  {
+    "callId": "6d5fd3a6e76d4120bd70d4f8d81d4b66",
+    "roomId": "call-6d5fd3a6e76d4120bd70d4f8d81d4b66",
+    "status": "accepted",
+    "caller": {
+      "userId": "member-user-id",
+      "displayName": "Ali"
+    },
+    "dispatcher": {
+      "userId": "dispatcher-user-id",
+      "displayName": "Dispatcher A"
+    },
+    "requestedAtUtc": "2026-04-25T10:00:00Z",
+    "acceptedAtUtc": "2026-04-25T10:00:08Z",
+    "endedAtUtc": "2026-04-25T10:12:41Z",
+    "durationSeconds": 753,
+    "resolvedAtUtc": "2026-04-25T10:00:08Z",
+    "resolveReason": null,
+    "endReason": "Call ended explicitly."
+  }
+]
+```
+
+### `GET /api/call-history/{callId}`
+Returns one call-history record for the authenticated user.
+
+Route parameters:
+- `callId` (`string`, required)
+
+Auth:
+- JWT bearer token required
+
+Behavior:
+- Returns `404` if call does not exist
+- Returns `404` if call exists but current user is not a participant
+
+Example request:
+
+```http
+GET /call/api/call-history/6d5fd3a6e76d4120bd70d4f8d81d4b66 HTTP/1.1
+Authorization: Bearer <accessToken>
+```
+
+Example response:
+
+```json
+{
+  "callId": "6d5fd3a6e76d4120bd70d4f8d81d4b66",
+  "roomId": "call-6d5fd3a6e76d4120bd70d4f8d81d4b66",
+  "status": "rejected",
+  "caller": {
+    "userId": "member-user-id",
+    "displayName": "Ali"
+  },
+  "dispatcher": {
+    "userId": "dispatcher-user-id",
+    "displayName": "Dispatcher A"
+  },
+  "requestedAtUtc": "2026-04-25T11:00:00Z",
+  "acceptedAtUtc": null,
+  "endedAtUtc": null,
+  "durationSeconds": null,
+  "resolvedAtUtc": "2026-04-25T11:00:12Z",
+  "resolveReason": "Busy",
+  "endReason": null
+}
+```
+
+### History Response Fields
+
+- `callId`: unique call request id
+- `roomId`: realtime room id used by SignalR/WebRTC flow
+- `status`: final or current request outcome
+- `caller`: `{ userId, displayName }`
+- `dispatcher`: `{ userId, displayName }`
+- `requestedAtUtc`: when invite was created
+- `acceptedAtUtc`: when dispatcher accepted the call
+- `endedAtUtc`: when an accepted call finished
+- `durationSeconds`: total accepted-call duration in seconds
+- `resolvedAtUtc`: when the request reached its status
+- `resolveReason`: reject / cancel / timeout reason when available
+- `endReason`: accepted-call ending reason when available
+
+### History Error Behavior
+
+- `400 Bad Request`: invalid `status` query or missing `callId`
+- `401 Unauthorized`: JWT missing or invalid
+- `404 Not Found`: call record not found for current user
 
 ## Dispatcher Inbox Routing
 

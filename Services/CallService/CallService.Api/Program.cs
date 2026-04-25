@@ -69,7 +69,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 var path = context.HttpContext.Request.Path;
 
                 if (!string.IsNullOrWhiteSpace(accessToken) &&
-                    path.StartsWithSegments("/hub"))
+                    (path.StartsWithSegments("/hub") ||
+                     path.StartsWithSegments("/call/hub")))
                 {
                     context.Token = accessToken;
                 }
@@ -188,7 +189,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -208,6 +208,7 @@ app.MapGet("/call/webrtc/ice-servers", GetIceServers).RequireAuthorization();
 
 app.MapControllers();
 app.MapHub<CallHub>("/hub").RequireAuthorization();
+app.MapHub<CallHub>("/call/hub").RequireAuthorization();
 
 app.Run();
 
