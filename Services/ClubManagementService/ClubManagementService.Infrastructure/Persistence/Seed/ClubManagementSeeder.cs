@@ -143,20 +143,20 @@ public static class ClubManagementSeeder
     {
         await SeedCategoriesAsync(dbContext, cancellationToken).ConfigureAwait(false);
 
-        var categoryIdsByName = (await dbContext.Categories
+        var categoryIdsByName = BuildCategoryIdsByName(
+            await dbContext.Categories
                 .AsNoTracking()
                 .ToListAsync(cancellationToken)
-                .ConfigureAwait(false))
-            .ToDictionary(x => x.Name, x => x.Id, StringComparer.OrdinalIgnoreCase);
+                .ConfigureAwait(false));
 
         await SeedClubsAsync(dbContext, categoryIdsByName, cancellationToken).ConfigureAwait(false);
 
         var seededClubNames = ClubSeeds.Select(x => x.Name).ToArray();
-        var seededClubsByName = (await dbContext.Clubs
+        var seededClubsByName = BuildClubsByName(
+            await dbContext.Clubs
                 .Where(x => seededClubNames.Contains(x.Name))
                 .ToListAsync(cancellationToken)
-                .ConfigureAwait(false))
-            .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
+                .ConfigureAwait(false));
 
         await SeedClubPositionsAsync(dbContext, seededClubsByName, cancellationToken).ConfigureAwait(false);
         await SeedClubEmployeesAsync(dbContext, seededClubsByName, cancellationToken).ConfigureAwait(false);
@@ -233,6 +233,28 @@ public static class ClubManagementSeeder
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    private static IReadOnlyDictionary<string, int> BuildCategoryIdsByName(IEnumerable<Category> categories)
+    {
+        return categories
+            .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+            .GroupBy(x => x.Name.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                x => x.Key,
+                x => x.OrderBy(y => y.Id).First().Id,
+                StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static IReadOnlyDictionary<string, Club> BuildClubsByName(IEnumerable<Club> clubs)
+    {
+        return clubs
+            .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+            .GroupBy(x => x.Name.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                x => x.Key,
+                x => x.OrderBy(y => y.Id).First(),
+                StringComparer.OrdinalIgnoreCase);
+    }
+
     private static async Task SeedClubsAsync(
         ClubManagementDbContext dbContext,
         IReadOnlyDictionary<string, int> categoryIdsByName,
@@ -242,11 +264,11 @@ public static class ClubManagementSeeder
             return;
 
         var seededClubNames = ClubSeeds.Select(x => x.Name).ToArray();
-        var existingClubsByName = (await dbContext.Clubs
+        var existingClubsByName = BuildClubsByName(
+            await dbContext.Clubs
                 .Where(x => seededClubNames.Contains(x.Name))
                 .ToListAsync(cancellationToken)
-                .ConfigureAwait(false))
-            .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
+                .ConfigureAwait(false));
 
         var saveChanges = false;
         foreach (var seed in ClubSeeds)
