@@ -1,10 +1,11 @@
 using ClubManagementService.API.Controllers;
-using ClubManagementService.API.Models;
 using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.Interfaces.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Moq;
 
 namespace MyAda.Tests.Controllers.ClubManagementService;
@@ -57,16 +58,24 @@ public class ClubProposalsControllerTests
             .ReturnsAsync("https://bucket.example/constitution.pdf");
 
         var controller = new ClubProposalsController(proposalContract.Object, imageStorage.Object);
-
-        var result = await controller.Create(new ClubProposalMultipartForm
+        var httpContext = new DefaultHttpContext();
+        var files = new FormFileCollection
         {
-            Id = "submitter-1",
-            Name = "Robotics Club",
-            Description = "Club proposal description",
-            LogoFile = CreateFormFile("logoFile", "logo.png", "image/png"),
-            ConstitutionFile = CreateFormFile("constitutionFile", "constitution.pdf", "application/pdf"),
-            OtherMembersJson = new List<string> { userId1, userId2 }
-        }, CancellationToken.None);
+            CreateFormFile("logoFile", "logo.png", "image/png"),
+            CreateFormFile("constitutionFile", "constitution.pdf", "application/pdf")
+        };
+        var form = new FormCollection(new Dictionary<string, StringValues>
+        {
+            ["id"] = "submitter-1",
+            ["name"] = "Robotics Club",
+            ["description"] = "Club proposal description",
+            ["otherMembersJson"] = new StringValues(new[] { userId1, userId2 })
+        }, files);
+        httpContext.Request.ContentType = "multipart/form-data; boundary=test";
+        httpContext.Features.Set<IFormFeature>(new TestFormFeature(form));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.Create(CancellationToken.None);
 
         result.Should().BeOfType<OkObjectResult>();
         proposalContract.VerifyAll();
@@ -82,5 +91,13 @@ public class ClubProposalsControllerTests
             Headers = new HeaderDictionary(),
             ContentType = contentType
         };
+    }
+
+    private sealed class TestFormFeature(IFormCollection form) : IFormFeature
+    {
+        public bool HasFormContentType => true;
+        public IFormCollection? Form { get; set; } = form;
+        public IFormCollection ReadForm() => Form ?? new FormCollection(new Dictionary<string, StringValues>());
+        public Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken) => Task.FromResult(ReadForm());
     }
 }
