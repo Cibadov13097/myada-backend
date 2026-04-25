@@ -79,7 +79,6 @@ vision=vision text
 
 ```bash
 curl -X POST "{CLUB_API_BASE}/api/v1/club-proposals" \
-  -H "Content-Type: multipart/form-data" \
   -F "organizationId=123456789" \
   -F "name=Club Propose" \
   -F "description=Good to go" \
@@ -91,6 +90,8 @@ curl -X POST "{CLUB_API_BASE}/api/v1/club-proposals" \
   -F "otherMembersJson=123456782" \
   -F "commitment=yes"
 ```
+
+- In frontend code, when using `FormData`, do not set `Content-Type: multipart/form-data` yourself. The browser or HTTP client must add the boundary automatically.
 
 **Example JSON request body**
 

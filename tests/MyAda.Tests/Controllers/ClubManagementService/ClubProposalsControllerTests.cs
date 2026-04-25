@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Moq;
+using System.Text;
 
 namespace MyAda.Tests.Controllers.ClubManagementService;
 
@@ -82,6 +83,43 @@ public class ClubProposalsControllerTests
         result.Should().BeOfType<OkObjectResult>();
         proposalContract.VerifyAll();
         imageStorage.VerifyAll();
+    }
+
+    [Fact]
+    public async Task Create_WithPdfContentType_ShouldReturnUnsupportedMediaType()
+    {
+        var controller = new ClubProposalsController(
+            Mock.Of<IProposalContractService>(),
+            Mock.Of<IImageStorageService>());
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "application/pdf";
+        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("%PDF-1.7"));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.Create(CancellationToken.None);
+
+        var unsupported = result.Should().BeOfType<ObjectResult>().Subject;
+        unsupported.StatusCode.Should().Be(StatusCodes.Status415UnsupportedMediaType);
+    }
+
+    [Fact]
+    public async Task Create_WithInvalidJsonBody_ShouldReturnBadRequest()
+    {
+        var proposalContract = new Mock<IProposalContractService>(MockBehavior.Strict);
+        var imageStorage = new Mock<IImageStorageService>(MockBehavior.Strict);
+
+        var controller = new ClubProposalsController(proposalContract.Object, imageStorage.Object);
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "application/json";
+        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("%PDF-1.7"));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.Create(CancellationToken.None);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
+        proposalContract.VerifyNoOtherCalls();
+        imageStorage.VerifyNoOtherCalls();
     }
 
     private static IFormFile CreateFormFile(string fieldName, string fileName, string contentType)

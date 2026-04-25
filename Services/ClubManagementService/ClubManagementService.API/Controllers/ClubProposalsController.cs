@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Primitives;
+using System.IO;
 using System.Text.Json;
 
 namespace ClubManagementService.API.Controllers;
@@ -35,8 +36,20 @@ public class ClubProposalsController : ControllerBase
         ClubProposalSubmissionDto body;
         if (IsMultipartRequest())
         {
-            var form = HttpContext.Features.Get<IFormFeature>()?.Form
+            IFormCollection form;
+            try
+            {
+                form = HttpContext.Features.Get<IFormFeature>()?.Form
                        ?? await Request.ReadFormAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (InvalidDataException)
+            {
+                return BadRequest(new
+                {
+                    message = "Invalid multipart form data. Use multipart/form-data for file uploads and let the client set the boundary automatically."
+                });
+            }
+
             var multipart = ToMultipartForm(form);
             body = multipart.ToSubmissionDto();
 
@@ -51,9 +64,26 @@ public class ClubProposalsController : ControllerBase
             body.LogoFile = logoUrl;
             body.ConstitutionFile = constitutionUrl;
         }
+        else if (IsJsonRequest())
+        {
+            try
+            {
+                body = await ReadJsonBodyAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (JsonException)
+            {
+                return BadRequest(new
+                {
+                    message = "Invalid JSON request body. Use multipart/form-data for direct file uploads, or application/json only when logoFile and constitutionFile are already uploaded URLs."
+                });
+            }
+        }
         else
         {
-            body = await ReadJsonBodyAsync(cancellationToken).ConfigureAwait(false);
+            return StatusCode(StatusCodes.Status415UnsupportedMediaType, new
+            {
+                message = "Unsupported content type. Use multipart/form-data for direct file uploads, or application/json only when logoFile and constitutionFile are already uploaded URLs."
+            });
         }
 
         var result = await _proposalContract
@@ -66,6 +96,17 @@ public class ClubProposalsController : ControllerBase
 
     private bool IsMultipartRequest() =>
         Request.ContentType?.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase) == true;
+
+    private bool IsJsonRequest()
+    {
+        var contentType = Request.ContentType;
+        if (string.IsNullOrWhiteSpace(contentType))
+            return false;
+
+        var mediaType = contentType.Split(';', 2)[0].Trim();
+        return string.Equals(mediaType, "application/json", StringComparison.OrdinalIgnoreCase)
+            || mediaType.EndsWith("+json", StringComparison.OrdinalIgnoreCase);
+    }
 
     private static ClubProposalMultipartForm ToMultipartForm(IFormCollection form) =>
         new()

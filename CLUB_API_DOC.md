@@ -394,7 +394,6 @@ Multipart example:
 
 ```bash
 curl -X POST "{CLUB_API_BASE}/api/v1/club-proposals" \
-  -H "Content-Type: multipart/form-data" \
   -F "organizationId=123456789" \
   -F "name=Robotics Club" \
   -F "description=Club proposal description" \
@@ -406,6 +405,8 @@ curl -X POST "{CLUB_API_BASE}/api/v1/club-proposals" \
   -F "otherMembersJson=123456782" \
   -F "commitment=yes"
 ```
+
+- When using `curl -F`, `FormData`, Axios, or `fetch`, do not set the multipart `Content-Type` header manually. Let the client generate the boundary.
 
 JSON request body fields:
 

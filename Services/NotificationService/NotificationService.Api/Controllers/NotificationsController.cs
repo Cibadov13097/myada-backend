@@ -5,6 +5,7 @@ using NotificationService.Domain.Entities;
 using NotificationService.Domain.Enums;
 using NotificationService.Infrastructure.Persistence;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Mail;
 
 namespace NotificationService.Api.Controllers;
 
@@ -15,13 +16,16 @@ public class NotificationsController : ControllerBase
 {
     private readonly NotificationDbContext _dbContext;
     private readonly INotificationService _notificationService;
+    private readonly ILogger<NotificationsController> _logger;
 
     public NotificationsController(
         NotificationDbContext dbContext,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        ILogger<NotificationsController> logger)
     {
         _dbContext = dbContext;
         _notificationService = notificationService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -129,11 +133,38 @@ public class NotificationsController : ControllerBase
             });
         }
 
-        await _notificationService.SendEmailAsync(
-            toEmail,
-            subject,
-            message,
-            cancellationToken);
+        try
+        {
+            await _notificationService.SendEmailAsync(
+                toEmail,
+                subject,
+                message,
+                cancellationToken);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(
+                ex,
+                "Email send failed due to invalid SMTP configuration for recipient {Recipient}.",
+                toEmail);
+
+            return Problem(
+                title: "Email delivery is not configured",
+                detail: ex.Message,
+                statusCode: StatusCodes.Status502BadGateway);
+        }
+        catch (SmtpException ex)
+        {
+            _logger.LogError(
+                ex,
+                "SMTP rejected email delivery to {Recipient}. Verify the SMTP username, app password, and sender address.",
+                toEmail);
+
+            return Problem(
+                title: "Email delivery failed",
+                detail: "The SMTP server rejected the message. Verify the SMTP username, app password, and sender address.",
+                statusCode: StatusCodes.Status502BadGateway);
+        }
 
         _dbContext.Notifications.Add(new Notification
         {

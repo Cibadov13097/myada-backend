@@ -37,6 +37,7 @@ Gateway routing for auth:
 - `jti`: token id
 - `email`: user email
 - `firstName`: user first name
+- `organizationalId`: user's organizational identifier
 - `userType`: user type value
 - `role`: one or more role claims
 
@@ -107,6 +108,7 @@ Request body:
   "username": "user1",
   "firstName": "User",
   "lastName": "One",
+  "organizationalId": "100000001",
   "phoneNumber": "123456789",
   "role": "student"
 }
@@ -124,6 +126,7 @@ Success response:
     "email": "user1@myada.local",
     "firstName": "User",
     "lastName": "One",
+    "organizationalId": "100000001",
     "phoneNumber": "123456789",
     "profileImage": null,
     "role": "student"
@@ -239,7 +242,7 @@ Success response:
 - Content type: `multipart/form-data`
 
 Form field:
-- `file` (required): image file
+- `File` (required): image file
 
 Validation:
 - Allowed extensions: `png`, `jpg`, `jpeg`, `webp`
@@ -391,7 +394,8 @@ Success response:
 {
   "accessToken": "<jwt-access-token>",
   "refreshToken": "<refresh-token>",
-  "profileImage": "https://<bucket-or-cdn>/users/<file-or-null>"
+  "profileImage": "https://<bucket-or-cdn>/users/<file-or-null>",
+  "organizationalId": "100000001"
 }
 ```
 
