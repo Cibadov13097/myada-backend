@@ -482,17 +482,19 @@ public static class ClubManagementSeeder
             return;
 
         var clubIds = clubsByName.Values.Select(x => x.Id).Distinct().ToArray();
-        var existingMembershipRows = await dbContext.ClubMemberships
-            .AsNoTracking()
+        var existingMemberships = await dbContext.ClubMemberships
+            .IgnoreQueryFilters()
             .Where(x => clubIds.Contains(x.ClubId))
-            .Select(x => new { x.ClubId, x.UserId })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        var existingKeys = new HashSet<(int ClubId, Guid UserId)>(
-            existingMembershipRows.Select(x => (x.ClubId, x.UserId)));
+        var membershipsByKey = existingMemberships
+            .GroupBy(x => (x.ClubId, x.UserId))
+            .ToDictionary(
+                x => x.Key,
+                x => x.OrderBy(y => y.Id).First());
 
-        var memberships = new List<ClubMembership>();
+        var saveChanges = false;
         foreach (var seed in ClubSeeds)
         {
             if (!clubsByName.TryGetValue(seed.Name, out var club))
@@ -502,22 +504,38 @@ public static class ClubManagementSeeder
             {
                 var userId = GetClubSeedUserId(memberName);
                 var key = (club.Id, userId);
-                if (!existingKeys.Add(key))
-                    continue;
 
-                memberships.Add(new ClubMembership
+                if (membershipsByKey.TryGetValue(key, out var existingMembership))
+                {
+                    if (!existingMembership.IsDeleted)
+                        continue;
+
+                    existingMembership.IsDeleted = false;
+                    existingMembership.DeletedAt = null;
+                    existingMembership.DeletedByUserId = null;
+                    existingMembership.ModifiedAt = DateTime.UtcNow;
+                    existingMembership.ModifiedByUserId = userId;
+                    existingMembership.CreatedByUserId ??= userId;
+                    saveChanges = true;
+                    continue;
+                }
+
+                var membership = new ClubMembership
                 {
                     ClubId = club.Id,
                     UserId = userId,
                     CreatedByUserId = userId
-                });
+                };
+
+                await dbContext.ClubMemberships.AddAsync(membership, cancellationToken).ConfigureAwait(false);
+                membershipsByKey[key] = membership;
+                saveChanges = true;
             }
         }
 
-        if (memberships.Count == 0)
+        if (!saveChanges)
             return;
 
-        await dbContext.ClubMemberships.AddRangeAsync(memberships, cancellationToken).ConfigureAwait(false);
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 

@@ -136,21 +136,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAutoMapper(opt =>
 {
-    opt.AddProfile(new LostItemProfile());
-    opt.AddProfile(new FoundItemProfile());
     opt.AddProfile(new CategoryProfile());
     opt.AddProfile(new LostAndFoundApiProfile());
 }); 
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IFoundItemService, FoundItemService>();
-builder.Services.AddScoped<IFoundItemRepository, FoundItemRepository>();
-
-builder.Services.AddScoped<IFoundItemAdminService, FoundItemAdminService>();
-builder.Services.AddScoped<ILostItemAdminService, LostItemAdminService>();
-
-builder.Services.AddScoped<ILostItemService, LostItemService>();
-builder.Services.AddScoped<ILostItemRepository,LostItemRepository>();
 builder.Services.AddScoped<ILostAndFoundService, LostAndFoundService>();
 builder.Services.AddScoped<ILostAndFoundRepository, LostAndFoundRepository>();
 

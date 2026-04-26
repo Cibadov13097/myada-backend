@@ -49,8 +49,6 @@ public static class LostFoundDbSeeder
         var documents = await GetCategoryIdAsync("Documents").ConfigureAwait(false);
         var accessories = await GetCategoryIdAsync("Accessories").ConfigureAwait(false);
 
-        await SeedLegacyLostItemsAsync(db, electronics, accessories, cancellationToken).ConfigureAwait(false);
-        await SeedLegacyFoundItemsAsync(db, electronics, documents, accessories, cancellationToken).ConfigureAwait(false);
         await SeedUnifiedItemsAsync(
             db,
             electronics,
@@ -100,110 +98,6 @@ public static class LostFoundDbSeeder
         return categoryByName
             .GroupBy(x => x.Name.Trim(), StringComparer.OrdinalIgnoreCase)
             .ToDictionary(g => g.Key, g => g.First().Id, StringComparer.OrdinalIgnoreCase);
-    }
-
-    private static async Task SeedLegacyLostItemsAsync(
-        LostFoundDbContext db,
-        int electronicsCategoryId,
-        int accessoriesCategoryId,
-        CancellationToken cancellationToken)
-    {
-        if (await db.LostItems.AnyAsync(cancellationToken).ConfigureAwait(false))
-        {
-            return;
-        }
-
-        var now = DateTime.UtcNow;
-        var lostItems = new[]
-        {
-            new LostItem
-            {
-                Title = "USB Flash Drive",
-                Description = "SanDisk 64GB flash drive with a blue cap. Contains important project files.",
-                PostedByUserId = SeedUserId(10),
-                CategoryId = electronicsCategoryId,
-                ImageUrl = "https://picsum.photos/seed/lost-usb-flash-drive/1000/700",
-                CreatedAt = now.AddHours(-8)
-            },
-            new LostItem
-            {
-                Title = "Red Notebook",
-                Description = "Red spiral notebook with lecture notes from the reading hall.",
-                PostedByUserId = SeedUserId(11),
-                CategoryId = accessoriesCategoryId,
-                ImageUrl = "https://picsum.photos/seed/lost-red-notebook/1000/700",
-                CreatedAt = now.AddHours(-7)
-            },
-            new LostItem
-            {
-                Title = "Silver MacBook Charger",
-                Description = "61W USB-C charger with a silver extension cable adapter.",
-                PostedByUserId = SeedUserId(12),
-                CategoryId = electronicsCategoryId,
-                ImageUrl = "https://picsum.photos/seed/lost-macbook-charger/1000/700",
-                CreatedAt = now.AddHours(-6)
-            },
-            new LostItem
-            {
-                Title = "iPhone 14 Pro",
-                Description = "Space black iPhone 14 Pro with clear case and minor scratch near the camera.",
-                PostedByUserId = SeedUserId(13),
-                CategoryId = electronicsCategoryId,
-                ImageUrl = "https://picsum.photos/seed/lost-iphone-14-pro/1000/700",
-                CreatedAt = now.AddHours(-5)
-            }
-        };
-
-        await db.LostItems.AddRangeAsync(lostItems, cancellationToken).ConfigureAwait(false);
-        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private static async Task SeedLegacyFoundItemsAsync(
-        LostFoundDbContext db,
-        int electronicsCategoryId,
-        int documentsCategoryId,
-        int accessoriesCategoryId,
-        CancellationToken cancellationToken)
-    {
-        if (await db.FoundItems.AnyAsync(cancellationToken).ConfigureAwait(false))
-        {
-            return;
-        }
-
-        var now = DateTime.UtcNow;
-        var foundItems = new[]
-        {
-            new FoundItem
-            {
-                Description = "Prescription glasses found in Main Building - Room A301.",
-                FoundByUserId = SeedUserId(20),
-                CategoryId = accessoriesCategoryId,
-                Status = Status.approved,
-                ImageUrl = "https://picsum.photos/seed/found-prescription-glasses/1000/700",
-                CreatedAt = now.AddHours(-4)
-            },
-            new FoundItem
-            {
-                Description = "House keys with two metal keys and one key fob found at Parking Area B.",
-                FoundByUserId = SeedUserId(21),
-                CategoryId = documentsCategoryId,
-                Status = Status.approved,
-                ImageUrl = "https://picsum.photos/seed/found-house-keys/1000/700",
-                CreatedAt = now.AddHours(-3)
-            },
-            new FoundItem
-            {
-                Description = "AirPods Pro charging case found on a bench in the main yard.",
-                FoundByUserId = SeedUserId(22),
-                CategoryId = electronicsCategoryId,
-                Status = Status.pending,
-                ImageUrl = "https://picsum.photos/seed/found-airpods-case/1000/700",
-                CreatedAt = now.AddHours(-2)
-            }
-        };
-
-        await db.FoundItems.AddRangeAsync(foundItems, cancellationToken).ConfigureAwait(false);
-        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task SeedUnifiedItemsAsync(

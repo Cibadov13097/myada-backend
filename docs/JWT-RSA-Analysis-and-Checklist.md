@@ -39,11 +39,14 @@
 ```csharp
 // Controller
 [Authorize]
-[HttpGet("users/me")]
-public async Task<IActionResult> GetMyFoundItems()
+[HttpGet("api/lost-and-found/items")]
+public async Task<IActionResult> GetItems()
 {
     var userId = User.GetUserId();  // ClaimsPrincipal extension
-    var resultDto = await _service.GetMyFoundItemsAsync(userId);
+    var resultDto = await _service.GetItemsAsync(new LostFoundItemSearchQuery
+    {
+        CurrentUserId = userId
+    });
     return Ok(resultDto);
 }
 ```
