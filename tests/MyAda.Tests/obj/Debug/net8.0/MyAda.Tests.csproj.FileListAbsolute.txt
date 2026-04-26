@@ -368,3 +368,5 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\t
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Tests\bin\Debug\net8.0\AuthService.Infrastructure.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Tests\bin\Debug\net8.0\AuthService.Api.pdb
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Tests\bin\Debug\net8.0\AuthService.Infrastructure.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\.msCoverageSourceRootsMapping_MyAda.Tests
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\CoverletSourceRootsMapping_MyAda.Tests

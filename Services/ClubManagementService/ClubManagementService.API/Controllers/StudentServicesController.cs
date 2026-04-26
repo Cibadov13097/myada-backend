@@ -64,20 +64,28 @@ public class StudentServicesController : ControllerBase
         var items = filtered
             .Skip(Math.Max(page - 1, 0) * Math.Max(limit, 1))
             .Take(Math.Max(limit, 1))
-            .Select(c => new
+            .Select(c =>
             {
-                profileImageUrl = ClubImageResponse.Normalize(c.ProfileImageUrl),
-                id = c.Id,
-                name = c.Name,
-                category = c.CategoryName ?? "General",
-                status = string.Equals(c.Status.ToString(), "Approved", StringComparison.OrdinalIgnoreCase) ? "Active" :
-                         string.Equals(c.Status.ToString(), "Archived", StringComparison.OrdinalIgnoreCase) ? "Inactive" :
-                         c.Status.ToString(),
-                members = 0,
-                president = (string?)null,
-                presidentId = (string?)null,
-                image = ClubImageResponse.ResolveDisplayImage(c.ProfileImageUrl),
-                proposedProfileImageUrl = ClubImageResponse.Normalize(c.ProposedProfileImageUrl)
+                var profileImageUrl = ClubImageResponse.Normalize(c.ProfileImageUrl);
+                var backgroundImageUrl = ClubImageResponse.Normalize(c.BackgroundImageUrl);
+                var backgroundImage = ClubImageResponse.ResolveDisplayImage(backgroundImageUrl);
+                return new
+                {
+                    profileImageUrl,
+                    backgroundImageUrl,
+                    id = c.Id,
+                    name = c.Name,
+                    category = c.CategoryName ?? "General",
+                    status = string.Equals(c.Status.ToString(), "Approved", StringComparison.OrdinalIgnoreCase) ? "Active" :
+                             string.Equals(c.Status.ToString(), "Archived", StringComparison.OrdinalIgnoreCase) ? "Inactive" :
+                             c.Status.ToString(),
+                    members = 0,
+                    president = (string?)null,
+                    presidentId = (string?)null,
+                    backgroundImage,
+                    image = backgroundImage,
+                    proposedProfileImageUrl = ClubImageResponse.Normalize(c.ProposedProfileImageUrl)
+                };
             })
             .ToList();
 

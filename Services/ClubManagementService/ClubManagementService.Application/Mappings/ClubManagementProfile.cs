@@ -58,6 +58,7 @@ public class ClubManagementProfile : Profile
             .ForMember(d => d.Email, o => o.Ignore())
             .ForMember(d => d.ResourcesJson, o => o.Ignore())
             .ForMember(d => d.ProfileImageUrl, o => o.Ignore())
+            .ForMember(d => d.BackgroundImageUrl, o => o.Ignore())
             .ForMember(d => d.ProposedProfileImageUrl, o => o.Ignore());
         CreateMap<UpdateClubDto, Club>()
             .IgnoreAuditableBase()
@@ -69,6 +70,7 @@ public class ClubManagementProfile : Profile
             .ForMember(d => d.Email, o => o.Ignore())
             .ForMember(d => d.ResourcesJson, o => o.Ignore())
             .ForMember(d => d.ProfileImageUrl, o => o.Ignore())
+            .ForMember(d => d.BackgroundImageUrl, o => o.Ignore())
             .ForMember(d => d.ProposedProfileImageUrl, o => o.Ignore());
 
         CreateMap<Event, EventDto>();

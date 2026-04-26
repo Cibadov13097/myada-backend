@@ -22,3 +22,9 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Shared\Shared.Contracts\obj\Debu
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Shared\Shared.Contracts\obj\Debug\net8.0\refint\Shared.Contracts.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Shared\Shared.Contracts\obj\Debug\net8.0\Shared.Contracts.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Shared\Shared.Contracts\obj\Debug\net8.0\ref\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\Shared.Contracts.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\Shared.Contracts.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\Shared.Contracts.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\Shared.Contracts.pdb

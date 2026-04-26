@@ -27,6 +27,9 @@ namespace ClubManagementService.Domain.Entities
         /// <summary>Approved logo/profile image URL (relative or absolute).</summary>
         public string? ProfileImageUrl { get; set; }
 
+        /// <summary>Approved background image URL (relative or absolute).</summary>
+        public string? BackgroundImageUrl { get; set; }
+
         /// <summary>Pending replacement logo; only visible to student services until approved.</summary>
         public string? ProposedProfileImageUrl { get; set; }
     }

@@ -144,6 +144,35 @@ public class ClubAdminServiceTests : IDisposable
         stored[0].Title.Should().Be("Keep");
     }
 
+    [Fact]
+    public async Task PatchProfileAsync_ShouldPersistLogoAndBackgroundSeparately()
+    {
+        var club = CreateClub();
+        SetupClub(club);
+
+        var result = await _service.PatchProfileAsync(
+            "1",
+            socialLinks: null,
+            focusAreasJson: null,
+            email: null,
+            resourcesJson: null,
+            uploadHints: new ClubProfileUploadHintsDto
+            {
+                HasLogo = true,
+                HasBackground = true,
+                LogoUrl = "https://example.com/clubs/1/logo.png",
+                BackgroundUrl = "https://example.com/clubs/1/background.png"
+            });
+
+        result.Updated.Should().BeTrue();
+        result.ProfileImageUrl.Should().Be("https://example.com/clubs/1/logo.png");
+        result.BackgroundImageUrl.Should().Be("https://example.com/clubs/1/background.png");
+        club.ProfileImageUrl.Should().Be("https://example.com/clubs/1/logo.png");
+        club.BackgroundImageUrl.Should().Be("https://example.com/clubs/1/background.png");
+        _clubRepository.Verify(x => x.UpdateAsync(club), Times.Once);
+        _clubRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
+    }
+
     public void Dispose()
     {
         _dbContext.Dispose();

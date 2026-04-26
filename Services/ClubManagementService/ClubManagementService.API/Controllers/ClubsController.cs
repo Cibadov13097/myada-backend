@@ -56,17 +56,25 @@ public class ClubsController : ControllerBase
             filtered = filtered.Where(c => string.Equals(c.CategoryName, category, StringComparison.OrdinalIgnoreCase));
 
         var total = filtered.Count();
-        var items = filtered.Skip(Math.Max(page - 1, 0) * Math.Max(limit, 1)).Take(Math.Max(limit, 1)).Select(c => new
+        var items = filtered.Skip(Math.Max(page - 1, 0) * Math.Max(limit, 1)).Take(Math.Max(limit, 1)).Select(c =>
         {
-            profileImageUrl = ClubImageResponse.Normalize(c.ProfileImageUrl),
-            id = c.Id,
-            name = c.Name,
-            category = c.CategoryName ?? "General",
-            image = ClubImageResponse.ResolveDisplayImage(c.ProfileImageUrl),
-            tags = Array.Empty<string>(),
-            members = 0,
-            about = c.Description,
-            status = c.Status.ToString()
+            var profileImageUrl = ClubImageResponse.Normalize(c.ProfileImageUrl);
+            var backgroundImageUrl = ClubImageResponse.Normalize(c.BackgroundImageUrl);
+            var backgroundImage = ClubImageResponse.ResolveDisplayImage(backgroundImageUrl);
+            return new
+            {
+                profileImageUrl,
+                backgroundImageUrl,
+                id = c.Id,
+                name = c.Name,
+                category = c.CategoryName ?? "General",
+                backgroundImage,
+                image = backgroundImage,
+                tags = Array.Empty<string>(),
+                members = 0,
+                about = c.Description,
+                status = c.Status.ToString()
+            };
         });
 
         return Ok(new { items, total, page, limit });
@@ -105,6 +113,8 @@ public class ClubsController : ControllerBase
         var links = dto.SocialLinks;
         var resources = dto.Resources ?? new List<ClubResourceItemDto>();
         var profileImageUrl = ClubImageResponse.Normalize(dto.ProfileImageUrl);
+        var backgroundImageUrl = ClubImageResponse.Normalize(dto.BackgroundImageUrl);
+        var backgroundImage = ClubImageResponse.ResolveDisplayImage(backgroundImageUrl);
         var hasSocial = links != null && (
             !string.IsNullOrWhiteSpace(links.Website) ||
             !string.IsNullOrWhiteSpace(links.Instagram) ||
@@ -118,7 +128,9 @@ public class ClubsController : ControllerBase
             name = dto.Name,
             category = dto.CategoryName ?? "General",
             profileImageUrl,
-            image = ClubImageResponse.ResolveDisplayImage(profileImageUrl),
+            backgroundImageUrl,
+            backgroundImage,
+            image = backgroundImage,
             about = dto.Description,
             focusAreas = dto.FocusAreas,
             officers,

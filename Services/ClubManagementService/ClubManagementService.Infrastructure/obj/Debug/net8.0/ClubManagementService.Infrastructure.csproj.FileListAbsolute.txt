@@ -42,3 +42,11 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\C
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.pdb
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\ClubManagementService.Infrastructure.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\ClubManagementService.Infrastructure.runtimeconfig.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\ClubManagementService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\ClubManagementService.Infrastructure.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\ClubManagementService.Infrastructure.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\ClubManagementService.Infrastructure.runtimeconfig.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\ClubManagementService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\ClubManagementService.Infrastructure.pdb

@@ -94,6 +94,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<string>("BackgroundImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("FocusAreasJson")
                         .HasColumnType("text");
 

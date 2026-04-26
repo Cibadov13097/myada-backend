@@ -20,6 +20,9 @@ public class ClubDto
     /// <summary>Approved logo/profile image URL (relative or absolute).</summary>
     public string? ProfileImageUrl { get; set; }
 
+    /// <summary>Approved background image URL (relative or absolute).</summary>
+    public string? BackgroundImageUrl { get; set; }
+
     /// <summary>Pending replacement logo; student services can approve.</summary>
     public string? ProposedProfileImageUrl { get; set; }
 

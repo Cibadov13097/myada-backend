@@ -46,3 +46,6 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFo
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Debug\net8.0\refint\LostFoundService.Domain.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Debug\net8.0\LostFoundService.Domain.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.Domain\obj\Debug\net8.0\ref\LostFoundService.Domain.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LostFoundService.Domain.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LostFoundService.Domain.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LostFoundService.Domain.pdb

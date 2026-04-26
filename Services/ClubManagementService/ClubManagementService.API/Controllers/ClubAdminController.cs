@@ -444,7 +444,10 @@ public class ClubAdminController : ControllerBase
 
         var backgroundUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/profile/background", request.BackgroundFile, cancellationToken).ConfigureAwait(false);
         if (backgroundUrl == string.Empty)
+        {
+            await TryDeleteStoredFileAsync(logoUrl, cancellationToken).ConfigureAwait(false);
             return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported background file type." });
+        }
 
         var hints = new ClubProfileUploadHintsDto
         {
@@ -453,27 +456,43 @@ public class ClubAdminController : ControllerBase
             LogoUrl = logoUrl,
             BackgroundUrl = backgroundUrl
         };
-        var result = await _clubAdmin.PatchProfileAsync(
-            clubId,
-            request.SocialLinks,
-            request.FocusAreasJson,
-            request.Email,
-            request.ResourcesJson,
-            hints,
-            cancellationToken).ConfigureAwait(false);
-        return Ok(new
+
+        try
         {
-            result.ClubId,
-            result.Updated,
-            result.PendingReview,
-            result.ProfileImageUrl,
-            result.FocusAreas,
-            result.Email,
-            result.SocialLinks,
-            result.Resources,
-            logoUrl,
-            backgroundUrl
-        });
+            var result = await _clubAdmin.PatchProfileAsync(
+                clubId,
+                request.SocialLinks,
+                request.FocusAreasJson,
+                request.Email,
+                request.ResourcesJson,
+                hints,
+                cancellationToken).ConfigureAwait(false);
+
+            if (!result.Updated && (logoUrl != null || backgroundUrl != null))
+            {
+                await TryDeleteStoredFileAsync(logoUrl, cancellationToken).ConfigureAwait(false);
+                await TryDeleteStoredFileAsync(backgroundUrl, cancellationToken).ConfigureAwait(false);
+            }
+
+            return Ok(new
+            {
+                clubId = result.ClubId,
+                updated = result.Updated,
+                pendingReview = result.PendingReview,
+                profileImageUrl = result.ProfileImageUrl,
+                backgroundImageUrl = result.BackgroundImageUrl,
+                focusAreas = result.FocusAreas,
+                email = result.Email,
+                socialLinks = result.SocialLinks,
+                resources = result.Resources
+            });
+        }
+        catch
+        {
+            await TryDeleteStoredFileAsync(logoUrl, cancellationToken).ConfigureAwait(false);
+            await TryDeleteStoredFileAsync(backgroundUrl, cancellationToken).ConfigureAwait(false);
+            throw;
+        }
     }
 
     [HttpPost("announcements")]

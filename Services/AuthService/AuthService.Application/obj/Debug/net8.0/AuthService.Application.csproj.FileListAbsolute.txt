@@ -62,3 +62,6 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Application\obj\Debug\net8.0\refint\AuthService.Application.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Application\obj\Debug\net8.0\AuthService.Application.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Application\obj\Debug\net8.0\ref\AuthService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\AuthService.Application.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\AuthService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\AuthService.Application.pdb

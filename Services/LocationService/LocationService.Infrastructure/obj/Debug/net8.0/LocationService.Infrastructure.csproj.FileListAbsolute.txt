@@ -38,3 +38,7 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\Locatio
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Infrastructure\obj\Debug\net8.0\LocationService.Infrastructure.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Infrastructure\obj\Debug\net8.0\LocationService.Infrastructure.genruntimeconfig.cache
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Infrastructure\obj\Debug\net8.0\ref\LocationService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LocationService.Infrastructure.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LocationService.Infrastructure.runtimeconfig.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LocationService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LocationService.Infrastructure.pdb

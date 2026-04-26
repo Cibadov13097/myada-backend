@@ -118,7 +118,7 @@ public sealed class ProfilePatchResultDto
 {
     public string ClubId { get; init; } = string.Empty;
 
-    /// <summary><c>true</c> when <c>FocusAreasJson</c>, <c>SocialLinksJson</c>, <c>Email</c>, and/or <c>ResourcesJson</c> was written.</summary>
+    /// <summary><c>true</c> when profile metadata and/or uploaded image fields were written.</summary>
     public bool Updated { get; init; }
 
     /// <summary>Option A (immediate publish): always false. Option B would set true when changes await approval.</summary>
@@ -127,6 +127,8 @@ public sealed class ProfilePatchResultDto
     public List<ClubFocusAreaItemDto> FocusAreas { get; init; } = new();
 
     public string? ProfileImageUrl { get; init; }
+
+    public string? BackgroundImageUrl { get; init; }
 
     public string? Email { get; init; }
 

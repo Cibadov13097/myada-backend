@@ -15,7 +15,7 @@ namespace MyAda.Tests.Controllers.ClubManagementService;
 public class ClubImagesControllerTests
 {
     [Fact]
-    public async Task ClubsController_GetAll_ShouldPreferStoredProfileImage()
+    public async Task ClubsController_GetAll_ShouldReturnSeparateProfileAndBackgroundImages()
     {
         var clubService = new Mock<IClubService>();
         clubService.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<ClubDto>
@@ -27,7 +27,8 @@ public class ClubImagesControllerTests
                 Description = "Build and learn",
                 Status = ClubStatus.Approved,
                 CategoryName = "Technology",
-                ProfileImageUrl = "https://bucket.example/clubs/robotics/logo.png"
+                ProfileImageUrl = "https://bucket.example/clubs/robotics/logo.png",
+                BackgroundImageUrl = "https://bucket.example/clubs/robotics/background.png"
             }
         });
 
@@ -45,11 +46,13 @@ public class ClubImagesControllerTests
         using var doc = JsonDocument.Parse(JsonSerializer.Serialize(ok.Value));
         var item = doc.RootElement.GetProperty("items")[0];
         item.GetProperty("profileImageUrl").GetString().Should().Be("https://bucket.example/clubs/robotics/logo.png");
-        item.GetProperty("image").GetString().Should().Be("https://bucket.example/clubs/robotics/logo.png");
+        item.GetProperty("backgroundImageUrl").GetString().Should().Be("https://bucket.example/clubs/robotics/background.png");
+        item.GetProperty("backgroundImage").GetString().Should().Be("https://bucket.example/clubs/robotics/background.png");
+        item.GetProperty("image").GetString().Should().Be("https://bucket.example/clubs/robotics/background.png");
     }
 
     [Fact]
-    public async Task StudentServicesController_Clubs_ShouldUseStoredProfileImageAsDisplayImage()
+    public async Task StudentServicesController_Clubs_ShouldReturnSeparateProfileAndBackgroundImages()
     {
         var clubService = new Mock<IClubService>();
         clubService.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<ClubDto>
@@ -62,6 +65,7 @@ public class ClubImagesControllerTests
                 Status = ClubStatus.Approved,
                 CategoryName = "Arts",
                 ProfileImageUrl = "https://bucket.example/clubs/design/logo.webp",
+                BackgroundImageUrl = "https://bucket.example/clubs/design/background.webp",
                 ProposedProfileImageUrl = "/uploads/clubs/5/logo-proposed.png"
             }
         });
@@ -89,7 +93,9 @@ public class ClubImagesControllerTests
         using var doc = JsonDocument.Parse(JsonSerializer.Serialize(ok.Value));
         var item = doc.RootElement.GetProperty("items")[0];
         item.GetProperty("profileImageUrl").GetString().Should().Be("https://bucket.example/clubs/design/logo.webp");
-        item.GetProperty("image").GetString().Should().Be("https://bucket.example/clubs/design/logo.webp");
+        item.GetProperty("backgroundImageUrl").GetString().Should().Be("https://bucket.example/clubs/design/background.webp");
+        item.GetProperty("backgroundImage").GetString().Should().Be("https://bucket.example/clubs/design/background.webp");
+        item.GetProperty("image").GetString().Should().Be("https://bucket.example/clubs/design/background.webp");
         item.GetProperty("proposedProfileImageUrl").GetString().Should().Be("/uploads/clubs/5/logo-proposed.png");
     }
 }

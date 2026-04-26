@@ -30,3 +30,6 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\Locatio
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Application\obj\Debug\net8.0\refint\LocationService.Application.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Application\obj\Debug\net8.0\LocationService.Application.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LocationService\LocationService.Application\obj\Debug\net8.0\ref\LocationService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LocationService.Application.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LocationService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\LocationService.Application.pdb

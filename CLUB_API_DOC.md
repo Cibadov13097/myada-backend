@@ -6,7 +6,7 @@ This document is based on the current source code and gateway configuration in t
 
 Remote reachability note:
 
-- On 2026-04-26, direct HTTP checks to `http://13.60.31.141/`, `/club/swagger/index.html`, and `/club/swagger/v1/swagger.json` were not reachable from this environment.
+- On 2026-04-26, direct HTTP checks to `http://13.60.31.141/`, `http://13.60.31.141:500/club/swagger/index.html`, and `http://13.60.31.141:500/club/swagger/v1/swagger.json` were not reachable from this environment.
 - The route prefix and endpoint paths below are therefore derived from source, especially `ApiGateway/appsettings.json` and controllers under `Services/ClubManagementService/ClubManagementService.API/Controllers`.
 - Club position categories are defined by `ClubPositionCategory` in `Services/ClubManagementService/ClubManagementService.Domain/Enums/ClubPositionCategory.cs`.
 
@@ -24,22 +24,23 @@ Use this gateway path pattern in frontend and integration code:
 
 | Environment | Base URL | Notes |
 |-------------|----------|-------|
-| Gateway host shared in this thread | `http://13.60.31.141/club` | Use this if the gateway is exposed on the host's default HTTP port. |
+| Gateway host shared in this thread | `http://13.60.31.141:500/club` | Matches the current gateway docs and reverse-proxy config in this repo. |
+| Alternate host-only form | `http://13.60.31.141/club` | Use only if your deployment exposes the gateway on port 80 instead of `:500`. |
 | Repo-local gateway | `http://localhost:5000/club` | From `docker-compose.yml` (`apigateway` maps `5000:8080`). |
 | Local service | `http://localhost:5003` | Local docker/service port. |
-| Swagger UI | `{gatewayHost}/club/swagger/index.html` | Swagger path configured behind the `/club` gateway prefix. |
-| OpenAPI JSON | `{gatewayHost}/club/swagger/v1/swagger.json` | Machine-readable contract when the deployed gateway is reachable. |
+| Swagger UI | `{gatewayHost}/club/swagger/index.html` | Exposed only when the club service runs in `Development`. |
+| OpenAPI JSON | `{gatewayHost}/club/swagger/v1/swagger.json` | Exposed only when the club service runs in `Development`. |
 
 Examples:
 
-- Categories: `http://13.60.31.141/club/api/v1/categories`
-- Club detail: `http://13.60.31.141/club/api/v1/clubs/1`
-- Swagger: `http://13.60.31.141/club/swagger/index.html`
+- Categories: `http://13.60.31.141:500/club/api/v1/categories`
+- Club detail: `http://13.60.31.141:500/club/api/v1/clubs/1`
+- Swagger: `http://13.60.31.141:500/club/swagger/index.html`
 
 Important gateway rule:
 
-- Correct: `http://13.60.31.141/club/api/v1/categories`
-- Wrong: `http://13.60.31.141/api/v1/categories`
+- Correct: `http://13.60.31.141:500/club/api/v1/categories`
+- Wrong: `http://13.60.31.141:500/api/v1/categories`
 
 The gateway strips `/club` before forwarding to the club service.
 
@@ -94,8 +95,8 @@ Do not assume the controller payload is returned raw.
 
 ## Current differences from older docs
 
-- The gateway route prefix is `/club`. The host and port are deployment-specific; for the host shared in this thread, the production-style base is `http://13.60.31.141/club` if that host serves the gateway directly.
-- Older docs that hard-coded `http://13.60.31.141:500/club` were not re-verifiable from this environment on 2026-04-26.
+- The gateway route prefix is `/club`. In the current repo docs and reverse-proxy config, the deployed gateway base is `http://13.60.31.141:500/club`.
+- If your deployment also exposes the gateway on the default HTTP port, the same paths may work under `http://13.60.31.141/club`, but that variant was not re-verifiable from this environment on 2026-04-26.
 - `POST /api/v1/club-proposals` is anonymous and supports both `application/json` and `multipart/form-data`; use `multipart/form-data` for direct file attachments and S3 upload flow.
 - Student-services proposal routes are:
   - `/api/v1/student-services/clubs/proposals/...`
@@ -103,6 +104,7 @@ Do not assume the controller payload is returned raw.
 - `GET /api/v1/users/me/event-registrations` exists as a shortcut route.
 - Legacy event aliases under `/api/events/...` are still live.
 - Club-admin position payloads now use a string enum `category`, not `categoryId`.
+- Club-admin file management routes now exist under `/api/v1/club-admin/{clubId}/files`.
 
 ---
 
@@ -726,12 +728,24 @@ Representative position response:
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Body: `{ "entered": bool }`. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Delete attendee. |
 
-### Profile and announcements
+### Profile, files, and announcements
 
 | Method | Path | Notes |
 |--------|------|-------|
+| `GET` | `/api/v1/club-admin/{clubId}/files` | List club resource files. Response body contains `items`. |
+| `GET` | `/api/v1/club-admin/{clubId}/files/{fileId}` | Get one club file by item id. |
+| `POST` | `/api/v1/club-admin/{clubId}/files` | `multipart/form-data`. Fields: `file` required, `title` optional. Uploads the file, stores the file URL in `ResourcesJson`, and returns the created item. |
+| `PATCH` | `/api/v1/club-admin/{clubId}/files/{fileId}` | `multipart/form-data`. Fields: `title` optional, `file` optional. At least one must be provided. Replacing the file uploads a new object and removes the previous stored object when cleanup succeeds. |
+| `DELETE` | `/api/v1/club-admin/{clubId}/files/{fileId}` | Removes the file item from `ResourcesJson` and attempts to delete the stored object. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/profile` | `multipart/form-data`. Fields: `socialLinks`, `focusAreasJson`, `email`, `resourcesJson`, `logoFile`, `backgroundFile`. Uploaded `logoFile` is persisted into the club's `ProfileImageUrl`, so later club `GET` endpoints return it. |
 | `POST` | `/api/v1/club-admin/{clubId}/announcements` | Body: `{ "title": string, "message": string }`. |
+
+Current file-management notes:
+
+- Allowed upload extensions come from the storage service and currently include `.png`, `.jpg`, `.jpeg`, `.webp`, `.pdf`, `.doc`, and `.docx`.
+- File items are stored in the club's `ResourcesJson` and now always carry a stable item `id`.
+- Older `resourcesJson` payloads without item ids are normalized on read and on write so item-level CRUD can work reliably.
+- Public club `GET` responses continue exposing these items through `resources` and the legacy alias `documents`.
 
 Current profile patch response highlights:
 
@@ -787,7 +801,7 @@ If you are building new frontend code, prefer the versioned `/api/v1/...` routes
 
 Use:
 
-`http://13.60.31.141/club`
+`http://13.60.31.141:500/club`
 
 Then append one of:
 
@@ -804,9 +818,11 @@ Then append one of:
 
 For exact live schemas and tags, use:
 
-- Swagger UI: `http://13.60.31.141/club/swagger/index.html`
-- OpenAPI JSON: `http://13.60.31.141/club/swagger/v1/swagger.json`
+- Swagger UI: `http://13.60.31.141:500/club/swagger/index.html`
+- OpenAPI JSON: `http://13.60.31.141:500/club/swagger/v1/swagger.json`
 
-If that host is not exposed on the default HTTP port in your deployment, keep the same `/club` prefix and swap in the deployed gateway host:port.
+Those Swagger routes are available only when the club service is running in `Development`. If they are unavailable in a deployment, use this markdown file plus the controller source as the source-backed reference.
+
+If your deployment does not expose the gateway on `:500`, keep the same `/club` prefix and swap in the deployed gateway host:port.
 
 This markdown file is the human-readable summary. The OpenAPI document is the canonical deployed contract when the target gateway is reachable.

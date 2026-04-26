@@ -22,3 +22,9 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\C
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\refint\ClubManagementService.Domain.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ClubManagementService.Domain.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\ClubManagementService\ClubManagementService.Domain\obj\Debug\net8.0\ref\ClubManagementService.Domain.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\ClubManagementService.Domain.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\ClubManagementService.Domain.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\ClubManagementService.Domain.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\ClubManagementService.Domain.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\ClubManagementService.Domain.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\ClubManagementService.Domain.pdb

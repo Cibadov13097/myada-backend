@@ -1,6 +1,6 @@
 # MyAda Full Gateway API Documentation
 
-Last updated: 2026-04-25
+Last updated: 2026-04-26
 
 ## Base URL
 
@@ -103,6 +103,11 @@ Most routes are under /api/v1/*.
 | POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/{applicationId}/request-changes |
 | POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/bulk-decision |
 | GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/dashboard |
+| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files |
+| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files |
+| DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files/{fileId} |
+| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files/{fileId} |
+| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files/{fileId} |
 | GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/employees |
 | POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/employees |
 | DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/employees/{employeeId} |

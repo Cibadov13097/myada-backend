@@ -1312,7 +1312,6 @@ public sealed class ClubAdminService : IClubAdminService
         ClubProfileUploadHintsDto? uploadHints,
         CancellationToken cancellationToken = default)
     {
-        _ = uploadHints;
         var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
         if (ctx == null)
         {
@@ -1323,6 +1322,7 @@ public sealed class ClubAdminService : IClubAdminService
                 PendingReview = false,
                 FocusAreas = new List<ClubFocusAreaItemDto>(),
                 ProfileImageUrl = null,
+                BackgroundImageUrl = null,
                 Email = null,
                 SocialLinks = null,
                 Resources = new List<ClubResourceItemDto>()
@@ -1339,6 +1339,7 @@ public sealed class ClubAdminService : IClubAdminService
                 PendingReview = false,
                 FocusAreas = new List<ClubFocusAreaItemDto>(),
                 ProfileImageUrl = null,
+                BackgroundImageUrl = null,
                 Email = null,
                 SocialLinks = null,
                 Resources = new List<ClubResourceItemDto>()
@@ -1406,6 +1407,17 @@ public sealed class ClubAdminService : IClubAdminService
             }
         }
 
+        var backgroundUrl = uploadHints?.BackgroundUrl;
+        if (!string.IsNullOrWhiteSpace(backgroundUrl))
+        {
+            var normalizedBackgroundUrl = backgroundUrl.Trim();
+            if (!string.Equals(entity.BackgroundImageUrl, normalizedBackgroundUrl, StringComparison.Ordinal))
+            {
+                entity.BackgroundImageUrl = normalizedBackgroundUrl;
+                modified = true;
+            }
+        }
+
         if (modified)
         {
             entity.ModifiedAt = DateTime.UtcNow;
@@ -1426,6 +1438,7 @@ public sealed class ClubAdminService : IClubAdminService
             PendingReview = false,
             FocusAreas = publishedFocus,
             ProfileImageUrl = entity.ProfileImageUrl,
+            BackgroundImageUrl = entity.BackgroundImageUrl,
             Email = entity.Email,
             SocialLinks = publishedSocial,
             Resources = publishedResources
