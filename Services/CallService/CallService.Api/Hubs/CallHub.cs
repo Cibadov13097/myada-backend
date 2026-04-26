@@ -12,6 +12,7 @@ namespace CallService.Api.Hubs;
 public class CallHub : Hub
 {
     private const string DispatcherRole = "dispatcher";
+    private const string StudentRole = "student";
     private const string DefaultDispatcherInboxPrefix = "dispatcher-inbox-";
 
     private readonly ICallStateStore _stateStore;
@@ -48,7 +49,7 @@ public class CallHub : Hub
         if (!string.IsNullOrWhiteSpace(dispatcherInboxGroup))
             await Groups.AddToGroupAsync(connection.ConnectionId, dispatcherInboxGroup);
 
-        var roles = GetRoleValues(Context.User);
+        var roles = connection.Roles;
         var iceConfiguration = _iceConfigurationProvider.GetForUser(connection.UserId);
 
         _logger.LogInformation(
@@ -110,33 +111,30 @@ public class CallHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task RequestCall(string dispatcherUserId)
+    public async Task RequestCall(string targetUserId)
     {
-        if (string.IsNullOrWhiteSpace(dispatcherUserId))
-            throw new HubException("dispatcherUserId is required.");
+        if (string.IsNullOrWhiteSpace(targetUserId))
+            throw new HubException("targetUserId is required.");
 
         var caller = await GetCurrentConnectionOrThrowAsync();
-        dispatcherUserId = dispatcherUserId.Trim();
+        targetUserId = targetUserId.Trim();
 
         _logger.LogInformation(
-            "Call request created by caller {CallerUserId} ({CallerConnectionId}) targeting dispatcher {DispatcherUserId}",
+            "Call request created by caller {CallerUserId} ({CallerConnectionId}) targeting user {TargetUserId}",
             caller.UserId,
             caller.ConnectionId,
-            dispatcherUserId);
+            targetUserId);
 
-        if (string.Equals(caller.UserId, dispatcherUserId, StringComparison.Ordinal))
+        if (string.Equals(caller.UserId, targetUserId, StringComparison.Ordinal))
             throw new HubException("You cannot call yourself.");
 
-        var dispatcherConnections = await _stateStore.GetUserConnectionsAsync(dispatcherUserId);
-        if (dispatcherConnections.Count == 0)
-            throw new HubException("Dispatcher is offline.");
+        var targetConnections = await _stateStore.GetUserConnectionsAsync(targetUserId);
+        if (targetConnections.Count == 0)
+            throw new HubException("Target user is offline.");
 
-        if (!dispatcherConnections.Any(x => x.IsDispatcher))
-            throw new HubException("Target user does not have dispatcher role.");
+        ValidateCallTarget(caller, targetConnections);
 
-        var dispatcherDisplayName = dispatcherConnections
-            .FirstOrDefault(x => x.IsDispatcher)?.DisplayName
-            ?? dispatcherUserId;
+        var targetDisplayName = targetConnections[0].DisplayName;
 
         var nowUtc = DateTime.UtcNow;
         var timeout = TimeSpan.FromSeconds(GetInviteTimeoutSeconds());
@@ -151,7 +149,7 @@ public class CallHub : Hub
             CallerUserId = caller.UserId,
             CallerConnectionId = caller.ConnectionId,
             CallerDisplayName = caller.DisplayName,
-            DispatcherUserId = dispatcherUserId,
+            DispatcherUserId = targetUserId,
             Status = CallRequestStatus.Pending,
             RequestedAtUtc = nowUtc,
             ExpiresAtUtc = expiresAtUtc
@@ -160,11 +158,11 @@ public class CallHub : Hub
         await _stateStore.CreatePendingCallAsync(pendingCall);
         await _callHistoryService.CreatePendingCallAsync(
             pendingCall,
-            dispatcherDisplayName,
+            targetDisplayName,
             CancellationToken.None);
 
         _logger.LogInformation(
-            "Pending call state saved. CallId={CallId}, RoomId={RoomId}, Caller={CallerUserId}, Dispatcher={DispatcherUserId}, ExpiresAtUtc={ExpiresAtUtc:o}",
+            "Pending call state saved. CallId={CallId}, RoomId={RoomId}, Caller={CallerUserId}, Target={TargetUserId}, ExpiresAtUtc={ExpiresAtUtc:o}",
             pendingCall.CallId,
             pendingCall.RoomId,
             pendingCall.CallerUserId,
@@ -181,7 +179,7 @@ public class CallHub : Hub
             pendingCall.ExpiresAtUtc);
 
         await _hubContext.Clients
-            .Group(GetDispatcherInboxGroup(dispatcherUserId))
+            .User(targetUserId)
             .SendAsync("IncomingCall", incomingPayload);
 
         await _hubContext.Clients.User(caller.UserId).SendAsync(
@@ -190,28 +188,26 @@ public class CallHub : Hub
                 pendingCall.CallId,
                 pendingCall.RoomId,
                 pendingCall.DispatcherUserId,
+                pendingCall.DispatcherUserId,
                 pendingCall.RequestedAtUtc,
                 pendingCall.ExpiresAtUtc));
 
         _ = ScheduleTimeoutAsync(pendingCall.CallId, timeout);
     }
 
-    [Authorize(Roles = DispatcherRole)]
     public async Task AcceptCall(string callId)
     {
         if (string.IsNullOrWhiteSpace(callId))
             throw new HubException("callId is required.");
 
-        var dispatcher = await GetCurrentConnectionOrThrowAsync();
-        if (!dispatcher.IsDispatcher)
-            throw new HubException("Only dispatchers can accept calls.");
+        var callee = await GetCurrentConnectionOrThrowAsync();
 
         var existingCall = await _stateStore.GetCallAsync(callId);
         if (existingCall is null)
             throw new HubException("Call request not found.");
 
-        if (!string.Equals(existingCall.DispatcherUserId, dispatcher.UserId, StringComparison.Ordinal))
-            throw new HubException("This call was not requested for the current dispatcher.");
+        if (!string.Equals(existingCall.DispatcherUserId, callee.UserId, StringComparison.Ordinal))
+            throw new HubException("This call was not requested for the current user.");
 
         if (existingCall.Status != CallRequestStatus.Pending)
             throw new HubException($"Call request is already {ToClientStatus(existingCall.Status)}.");
@@ -231,7 +227,7 @@ public class CallHub : Hub
             {
                 await _callHistoryService.UpdateCallStatusAsync(
                     timedOut,
-                    dispatcher.DisplayName,
+                    callee.DisplayName,
                     CancellationToken.None);
                 await BroadcastTimedOutAsync(timedOut);
             }
@@ -243,8 +239,8 @@ public class CallHub : Hub
             existingCall.CallId,
             CallRequestStatus.Pending,
             CallRequestStatus.Accepted,
-            dispatcher.UserId,
-            dispatcher.ConnectionId,
+            callee.UserId,
+            callee.ConnectionId,
             null,
             DateTime.UtcNow);
 
@@ -253,7 +249,7 @@ public class CallHub : Hub
 
         await _callHistoryService.UpdateCallStatusAsync(
             accepted,
-            dispatcher.DisplayName,
+            callee.DisplayName,
             CancellationToken.None);
 
         var callerConnection = await _stateStore.GetConnectionAsync(accepted.CallerConnectionId);
@@ -278,7 +274,7 @@ public class CallHub : Hub
             {
                 await _callHistoryService.UpdateCallStatusAsync(
                     cancelled,
-                    dispatcher.DisplayName,
+                    callee.DisplayName,
                     CancellationToken.None);
                 await BroadcastCancelledAsync(cancelled);
             }
@@ -287,7 +283,7 @@ public class CallHub : Hub
         }
 
         await JoinConnectionToRoomAsync(callerConnection.ConnectionId, accepted.RoomId);
-        await JoinConnectionToRoomAsync(dispatcher.ConnectionId, accepted.RoomId);
+        await JoinConnectionToRoomAsync(callee.ConnectionId, accepted.RoomId);
 
         await NotifyJoinedRoomAsync(accepted.RoomId);
 
@@ -295,18 +291,18 @@ public class CallHub : Hub
         var acceptedAtUtc = accepted.ResolvedAtUtc ?? DateTime.UtcNow;
 
         _logger.LogInformation(
-            "Call accepted. CallId={CallId}, RoomId={RoomId}, DispatcherConnectionId={DispatcherConnectionId}, CallerConnectionId={CallerConnectionId}, ParticipantCount={ParticipantCount}",
+            "Call accepted. CallId={CallId}, RoomId={RoomId}, CalleeConnectionId={CalleeConnectionId}, CallerConnectionId={CallerConnectionId}, ParticipantCount={ParticipantCount}",
             accepted.CallId,
             accepted.RoomId,
-            dispatcher.ConnectionId,
+            callee.ConnectionId,
             callerConnection.ConnectionId,
             participants.Length);
 
         var payload = new CallAcceptedDto(
             accepted.CallId,
             accepted.RoomId,
-            dispatcher.UserId,
-            dispatcher.ConnectionId,
+            callee.UserId,
+            callee.ConnectionId,
             acceptedAtUtc,
             participants);
 
@@ -314,29 +310,26 @@ public class CallHub : Hub
         await _hubContext.Clients.User(accepted.DispatcherUserId).SendAsync("CallAccepted", payload);
     }
 
-    [Authorize(Roles = DispatcherRole)]
     public async Task RejectCall(string callId, string? reason = null)
     {
         if (string.IsNullOrWhiteSpace(callId))
             throw new HubException("callId is required.");
 
-        var dispatcher = await GetCurrentConnectionOrThrowAsync();
-        if (!dispatcher.IsDispatcher)
-            throw new HubException("Only dispatchers can reject calls.");
+        var callee = await GetCurrentConnectionOrThrowAsync();
 
         var existingCall = await _stateStore.GetCallAsync(callId);
         if (existingCall is null)
             throw new HubException("Call request not found.");
 
-        if (!string.Equals(existingCall.DispatcherUserId, dispatcher.UserId, StringComparison.Ordinal))
-            throw new HubException("This call was not requested for the current dispatcher.");
+        if (!string.Equals(existingCall.DispatcherUserId, callee.UserId, StringComparison.Ordinal))
+            throw new HubException("This call was not requested for the current user.");
 
         var rejected = await _stateStore.TryTransitionCallAsync(
             existingCall.CallId,
             CallRequestStatus.Pending,
             CallRequestStatus.Rejected,
-            dispatcher.UserId,
-            dispatcher.ConnectionId,
+            callee.UserId,
+            callee.ConnectionId,
             NormalizeReason(reason),
             DateTime.UtcNow);
 
@@ -345,7 +338,7 @@ public class CallHub : Hub
 
         await _callHistoryService.UpdateCallStatusAsync(
             rejected,
-            dispatcher.DisplayName,
+            callee.DisplayName,
             CancellationToken.None);
         await BroadcastRejectedAsync(rejected);
     }
@@ -377,7 +370,7 @@ public class CallHub : Hub
 
         await _callHistoryService.UpdateCallStatusAsync(
             cancelled,
-            await GetDispatcherDisplayNameAsync(cancelled.DispatcherUserId),
+            await GetTargetDisplayNameAsync(cancelled.DispatcherUserId),
             CancellationToken.None);
         await BroadcastCancelledAsync(cancelled);
     }
@@ -615,6 +608,7 @@ public class CallHub : Hub
             ConnectionId = Context.ConnectionId,
             UserId = userId,
             DisplayName = displayName,
+            Roles = GetRoleValues(user),
             IsDispatcher = IsDispatcher(user),
             ConnectedAtUtc = DateTime.UtcNow
         };
@@ -652,8 +646,37 @@ public class CallHub : Hub
 
     private static bool IsDispatcher(ClaimsPrincipal user)
     {
-        return GetRoleValues(user).Any(role =>
-            string.Equals(role, DispatcherRole, StringComparison.OrdinalIgnoreCase));
+        return HasRole(GetRoleValues(user), DispatcherRole);
+    }
+
+    private static bool HasRole(IEnumerable<string> roles, string role)
+    {
+        return roles.Any(value =>
+            string.Equals(value, role, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool HasRole(ConnectedUserConnection connection, string role)
+    {
+        return HasRole(connection.Roles, role);
+    }
+
+    private static void ValidateCallTarget(
+        ConnectedUserConnection caller,
+        IReadOnlyList<ConnectedUserConnection> targetConnections)
+    {
+        var targetIsDispatcher = targetConnections.Any(connection => connection.IsDispatcher);
+        var targetIsStudent = targetConnections.Any(connection => HasRole(connection, StudentRole));
+
+        if (caller.IsDispatcher)
+        {
+            if (!targetIsDispatcher && targetIsStudent)
+                throw new HubException("Dispatchers cannot call students.");
+
+            return;
+        }
+
+        if (!targetIsDispatcher)
+            throw new HubException("Only dispatchers can call non-dispatcher users.");
     }
 
     private static string[] GetRoleValues(ClaimsPrincipal? user)
@@ -714,10 +737,10 @@ public class CallHub : Hub
         return new[] { trimmed };
     }
 
-    private async Task<string> GetDispatcherDisplayNameAsync(string dispatcherUserId)
+    private async Task<string> GetTargetDisplayNameAsync(string targetUserId)
     {
-        var dispatcherConnections = await _stateStore.GetUserConnectionsAsync(dispatcherUserId);
-        return dispatcherConnections.FirstOrDefault(x => x.IsDispatcher)?.DisplayName ?? dispatcherUserId;
+        var targetConnections = await _stateStore.GetUserConnectionsAsync(targetUserId);
+        return targetConnections.FirstOrDefault()?.DisplayName ?? targetUserId;
     }
 
     private async Task TryFinalizeAcceptedCallAfterDepartureAsync(
@@ -783,7 +806,7 @@ public class CallHub : Hub
                 CallRequestStatus.TimedOut,
                 "system",
                 null,
-                "No dispatcher response before timeout.",
+                "No response before timeout.",
                 DateTime.UtcNow);
 
             if (timedOut is null)
@@ -791,7 +814,7 @@ public class CallHub : Hub
 
             await _callHistoryService.UpdateCallStatusAsync(
                 timedOut,
-                await GetDispatcherDisplayNameAsync(timedOut.DispatcherUserId),
+                await GetTargetDisplayNameAsync(timedOut.DispatcherUserId),
                 CancellationToken.None);
             await BroadcastTimedOutAsync(timedOut);
         }
@@ -908,6 +931,7 @@ public class CallHub : Hub
         string CallId,
         string RoomId,
         string DispatcherUserId,
+        string TargetUserId,
         DateTime RequestedAtUtc,
         DateTime ExpiresAtUtc);
 

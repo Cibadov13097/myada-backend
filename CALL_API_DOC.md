@@ -1,6 +1,6 @@
 # Call Service API Documentation for Frontend
 
-Last updated: 2026-04-25
+Last updated: 2026-04-26
 
 ## What Frontend Should Use
 
@@ -132,11 +132,13 @@ Token validation settings:
 
 ## Authorization Rules
 
-- Any authenticated user can call `RequestCall`.
-- Only dispatcher users can call `AcceptCall` and `RejectCall`.
+- Any authenticated user can call a dispatcher with `RequestCall`.
+- Dispatcher users can call any online non-student user with `RequestCall`.
+- Non-dispatcher users cannot call other non-dispatcher users.
+- The called user can call `AcceptCall` and `RejectCall`.
 - Caller who created the request can call `CancelCall`.
 - WebRTC signaling methods require both connections to be in the same accepted room.
-- `dispatcherUserId` in `RequestCall(dispatcherUserId)` must be the target dispatcher's JWT `sub`.
+- `RequestCall(targetUserId)` must receive the called user's JWT `sub`.
 
 ## Persisted Call History
 
@@ -146,6 +148,7 @@ Saved fields include:
 - call id and room id
 - caller user id + display name
 - dispatcher user id + display name
+  This is a legacy field name and stores the called user's identity, even when the called user is not a dispatcher.
 - request status (`pending`, `accepted`, `rejected`, `cancelled`, `timed-out`)
 - requested / accepted / resolved timestamps
 - call end time and duration in seconds for accepted calls
@@ -167,7 +170,7 @@ History query options:
 
 History endpoint auth:
 - Requires JWT bearer token.
-- Returns only calls where current user is the caller or dispatcher.
+- Returns only calls where current user is the caller or called user.
 
 ## Call History REST API
 
@@ -198,7 +201,7 @@ Auth:
 - JWT bearer token required
 
 Behavior:
-- Returns calls where current user is either the caller or dispatcher
+- Returns calls where current user is either the caller or called user
 - Ordered by newest `requestedAtUtc` first
 
 Example request:
@@ -287,8 +290,9 @@ Example response:
 - `status`: final or current request outcome
 - `caller`: `{ userId, displayName }`
 - `dispatcher`: `{ userId, displayName }`
+  Legacy response field name for the called user.
 - `requestedAtUtc`: when invite was created
-- `acceptedAtUtc`: when dispatcher accepted the call
+- `acceptedAtUtc`: when the called user accepted the call
 - `endedAtUtc`: when an accepted call finished
 - `durationSeconds`: total accepted-call duration in seconds
 - `resolvedAtUtc`: when the request reached its status
@@ -305,6 +309,8 @@ Example response:
 
 - On hub connect, users with `dispatcher` role are automatically joined to:
   - `<DispatcherInboxPrefix><sub>`
+- This group is still exposed in the `Connected` payload for dispatcher presence/debugging.
+- Incoming call notifications are delivered with `Clients.User(targetUserId)`, so non-dispatcher callees can also receive `IncomingCall`.
 - Default prefix is `dispatcher-inbox-`.
 - Backend config key:
   - `Call:DispatcherInboxPrefix`
@@ -315,32 +321,34 @@ Example response:
 
 ## Hub Methods (Client -> Server)
 
-### `RequestCall(dispatcherUserId)`
-Creates a pending call invite from current user to a target dispatcher.
+### `RequestCall(targetUserId)`
+Creates a pending call invite from current user to a target user.
 
 Parameters:
-- `dispatcherUserId` (`string`, required)
+- `targetUserId` (`string`, required)
 
 Behavior:
 - Creates `callId` and `roomId` internally.
-- Sends `IncomingCall` to dispatcher inbox group:
-  - `<DispatcherInboxPrefix><dispatcherUserId>`
+- Allowed call matrix:
+  - any authenticated user -> dispatcher
+  - dispatcher -> any non-student user
+- Sends `IncomingCall` to all SignalR connections of the target user.
 - Sends `CallRinging` to caller user connections.
 - Starts server-side timeout for invite expiration.
 
 ### `AcceptCall(callId)`
-Dispatcher accepts a pending call.
+The called user accepts a pending call.
 
 Parameters:
 - `callId` (`string`, required)
 
 Behavior:
-- Valid only for target dispatcher and pending status.
-- Automatically joins caller connection and accepting dispatcher connection to room.
+- Valid only for the called user and pending status.
+- Automatically joins caller connection and accepting callee connection to room.
 - Emits `JoinedRoom` and `CallAccepted`.
 
 ### `RejectCall(callId, reason?)`
-Dispatcher rejects a pending call.
+The called user rejects a pending call.
 
 Parameters:
 - `callId` (`string`, required)
@@ -424,7 +432,7 @@ Payload:
 ```
 
 ### `IncomingCall`
-Sent to dispatcher when caller requests a call.
+Sent to the called user when caller requests a call.
 
 Payload:
 ```json
@@ -448,13 +456,18 @@ Payload:
   "callId": "f9f2...",
   "roomId": "call-f9f2...",
   "dispatcherUserId": "dispatcher-user-id",
+  "targetUserId": "dispatcher-user-id",
   "requestedAtUtc": "2026-04-15T10:00:00Z",
   "expiresAtUtc": "2026-04-15T10:00:30Z"
 }
 ```
 
+Notes:
+- `targetUserId` is the canonical field for the called user's id.
+- `dispatcherUserId` is kept for backward compatibility and contains the same value.
+
 ### `CallAccepted`
-Sent to caller + dispatcher after successful acceptance.
+Sent to caller + called user after successful acceptance.
 
 Payload:
 ```json
@@ -480,7 +493,7 @@ Payload:
 ```
 
 ### `CallRejected`
-Sent when dispatcher rejects invite.
+Sent when the called user rejects invite.
 
 Payload:
 ```json
@@ -516,7 +529,7 @@ Payload:
   "callId": "f9f2...",
   "roomId": "call-f9f2...",
   "timedOutAtUtc": "2026-04-15T10:00:30Z",
-  "reason": "No dispatcher response before timeout."
+  "reason": "No response before timeout."
 }
 ```
 
@@ -620,10 +633,10 @@ Payload:
 ## Error Behavior
 
 Hub errors are returned as SignalR `HubException` messages, for example:
-- `dispatcherUserId is required.`
-- `Dispatcher is offline.`
-- `Target user does not have dispatcher role.`
-- `Only dispatchers can accept calls.`
+- `targetUserId is required.`
+- `Target user is offline.`
+- `Only dispatchers can call non-dispatcher users.`
+- `Dispatchers cannot call students.`
 - `Call request expired.`
 - `You must be in a call room before sending signaling messages.`
 - `Target connection is not online.`
@@ -645,7 +658,7 @@ const connection = new signalR.HubConnectionBuilder()
 
 connection.on("IncomingCall", ({ callId, fromUserId, fromDisplayName }) => {
   console.log("Incoming call:", callId, fromUserId, fromDisplayName);
-  // dispatcher can accept/reject:
+  // the called user can accept/reject:
   // connection.invoke("AcceptCall", callId);
   // connection.invoke("RejectCall", callId, "Busy");
 });
@@ -671,21 +684,21 @@ await connection.start();
 await connection.invoke("RequestCall", "dispatcher-user-id");
 ```
 
-Dispatcher id note:
-- Replace `"dispatcher-user-id"` with the exact `sub` claim value from the dispatcher's JWT.
+Target id note:
+- Replace `"dispatcher-user-id"` with the exact `sub` claim value from the user you are calling.
 
-## Recommended Dispatcher Flow
+## Recommended Call Flow
 
-1. Caller and dispatcher keep a single app-level SignalR connection to `/call/hub` with JWT (do not tie connection lifecycle to one page only).
-2. Caller invokes `RequestCall(dispatcherUserId)`.
-3. Dispatcher receives `IncomingCall` in real-time.
-4. Dispatcher invokes `AcceptCall(callId)` or `RejectCall(callId, reason?)`.
+1. Caller and callee keep a single app-level SignalR connection to `/call/hub` with JWT (do not tie connection lifecycle to one page only).
+2. Caller invokes `RequestCall(targetUserId)`.
+3. The called user receives `IncomingCall` in real-time.
+4. The called user invokes `AcceptCall(callId)` or `RejectCall(callId, reason?)`.
 5. On accept, fetch ICE config (`GET /call/webrtc/ice-servers`) or call `GetIceConfiguration()`.
 6. Create `RTCPeerConnection({ iceServers })`.
 7. Start WebRTC signaling using `CallAccepted` / `JoinedRoom` data.
 8. During call, exchange `SendOffer` / `SendAnswer` / `SendIceCandidate`.
 9. Use `LeaveCall()` for single participant leave or `EndCall()` to end for everyone.
-10. If dispatcher takes no action, both sides receive `CallTimedOut`.
+10. If the called user takes no action, both sides receive `CallTimedOut`.
 
 ## Health Endpoints
 

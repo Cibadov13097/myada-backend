@@ -5,6 +5,7 @@ public sealed class ConnectedUserConnection
     public string ConnectionId { get; init; } = string.Empty;
     public string UserId { get; init; } = string.Empty;
     public string DisplayName { get; init; } = string.Empty;
+    public string[] Roles { get; init; } = Array.Empty<string>();
     public bool IsDispatcher { get; init; }
     public DateTime ConnectedAtUtc { get; init; }
 }
