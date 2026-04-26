@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"liedjw4/hJxa6sPLKwCtpJeYknRQdyOAWI5lEUZ6xVI=","Source":"LocationService.Api","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "3crIcb7J4gA9Rf6E2qBxALxO5ImlicChw0ncz5V+POg=",
+  "Source": "LocationService.Api",
+  "BasePath": "_content/LocationService.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

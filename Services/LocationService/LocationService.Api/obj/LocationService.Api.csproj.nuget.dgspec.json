@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj": {}
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj": {
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj",
         "projectName": "LocationService.Api",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj",
-        "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Api\\obj\\",
+        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Api\\LocationService.Api.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\cavid\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,8 +32,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj"
+              "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj"
               }
             }
           }
@@ -47,8 +47,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -84,24 +83,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -110,24 +91,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj": {
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj",
         "projectName": "LocationService.Application",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj",
-        "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Application\\obj\\",
+        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\cavid\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -142,8 +123,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj": {
-                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj"
+              "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj": {
+                "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj"
               }
             }
           }
@@ -157,8 +138,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -174,43 +154,29 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj": {
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj",
         "projectName": "LocationService.Domain",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj",
-        "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Domain\\obj\\",
+        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Domain\\LocationService.Domain.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\cavid\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -236,8 +202,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -253,43 +218,29 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj": {
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj",
         "projectName": "LocationService.Infrastructure",
-        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\LocationService.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\cavid\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -304,8 +255,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj": {
-                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj"
+              "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj": {
+                "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Application\\LocationService.Application.csproj"
               }
             }
           }
@@ -319,8 +270,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -352,26 +302,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

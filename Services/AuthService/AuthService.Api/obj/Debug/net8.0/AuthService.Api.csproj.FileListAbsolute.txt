@@ -624,3 +624,5 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\Au
 C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\AuthService.Api.runtimeconfig.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\AuthService.Api.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-test-output-2\Debug\net8.0\AuthService.Api.pdb
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Api\bin\Debug\net8.0\AWSSDK.S3.dll

@@ -48,3 +48,5 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" })).AllowAnonymo
 app.MapReverseProxy();
 
 app.Run();
+
+public partial class Program;

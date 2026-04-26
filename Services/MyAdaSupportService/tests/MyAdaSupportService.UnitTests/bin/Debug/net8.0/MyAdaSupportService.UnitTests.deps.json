@@ -56,6 +56,25 @@
           }
         }
       },
+      "AWSSDK.Core/3.7.400.51": {
+        "runtime": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.400.51"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.406": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.400.51"
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.406.0"
+          }
+        }
+      },
       "Castle.Core/5.1.1": {
         "dependencies": {
           "System.Diagnostics.EventLog": "6.0.0"
@@ -726,10 +745,12 @@
       },
       "MyAdaSupportService.Infrastructure/1.0.0": {
         "dependencies": {
+          "AWSSDK.S3": "3.7.406",
           "Microsoft.EntityFrameworkCore": "8.0.0",
           "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Http": "8.0.0",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0",
           "MyAdaSupportService.Application": "1.0.0",
           "MyAdaSupportService.Domain": "1.0.0",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.0"
@@ -769,6 +790,20 @@
       "sha512": "sha512-voHfDZSDqBdSTwJHHSLhZu61opz/5OEKqn+P+0DEa0hdOOo8FfFWXSnZQYKMjwWurKR0f5hD/InPN2h828rMag==",
       "path": "autowrapper.core/4.5.1",
       "hashPath": "autowrapper.core.4.5.1.nupkg.sha512"
+    },
+    "AWSSDK.Core/3.7.400.51": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OXWOZPI2VFupd3yohihF5NX3Hpjj2yqftah06T7ef18CTuw7MIbvwxVT49gIPDmp+WagRVavS+sjn1xCpxzlIw==",
+      "path": "awssdk.core/3.7.400.51",
+      "hashPath": "awssdk.core.3.7.400.51.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.7.406": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GLIvxtD6W3YxsTYzRbm62CNuhC3T6ibOqq/bAJTm49DyL7Abd+whyEJ+qNw2Su8zdEqXfTaj0ASsJmNyeE7qGw==",
+      "path": "awssdk.s3/3.7.406",
+      "hashPath": "awssdk.s3.3.7.406.nupkg.sha512"
     },
     "Castle.Core/5.1.1": {
       "type": "package",

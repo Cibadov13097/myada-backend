@@ -1,8 +1,8 @@
 {
   "Version": 1,
-  "Hash": "Dvd5zj36VoebVodBCXc0wTQICYSYItA43Rbou7iUTds=",
-  "Source": "LostFoundService.API",
-  "BasePath": "_content/LostFoundService.API",
+  "Hash": "K6+svycnXliYwgFs5T8DtqOYr3tpugq+mgF1GB+5zKo=",
+  "Source": "LostFoundService.Api",
+  "BasePath": "_content/LostFoundService.Api",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
