@@ -16,12 +16,21 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         _context = context;
     }
 
-    private IQueryable<LostFoundItem> ItemsWithImages(bool asNoTracking)
+    private IQueryable<LostFoundItem> ItemsWithRelations(bool asNoTracking, bool includeImages = true, string? currentUserId = null)
     {
-        var query = _context.LostFoundItems
-            .Include(x => x.Images)
-            .Include(x => x.Category)
-            .AsQueryable();
+        IQueryable<LostFoundItem> query = _context.LostFoundItems
+            .Include(x => x.Category);
+
+        if (includeImages)
+        {
+            query = query.Include(x => x.Images);
+        }
+
+        if (!string.IsNullOrWhiteSpace(currentUserId))
+        {
+            query = query.Include(x => x.Claims.Where(c => c.UserId == currentUserId));
+        }
+
         return asNoTracking ? query.AsNoTracking() : query;
     }
 
@@ -34,9 +43,10 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         LostFoundAdminStatus? adminStatus,
         bool excludeTerminalAdminItems,
         int page,
-        int limit)
+        int limit,
+        string? currentUserId = null)
     {
-        var query = ItemsWithImages(asNoTracking: true);
+        var query = ItemsWithRelations(asNoTracking: true, includeImages: true, currentUserId: currentUserId);
 
         if (type.HasValue)
         {
@@ -88,20 +98,16 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         return (items, total);
     }
 
-    public async Task<LostFoundItem?> GetItemByIdAsync(int id, bool asNoTracking = false, bool includeImages = true)
+    public async Task<LostFoundItem?> GetItemByIdAsync(int id, bool asNoTracking = false, bool includeImages = true, string? currentUserId = null)
     {
-        var query = includeImages
-            ? ItemsWithImages(asNoTracking)
-            : (asNoTracking ? _context.LostFoundItems.AsNoTracking() : _context.LostFoundItems.AsQueryable());
+        var query = ItemsWithRelations(asNoTracking, includeImages: includeImages, currentUserId: currentUserId);
 
         return await query.FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<LostFoundItem?> GetTrackedItemAsync(int id, bool includeImages = false)
     {
-        var query = includeImages
-            ? ItemsWithImages(asNoTracking: false)
-            : _context.LostFoundItems.AsQueryable();
+        var query = ItemsWithRelations(asNoTracking: false, includeImages: includeImages);
 
         return await query.FirstOrDefaultAsync(x => x.Id == id);
     }

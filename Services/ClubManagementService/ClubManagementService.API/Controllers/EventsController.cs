@@ -5,9 +5,11 @@ using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.EventRegistration;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
+using ClubManagementService.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Events.Notifications;
+using System.IO;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -23,17 +25,20 @@ public class EventsController : ControllerBase
     private readonly IEventRegistrationService _registrationService;
     private readonly IClubMembershipRepository _clubMembershipRepository;
     private readonly IClubNotificationService _notificationService;
+    private readonly IImageStorageService _imageStorageService;
 
     public EventsController(
         IEventService eventService,
         IEventRegistrationService registrationService,
         IClubMembershipRepository clubMembershipRepository,
-        IClubNotificationService notificationService)
+        IClubNotificationService notificationService,
+        IImageStorageService imageStorageService)
     {
         _eventService = eventService;
         _registrationService = registrationService;
         _clubMembershipRepository = clubMembershipRepository;
         _notificationService = notificationService;
+        _imageStorageService = imageStorageService;
     }
 
     [HttpGet]
@@ -224,23 +229,86 @@ public class EventsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateEventDto dto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create([FromForm] CreateEventFormRequest request, CancellationToken cancellationToken)
     {
         var approvedBy = GetCurrentUserIdOrDefault();
         if (approvedBy == Guid.Empty)
             return Unauthorized();
 
-        dto.ApprovedBy = approvedBy;
-        var created = await _eventService.CreateAsync(dto);
-        var v = HttpContext.GetClubApiMajorVersion();
-        return CreatedAtAction(nameof(GetById), new { version = v, eventId = created.Id }, created);
+        var (form, errorResult) = await TryReadMultipartFormAsync(cancellationToken).ConfigureAwait(false);
+        if (errorResult != null)
+            return errorResult;
+
+        if (ContainsDisallowedImageUrlFields(form!))
+        {
+            return BadRequest(new
+            {
+                message = "Attach the event image with imageFile. imageUrl and imgUrl are not accepted on this route."
+            });
+        }
+
+        var uploadedImageUrl = await UploadEventImageIfPresentAsync(request.ClubId, form!, request.ImageFile, cancellationToken).ConfigureAwait(false);
+        if (uploadedImageUrl == string.Empty)
+            return BadRequest(new { message = "imageFile has an unsupported file type." });
+
+        try
+        {
+            var dto = request.ToCreateDto(approvedBy, uploadedImageUrl);
+            var created = await _eventService.CreateAsync(dto).ConfigureAwait(false);
+            var v = HttpContext.GetClubApiMajorVersion();
+            return CreatedAtAction(nameof(GetById), new { version = v, eventId = created.Id }, created);
+        }
+        catch
+        {
+            await TryDeleteStoredFileAsync(uploadedImageUrl, cancellationToken).ConfigureAwait(false);
+            throw;
+        }
     }
 
     [HttpPatch("{eventId:int}")]
-    public async Task<IActionResult> Update(int eventId, [FromBody] UpdateEventDto dto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Update(int eventId, [FromForm] UpdateEventFormRequest request, CancellationToken cancellationToken)
     {
-        var updated = await _eventService.UpdateAsync(eventId, dto);
-        return Ok(updated);
+        var (form, errorResult) = await TryReadMultipartFormAsync(cancellationToken).ConfigureAwait(false);
+        if (errorResult != null)
+            return errorResult;
+
+        if (ContainsDisallowedImageUrlFields(form!))
+        {
+            return BadRequest(new
+            {
+                message = "Attach the event image with imageFile. imageUrl and imgUrl are not accepted on this route."
+            });
+        }
+
+        var existing = await _eventService.GetByIdAsync(eventId).ConfigureAwait(false);
+        if (existing == null)
+            return NotFound();
+
+        var uploadedImageUrl = await UploadEventImageIfPresentAsync(existing.ClubId, form!, request.ImageFile, cancellationToken).ConfigureAwait(false);
+        if (uploadedImageUrl == string.Empty)
+            return BadRequest(new { message = "imageFile has an unsupported file type." });
+
+        var nextImageUrl = string.IsNullOrWhiteSpace(uploadedImageUrl) ? existing.ImageUrl : uploadedImageUrl;
+        try
+        {
+            var updated = await _eventService.UpdateAsync(eventId, request.ToUpdateDto(nextImageUrl)).ConfigureAwait(false);
+
+            if (!string.IsNullOrWhiteSpace(uploadedImageUrl)
+                && !string.IsNullOrWhiteSpace(existing.ImageUrl)
+                && !string.Equals(existing.ImageUrl, uploadedImageUrl, StringComparison.Ordinal))
+            {
+                await TryDeleteStoredFileAsync(existing.ImageUrl, cancellationToken).ConfigureAwait(false);
+            }
+
+            return Ok(updated);
+        }
+        catch
+        {
+            await TryDeleteStoredFileAsync(uploadedImageUrl, cancellationToken).ConfigureAwait(false);
+            throw;
+        }
     }
 
     [HttpDelete("{eventId:int}")]
@@ -256,10 +324,151 @@ public class EventsController : ControllerBase
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
     }
 
+    private async Task<(IFormCollection? Form, IActionResult? ErrorResult)> TryReadMultipartFormAsync(CancellationToken cancellationToken)
+    {
+        if (Request.ContentType?.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase) != true)
+        {
+            return (null, StatusCode(StatusCodes.Status415UnsupportedMediaType, new
+            {
+                message = "Unsupported content type. Use multipart/form-data and attach the image as imageFile."
+            }));
+        }
+
+        try
+        {
+            return (await Request.ReadFormAsync(cancellationToken).ConfigureAwait(false), null);
+        }
+        catch (InvalidDataException)
+        {
+            return (null, BadRequest(new
+            {
+                message = "Invalid multipart form data. Use multipart/form-data for file uploads and let the client set the boundary automatically."
+            }));
+        }
+    }
+
+    private static bool ContainsDisallowedImageUrlFields(IFormCollection form)
+    {
+        return form.Keys.Any(key =>
+            string.Equals(key, "imageUrl", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(key, "imgUrl", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private async Task<string?> UploadEventImageIfPresentAsync(
+        int clubId,
+        IFormCollection form,
+        IFormFile? imageFile,
+        CancellationToken cancellationToken)
+    {
+        var file = ResolveEventImageFile(form, imageFile);
+        if (file == null || file.Length <= 0)
+            return null;
+
+        if (!_imageStorageService.IsSupportedImage(file.FileName))
+            return string.Empty;
+
+        await using var stream = file.OpenReadStream();
+        return await _imageStorageService.UploadImageAsync(
+            stream,
+            file.FileName,
+            file.ContentType,
+            $"events/{clubId}",
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private static IFormFile? ResolveEventImageFile(IFormCollection form, IFormFile? imageFile)
+    {
+        return imageFile
+            ?? form.Files.GetFile("imageFile")
+            ?? form.Files.GetFile("image")
+            ?? form.Files.GetFile("posterFile");
+    }
+
+    private async Task TryDeleteStoredFileAsync(string? fileUrl, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(fileUrl))
+            return;
+
+        try
+        {
+            await _imageStorageService.DeleteFileAsync(fileUrl, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Event metadata updates should still succeed if cleanup of an old stored file fails.
+        }
+    }
+
     private int GetDefaultEventPageSize() => HttpContext.GetClubApiMajorVersion() >= 2 ? 24 : 12;
 
     public sealed class CheckInRequest
     {
         public string Jwt { get; set; } = string.Empty;
+    }
+
+    public sealed class CreateEventFormRequest : EventFormRequestBase
+    {
+        public int ClubId { get; set; }
+
+        public CreateEventDto ToCreateDto(Guid approvedBy, string? imageUrl)
+        {
+            return new CreateEventDto
+            {
+                ClubId = ClubId,
+                Name = Name,
+                Description = Description,
+                ImageUrl = NormalizeOptionalText(imageUrl),
+                StartTime = StartTime,
+                EndTime = EndTime,
+                Location = Location,
+                SeatLimit = SeatLimit,
+                Requirements = Requirements,
+                Prerequisites = Prerequisites,
+                Notes = Notes,
+                ApprovedBy = approvedBy
+            };
+        }
+    }
+
+    public sealed class UpdateEventFormRequest : EventFormRequestBase
+    {
+        public ClubStatus Status { get; set; }
+
+        public UpdateEventDto ToUpdateDto(string? imageUrl)
+        {
+            return new UpdateEventDto
+            {
+                Name = Name,
+                Description = Description,
+                ImageUrl = NormalizeOptionalText(imageUrl),
+                StartTime = StartTime,
+                EndTime = EndTime,
+                Location = Location,
+                SeatLimit = SeatLimit,
+                Requirements = Requirements,
+                Prerequisites = Prerequisites,
+                Notes = Notes,
+                Status = Status
+            };
+        }
+    }
+
+    public abstract class EventFormRequestBase
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string Location { get; set; } = string.Empty;
+        public int SeatLimit { get; set; }
+        public string Requirements { get; set; } = string.Empty;
+        public string Prerequisites { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
+        public IFormFile? ImageFile { get; set; }
+
+        protected static string? NormalizeOptionalText(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        }
     }
 }

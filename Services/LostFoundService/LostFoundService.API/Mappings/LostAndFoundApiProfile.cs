@@ -72,6 +72,8 @@ public class LostAndFoundApiProfile : Profile
             .ForMember(d => d.DateLost, o => o.MapFrom(s => s.DateLost.HasValue
                 ? s.DateLost.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                 : null))
+            .ForMember(d => d.IsMine, o => o.MapFrom(s => s.Claims.Any(c => c.ClaimType == LostFoundClaimType.Owner)))
+            .ForMember(d => d.ItemFound, o => o.MapFrom(s => s.Claims.Any(c => c.ClaimType == LostFoundClaimType.Finder)))
             .ForMember(d => d.Condition, o => o.MapFrom((s, _, _, context) =>
                 IncludeAdminFields(context) ? ToConditionString(s.Condition) : null))
             .ForMember(d => d.StorageBinId, o => o.MapFrom((s, _, _, context) =>

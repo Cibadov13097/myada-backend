@@ -772,7 +772,7 @@ public class StudentServicesController : ControllerBase
                 form = HttpContext.Features.Get<IFormFeature>()?.Form
                        ?? await Request.ReadFormAsync(cancellationToken).ConfigureAwait(false);
             }
-            catch (InvalidDataException)
+            catch (Exception ex) when (!cancellationToken.IsCancellationRequested && IsInvalidEventProposalRequestException(ex))
             {
                 return (null, null, BadRequest(new
                 {
@@ -824,6 +824,12 @@ public class StudentServicesController : ControllerBase
             message = "Unsupported content type. Use multipart/form-data for direct image uploads, or application/json when imageUrl is already available."
         }));
     }
+
+    private static bool IsInvalidEventProposalRequestException(Exception ex) =>
+        ex is InvalidDataException
+            or IOException
+            or InvalidOperationException
+            or BadHttpRequestException;
 
     private IActionResult? EnsureStudentServices()
     {

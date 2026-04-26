@@ -189,7 +189,10 @@ public class LostAndFoundController : ControllerBase
     {
         try
         {
-            var item = await _lostAndFoundService.GetItemByIdAsync(id, hideTerminalItemsForPublic: !IsAdmin());
+            var item = await _lostAndFoundService.GetItemByIdAsync(
+                id,
+                currentUserId: TryGetUserId(),
+                hideTerminalItemsForPublic: !IsAdmin());
             return Ok(MapItemResponse(item, includeAdminFields: false));
         }
         catch (NotFoundException ex)
@@ -455,7 +458,9 @@ public class LostAndFoundController : ControllerBase
             return StatusCode(StatusCodes.Status201Created, new ClaimCreatedResponse
             {
                 ClaimId = claim.Id,
-                Status = response.Status
+                Status = response.Status,
+                IsMine = string.Equals(response.ClaimType, "owner", StringComparison.OrdinalIgnoreCase),
+                ItemFound = string.Equals(response.ClaimType, "finder", StringComparison.OrdinalIgnoreCase)
             });
         }
         catch (BadRequestException ex)

@@ -23,12 +23,16 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
             operation.RequestBody = new OpenApiRequestBody
             {
                 Required = true,
-                Description = "Use multipart/form-data and attach imageFile directly for club-admin event proposals. Send subEventsJson as a JSON array string and logisticsJson as a JSON object string.",
+                Description = "Use application/json when imageUrl already exists, or multipart/form-data to upload imageFile directly. For multipart requests, send subEventsJson as a JSON array string and logisticsJson as a JSON object string.",
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
+                    ["application/json"] = new()
+                    {
+                        Schema = BuildJsonSchema()
+                    },
                     ["multipart/form-data"] = new()
                     {
-                        Schema = BuildMultipartSchema(includeImageUrl: false)
+                        Schema = BuildMultipartSchema(includeImageUrl: true)
                     }
                 }
             };

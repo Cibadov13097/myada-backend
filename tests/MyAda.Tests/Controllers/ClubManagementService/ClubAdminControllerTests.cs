@@ -76,9 +76,26 @@ public class ClubAdminControllerTests
     }
 
     [Fact]
-    public async Task EventProposal_ShouldRejectImageUrlField()
+    public async Task EventProposal_ShouldAcceptMultipartImageUrlWhenNoFileIsAttached()
     {
-        var controller = new ClubAdminController(Mock.Of<IClubAdminService>(), Mock.Of<IImageStorageService>());
+        var clubAdmin = new Mock<IClubAdminService>();
+        clubAdmin.Setup(x => x.CreateEventProposalAsync(
+                "1",
+                It.Is<EventProposalSubmitDto>(dto =>
+                    dto.Name == "Launch Day"
+                    && dto.ImageUrl == "https://bucket.example/poster.png"),
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new EventProposalResultDto
+            {
+                ProposalId = "2",
+                Id = "2",
+                Status = "pending_review",
+                ClubId = "1",
+                ImageUrl = "https://bucket.example/poster.png"
+            });
+
+        var controller = new ClubAdminController(clubAdmin.Object, Mock.Of<IImageStorageService>());
         var httpContext = new DefaultHttpContext();
         var form = new FormCollection(new Dictionary<string, StringValues>
         {
@@ -98,22 +115,59 @@ public class ClubAdminControllerTests
 
         var result = await controller.EventProposal("1", CancellationToken.None);
 
-        result.Should().BeOfType<BadRequestObjectResult>();
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        var body = ok.Value.Should().BeAssignableTo<EventProposalResultDto>().Subject;
+        body.ImageUrl.Should().Be("https://bucket.example/poster.png");
+        clubAdmin.VerifyAll();
     }
 
     [Fact]
-    public async Task EventProposal_ShouldRejectJsonRequests()
+    public async Task EventProposal_ShouldAcceptJsonRequests()
     {
-        var controller = new ClubAdminController(Mock.Of<IClubAdminService>(), Mock.Of<IImageStorageService>());
+        var clubAdmin = new Mock<IClubAdminService>();
+        clubAdmin.Setup(x => x.CreateEventProposalAsync(
+                "1",
+                It.Is<EventProposalSubmitDto>(dto =>
+                    dto.Name == "Launch Day"
+                    && dto.DateTime == "2026-04-26T14:30:00"
+                    && dto.ImageUrl == "https://bucket.example/poster.png"),
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new EventProposalResultDto
+            {
+                ProposalId = "3",
+                Id = "3",
+                Status = "pending_review",
+                ClubId = "1",
+                ImageUrl = "https://bucket.example/poster.png"
+            });
+
+        var controller = new ClubAdminController(clubAdmin.Object, Mock.Of<IImageStorageService>());
         var httpContext = new DefaultHttpContext();
         httpContext.Request.ContentType = "application/json";
-        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("{\"name\":\"Launch Day\",\"imageUrl\":\"https://bucket.example/poster.png\"}"));
+        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("{\"name\":\"Launch Day\",\"dateTime\":\"2026-04-26T14:30:00\",\"duration\":\"2\",\"attendance\":\"120\",\"venue\":\"Main Hall\",\"description\":\"Event description\",\"objectives\":\"Event objectives\",\"imageUrl\":\"https://bucket.example/poster.png\"}"));
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
         var result = await controller.EventProposal("1", CancellationToken.None);
 
-        var unsupported = result.Should().BeOfType<ObjectResult>().Subject;
-        unsupported.StatusCode.Should().Be(StatusCodes.Status415UnsupportedMediaType);
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        var body = ok.Value.Should().BeAssignableTo<EventProposalResultDto>().Subject;
+        body.ImageUrl.Should().Be("https://bucket.example/poster.png");
+        clubAdmin.VerifyAll();
+    }
+
+    [Fact]
+    public async Task EventProposal_ShouldReturnBadRequestForMalformedMultipartBody()
+    {
+        var controller = new ClubAdminController(Mock.Of<IClubAdminService>(), Mock.Of<IImageStorageService>());
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "multipart/form-data; boundary=test";
+        httpContext.Features.Set<IFormFeature>(new ThrowingFormFeature(new InvalidOperationException("Malformed multipart body.")));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.EventProposal("1", CancellationToken.None);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
     }
 
     [Fact]
@@ -307,5 +361,19 @@ public class ClubAdminControllerTests
         public IFormCollection? Form { get; set; } = form;
         public IFormCollection ReadForm() => Form ?? new FormCollection(new Dictionary<string, StringValues>());
         public Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken) => Task.FromResult(ReadForm());
+    }
+
+    private sealed class ThrowingFormFeature(Exception exception) : IFormFeature
+    {
+        public bool HasFormContentType => true;
+
+        public IFormCollection? Form
+        {
+            get => throw exception;
+            set => throw new NotSupportedException();
+        }
+
+        public IFormCollection ReadForm() => throw exception;
+        public Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken) => throw exception;
     }
 }

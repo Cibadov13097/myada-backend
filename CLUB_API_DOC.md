@@ -213,8 +213,8 @@ Auth: Bearer required
 | `DELETE` | `/api/v1/events/{eventId}/registrations` | Cancel current user's registration. |
 | `GET` | `/api/v1/events/{eventId}/ticket` | Get current user's ticket payload. |
 | `POST` | `/api/v1/events/{eventId}/check-in` | Staff/admin only. Body: `{ "jwt": "..." }`. |
-| `POST` | `/api/v1/events` | Body: `CreateEventDto`; `approvedBy` is filled from JWT. |
-| `PATCH` | `/api/v1/events/{eventId}` | Body: `UpdateEventDto`. |
+| `POST` | `/api/v1/events` | `multipart/form-data` only. Fields: `clubId`, `name`, `description`, `startTime`, `endTime`, `location`, `seatLimit`, `requirements`, `prerequisites`, `notes`, optional `imageFile`. `approvedBy` is filled from JWT. |
+| `PATCH` | `/api/v1/events/{eventId}` | `multipart/form-data` only. Fields: `name`, `description`, `startTime`, `endTime`, `location`, `seatLimit`, `requirements`, `prerequisites`, `notes`, `status`, optional `imageFile`. |
 | `DELETE` | `/api/v1/events/{eventId}` | Delete event. |
 
 Compatibility aliases also exposed by the same controller:
@@ -249,6 +249,12 @@ Registration response shape:
   }
 }
 ```
+
+Create/update notes:
+
+- Attach the event image with `imageFile`.
+- `imageUrl` and `imgUrl` are rejected on `POST /api/v1/events` and `PATCH /api/v1/events/{eventId}`.
+- Event responses still expose the persisted image as `imageUrl`.
 
 ---
 
@@ -741,7 +747,7 @@ Representative position response:
 |--------|------|-------|
 | `GET` | `/api/v1/club-admin/{clubId}/events` | Query: `status`, `search`, `page`, `limit`. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}` | Body: `UpdateEventDto`. |
-| `POST` | `/api/v1/club-admin/{clubId}/events/proposals` | `multipart/form-data` only. Attach the proposal image with `imageFile`; `imageUrl` is rejected on this route. |
+| `POST` | `/api/v1/club-admin/{clubId}/events/proposals` | Accepts `application/json` or `multipart/form-data`. Use `imageFile` for direct uploads, or `imageUrl` when the image is already hosted. |
 | `GET` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees` | Query: `page`, `limit`. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Body: `{ "entered": bool }`. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Delete attendee. |

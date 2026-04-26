@@ -76,7 +76,8 @@ public class LostAndFoundService : ILostAndFoundService
             parsedAdminStatus,
             query.ExcludeTerminalAdminItems,
             page,
-            limit);
+            limit,
+            query.CurrentUserId);
 
         return new LostFoundItemListResult
         {
@@ -85,9 +86,9 @@ public class LostAndFoundService : ILostAndFoundService
         };
     }
 
-    public async Task<LostFoundItem> GetItemByIdAsync(int id, bool hideTerminalItemsForPublic = false)
+    public async Task<LostFoundItem> GetItemByIdAsync(int id, string? currentUserId = null, bool hideTerminalItemsForPublic = false)
     {
-        var item = await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: true);
+        var item = await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: true, currentUserId: currentUserId);
         if (item == null)
         {
             throw new NotFoundException($"Item {id} was not found.");

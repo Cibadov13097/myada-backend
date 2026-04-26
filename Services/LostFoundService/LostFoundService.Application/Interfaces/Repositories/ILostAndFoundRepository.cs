@@ -14,9 +14,10 @@ public interface ILostAndFoundRepository
         LostFoundAdminStatus? adminStatus,
         bool excludeTerminalAdminItems,
         int page,
-        int limit);
+        int limit,
+        string? currentUserId = null);
 
-    Task<LostFoundItem?> GetItemByIdAsync(int id, bool asNoTracking = false, bool includeImages = true);
+    Task<LostFoundItem?> GetItemByIdAsync(int id, bool asNoTracking = false, bool includeImages = true, string? currentUserId = null);
     Task<LostFoundItem?> GetTrackedItemAsync(int id, bool includeImages = false);
     Task<int> CountItemsAsync();
     Task<int> CountItemsByStatusAsync(LostFoundPublicStatus status);

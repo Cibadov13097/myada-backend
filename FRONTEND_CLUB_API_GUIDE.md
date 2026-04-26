@@ -212,11 +212,12 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
 
 ### 3.1 Club admin — suggest event
 
-- `POST /api/v1/club-admin/{clubId}/events/proposals`  
-- `Content-Type: multipart/form-data`
-- Multipart fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `description`, `objectives`, `submittedByOrganization?`, `imageFile?`, `subEventsJson?`, `logisticsJson?`
-- Attach the proposal image using `imageFile`. This route rejects `imageUrl`.
-- In Swagger, this route now shows the file picker directly because the request body is multipart-only.
+- `POST /api/v1/club-admin/{clubId}/events/proposals`
+- Accepts `application/json` or `multipart/form-data`.
+- JSON uses the shared `EventProposalSubmitDto` shape and can send `imageUrl` when the image is already hosted.
+- Multipart fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `description`, `objectives`, `submittedByOrganization?`, `imageUrl?`, `imageFile?`, `subEventsJson?`, `logisticsJson?`
+- When both `imageUrl` and `imageFile` are sent, the uploaded `imageFile` wins.
+- Swagger now shows both JSON and multipart request body options for this route.
 
 **Success (`result`)**
 

@@ -32,6 +32,8 @@ public sealed class LostFoundItemResponse
     public string? TimeLost { get; set; }
     public string? ContactName { get; set; }
     public string? ContactPhone { get; set; }
+    public bool IsMine { get; set; }
+    public bool ItemFound { get; set; }
     public string? StorageBinId { get; set; }
     public string? Condition { get; set; }
     public string? AdminNotes { get; set; }
