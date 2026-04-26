@@ -4,7 +4,7 @@ public sealed class CreateLostFoundItemCommand
 {
     public string? Type { get; set; }
     public string? ItemName { get; set; }
-    public string? Category { get; set; }
+    public int? CategoryId { get; set; }
     public string? Description { get; set; }
     public string? Location { get; set; }
     public string? LocationType { get; set; }

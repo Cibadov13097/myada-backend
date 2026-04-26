@@ -176,7 +176,7 @@ namespace AuthService.API.Controllers
             };
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [HttpGet("users-by-role/{role}")]
         public async Task<IActionResult> GetUsersByRole(string role)
         {

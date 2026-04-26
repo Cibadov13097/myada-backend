@@ -20,7 +20,7 @@ public class LostAndFoundController : ControllerBase
     {
         "type",
         "itemName",
-        "category",
+        "categoryId",
         "description",
         "location",
         "dateLost",
@@ -34,7 +34,7 @@ public class LostAndFoundController : ControllerBase
     {
         "type",
         "itemName",
-        "category",
+        "categoryId",
         "description",
         "location",
         "dateLost",
@@ -56,7 +56,7 @@ public class LostAndFoundController : ControllerBase
     {
         "type",
         "itemName",
-        "category",
+        "categoryId",
         "description",
         "location",
         "locationType",
@@ -85,7 +85,7 @@ public class LostAndFoundController : ControllerBase
     {
         "type",
         "itemName",
-        "category",
+        "categoryId",
         "description",
         "location",
         "customLocation",
@@ -142,7 +142,7 @@ public class LostAndFoundController : ControllerBase
         [FromQuery(Name = "search")] string? search,
         [FromQuery] string? type,
         [FromQuery] string? postedBy,
-        [FromQuery] string? category,
+        [FromQuery] int? categoryId,
         [FromQuery] string? status,
         [FromQuery] string? adminStatus,
         [FromQuery] int page = 1,
@@ -156,7 +156,7 @@ public class LostAndFoundController : ControllerBase
                 Search = search,
                 Type = type,
                 PostedBy = postedBy,
-                Category = category,
+                CategoryId = categoryId,
                 Status = status,
                 AdminStatus = adminStatus,
                 Page = page,
@@ -618,7 +618,7 @@ public class LostAndFoundController : ControllerBase
             {
                 Type = GetForm(form, "type"),
                 ItemName = GetForm(form, "itemName"),
-                Category = GetForm(form, "category"),
+                CategoryId = GetFormInt(form, "categoryId"),
                 Description = GetForm(form, "description"),
                 Location = GetForm(form, "location") ?? GetForm(form, "customLocation"),
                 LocationType = GetForm(form, "locationType"),
@@ -706,7 +706,7 @@ public class LostAndFoundController : ControllerBase
             {
                 Type = GetForm(form, "type"),
                 ItemName = GetForm(form, "itemName"),
-                Category = GetForm(form, "category"),
+                CategoryId = GetFormInt(form, "categoryId"),
                 Description = GetForm(form, "description"),
                 Location = GetForm(form, "location"),
                 DateLost = GetForm(form, "dateLost"),
@@ -759,7 +759,7 @@ public class LostAndFoundController : ControllerBase
             {
                 Type = GetForm(form, "type"),
                 ItemName = GetForm(form, "itemName"),
-                Category = GetForm(form, "category"),
+                CategoryId = GetFormInt(form, "categoryId"),
                 Description = GetForm(form, "description"),
                 ImageUrl = GetForm(form, "imageUrl"),
                 Location = GetForm(form, "location") ?? GetForm(form, "customLocation"),
@@ -1032,6 +1032,12 @@ public class LostAndFoundController : ControllerBase
     private static string? GetForm(IFormCollection form, string key)
     {
         return form.TryGetValue(key, out var value) ? value.ToString() : null;
+    }
+
+    private static int? GetFormInt(IFormCollection form, string key)
+    {
+        var value = GetForm(form, key);
+        return int.TryParse(value, out var parsed) ? parsed : null;
     }
 
     private static List<string> ExtractImageUrlsFromForm(IFormCollection form)

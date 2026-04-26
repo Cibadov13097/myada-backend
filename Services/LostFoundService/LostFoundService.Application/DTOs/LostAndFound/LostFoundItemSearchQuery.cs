@@ -6,7 +6,7 @@ public sealed class LostFoundItemSearchQuery
     public string? Search { get; set; }
     public string? Type { get; set; }
     public string? PostedBy { get; set; }
-    public string? Category { get; set; }
+    public int? CategoryId { get; set; }
     public string? Status { get; set; }
     public string? AdminStatus { get; set; }
     public int Page { get; set; } = 1;

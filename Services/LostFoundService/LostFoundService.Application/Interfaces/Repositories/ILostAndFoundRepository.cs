@@ -9,7 +9,7 @@ public interface ILostAndFoundRepository
         string? searchTerm,
         LostFoundItemType? type,
         string? postedByUserId,
-        string? category,
+        int? categoryId,
         LostFoundPublicStatus? status,
         LostFoundAdminStatus? adminStatus,
         int page,
@@ -19,6 +19,7 @@ public interface ILostAndFoundRepository
     Task<LostFoundItem?> GetTrackedItemAsync(int id, bool includeImages = false);
     Task<int> CountItemsAsync();
     Task<int> CountItemsByStatusAsync(LostFoundPublicStatus status);
+    Task<bool> CategoryExistsAsync(int categoryId);
     Task AddItemAsync(LostFoundItem item);
     Task AssignUniqueReferenceNumberAsync(LostFoundItem item);
     Task AddItemImagesAsync(IEnumerable<LostFoundItemImage> images);

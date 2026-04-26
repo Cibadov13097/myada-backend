@@ -6,7 +6,8 @@ public sealed class LostFoundItemResponse
     public string Type { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string? Location { get; set; }
-    public string Category { get; set; } = string.Empty;
+    public int CategoryId { get; set; }
+    public string? CategoryName { get; set; }
     public string Status { get; set; } = string.Empty;
     public string? AdminStatus { get; set; }
     public string? Description { get; set; }

@@ -16,7 +16,7 @@ public class LostFoundItemConfiguration : IEntityTypeConfiguration<LostFoundItem
             .HasMaxLength(10);
         builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
         builder.Property(x => x.Location).HasMaxLength(400);
-        builder.Property(x => x.Category).IsRequired().HasMaxLength(100);
+        builder.Property(x => x.CategoryId).IsRequired();
         builder.Property(x => x.Status)
             .HasConversion<string>()
             .IsRequired()
@@ -55,6 +55,12 @@ public class LostFoundItemConfiguration : IEntityTypeConfiguration<LostFoundItem
         builder.Property(x => x.ClaimantStudentId).HasMaxLength(100);
         builder.Property(x => x.HandoverProofUrl).HasMaxLength(500);
 
+        builder.HasOne(x => x.Category)
+            .WithMany(x => x.LostFoundItems)
+            .HasForeignKey(x => x.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => x.CategoryId);
         builder.HasIndex(x => x.ReferenceNumber).IsUnique();
     }
 }

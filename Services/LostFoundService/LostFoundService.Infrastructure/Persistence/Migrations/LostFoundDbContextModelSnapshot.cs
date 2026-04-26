@@ -160,10 +160,8 @@ namespace LostFoundService.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ClaimantName")
                         .HasMaxLength(150)
@@ -308,6 +306,8 @@ namespace LostFoundService.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(10)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ReferenceNumber")
                         .IsUnique();
@@ -477,6 +477,17 @@ namespace LostFoundService.Infrastructure.Persistence.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("LostFoundService.Domain.Entities.LostFoundItem", b =>
+                {
+                    b.HasOne("LostFoundService.Domain.Entities.Category", "Category")
+                        .WithMany("LostFoundItems")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("LostFoundService.Domain.Entities.LostFoundItemClaim", b =>
                 {
                     b.HasOne("LostFoundService.Domain.Entities.LostFoundItem", "LostFoundItem")
@@ -512,9 +523,16 @@ namespace LostFoundService.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("LostFoundService.Domain.Entities.LostFoundItem", b =>
                 {
+                    b.Navigation("Category");
+
                     b.Navigation("Claims");
 
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("LostFoundService.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("LostFoundItems");
                 });
 #pragma warning restore 612, 618
         }

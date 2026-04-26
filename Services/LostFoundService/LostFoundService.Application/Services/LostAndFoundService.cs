@@ -71,7 +71,7 @@ public class LostAndFoundService : ILostAndFoundService
             effectiveQuery,
             parsedType,
             postedByUserId,
-            query.Category,
+            query.CategoryId,
             parsedStatus,
             parsedAdminStatus,
             page,
@@ -108,6 +108,10 @@ public class LostAndFoundService : ILostAndFoundService
         }
 
         ValidateCreateCommand(command, itemType);
+        if (!await _repository.CategoryExistsAsync(command.CategoryId!.Value))
+        {
+            throw ValidationError("VALIDATION_ERROR", "categoryId must reference an existing category.");
+        }
 
         var imageUrls = NormalizeDistinctImageUrls(command.ImageUrls);
         var postedAt = DateTime.UtcNow;
@@ -121,7 +125,7 @@ public class LostAndFoundService : ILostAndFoundService
         {
             Type = itemType,
             Title = command.ItemName!.Trim(),
-            Category = command.Category!.Trim(),
+            CategoryId = command.CategoryId.Value,
             Description = command.Description?.Trim(),
             LocationType = command.LocationType?.Trim(),
             BuildingCode = command.BuildingCode?.Trim(),
@@ -190,7 +194,7 @@ public class LostAndFoundService : ILostAndFoundService
         }
 
         await _repository.SaveChangesAsync();
-        return item;
+        return await _repository.GetItemByIdAsync(item.Id, asNoTracking: true, includeImages: true) ?? item;
     }
 
     public async Task<LostFoundItem> UpdateItemAsync(int id, UpdateLostFoundItemCommand command)
@@ -209,6 +213,16 @@ public class LostAndFoundService : ILostAndFoundService
             }
 
             item.AdminStatus = parsedAdminStatus;
+        }
+
+        if (command.CategoryId.HasValue)
+        {
+            if (!await _repository.CategoryExistsAsync(command.CategoryId.Value))
+            {
+                throw ValidationError("VALIDATION_ERROR", "categoryId must reference an existing category.");
+            }
+
+            item.CategoryId = command.CategoryId.Value;
         }
 
         if (!string.IsNullOrWhiteSpace(command.Title))
@@ -389,7 +403,8 @@ public class LostAndFoundService : ILostAndFoundService
         }
 
         if (string.IsNullOrWhiteSpace(command.ItemName)) Add("itemName", "itemName is required.");
-        if (string.IsNullOrWhiteSpace(command.Category)) Add("category", "category is required.");
+        if (!command.CategoryId.HasValue) Add("categoryId", "categoryId is required.");
+        else if (command.CategoryId.Value <= 0) Add("categoryId", "categoryId must be a positive integer.");
         if (!string.IsNullOrWhiteSpace(command.Description) && command.Description.Length > 500) Add("description", "description max length is 500.");
         if (!string.IsNullOrWhiteSpace(command.Location) && command.Location.Length > 400) Add("location", "location max length is 400.");
 

@@ -18,7 +18,10 @@ public class LostAndFoundRepository : ILostAndFoundRepository
 
     private IQueryable<LostFoundItem> ItemsWithImages(bool asNoTracking)
     {
-        var query = _context.LostFoundItems.Include(x => x.Images).AsQueryable();
+        var query = _context.LostFoundItems
+            .Include(x => x.Images)
+            .Include(x => x.Category)
+            .AsQueryable();
         return asNoTracking ? query.AsNoTracking() : query;
     }
 
@@ -26,7 +29,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         string? searchTerm,
         LostFoundItemType? type,
         string? postedByUserId,
-        string? category,
+        int? categoryId,
         LostFoundPublicStatus? status,
         LostFoundAdminStatus? adminStatus,
         int page,
@@ -44,10 +47,9 @@ public class LostAndFoundRepository : ILostAndFoundRepository
             query = query.Where(x => x.PostedByUserId == postedByUserId);
         }
 
-        if (!string.IsNullOrWhiteSpace(category))
+        if (categoryId.HasValue)
         {
-            var normalizedCategory = category.Trim().ToLowerInvariant();
-            query = query.Where(x => x.Category.ToLower() == normalizedCategory);
+            query = query.Where(x => x.CategoryId == categoryId.Value);
         }
 
         if (status.HasValue)
@@ -67,7 +69,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
                 EF.Functions.ILike(x.Title, pattern) ||
                 EF.Functions.ILike(x.Location ?? string.Empty, pattern) ||
                 EF.Functions.ILike(x.Description ?? string.Empty, pattern) ||
-                EF.Functions.ILike(x.Category, pattern));
+                EF.Functions.ILike(x.Category.Name, pattern));
         }
 
         var total = await query.CountAsync();
@@ -106,6 +108,11 @@ public class LostAndFoundRepository : ILostAndFoundRepository
     public Task<int> CountItemsByStatusAsync(LostFoundPublicStatus status)
     {
         return _context.LostFoundItems.CountAsync(x => x.Status == status);
+    }
+
+    public Task<bool> CategoryExistsAsync(int categoryId)
+    {
+        return _context.Categories.AnyAsync(x => x.Id == categoryId);
     }
 
     public async Task AddItemAsync(LostFoundItem item)

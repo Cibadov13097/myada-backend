@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CallService.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ec525f2eef0c51b5b838f931abc7a70d4bb6a94")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a535d033c4e51379ba577603050b77a8d8032ff1")]
 [assembly: System.Reflection.AssemblyProductAttribute("CallService.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CallService.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

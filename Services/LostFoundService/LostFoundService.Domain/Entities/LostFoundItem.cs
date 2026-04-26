@@ -8,7 +8,8 @@ public class LostFoundItem : AuditableEntity
     public LostFoundItemType Type { get; set; } = LostFoundItemType.Lost;
     public string Title { get; set; } = string.Empty;
     public string? Location { get; set; }
-    public string Category { get; set; } = string.Empty;
+    public int CategoryId { get; set; }
+    public Category Category { get; set; } = null!;
     public LostFoundPublicStatus Status { get; set; } = LostFoundPublicStatus.PendingVerification;
     public LostFoundAdminStatus? AdminStatus { get; set; } = LostFoundAdminStatus.Pending;
     public string? Description { get; set; }

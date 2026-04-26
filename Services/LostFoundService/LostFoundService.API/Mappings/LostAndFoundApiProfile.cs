@@ -62,6 +62,7 @@ public class LostAndFoundApiProfile : Profile
         CreateMap<LostFoundItem, LostFoundItemResponse>()
             .ForMember(d => d.Type, o => o.MapFrom(s => ToItemTypeString(s.Type)))
             .ForMember(d => d.Status, o => o.MapFrom(s => ToPublicStatusString(s.Status)))
+            .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null))
             .ForMember(d => d.AdminStatus, o => o.MapFrom((s, _, _, context) =>
                 IncludeAdminFields(context) ? ToAdminStatusString(s.AdminStatus) : null))
             .ForMember(d => d.DatePosted, o => o.MapFrom(s => s.PostedAt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)))

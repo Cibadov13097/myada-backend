@@ -51,7 +51,13 @@ public static class LostFoundDbSeeder
 
         await SeedLegacyLostItemsAsync(db, electronics, accessories, cancellationToken).ConfigureAwait(false);
         await SeedLegacyFoundItemsAsync(db, electronics, documents, accessories, cancellationToken).ConfigureAwait(false);
-        await SeedUnifiedItemsAsync(db, cancellationToken).ConfigureAwait(false);
+        await SeedUnifiedItemsAsync(
+            db,
+            electronics,
+            documents,
+            accessories,
+            await GetCategoryIdAsync("Personal Items").ConfigureAwait(false),
+            cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task<Dictionary<string, int>> EnsureCategoriesAsync(
@@ -202,6 +208,10 @@ public static class LostFoundDbSeeder
 
     private static async Task SeedUnifiedItemsAsync(
         LostFoundDbContext db,
+        int electronicsCategoryId,
+        int documentsCategoryId,
+        int accessoriesCategoryId,
+        int personalItemsCategoryId,
         CancellationToken cancellationToken)
     {
         if (await db.LostFoundItems.AnyAsync(cancellationToken).ConfigureAwait(false))
@@ -219,7 +229,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Lost,
                 Title = "USB Flash Drive",
                 Location = "Building C - Room C203",
-                Category = "Electronics",
+                CategoryId = electronicsCategoryId,
                 Status = LostFoundPublicStatus.PendingVerification,
                 AdminStatus = LostFoundAdminStatus.Pending,
                 Description = "SanDisk 64GB flash drive with a blue cap. Contains important project files.",
@@ -244,7 +254,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Lost,
                 Title = "Red Notebook",
                 Location = "Library - 3rd Floor, reading hall near Window 4",
-                Category = "Accessories",
+                CategoryId = accessoriesCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Pending,
                 Description = "Red notebook with handwritten CS notes and a weekly timetable.",
@@ -270,7 +280,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Lost,
                 Title = "Silver MacBook Charger",
                 Location = "Campus - Outdoor seating area between Building A and B",
-                Category = "Electronics",
+                CategoryId = electronicsCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Pending,
                 Description = "Apple 61W USB-C MacBook charger with silver braided cable.",
@@ -292,7 +302,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Found,
                 Title = "Prescription Glasses",
                 Location = "Main Building - Room A301",
-                Category = "Accessories",
+                CategoryId = accessoriesCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Received,
                 Description = "Black-framed prescription glasses found on a desk in Room A301.",
@@ -317,7 +327,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Found,
                 Title = "House Keys",
                 Location = "Campus - Parking Area B, ground level",
-                Category = "Accessories",
+                CategoryId = accessoriesCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Received,
                 Description = "Set of house keys with a black key cover and small flashlight keychain.",
@@ -339,7 +349,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Found,
                 Title = "AirPods Pro Case",
                 Location = "Campus - Main yard, on the bench near fountain",
-                Category = "Electronics",
+                CategoryId = electronicsCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Received,
                 Description = "White AirPods Pro charging case with minor scratches on the lid.",
@@ -361,7 +371,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Lost,
                 Title = "iPhone 14 Pro",
                 Location = "Main Building - Room A120",
-                Category = "Electronics",
+                CategoryId = electronicsCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Pending,
                 Description = "Space black iPhone 14 Pro in clear case, lost after afternoon lecture.",
@@ -386,7 +396,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Found,
                 Title = "Student ID Card",
                 Location = "Student Center - Main entrance",
-                Category = "Documents",
+                CategoryId = documentsCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Received,
                 Description = "ADA student ID card found near the turnstiles.",
@@ -411,7 +421,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Lost,
                 Title = "Blue Hoodie",
                 Location = "Library - 2nd Floor, sofa area",
-                Category = "Personal Items",
+                CategoryId = personalItemsCategoryId,
                 Status = LostFoundPublicStatus.PendingVerification,
                 AdminStatus = LostFoundAdminStatus.Pending,
                 Description = "Blue hoodie with white ADA logo on the sleeve.",
@@ -437,7 +447,7 @@ public static class LostFoundDbSeeder
                 Type = LostFoundItemType.Lost,
                 Title = "Brown Wallet",
                 Location = "Campus - Cafeteria cashier counter",
-                Category = "Documents",
+                CategoryId = documentsCategoryId,
                 Status = LostFoundPublicStatus.Active,
                 AdminStatus = LostFoundAdminStatus.Pending,
                 Description = "Brown leather wallet with cards and a student transport pass.",
