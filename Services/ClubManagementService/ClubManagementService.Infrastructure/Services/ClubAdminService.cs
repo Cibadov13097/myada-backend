@@ -1189,6 +1189,120 @@ public sealed class ClubAdminService : IClubAdminService
         return true;
     }
 
+    public async Task<IReadOnlyList<ClubResourceItemDto>> GetFilesAsync(string clubRouteKey, CancellationToken cancellationToken = default)
+    {
+        var entity = await TryResolveClubEntityAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
+        if (entity == null)
+            return Array.Empty<ClubResourceItemDto>();
+
+        var (resources, changed) = ClubResourcesJson.ParseForManagement(entity.ResourcesJson);
+        if (changed)
+            await SaveResourcesAsync(entity, resources).ConfigureAwait(false);
+
+        return resources;
+    }
+
+    public async Task<ClubResourceItemDto?> GetFileAsync(string clubRouteKey, string fileId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(fileId))
+            return null;
+
+        var entity = await TryResolveClubEntityAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
+        if (entity == null)
+            return null;
+
+        var normalizedFileId = fileId.Trim();
+        var (resources, changed) = ClubResourcesJson.ParseForManagement(entity.ResourcesJson);
+        var match = resources.FirstOrDefault(x => string.Equals(x.Id, normalizedFileId, StringComparison.Ordinal));
+
+        if (changed)
+            await SaveResourcesAsync(entity, resources).ConfigureAwait(false);
+
+        return match;
+    }
+
+    public async Task<ClubResourceItemDto?> CreateFileAsync(string clubRouteKey, ClubAdminCreateFileInput input, CancellationToken cancellationToken = default)
+    {
+        var entity = await TryResolveClubEntityAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
+        if (entity == null)
+            return null;
+
+        var (resources, _) = ClubResourcesJson.ParseForManagement(entity.ResourcesJson);
+        if (resources.Count >= ClubResourcesJson.MaxItems)
+            throw new InvalidOperationException($"At most {ClubResourcesJson.MaxItems} files are allowed.");
+
+        var created = new ClubResourceItemDto
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            Url = NormalizeResourceUrl(input.Url),
+            Title = NormalizeResourceTitle(input.Title)
+        };
+
+        resources.Add(created);
+        await SaveResourcesAsync(entity, resources, true).ConfigureAwait(false);
+        return created;
+    }
+
+    public async Task<ClubResourceItemDto?> UpdateFileAsync(string clubRouteKey, string fileId, ClubAdminUpdateFileInput input, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(fileId))
+            return null;
+
+        var entity = await TryResolveClubEntityAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
+        if (entity == null)
+            return null;
+
+        var normalizedFileId = fileId.Trim();
+        var (resources, changed) = ClubResourcesJson.ParseForManagement(entity.ResourcesJson);
+        var existing = resources.FirstOrDefault(x => string.Equals(x.Id, normalizedFileId, StringComparison.Ordinal));
+        if (existing == null)
+            return null;
+
+        var modified = changed;
+        if (input.Url is not null)
+        {
+            var normalizedUrl = NormalizeResourceUrl(input.Url);
+            if (!string.Equals(existing.Url, normalizedUrl, StringComparison.Ordinal))
+            {
+                existing.Url = normalizedUrl;
+                modified = true;
+            }
+        }
+
+        if (input.Title is not null)
+        {
+            var normalizedTitle = NormalizeResourceTitle(input.Title);
+            if (!string.Equals(existing.Title, normalizedTitle, StringComparison.Ordinal))
+            {
+                existing.Title = normalizedTitle;
+                modified = true;
+            }
+        }
+
+        await SaveResourcesAsync(entity, resources, modified).ConfigureAwait(false);
+        return existing;
+    }
+
+    public async Task<ClubResourceItemDto?> DeleteFileAsync(string clubRouteKey, string fileId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(fileId))
+            return null;
+
+        var entity = await TryResolveClubEntityAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
+        if (entity == null)
+            return null;
+
+        var normalizedFileId = fileId.Trim();
+        var (resources, _) = ClubResourcesJson.ParseForManagement(entity.ResourcesJson);
+        var removed = resources.FirstOrDefault(x => string.Equals(x.Id, normalizedFileId, StringComparison.Ordinal));
+        if (removed == null)
+            return null;
+
+        resources.Remove(removed);
+        await SaveResourcesAsync(entity, resources, true).ConfigureAwait(false);
+        return removed;
+    }
+
     public async Task<ProfilePatchResultDto> PatchProfileAsync(
         string clubRouteKey,
         string? socialLinks,
@@ -1395,6 +1509,40 @@ public sealed class ClubAdminService : IClubAdminService
         var club = await _clubService.GetByIdAsync(id).ConfigureAwait(false);
         return club == null ? null : new ClubRouteContext(id, clubRouteKey.Trim());
     }
+
+    private async Task<Club?> TryResolveClubEntityAsync(string clubRouteKey, CancellationToken cancellationToken)
+    {
+        var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false);
+        if (ctx == null)
+            return null;
+
+        return await _clubRepository.GetByIdWithCategoryAsync(ctx.ClubId).ConfigureAwait(false);
+    }
+
+    private async Task SaveResourcesAsync(Club entity, IReadOnlyCollection<ClubResourceItemDto> resources, bool modified = true)
+    {
+        if (!modified)
+            return;
+
+        entity.ResourcesJson = ClubResourcesJson.SerializeCanonical(resources);
+        entity.ModifiedAt = DateTime.UtcNow;
+        await _clubRepository.UpdateAsync(entity).ConfigureAwait(false);
+        await _clubRepository.SaveChangesAsync().ConfigureAwait(false);
+    }
+
+    private static string NormalizeResourceUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            throw new ArgumentException("File URL is required.");
+
+        if (!ClubUrlNormalizer.TryNormalizeSocialOrResourceUrl(url, out var normalized, out var error))
+            throw new ArgumentException(error ?? "Invalid file URL.");
+
+        return normalized;
+    }
+
+    private static string? NormalizeResourceTitle(string? title) =>
+        string.IsNullOrWhiteSpace(title) ? null : title.Trim();
 
     private static string AttendeeBucketKey(int clubId, int eventId) => $"{clubId.ToString(CultureInfo.InvariantCulture)}:{eventId.ToString(CultureInfo.InvariantCulture)}";
 

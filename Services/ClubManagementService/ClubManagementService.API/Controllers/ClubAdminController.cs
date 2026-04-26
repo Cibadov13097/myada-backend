@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.ClubAdmin;
 using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Event;
@@ -318,6 +319,116 @@ public class ClubAdminController : ControllerBase
         return ok ? NoContent() : NotFound();
     }
 
+    [HttpGet("files")]
+    public async Task<IActionResult> Files(string clubId, CancellationToken cancellationToken)
+    {
+        var files = await _clubAdmin.GetFilesAsync(clubId, cancellationToken).ConfigureAwait(false);
+        return Ok(new { items = files });
+    }
+
+    [HttpGet("files/{fileId}")]
+    public async Task<IActionResult> FileById(string clubId, string fileId, CancellationToken cancellationToken)
+    {
+        var file = await _clubAdmin.GetFileAsync(clubId, fileId, cancellationToken).ConfigureAwait(false);
+        return file == null ? NotFound() : Ok(file);
+    }
+
+    [HttpPost("files")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> CreateFile(string clubId, [FromForm] ClubFileCreateRequest request, CancellationToken cancellationToken)
+    {
+        var uploadedUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/files", request.File, cancellationToken).ConfigureAwait(false);
+        if (uploadedUrl == null)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "A file is required." });
+
+        if (uploadedUrl == string.Empty)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported file type." });
+
+        try
+        {
+            var created = await _clubAdmin.CreateFileAsync(clubId, new ClubAdminCreateFileInput
+            {
+                Url = uploadedUrl,
+                Title = request.Title
+            }, cancellationToken).ConfigureAwait(false);
+
+            if (created == null)
+            {
+                await TryDeleteStoredFileAsync(uploadedUrl, cancellationToken).ConfigureAwait(false);
+                return NotFound();
+            }
+
+            return Ok(created);
+        }
+        catch
+        {
+            await TryDeleteStoredFileAsync(uploadedUrl, cancellationToken).ConfigureAwait(false);
+            throw;
+        }
+    }
+
+    [HttpPatch("files/{fileId}")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> PatchFile(string clubId, string fileId, [FromForm] ClubFilePatchRequest request, CancellationToken cancellationToken)
+    {
+        if (request.File == null && request.Title == null)
+            return BadRequest(new { error = "VALIDATION_ERROR", message = "At least one of title or file must be provided." });
+
+        ClubResourceItemDto? existing = null;
+        string? uploadedUrl = null;
+
+        if (request.File is { Length: > 0 })
+        {
+            existing = await _clubAdmin.GetFileAsync(clubId, fileId, cancellationToken).ConfigureAwait(false);
+            if (existing == null)
+                return NotFound();
+
+            uploadedUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/files", request.File, cancellationToken).ConfigureAwait(false);
+            if (uploadedUrl == string.Empty)
+                return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported file type." });
+        }
+
+        try
+        {
+            var updated = await _clubAdmin.UpdateFileAsync(clubId, fileId, new ClubAdminUpdateFileInput
+            {
+                Url = uploadedUrl,
+                Title = request.Title
+            }, cancellationToken).ConfigureAwait(false);
+
+            if (updated == null)
+            {
+                if (uploadedUrl != null)
+                    await TryDeleteStoredFileAsync(uploadedUrl, cancellationToken).ConfigureAwait(false);
+
+                return NotFound();
+            }
+
+            if (existing != null && uploadedUrl != null && !string.Equals(existing.Url, uploadedUrl, StringComparison.Ordinal))
+                await TryDeleteStoredFileAsync(existing.Url, cancellationToken).ConfigureAwait(false);
+
+            return Ok(updated);
+        }
+        catch
+        {
+            if (uploadedUrl != null)
+                await TryDeleteStoredFileAsync(uploadedUrl, cancellationToken).ConfigureAwait(false);
+
+            throw;
+        }
+    }
+
+    [HttpDelete("files/{fileId}")]
+    public async Task<IActionResult> DeleteFile(string clubId, string fileId, CancellationToken cancellationToken)
+    {
+        var deleted = await _clubAdmin.DeleteFileAsync(clubId, fileId, cancellationToken).ConfigureAwait(false);
+        if (deleted == null)
+            return NotFound();
+
+        await TryDeleteStoredFileAsync(deleted.Url, cancellationToken).ConfigureAwait(false);
+        return NoContent();
+    }
+
     /// <summary>
     /// Multipart profile update (Option A: changes publish immediately; <see cref="ProfilePatchResultDto.PendingReview"/> is always false).
     /// Parts: <c>focusAreasJson</c> (JSON array, replace-only), optional <c>socialLinks</c> (JSON object, merge-patch),
@@ -327,11 +438,11 @@ public class ClubAdminController : ControllerBase
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> PatchProfile(string clubId, [FromForm] ClubProfilePatchRequest request, CancellationToken cancellationToken)
     {
-        var logoUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/profile/logo", request.LogoFile);
+        var logoUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/profile/logo", request.LogoFile, cancellationToken).ConfigureAwait(false);
         if (logoUrl == string.Empty)
             return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported logo file type." });
 
-        var backgroundUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/profile/background", request.BackgroundFile);
+        var backgroundUrl = await UploadFileIfPresentAsync($"clubs/{clubId}/profile/background", request.BackgroundFile, cancellationToken).ConfigureAwait(false);
         if (backgroundUrl == string.Empty)
             return BadRequest(new { error = "VALIDATION_ERROR", message = "Unsupported background file type." });
 
@@ -378,7 +489,7 @@ public class ClubAdminController : ControllerBase
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
     }
 
-    private async Task<string?> UploadFileIfPresentAsync(string directory, IFormFile? file)
+    private async Task<string?> UploadFileIfPresentAsync(string directory, IFormFile? file, CancellationToken cancellationToken)
     {
         if (file == null || file.Length == 0)
             return null;
@@ -392,7 +503,22 @@ public class ClubAdminController : ControllerBase
             file.FileName,
             file.ContentType,
             directory,
-            HttpContext.RequestAborted);
+            cancellationToken);
+    }
+
+    private async Task TryDeleteStoredFileAsync(string? fileUrl, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(fileUrl))
+            return;
+
+        try
+        {
+            await _imageStorageService.DeleteFileAsync(fileUrl, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Metadata updates should still succeed if cleanup of an old stored file fails.
+        }
     }
 
     public sealed class ReasonRequest { public string Reason { get; set; } = string.Empty; }
@@ -500,6 +626,24 @@ public class ClubAdminController : ControllerBase
 
         [FromForm(Name = "backgroundFile")]
         public IFormFile? BackgroundFile { get; set; }
+    }
+
+    public sealed class ClubFileCreateRequest
+    {
+        [FromForm(Name = "title")]
+        public string? Title { get; set; }
+
+        [FromForm(Name = "file")]
+        public IFormFile? File { get; set; }
+    }
+
+    public sealed class ClubFilePatchRequest
+    {
+        [FromForm(Name = "title")]
+        public string? Title { get; set; }
+
+        [FromForm(Name = "file")]
+        public IFormFile? File { get; set; }
     }
 
     public sealed class AnnouncementRequest

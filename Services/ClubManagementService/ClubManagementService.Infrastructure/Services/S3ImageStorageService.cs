@@ -6,6 +6,7 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using System.IO;
+using System.Net;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -89,6 +90,31 @@ public sealed class S3ImageStorageService : IImageStorageService, IDisposable
 
         await _s3Client.PutObjectAsync(request, cancellationToken);
         return BuildPublicUrl(objectKey);
+    }
+
+    public async Task DeleteFileAsync(string fileUrl, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(fileUrl))
+            return;
+
+        var objectKey = TryResolveObjectKey(fileUrl);
+        if (string.IsNullOrWhiteSpace(objectKey))
+            return;
+
+        await EnsureBucketReadyAsync(cancellationToken);
+
+        try
+        {
+            await _s3Client.DeleteObjectAsync(new DeleteObjectRequest
+            {
+                BucketName = _options.BucketName,
+                Key = objectKey
+            }, cancellationToken);
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            // Deleting an already-missing object should be treated as success.
+        }
     }
 
     private static IAmazonS3 CreateClient(AmazonS3Config config, S3StorageOptions options)
@@ -179,6 +205,109 @@ public sealed class S3ImageStorageService : IImageStorageService, IDisposable
             ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             _ => "application/octet-stream"
         };
+    }
+
+    private string? TryResolveObjectKey(string fileUrl)
+    {
+        if (!Uri.TryCreate(fileUrl, UriKind.Absolute, out var fileUri))
+            return null;
+
+        if (TryResolveFromPublicBaseUrl(fileUri, out var objectKey) && !string.IsNullOrWhiteSpace(objectKey))
+            return objectKey;
+
+        if (TryResolveFromServiceUrl(fileUri, out objectKey) && !string.IsNullOrWhiteSpace(objectKey))
+            return objectKey;
+
+        if (TryResolveFromAwsUrl(fileUri, out objectKey) && !string.IsNullOrWhiteSpace(objectKey))
+            return objectKey;
+
+        return null;
+    }
+
+    private bool TryResolveFromPublicBaseUrl(Uri fileUri, out string? objectKey)
+    {
+        objectKey = null;
+        if (string.IsNullOrWhiteSpace(_options.PublicBaseUrl)
+            || !Uri.TryCreate(_options.PublicBaseUrl, UriKind.Absolute, out var baseUri))
+            return false;
+
+        if (!UriMatchesBase(fileUri, baseUri))
+            return false;
+
+        objectKey = DecodeObjectKey(fileUri.AbsolutePath[baseUri.AbsolutePath.Length..]);
+        return !string.IsNullOrWhiteSpace(objectKey);
+    }
+
+    private bool TryResolveFromServiceUrl(Uri fileUri, out string? objectKey)
+    {
+        objectKey = null;
+        if (string.IsNullOrWhiteSpace(_options.ServiceUrl)
+            || !Uri.TryCreate(_options.ServiceUrl, UriKind.Absolute, out var serviceUri))
+            return false;
+
+        if (_options.ForcePathStyle)
+        {
+            if (!UriMatchesBase(fileUri, serviceUri))
+                return false;
+
+            var path = fileUri.AbsolutePath.Trim('/');
+            var bucketPrefix = $"{_options.BucketName}/";
+            if (!path.StartsWith(bucketPrefix, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            objectKey = DecodeObjectKey(path[bucketPrefix.Length..]);
+            return !string.IsNullOrWhiteSpace(objectKey);
+        }
+
+        if (!string.Equals(fileUri.Scheme, serviceUri.Scheme, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        var expectedHostPrefix = $"{_options.BucketName}.";
+        if (!fileUri.Host.StartsWith(expectedHostPrefix, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (!string.Equals(fileUri.Host[expectedHostPrefix.Length..], serviceUri.Host, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        objectKey = DecodeObjectKey(fileUri.AbsolutePath);
+        return !string.IsNullOrWhiteSpace(objectKey);
+    }
+
+    private bool TryResolveFromAwsUrl(Uri fileUri, out string? objectKey)
+    {
+        objectKey = null;
+        var expectedHost = $"{_options.BucketName}.s3.{_options.Region}.amazonaws.com";
+        if (!string.Equals(fileUri.Host, expectedHost, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        objectKey = DecodeObjectKey(fileUri.AbsolutePath);
+        return !string.IsNullOrWhiteSpace(objectKey);
+    }
+
+    private static bool UriMatchesBase(Uri value, Uri baseUri)
+    {
+        if (!string.Equals(value.Scheme, baseUri.Scheme, StringComparison.OrdinalIgnoreCase)
+            || !string.Equals(value.Host, baseUri.Host, StringComparison.OrdinalIgnoreCase)
+            || value.Port != baseUri.Port)
+        {
+            return false;
+        }
+
+        var basePath = baseUri.AbsolutePath.TrimEnd('/');
+        return string.IsNullOrEmpty(basePath)
+               || string.Equals(value.AbsolutePath, basePath, StringComparison.OrdinalIgnoreCase)
+               || value.AbsolutePath.StartsWith($"{basePath}/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string? DecodeObjectKey(string path)
+    {
+        var trimmed = path.Trim('/');
+        if (string.IsNullOrWhiteSpace(trimmed))
+            return null;
+
+        return string.Join("/",
+            trimmed.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                .Select(Uri.UnescapeDataString));
     }
 
     public void Dispose()

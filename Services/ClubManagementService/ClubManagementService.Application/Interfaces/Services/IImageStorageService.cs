@@ -12,4 +12,6 @@ public interface IImageStorageService
         string? contentType,
         string directory,
         CancellationToken cancellationToken = default);
+
+    Task DeleteFileAsync(string fileUrl, CancellationToken cancellationToken = default);
 }

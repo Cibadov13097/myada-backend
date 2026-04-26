@@ -6,6 +6,11 @@ namespace ClubManagementService.Application.DTOs.Club;
 public static class ClubResourcesJson
 {
     public const int MaxItems = 50;
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+    };
 
     public static List<ClubResourceItemDto> ParseForRead(string? json)
     {
@@ -51,6 +56,37 @@ public static class ClubResourcesJson
         }
     }
 
+    public static (List<ClubResourceItemDto> Items, bool Changed) ParseForManagement(string? json)
+    {
+        var items = ParseForRead(json);
+        var changed = false;
+
+        foreach (var item in items)
+        {
+            var title = string.IsNullOrWhiteSpace(item.Title) ? null : item.Title.Trim();
+            if (!string.Equals(item.Title, title, StringComparison.Ordinal))
+            {
+                item.Title = title;
+                changed = true;
+            }
+
+            var url = item.Url.Trim();
+            if (!string.Equals(item.Url, url, StringComparison.Ordinal))
+            {
+                item.Url = url;
+                changed = true;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.Id))
+            {
+                item.Id = Guid.NewGuid().ToString("N");
+                changed = true;
+            }
+        }
+
+        return (items, changed);
+    }
+
     public static (bool Ok, string? ErrorMessage, string? CanonicalJson) ValidateAndReplace(string raw)
     {
         if (string.IsNullOrWhiteSpace(raw))
@@ -83,7 +119,11 @@ public static class ClubResourcesJson
                     continue;
                 if (!ClubUrlNormalizer.TryNormalizeSocialOrResourceUrl(u, out var nu, out var err))
                     return (false, $"resources[{i}]: {err}", null);
-                normalized.Add(new ClubResourceItemDto { Url = nu });
+                normalized.Add(new ClubResourceItemDto
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    Url = nu
+                });
                 continue;
             }
 
@@ -99,18 +139,18 @@ public static class ClubResourcesJson
 
             normalized.Add(new ClubResourceItemDto
             {
-                Id = FirstNonEmpty(o, "id"),
+                Id = NormalizeId(FirstNonEmpty(o, "id")),
                 Url = nurl,
-                Title = FirstNonEmpty(o, "title", "name", "fileName")
+                Title = NormalizeTitle(FirstNonEmpty(o, "title", "name", "fileName"))
             });
         }
 
-        var canonical = JsonSerializer.Serialize(normalized, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        });
-        return (true, null, canonical);
+        return (true, null, SerializeCanonical(normalized));
+    }
+
+    public static string SerializeCanonical(IReadOnlyCollection<ClubResourceItemDto> items)
+    {
+        return JsonSerializer.Serialize(items, SerializerOptions);
     }
 
     private static string? FirstNonEmpty(JsonObject o, params string[] keys)
@@ -124,4 +164,10 @@ public static class ClubResourcesJson
 
         return null;
     }
+
+    private static string NormalizeId(string? id) =>
+        string.IsNullOrWhiteSpace(id) ? Guid.NewGuid().ToString("N") : id.Trim();
+
+    private static string? NormalizeTitle(string? title) =>
+        string.IsNullOrWhiteSpace(title) ? null : title.Trim();
 }

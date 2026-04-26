@@ -58,6 +58,12 @@ public interface IClubAdminService
     Task<ClubAdminAttendeeDto?> PatchEventAttendeeAsync(string clubRouteKey, string eventId, string attendeeId, bool entered, CancellationToken cancellationToken = default);
     Task<bool> DeleteEventAttendeeAsync(string clubRouteKey, string eventId, string attendeeId, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<ClubResourceItemDto>> GetFilesAsync(string clubRouteKey, CancellationToken cancellationToken = default);
+    Task<ClubResourceItemDto?> GetFileAsync(string clubRouteKey, string fileId, CancellationToken cancellationToken = default);
+    Task<ClubResourceItemDto?> CreateFileAsync(string clubRouteKey, ClubAdminCreateFileInput input, CancellationToken cancellationToken = default);
+    Task<ClubResourceItemDto?> UpdateFileAsync(string clubRouteKey, string fileId, ClubAdminUpdateFileInput input, CancellationToken cancellationToken = default);
+    Task<ClubResourceItemDto?> DeleteFileAsync(string clubRouteKey, string fileId, CancellationToken cancellationToken = default);
+
     Task<ProfilePatchResultDto> PatchProfileAsync(
         string clubRouteKey,
         string? socialLinks,

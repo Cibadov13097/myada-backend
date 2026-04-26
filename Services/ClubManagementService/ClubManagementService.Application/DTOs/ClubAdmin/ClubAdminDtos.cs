@@ -10,6 +10,18 @@ public sealed class ClubProfileUploadHintsDto
     public string? BackgroundUrl { get; init; }
 }
 
+public sealed class ClubAdminCreateFileInput
+{
+    public string Url { get; init; } = string.Empty;
+    public string? Title { get; init; }
+}
+
+public sealed class ClubAdminUpdateFileInput
+{
+    public string? Url { get; init; }
+    public string? Title { get; init; }
+}
+
 public sealed class ClubAdminPagedResult<T>
 {
     public IReadOnlyList<T> Items { get; init; } = Array.Empty<T>();
