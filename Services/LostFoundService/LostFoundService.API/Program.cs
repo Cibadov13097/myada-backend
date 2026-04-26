@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using AutoMapper;
 using LostFoundService.Api.Mappings;
 using LostFoundService.Api.Middlewares;
@@ -185,6 +186,8 @@ builder.Services.AddDbContext<LostFoundDbContext>(options =>
 // 6. BUILD APP
 // ==========================
 
+builder.AddMyAdaOpenTelemetry("lostfound-service");
+
 var app = builder.Build();
 
 
@@ -218,6 +221,7 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();

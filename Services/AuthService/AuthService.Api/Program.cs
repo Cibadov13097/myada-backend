@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using AuthService.Application.Interfaces;
 using AuthService.Application.Options;
 using AuthService.Application.Services;
@@ -190,6 +191,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.AddMyAdaOpenTelemetry("auth-service");
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -208,6 +211,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

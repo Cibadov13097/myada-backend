@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NotificationService.Infrastructure\NotificationService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Observability\Shared.Observability.csproj" />
   </ItemGroup>
 
   <ItemGroup>

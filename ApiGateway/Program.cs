@@ -1,3 +1,5 @@
+using MyAda.Observability;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var corsSection = builder.Configuration.GetSection("Cors");
@@ -35,11 +37,14 @@ builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+builder.AddMyAdaOpenTelemetry("api-gateway");
+
 var app = builder.Build();
 
 // CORS first: OPTIONS preflight must get 204 + CORS headers before auth/routing/YARP.
 // (JWT [Authorize] would return 401 for OPTIONS without a token if CORS did not short-circuit.)
 app.UseCors("SpaCors");
+app.UseMyAdaPrometheusScraping();
 
 // Root and health – must be registered before MapReverseProxy so they are hit first
 app.MapGet("/", () => Results.Text("ApiGateway is running.", "text/plain")).AllowAnonymous();

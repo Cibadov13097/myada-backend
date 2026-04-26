@@ -26,6 +26,7 @@
     <ProjectReference Include="..\MyAdaAttendanceService.Application\MyAdaAttendanceService.Application.csproj" />
     <ProjectReference Include="..\MyAdaAttendanceService.Core\MyAdaAttendanceService.Core.csproj" />
     <ProjectReference Include="..\MyAdaAttendanceService.Infrastructure\MyAdaAttendanceService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Observability\Shared.Observability.csproj" />
   </ItemGroup>
 
 </Project>

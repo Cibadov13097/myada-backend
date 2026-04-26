@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using AutoWrapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -96,6 +97,8 @@ public class Program
         builder.Services.AddSignalR();
         builder.Services.AddSingleton<ISupportRealtimeNotifier, SupportRealtimeNotifier>();
 
+        builder.AddMyAdaOpenTelemetry("myada-support-service");
+
         var app = builder.Build();
 
         using (var scope = app.Services.CreateScope())
@@ -133,6 +136,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseCors();
+        app.UseMyAdaPrometheusScraping();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

@@ -315,8 +315,74 @@ services:
       - myadaattendanceservice
     restart: always
 
+  loki:
+    image: grafana/loki:3.1.1
+    container_name: myada-loki
+    command: -config.file=/etc/loki/loki-config.yaml
+    user: "0:0"
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+      - ./observability/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+    restart: always
+
+  promtail:
+    image: grafana/promtail:3.1.1
+    container_name: myada-promtail
+    user: "0:0"
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./observability/promtail/promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
+    depends_on:
+      - loki
+    restart: always
+
+  pushgateway:
+    image: prom/pushgateway:v1.9.0
+    container_name: myada-pushgateway
+    ports:
+      - "9091:9091"
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: myada-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - loki
+      - pushgateway
+    restart: always
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: myada-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+      - loki
+      - pushgateway
+    restart: always
+
 volumes:
   myada_postgres_data:
+  grafana_data:
+  loki_data:
 
 # Optional: attach API Gateway to an external Docker network (e.g. another Compose stack).
 # 1) Create once: docker network create gateway-shared

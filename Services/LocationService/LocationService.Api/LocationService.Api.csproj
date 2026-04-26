@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LocationService.Infrastructure\LocationService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Observability\Shared.Observability.csproj" />
   </ItemGroup>
 
 </Project>

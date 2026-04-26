@@ -1,3 +1,4 @@
 {
-  "ApiGateway, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\ApiGateway"
+  "ApiGateway, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\ApiGateway",
+  "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability"
 }

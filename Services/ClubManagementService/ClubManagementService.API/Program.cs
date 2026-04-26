@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using AutoWrapper;
@@ -231,6 +232,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.AddMyAdaOpenTelemetry("clubmanagement-service");
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -241,6 +244,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("SpaCors");
+app.UseMyAdaPrometheusScraping();
 
 app.UseStaticFiles();
 

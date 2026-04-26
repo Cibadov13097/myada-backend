@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using System.Security.Claims;
 using System.Text.Json;
 using CallService.Api.Hubs;
@@ -159,6 +160,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.AddMyAdaOpenTelemetry("call-service");
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -189,6 +192,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseAuthentication();
 app.UseAuthorization();
 

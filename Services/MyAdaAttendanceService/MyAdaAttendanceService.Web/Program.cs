@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using System.Text.Json.Serialization;
 using AutoWrapper;
 using Microsoft.AspNetCore.HttpLogging;
@@ -88,6 +89,8 @@ public class Program
                 builder.Configuration.GetConnectionString("DefaultConnection"),
                 npgsql => npgsql.MigrationsAssembly(typeof(AppDbContext).Assembly.GetName().Name)));
 
+        builder.AddMyAdaOpenTelemetry("myada-attendance-service");
+
         var app = builder.Build();
 
         await using (var scope = app.Services.CreateAsyncScope())
@@ -136,6 +139,7 @@ public class Program
         app.UseHttpLogging();
         app.UseHttpsRedirection();
         app.UseCors();
+        app.UseMyAdaPrometheusScraping();
 
         app.MapControllers();
         app.Logger.LogInformation("MyAdaAttendanceService.Web started.");
