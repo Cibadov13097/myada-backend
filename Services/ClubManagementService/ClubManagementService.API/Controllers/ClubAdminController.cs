@@ -296,7 +296,7 @@ public class ClubAdminController : ControllerBase
     }
 
     [HttpPost("events/proposals")]
-    [Consumes("application/json", "multipart/form-data")]
+    [Consumes("multipart/form-data")]
     public async Task<IActionResult> EventProposal(string clubId, CancellationToken cancellationToken)
     {
         var (body, uploadedImageUrl, errorResult) = await TryReadEventProposalBodyAsync(
@@ -579,6 +579,14 @@ public class ClubAdminController : ControllerBase
             try
             {
                 multipart = EventProposalRequestParser.ToMultipartForm(form);
+                if (!string.IsNullOrWhiteSpace(multipart.ImageUrl))
+                {
+                    return (null, null, BadRequest(new
+                    {
+                        message = "Use imageFile as a multipart attachment for club-admin event proposals. imageUrl is not accepted on this route."
+                    }));
+                }
+
                 var body = multipart.ToSubmissionDto();
                 var uploadedImageUrl = await UploadFileIfPresentAsync(uploadDirectory, multipart.ImageFile, cancellationToken).ConfigureAwait(false);
                 if (uploadedImageUrl == string.Empty)
@@ -600,24 +608,9 @@ public class ClubAdminController : ControllerBase
             }
         }
 
-        if (EventProposalRequestParser.IsJsonRequest(Request))
-        {
-            try
-            {
-                return (await EventProposalRequestParser.ReadJsonBodyAsync(Request, cancellationToken).ConfigureAwait(false), null, null);
-            }
-            catch (JsonException)
-            {
-                return (null, null, BadRequest(new
-                {
-                    message = "Invalid JSON request body. Use multipart/form-data for direct image uploads, or application/json when imageUrl is already available."
-                }));
-            }
-        }
-
         return (null, null, StatusCode(StatusCodes.Status415UnsupportedMediaType, new
         {
-            message = "Unsupported content type. Use multipart/form-data for direct image uploads, or application/json when imageUrl is already available."
+            message = "Unsupported content type. Club-admin event proposals must use multipart/form-data with imageFile."
         }));
     }
 

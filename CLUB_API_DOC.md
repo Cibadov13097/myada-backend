@@ -741,7 +741,7 @@ Representative position response:
 |--------|------|-------|
 | `GET` | `/api/v1/club-admin/{clubId}/events` | Query: `status`, `search`, `page`, `limit`. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}` | Body: `UpdateEventDto`. |
-| `POST` | `/api/v1/club-admin/{clubId}/events/proposals` | Accepts `application/json` or `multipart/form-data`. Same create contract as student-services event proposals, including optional `imageFile`. |
+| `POST` | `/api/v1/club-admin/{clubId}/events/proposals` | `multipart/form-data` only. Attach the proposal image with `imageFile`; `imageUrl` is rejected on this route. |
 | `GET` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees` | Query: `page`, `limit`. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Body: `{ "entered": bool }`. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Delete attendee. |

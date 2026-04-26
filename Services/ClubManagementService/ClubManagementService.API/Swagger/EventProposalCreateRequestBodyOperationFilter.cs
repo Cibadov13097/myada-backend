@@ -18,6 +18,23 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
         if (!isClubAdminEndpoint && !isStudentServicesEndpoint)
             return;
 
+        if (isClubAdminEndpoint)
+        {
+            operation.RequestBody = new OpenApiRequestBody
+            {
+                Required = true,
+                Description = "Use multipart/form-data and attach imageFile directly for club-admin event proposals. Send subEventsJson as a JSON array string and logisticsJson as a JSON object string.",
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    ["multipart/form-data"] = new()
+                    {
+                        Schema = BuildMultipartSchema(includeImageUrl: false)
+                    }
+                }
+            };
+            return;
+        }
+
         operation.RequestBody = new OpenApiRequestBody
         {
             Required = true,
@@ -30,7 +47,7 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
                 },
                 ["multipart/form-data"] = new()
                 {
-                    Schema = BuildMultipartSchema()
+                    Schema = BuildMultipartSchema(includeImageUrl: true)
                 }
             }
         };
@@ -92,8 +109,27 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
             }
         };
 
-    private static OpenApiSchema BuildMultipartSchema() =>
-        new()
+    private static OpenApiSchema BuildMultipartSchema(bool includeImageUrl)
+    {
+        var properties = new Dictionary<string, OpenApiSchema>
+        {
+            ["name"] = StringSchema(),
+            ["dateTime"] = StringSchema("Event start datetime, for example 2026-04-26T14:30:00Z."),
+            ["duration"] = StringSchema("Duration in hours."),
+            ["attendance"] = StringSchema("Expected attendance."),
+            ["venue"] = StringSchema(),
+            ["description"] = StringSchema(),
+            ["objectives"] = StringSchema(),
+            ["imageFile"] = BinarySchema(),
+            ["submittedByOrganization"] = StringSchema(),
+            ["subEventsJson"] = StringSchema("JSON array of sub-events."),
+            ["logisticsJson"] = StringSchema("JSON object for logistics settings.")
+        };
+
+        if (includeImageUrl)
+            properties["imageUrl"] = StringSchema("Optional existing image URL. If imageFile is also provided, the uploaded file wins.");
+
+        return new OpenApiSchema
         {
             Type = "object",
             Required = new HashSet<string>
@@ -106,22 +142,9 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
                 "description",
                 "objectives"
             },
-            Properties = new Dictionary<string, OpenApiSchema>
-            {
-                ["name"] = StringSchema(),
-                ["dateTime"] = StringSchema("Event start datetime, for example 2026-04-26T14:30:00Z."),
-                ["duration"] = StringSchema("Duration in hours."),
-                ["attendance"] = StringSchema("Expected attendance."),
-                ["venue"] = StringSchema(),
-                ["description"] = StringSchema(),
-                ["objectives"] = StringSchema(),
-                ["imageUrl"] = StringSchema("Optional existing image URL. If imageFile is also provided, the uploaded file wins."),
-                ["imageFile"] = BinarySchema(),
-                ["submittedByOrganization"] = StringSchema(),
-                ["subEventsJson"] = StringSchema("JSON array of sub-events."),
-                ["logisticsJson"] = StringSchema("JSON object for logistics settings.")
-            }
+            Properties = properties
         };
+    }
 
     private static OpenApiSchema StringSchema(string? description = null) => new()
     {

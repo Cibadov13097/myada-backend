@@ -213,10 +213,10 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
 ### 3.1 Club admin — suggest event
 
 - `POST /api/v1/club-admin/{clubId}/events/proposals`  
-- `Content-Type: application/json` or `multipart/form-data`
-- JSON body: **`EventProposalSubmitDto`** (see types below).
-- Multipart fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `description`, `objectives`, `submittedByOrganization?`, `imageUrl?`, `imageFile?`, `subEventsJson?`, `logisticsJson?`
-- In Swagger, choose `multipart/form-data` to get the file picker for `imageFile`.
+- `Content-Type: multipart/form-data`
+- Multipart fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `description`, `objectives`, `submittedByOrganization?`, `imageFile?`, `subEventsJson?`, `logisticsJson?`
+- Attach the proposal image using `imageFile`. This route rejects `imageUrl`.
+- In Swagger, this route now shows the file picker directly because the request body is multipart-only.
 
 **Success (`result`)**
 
@@ -230,14 +230,14 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
 }
 ```
 
-(`clubId` is the route string; `proposalId` / `id` are numeric strings from a server counter. `imageUrl` is present when an image URL or uploaded file was supplied.)
+(`clubId` is the route string; `proposalId` / `id` are numeric strings from a server counter. `imageUrl` is present in the response when an uploaded file was supplied.)
 
 ### 3.2 Student Services — staff event proposal + queue
 
 **Create (staff)**
 
 - `POST /api/v1/student-services/events/proposals`
-- Same create contract as the club-admin route: `application/json` or `multipart/form-data`.
+- Accepts `application/json` or `multipart/form-data`.
 - Multipart uploads use `imageFile`; JSON requests use `imageUrl` when the file is already uploaded elsewhere.
 
 **List / detail / actions**
@@ -248,7 +248,7 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
 - POST `/api/v1/student-services/events/proposals/{proposalId}/reject` — `{ "reason": "..." }`
 - POST `/api/v1/student-services/events/proposals/{proposalId}/request-revision` — `{ "changes": "..." }`
 
-**Event proposal body (club + staff)**
+**Event proposal body (shared DTO for reads and staff JSON create)**
 
 Shared shape (`EventProposalSubmitDto`):
 
@@ -269,9 +269,10 @@ Shared shape (`EventProposalSubmitDto`):
 **Multipart-specific notes**
 
 - `imageFile` is the direct upload field for Swagger/Postman/browser forms.
+- Club-admin create rejects `imageUrl`; attach the image file instead.
 - `subEventsJson` must be a JSON array string.
 - `logisticsJson` must be a JSON object string.
-- If both `imageUrl` and `imageFile` are sent, the uploaded file wins and its stored URL becomes the proposal image.
+- On the student-services create route, if both `imageUrl` and `imageFile` are sent, the uploaded file wins and its stored URL becomes the proposal image.
 
 **Persistence**
 

@@ -1,17 +1,121 @@
 using ClubManagementService.API.Controllers;
+using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.ClubAdmin;
 using ClubManagementService.Application.Interfaces.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Moq;
+using System.Text;
 using System.Text.Json;
 
 namespace MyAda.Tests.Controllers.ClubManagementService;
 
 public class ClubAdminControllerTests
 {
+    [Fact]
+    public async Task EventProposal_ShouldUploadAttachedImageAndSubmitStoredUrl()
+    {
+        var clubAdmin = new Mock<IClubAdminService>();
+        clubAdmin.Setup(x => x.CreateEventProposalAsync(
+                "1",
+                It.Is<EventProposalSubmitDto>(dto =>
+                    dto.Name == "Launch Day"
+                    && dto.ImageUrl == "https://bucket.example/clubs/1/event-proposals/poster.png"),
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new EventProposalResultDto
+            {
+                ProposalId = "1",
+                Id = "1",
+                Status = "pending_review",
+                ClubId = "1",
+                ImageUrl = "https://bucket.example/clubs/1/event-proposals/poster.png"
+            });
+
+        var storage = new Mock<IImageStorageService>();
+        storage.Setup(x => x.IsSupportedImage("poster.png")).Returns(true);
+        storage.Setup(x => x.UploadImageAsync(
+                It.IsAny<Stream>(),
+                "poster.png",
+                "image/png",
+                "clubs/1/event-proposals",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync("https://bucket.example/clubs/1/event-proposals/poster.png");
+
+        var controller = new ClubAdminController(clubAdmin.Object, storage.Object);
+        var httpContext = new DefaultHttpContext();
+        var form = new FormCollection(new Dictionary<string, StringValues>
+        {
+            ["name"] = "Launch Day",
+            ["dateTime"] = "2026-04-26T14:30:00",
+            ["duration"] = "2",
+            ["attendance"] = "120",
+            ["venue"] = "Main Hall",
+            ["description"] = "Event description",
+            ["objectives"] = "Event objectives"
+        }, new FormFileCollection
+        {
+            CreateFormFile("imageFile", "poster.png", "image/png")
+        });
+
+        httpContext.Request.ContentType = "multipart/form-data; boundary=test";
+        httpContext.Features.Set<IFormFeature>(new TestFormFeature(form));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.EventProposal("1", CancellationToken.None);
+
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        var body = ok.Value.Should().BeAssignableTo<EventProposalResultDto>().Subject;
+        body.ImageUrl.Should().Be("https://bucket.example/clubs/1/event-proposals/poster.png");
+        clubAdmin.VerifyAll();
+        storage.VerifyAll();
+    }
+
+    [Fact]
+    public async Task EventProposal_ShouldRejectImageUrlField()
+    {
+        var controller = new ClubAdminController(Mock.Of<IClubAdminService>(), Mock.Of<IImageStorageService>());
+        var httpContext = new DefaultHttpContext();
+        var form = new FormCollection(new Dictionary<string, StringValues>
+        {
+            ["name"] = "Launch Day",
+            ["dateTime"] = "2026-04-26T14:30:00",
+            ["duration"] = "2",
+            ["attendance"] = "120",
+            ["venue"] = "Main Hall",
+            ["description"] = "Event description",
+            ["objectives"] = "Event objectives",
+            ["imageUrl"] = "https://bucket.example/poster.png"
+        });
+
+        httpContext.Request.ContentType = "multipart/form-data; boundary=test";
+        httpContext.Features.Set<IFormFeature>(new TestFormFeature(form));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.EventProposal("1", CancellationToken.None);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task EventProposal_ShouldRejectJsonRequests()
+    {
+        var controller = new ClubAdminController(Mock.Of<IClubAdminService>(), Mock.Of<IImageStorageService>());
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "application/json";
+        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("{\"name\":\"Launch Day\",\"imageUrl\":\"https://bucket.example/poster.png\"}"));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.EventProposal("1", CancellationToken.None);
+
+        var unsupported = result.Should().BeOfType<ObjectResult>().Subject;
+        unsupported.StatusCode.Should().Be(StatusCodes.Status415UnsupportedMediaType);
+    }
+
     [Fact]
     public async Task CreateFile_ShouldUploadAndPersistFile()
     {
@@ -195,5 +299,13 @@ public class ClubAdminControllerTests
             Headers = new HeaderDictionary(),
             ContentType = contentType
         };
+    }
+
+    private sealed class TestFormFeature(IFormCollection form) : IFormFeature
+    {
+        public bool HasFormContentType => true;
+        public IFormCollection? Form { get; set; } = form;
+        public IFormCollection ReadForm() => Form ?? new FormCollection(new Dictionary<string, StringValues>());
+        public Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken) => Task.FromResult(ReadForm());
     }
 }
