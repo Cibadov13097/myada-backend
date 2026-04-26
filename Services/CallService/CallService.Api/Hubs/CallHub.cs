@@ -13,6 +13,8 @@ public class CallHub : Hub
 {
     private const string DispatcherRole = "dispatcher";
     private const string StudentRole = "student";
+    private const string InstructorRole = "instructor";
+    private static readonly string[] TechRoles = ["support", "staff", "student_services"];
     private const string DefaultDispatcherInboxPrefix = "dispatcher-inbox-";
 
     private readonly ICallStateStore _stateStore;
@@ -660,12 +662,35 @@ public class CallHub : Hub
         return HasRole(connection.Roles, role);
     }
 
+    private static bool IsInstructor(ConnectedUserConnection connection)
+    {
+        return HasRole(connection, InstructorRole) || HasRole(connection, "teacher");
+    }
+
+    private static bool IsTech(ConnectedUserConnection connection)
+    {
+        return connection.Roles.Any(IsTechRole);
+    }
+
+    private static bool IsTechRole(string role)
+    {
+        if (string.IsNullOrWhiteSpace(role))
+            return false;
+
+        return TechRoles.Any(value => string.Equals(value, role, StringComparison.OrdinalIgnoreCase))
+               || role.EndsWith("_staff", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static void ValidateCallTarget(
         ConnectedUserConnection caller,
         IReadOnlyList<ConnectedUserConnection> targetConnections)
     {
         var targetIsDispatcher = targetConnections.Any(connection => connection.IsDispatcher);
         var targetIsStudent = targetConnections.Any(connection => HasRole(connection, StudentRole));
+        var targetIsInstructor = targetConnections.Any(IsInstructor);
+        var targetIsTech = targetConnections.Any(IsTech);
+        var callerIsInstructor = IsInstructor(caller);
+        var callerIsTech = IsTech(caller);
 
         if (caller.IsDispatcher)
         {
@@ -674,6 +699,9 @@ public class CallHub : Hub
 
             return;
         }
+
+        if ((callerIsInstructor && targetIsTech) || (callerIsTech && targetIsInstructor))
+            return;
 
         if (!targetIsDispatcher)
             throw new HubException("Only dispatchers can call non-dispatcher users.");

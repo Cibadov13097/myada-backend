@@ -134,7 +134,10 @@ Token validation settings:
 
 - Any authenticated user can call a dispatcher with `RequestCall`.
 - Dispatcher users can call any online non-student user with `RequestCall`.
+- Teacher users with role `instructor` can call tech users with roles `support`, `staff`, `student_services`, or roles ending in `_staff`.
+- Tech users with roles `support`, `staff`, `student_services`, or roles ending in `_staff` can call teacher users with role `instructor`.
 - Non-dispatcher users cannot call other non-dispatcher users.
+  Exception: `instructor` and tech roles listed above can call each other.
 - The called user can call `AcceptCall` and `RejectCall`.
 - Caller who created the request can call `CancelCall`.
 - WebRTC signaling methods require both connections to be in the same accepted room.
@@ -332,6 +335,8 @@ Behavior:
 - Allowed call matrix:
   - any authenticated user -> dispatcher
   - dispatcher -> any non-student user
+  - instructor -> support/staff/student_services/*_staff
+  - support/staff/student_services/*_staff -> instructor
 - Sends `IncomingCall` to all SignalR connections of the target user.
 - Sends `CallRinging` to caller user connections.
 - Starts server-side timeout for invite expiration.
