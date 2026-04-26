@@ -1,5 +1,6 @@
 using ClubManagementService.Application.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -9,9 +10,11 @@ public sealed class AuthUserLookupService : IAuthUserLookupService
 {
     private readonly string _connectionString;
 
-    public AuthUserLookupService(IConfiguration configuration)
+    public AuthUserLookupService(
+        IConfiguration configuration,
+        ILogger<AuthUserLookupService> logger)
     {
-        _connectionString = BuildAuthConnectionString(configuration);
+        _connectionString = BuildAuthConnectionString(configuration, logger);
     }
 
     public async Task<IReadOnlyDictionary<string, Guid>> GetUserIdsByOrganizationalIdsAsync(
@@ -99,16 +102,34 @@ public sealed class AuthUserLookupService : IAuthUserLookupService
         return results;
     }
 
-    private static string BuildAuthConnectionString(IConfiguration configuration)
+    private static string BuildAuthConnectionString(
+        IConfiguration configuration,
+        ILogger<AuthUserLookupService> logger)
     {
         var authConnectionString = configuration.GetConnectionString("Auth");
-        if (!string.IsNullOrWhiteSpace(authConnectionString))
-            return authConnectionString;
-
         var clubConnectionString = configuration.GetConnectionString("Develop");
+
+        if (!string.IsNullOrWhiteSpace(authConnectionString))
+        {
+            if (TryResolveContainerSafeAuthConnectionString(authConnectionString, clubConnectionString, out var resolvedConnectionString, out var clubHost))
+            {
+                logger.LogInformation(
+                    "ConnectionStrings:Auth points to loopback, so auth lookups will use host {AuthHost} from ConnectionStrings:Develop instead.",
+                    clubHost);
+                return resolvedConnectionString;
+            }
+
+            return authConnectionString;
+        }
+
         if (string.IsNullOrWhiteSpace(clubConnectionString))
             throw new InvalidOperationException("ConnectionStrings:Auth or ConnectionStrings:Develop must be configured.");
 
+        return BuildAuthConnectionStringFromClub(clubConnectionString);
+    }
+
+    private static string BuildAuthConnectionStringFromClub(string clubConnectionString)
+    {
         var builder = new NpgsqlConnectionStringBuilder(clubConnectionString)
         {
             Database = "AuthDb"
@@ -116,4 +137,35 @@ public sealed class AuthUserLookupService : IAuthUserLookupService
 
         return builder.ConnectionString;
     }
+
+    private static bool TryResolveContainerSafeAuthConnectionString(
+        string authConnectionString,
+        string? clubConnectionString,
+        out string resolvedConnectionString,
+        out string clubHost)
+    {
+        resolvedConnectionString = string.Empty;
+        clubHost = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(clubConnectionString))
+            return false;
+
+        var authBuilder = new NpgsqlConnectionStringBuilder(authConnectionString);
+        var clubBuilder = new NpgsqlConnectionStringBuilder(clubConnectionString);
+
+        if (!IsLoopbackHost(authBuilder.Host) || IsLoopbackHost(clubBuilder.Host))
+            return false;
+
+        authBuilder.Host = clubBuilder.Host;
+        authBuilder.Port = clubBuilder.Port;
+
+        resolvedConnectionString = authBuilder.ConnectionString;
+        clubHost = clubBuilder.Host ?? string.Empty;
+        return true;
+    }
+
+    private static bool IsLoopbackHost(string? host) =>
+        string.Equals(host, "localhost", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(host, "127.0.0.1", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(host, "::1", StringComparison.OrdinalIgnoreCase);
 }

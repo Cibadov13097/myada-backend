@@ -6,7 +6,7 @@ This document is based on the current source code and gateway configuration in t
 
 Remote reachability note:
 
-- On 2026-04-26, direct HTTP checks to `http://13.60.31.141/`, `http://13.60.31.141:500/club/swagger/index.html`, and `http://13.60.31.141:500/club/swagger/v1/swagger.json` were not reachable from this environment.
+- On 2026-04-26, direct HTTP checks to `http://13.60.31.141/club/swagger/index.html` and `http://13.60.31.141/club/swagger/v1/swagger.json` were not reachable from this environment.
 - The route prefix and endpoint paths below are therefore derived from source, especially `ApiGateway/appsettings.json` and controllers under `Services/ClubManagementService/ClubManagementService.API/Controllers`.
 - Club position categories are defined by `ClubPositionCategory` in `Services/ClubManagementService/ClubManagementService.Domain/Enums/ClubPositionCategory.cs`.
 
@@ -14,9 +14,9 @@ The Club Management service uses URL versioning. The main path format is:
 
 `/api/v1/...`
 
-Use this gateway path pattern in frontend and integration code:
+Use this gateway base in frontend and integration code:
 
-`{base} = {gatewayHost}/club`
+`base = http://13.60.31.141/club`
 
 ---
 
@@ -24,23 +24,23 @@ Use this gateway path pattern in frontend and integration code:
 
 | Environment | Base URL | Notes |
 |-------------|----------|-------|
-| Gateway host shared in this thread | `http://13.60.31.141:500/club` | Matches the current gateway docs and reverse-proxy config in this repo. |
-| Alternate host-only form | `http://13.60.31.141/club` | Use only if your deployment exposes the gateway on port 80 instead of `:500`. |
+| Gateway base shared in this thread | `http://13.60.31.141/club` | Matches the reverse-proxy route prefix configured in this repo. |
+| Host-only form | `http://13.60.31.141` | Use this if your client code appends `/club` separately. |
 | Repo-local gateway | `http://localhost:5000/club` | From `docker-compose.yml` (`apigateway` maps `5000:8080`). |
 | Local service | `http://localhost:5003` | Local docker/service port. |
-| Swagger UI | `{gatewayHost}/club/swagger/index.html` | Exposed only when the club service runs in `Development`. |
-| OpenAPI JSON | `{gatewayHost}/club/swagger/v1/swagger.json` | Exposed only when the club service runs in `Development`. |
+| Swagger UI | `http://13.60.31.141/club/swagger/index.html` | Exposed only when the club service runs in `Development`. |
+| OpenAPI JSON | `http://13.60.31.141/club/swagger/v1/swagger.json` | Exposed only when the club service runs in `Development`. |
 
 Examples:
 
-- Categories: `http://13.60.31.141:500/club/api/v1/categories`
-- Club detail: `http://13.60.31.141:500/club/api/v1/clubs/1`
-- Swagger: `http://13.60.31.141:500/club/swagger/index.html`
+- Categories: `http://13.60.31.141/club/api/v1/categories`
+- Club detail: `http://13.60.31.141/club/api/v1/clubs/1`
+- Swagger: `http://13.60.31.141/club/swagger/index.html`
 
 Important gateway rule:
 
-- Correct: `http://13.60.31.141:500/club/api/v1/categories`
-- Wrong: `http://13.60.31.141:500/api/v1/categories`
+- Correct: `http://13.60.31.141/club/api/v1/categories`
+- Wrong: `http://13.60.31.141/api/v1/categories`
 
 The gateway strips `/club` before forwarding to the club service.
 
@@ -95,8 +95,8 @@ Do not assume the controller payload is returned raw.
 
 ## Current differences from older docs
 
-- The gateway route prefix is `/club`. In the current repo docs and reverse-proxy config, the deployed gateway base is `http://13.60.31.141:500/club`.
-- If your deployment also exposes the gateway on the default HTTP port, the same paths may work under `http://13.60.31.141/club`, but that variant was not re-verifiable from this environment on 2026-04-26.
+- The gateway route prefix is `/club`. In the current repo docs and reverse-proxy config, the deployed gateway base is `http://13.60.31.141/club`.
+- If your deployment also exposes the gateway on the default HTTP port, the same paths may work under `http://13.60.31.141` with the `/club` prefix appended, but that variant was not re-verifiable from this environment on 2026-04-26.
 - `POST /api/v1/club-proposals` is anonymous and supports both `application/json` and `multipart/form-data`; use `multipart/form-data` for direct file attachments and S3 upload flow.
 - Student-services proposal routes are:
   - `/api/v1/student-services/clubs/proposals/...`
@@ -801,7 +801,7 @@ If you are building new frontend code, prefer the versioned `/api/v1/...` routes
 
 Use:
 
-`http://13.60.31.141:500/club`
+`http://13.60.31.141/club`
 
 Then append one of:
 
@@ -818,11 +818,11 @@ Then append one of:
 
 For exact live schemas and tags, use:
 
-- Swagger UI: `http://13.60.31.141:500/club/swagger/index.html`
-- OpenAPI JSON: `http://13.60.31.141:500/club/swagger/v1/swagger.json`
+- Swagger UI: `http://13.60.31.141/club/swagger/index.html`
+- OpenAPI JSON: `http://13.60.31.141/club/swagger/v1/swagger.json`
 
 Those Swagger routes are available only when the club service is running in `Development`. If they are unavailable in a deployment, use this markdown file plus the controller source as the source-backed reference.
 
-If your deployment does not expose the gateway on `:500`, keep the same `/club` prefix and swap in the deployed gateway host:port.
+If your deployment exposes the gateway on a different host or port, keep the same `/club` prefix and swap in the deployed gateway address.
 
 This markdown file is the human-readable summary. The OpenAPI document is the canonical deployed contract when the target gateway is reachable.

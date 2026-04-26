@@ -7,7 +7,9 @@ using ClubManagementService.Infrastructure.Persistence.Context;
 using ClubManagementService.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
+using Npgsql;
 
 namespace MyAda.Tests.Services.ClubManagementService;
 
@@ -15,6 +17,7 @@ public class ClubAdminServiceTests : IDisposable
 {
     private readonly Mock<IClubService> _clubService = new();
     private readonly Mock<IClubRepository> _clubRepository = new();
+    private readonly Mock<IAuthUserLookupService> _authUserLookup = new();
     private readonly ClubManagementDbContext _dbContext;
     private readonly ClubAdminService _service;
 
@@ -35,7 +38,9 @@ public class ClubAdminServiceTests : IDisposable
             Mock.Of<IProposalContractService>(),
             _clubRepository.Object,
             Mock.Of<IClubMembershipRepository>(),
-            _dbContext);
+            _dbContext,
+            _authUserLookup.Object,
+            Mock.Of<ILogger<ClubAdminService>>());
     }
 
     [Fact]
@@ -171,6 +176,45 @@ public class ClubAdminServiceTests : IDisposable
         club.BackgroundImageUrl.Should().Be("https://example.com/clubs/1/background.png");
         _clubRepository.Verify(x => x.UpdateAsync(club), Times.Once);
         _clubRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_ShouldReturnEmployees_WhenAuthLookupFails()
+    {
+        var club = CreateClub();
+        SetupClub(club);
+
+        var userId = Guid.NewGuid();
+        _dbContext.ClubEmployees.Add(new ClubEmployee
+        {
+            Id = 17,
+            ClubId = club.Id,
+            UserId = userId,
+            PositionId = 4
+        });
+        _dbContext.ClubPositions.Add(new ClubPosition
+        {
+            Id = 4,
+            ClubId = club.Id,
+            Title = "Coordinator"
+        });
+        await _dbContext.SaveChangesAsync();
+
+        _authUserLookup
+            .Setup(x => x.GetUserNamesByIdsAsync(
+                It.IsAny<IEnumerable<Guid>>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new NpgsqlException("Auth DB unavailable"));
+
+        var result = await _service.GetEmployeesAsync("1", 1, 50);
+
+        result.Items.Should().ContainSingle();
+        result.Items[0].Id.Should().Be("17");
+        result.Items[0].StudentId.Should().Be(userId.ToString("D"));
+        result.Items[0].EmployeeName.Should().BeNull();
+        result.Items[0].PositionId.Should().Be("4");
+        result.Items[0].PositionTitle.Should().Be("Coordinator");
+        result.Items[0].PositionName.Should().Be("Coordinator");
     }
 
     public void Dispose()

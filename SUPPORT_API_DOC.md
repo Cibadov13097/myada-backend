@@ -1,52 +1,49 @@
 # MyAda Support API Documentation for Frontend
 
-Last updated: 2026-04-25
-
-## Common 404 Mistake (Important)
-
-If you call through gateway (`http://13.60.31.141:500`), you must include `/support` prefix.
-
-- Correct: `http://13.60.31.141:500/support/api/...`
-- Wrong: `http://13.60.31.141:500/api/...` (this returns 404 for Support endpoints)
-
-Direct service (no gateway prefix):
-- `http://13.60.31.141:5008/api/...`
+Last updated: 2026-04-26
 
 ## Base URLs
 
-Recommended via API Gateway:
-- Production: `http://13.60.31.141:500`
-- Local: `http://localhost:5000`
+- Gateway (production): `http://13.60.31.141`
+- Gateway (local): `http://localhost:5000`
+- Direct support service (production diagnostics): `http://13.60.31.141:5008`
+- Direct support service (local launch profile): `http://localhost:5184`
+- Direct support service (docker-compose): `http://localhost:5008`
 
-Support service gateway prefix:
+Gateway prefix for support:
 - `/support`
 
-Final frontend URL format:
-- `http://13.60.31.141:500/support/api/...`
+Front-end URL format through the gateway:
+- `http://13.60.31.141/support/api/...`
+- `http://localhost:5000/support/api/...`
 
-Direct service (diagnostics only):
-- Production: `http://13.60.31.141:5008/api/...`
-- Local: `http://localhost:5008/api/...`
+## Common 404 Mistake
+
+If you call support through the gateway, you must include the `/support` prefix.
+
+- Correct: `http://13.60.31.141/support/api/...`
+- Wrong: `http://13.60.31.141/api/...`
+- Direct service calls do not use `/support`.
 
 ## Authentication
 
-All Support endpoints require JWT bearer token, except internal provisioning endpoint used by backend-to-backend integration.
-
-Header:
+All support endpoints require a JWT bearer token, except the internal staff-status provisioning endpoint used for backend-to-backend integration.
 
 ```http
 Authorization: Bearer <accessToken>
 ```
 
-Token validation settings:
+Token validation:
 - Issuer: `myada-auth`
 - Audience: `myada-api`
 - Signing source: AuthService JWKS (`/.well-known/jwks.json`)
 
 ## Swagger
 
-- Gateway: `http://13.60.31.141:500/support/swagger/index.html`
-- Direct: `http://13.60.31.141:5008/swagger/index.html`
+- Gateway: `http://13.60.31.141/support/swagger/index.html`
+- Local gateway: `http://localhost:5000/support/swagger/index.html`
+- Direct prod: `http://13.60.31.141:5008/swagger/index.html`
+- Direct local: `http://localhost:5184/swagger/index.html`
 
 ## Response Envelope
 
@@ -61,7 +58,7 @@ Support API uses AutoWrapper. Most successful responses are wrapped:
 }
 ```
 
-`204 No Content` endpoints return empty body.
+`204 No Content` endpoints return an empty body.
 
 ## Categories
 
@@ -72,14 +69,21 @@ Base path: `/support/api/Categories`
 - `POST /support/api/Categories`
 - `DELETE /support/api/Categories/{id}`
 
+Notes:
+- `module` is the `SupportArea` enum in code.
+- Route filtering expects `IT` or `FM`.
+- On the wire, category DTOs use the API's default enum JSON behavior. If your client does not use string enum conversion, send the numeric enum value.
+
 Example create payload:
 
 ```json
 {
-  "module": "IT",
+  "module": 0,
   "name": "Hardware"
 }
 ```
+
+`0 = IT`, `1 = FM`.
 
 ## Attachments
 
@@ -106,28 +110,23 @@ Base path: `/support/api/SupportStaffStatuses`
 - `GET /support/api/SupportStaffStatuses/member/{memberId}`
 - `GET /support/api/SupportStaffStatuses/status/{status}`
 - `PUT /support/api/SupportStaffStatuses/member/{memberId}`
-- `POST /support/api/SupportStaffStatuses/internal/provision` (internal backend use only)
+- `POST /support/api/SupportStaffStatuses/internal/provision`
 
-Access roles:
-- `support`
-- `dispatcher`
-- `staff`
-- `admin`
+Access rules:
 - `GET /status/{status}`: any authenticated user
 - `POST`, `GET /member/{memberId}`, `PUT /member/{memberId}`:
-  - `admin`: can manage any `memberId`
-  - `support/dispatcher/staff`: ownership check (`memberId` must match JWT `sub`)
-- `POST /internal/provision`: no JWT; requires `X-Internal-Key` header matching server config
+  - `admin`: may manage any `memberId`
+  - `support`, `dispatcher`, `staff`: `memberId` must match the JWT `sub` claim
+- `POST /internal/provision`: no JWT; requires `X-Internal-Key`
 
 `memberId` format:
-- GUID (must match authenticated user `sub` claim)
-- If `memberId` in POST body is `00000000-0000-0000-0000-000000000000`, backend uses authenticated user id (`sub`).
+- GUID
+- If `memberId` in the POST body is `00000000-0000-0000-0000-000000000000`, the backend uses the authenticated user id (`sub`)
 
 Auto-create behavior:
-- `GET /member/{memberId}` automatically creates a status row when it does not exist.
-- `PUT /member/{memberId}` also auto-creates when missing, using the provided status.
-- AuthService `POST /api/auth/create-user-with-role` auto-provisions this table for support roles.
-- In that flow, `SupportStaffStatus.MemberId` is always the Auth user id (JWT `sub`) and initial status is `Offline`.
+- `GET /member/{memberId}` auto-creates a status row if one does not exist
+- `PUT /member/{memberId}` also auto-creates when missing, using the requested status
+- AuthService `POST /api/auth/create-user-with-role` auto-provisions this table for support roles
 
 Example create payload:
 
@@ -138,14 +137,6 @@ Example create payload:
 }
 ```
 
-Typical responses:
-- `201 Created` (POST)
-- `200 OK` (GET)
-- `204 No Content` (PUT)
-- `403 Forbidden` when `memberId` does not match authenticated `sub` for non-admin roles
-- `401 Unauthorized` when token/user id claim is missing
-- `400 Bad Request` when `sub` is not a valid GUID or status value is invalid
-
 Example update payload:
 
 ```json
@@ -154,7 +145,7 @@ Example update payload:
 }
 ```
 
-Internal provision payload (backend only):
+Internal provision payload:
 
 ```json
 {
@@ -169,10 +160,22 @@ Internal provision headers:
 X-Internal-Key: <shared-internal-key>
 ```
 
+Typical responses:
+- `201 Created` for `POST`
+- `200 OK` for `GET`
+- `204 No Content` for `PUT`
+- `403 Forbidden` when a non-admin user targets another `memberId`
+- `401 Unauthorized` when the token or user id claim is missing
+- `400 Bad Request` when `sub` is not a valid GUID or status is invalid
+
 ## Support Requests
 
 Base path: `/support/api/SupportRequests`
 
+Legacy alias:
+- `/support/api/Requests`
+
+Routes:
 - `POST /support/api/SupportRequests/uploads` (`multipart/form-data`)
 - `POST /support/api/SupportRequests/member/{memberId}`
 - `GET /support/api/SupportRequests/member/{memberId}`
@@ -188,9 +191,22 @@ Base path: `/support/api/SupportRequests`
 - `PUT /support/api/SupportRequests/{requestId}/in-progress/staff/{staffId}`
 - `PUT /support/api/SupportRequests/{requestId}/complete/staff/{staffId}`
 
-Upload constraints (`/uploads`):
+ID types:
+- `requestId`: int
+- `memberId`, `staffId`, `dispatcherId`: GUID
+
+Upload constraints:
 - Max file size: `10 MB`
 - Allowed extensions: `.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`
+- Form field name: `files`
+
+Example upload result:
+
+```json
+[
+  "https://example-bucket/support/requests/attachments/photo1.jpg"
+]
+```
 
 Example create request payload:
 
@@ -211,18 +227,25 @@ Example create request payload:
 }
 ```
 
+Query filter note:
+- The `GET /support/api/SupportRequests` endpoint currently applies `status`, `categoryId`, `service`, `memberId`, and `staffId`.
+- The `RequestFilterDto` also exposes `search`, `priority`, `sortBy`, `page`, and `pageSize`, but the current service implementation does not use them yet.
+- `status` accepts `open`, `New`, `Assigned`, `InProgress`, `Completed`, and `Cancelled` values in a case-insensitive way.
+
 ## Realtime (SignalR)
 
 Hub endpoint:
 - Gateway: `/support/hubs/support-updates`
-- Direct: `/hubs/support-updates`
+- Local gateway: `http://localhost:5000/support/hubs/support-updates`
+- Direct local: `http://localhost:5184/hubs/support-updates`
+- Direct prod: `http://13.60.31.141:5008/hubs/support-updates`
 
 JWT token is required for hub access.
 
 ## Quick cURL Example
 
 ```bash
-curl -X GET "http://13.60.31.141:500/support/api/Categories" \
+curl -X GET "http://13.60.31.141/support/api/Categories" \
   -H "accept: application/json" \
   -H "Authorization: Bearer <accessToken>"
 ```

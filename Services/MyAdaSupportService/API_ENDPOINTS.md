@@ -1,20 +1,23 @@
 # MyAdaSupportService API Endpoints
 
-Last updated: 2026-04-25
+Last updated: 2026-04-26
 
 Base path (service): `/api`
 
-Gateway route format (frontend):
-- `http://13.60.31.141:500/support/api/...`
+Gateway route format:
+- Production: `http://13.60.31.141/support/api/...`
+- Local: `http://localhost:5000/support/api/...`
 
-Direct service format (diagnostics):
-- Production: `http://13.60.31.141:5008/api/...`
-- Local: `http://localhost:5008/api/...`
+Direct service format:
+- Production diagnostics: `http://13.60.31.141:5008/api/...`
+- Local launch profile: `http://localhost:5184/api/...`
+- Local docker-compose: `http://localhost:5008/api/...`
 
 Common 404 rule:
-- If host is the deployed gateway (`:500`), `/support` prefix is required.
+- If you call the deployed gateway, `/support` is required in the path.
 
-Authentication: Bearer JWT is required for all endpoints.
+Authentication:
+- Bearer JWT is required for all endpoints except `POST /api/SupportStaffStatuses/internal/provision`.
 
 ## Response envelope
 
@@ -42,16 +45,17 @@ For `204 No Content` endpoints, the response body is empty.
 - `StaffAvailabilityStatus`: `Online`, `Offline`, `OnBreak`
 - `UrgencyLevel`: `Standard`, `Critical`
 
-### String value conventions used in DTO comments
+### Wire-format notes
 
 - `CreateSupportRequestDto.area`: `it`, `fm`
 - `CreateSupportRequestDto.locationType`: `building`, `campus`
 - `CreateSupportRequestDto.placeType`: `room`, `nonRoom`
 - `CreateSupportRequestDto.urgency`: `standard`, `critical`
-- `RequestFilterDto.status`: `open`, `completed`, `cancelled`
+- `RequestFilterDto.status`: `open`, `New`, `Assigned`, `InProgress`, `Completed`, `Cancelled`
 - `RequestFilterDto.service`: `IT`, `FM`
 - `RequestFilterDto.sortBy`: `newest`, `oldest`
 - `SupportStaffStatusDto.status` / `UpdateSupportStaffStatusDto.status`: `Online`, `Offline`, `OnBreak`
+- `CategoryCreateDto.Module` and `CategoryDto.Module` use the `SupportArea` enum. If your JSON serializer does not convert enums to strings, send the numeric value (`0 = IT`, `1 = FM`).
 
 ---
 
@@ -61,14 +65,13 @@ For `204 No Content` endpoints, the response body is empty.
 
 Returns all categories.
 
-- Request body: none
-- Response `200 OK` result:
+Response `200 OK` result:
 
 ```json
 [
   {
     "id": 1,
-    "module": "IT",
+    "module": 0,
     "name": "Network"
   }
 ]
@@ -79,8 +82,8 @@ Returns all categories.
 Returns categories by module.
 
 - Path params:
-  - `module` (string; usually `IT` or `FM`)
-- Response `200 OK` result: `CategoryDto[]` (same shape as above)
+  - `module` (string; `IT` or `FM`)
+- Response `200 OK` result: `CategoryDto[]`
 
 ### POST `/api/Categories`
 
@@ -90,7 +93,7 @@ Creates a category.
 
 ```json
 {
-  "module": "IT",
+  "module": 0,
   "name": "Hardware"
 }
 ```
@@ -100,7 +103,7 @@ Creates a category.
 ```json
 {
   "id": 10,
-  "module": "IT",
+  "module": 0,
   "name": "Hardware"
 }
 ```
@@ -119,9 +122,9 @@ Deletes a category.
 
 ### POST `/api/Attachments`
 
-Adds an attachment to a request.
+Adds an attachment record to a request.
 
-Upload the image first through `POST /api/SupportRequests/uploads`, then pass the returned bucket URL here.
+Upload the image first through `POST /api/SupportRequests/uploads` or `POST /api/Requests/uploads`, then pass the returned URL here.
 
 - Request body (`AttachmentCreateDto`):
 
@@ -161,12 +164,30 @@ Removes an attachment.
 
 ## Support Staff Statuses
 
+### POST `/api/SupportStaffStatuses`
+
+Creates support staff status.
+
+- Roles: `support`, `dispatcher`, `staff`, `admin`
+- Request body (`CreateSupportStaffStatusDto`):
+
+```json
+{
+  "memberId": "7d75bf0d-c467-4ce7-8872-c58495a6ca8a",
+  "status": "Online"
+}
+```
+
+- `memberId` must match authenticated user `sub` unless the caller is `admin`.
+- If `memberId` is `00000000-0000-0000-0000-000000000000`, the backend uses the authenticated user id (`sub`).
+- Response: `201 Created`
+
 ### GET `/api/SupportStaffStatuses/member/{memberId}`
 
 Gets status by member id.
 
 - Path params:
-  - `memberId` (guid, must match authenticated user `sub`)
+  - `memberId` (guid, must match authenticated user `sub` unless the caller is `admin`)
 - Response `200 OK` result (`SupportStaffStatusDto`):
 
 ```json
@@ -178,8 +199,7 @@ Gets status by member id.
 }
 ```
 
-- If not found, service auto-creates with status `Offline`.
-- If authenticated `sub` does not match path `memberId`, returns `403 Forbidden`.
+- If not found, the service auto-creates a row with status `Offline`.
 
 ### GET `/api/SupportStaffStatuses/status/{status}`
 
@@ -195,7 +215,7 @@ Gets all staff statuses by status.
 Updates staff status.
 
 - Path params:
-  - `memberId` (guid, must match authenticated user `sub`)
+  - `memberId` (guid, must match authenticated user `sub` unless the caller is `admin`)
 - Request body (`UpdateSupportStaffStatusDto`):
 
 ```json
@@ -206,26 +226,39 @@ Updates staff status.
 
 - Response: `204 No Content`
 
-- If not found, service auto-creates status row with the requested status.
-- If authenticated `sub` does not match path `memberId`, returns `403 Forbidden`.
+- If not found, the service auto-creates a status row with the requested status.
 
-### POST `/api/SupportStaffStatuses`
+### POST `/api/SupportStaffStatuses/internal/provision`
 
-Creates support staff status.
+Internal backend provisioning endpoint.
 
-- Roles: `support`, `dispatcher`, `staff`
+- Authentication: none
+- Header required:
+
+```http
+X-Internal-Key: <shared-internal-key>
+```
+
 - Request body (`CreateSupportStaffStatusDto`):
 
 ```json
 {
   "memberId": "7d75bf0d-c467-4ce7-8872-c58495a6ca8a",
-  "status": "Online"
+  "status": "Offline"
 }
 ```
 
-- `memberId` must match authenticated user `sub`.
-- `memberId = 00000000-0000-0000-0000-000000000000` means "use authenticated user id (`sub`)".
-- Response: `201 Created`
+- If `status` is omitted or blank, the backend uses `Offline`.
+- If `memberId` is missing or empty, the endpoint returns `400 Bad Request`.
+- Response: `200 OK`
+
+Typical responses:
+- `201 Created` (POST)
+- `200 OK` (GET or internal provision)
+- `204 No Content` (PUT)
+- `403 Forbidden` when `memberId` does not match authenticated `sub` for non-admin roles
+- `401 Unauthorized` when token/user id claim is missing
+- `400 Bad Request` when `sub` is not a valid GUID or status value is invalid
 
 ---
 
@@ -248,7 +281,7 @@ Uploads one or more support request images to the configured S3-compatible bucke
 Creates a support request.
 
 - Path params:
-  - `memberId` (int; reporter/member id)
+  - `memberId` (guid; reporter/member id)
 - Request body (`CreateSupportRequestDto`):
 
 ```json
@@ -268,14 +301,14 @@ Creates a support request.
 }
 ```
 
-- Response `200 OK` result: `SupportRequestDetailDto` (shape shown below)
+- Response `200 OK` result: `SupportRequestDetailDto`
 
 ### GET `/api/SupportRequests/member/{memberId}`
 
 Gets requests created by a member.
 
 - Path params:
-  - `memberId` (int)
+  - `memberId` (guid)
 - Response `200 OK` result: `SupportRequestListItemDto[]`
 
 ### GET `/api/SupportRequests/staff/{staffId}`
@@ -283,7 +316,7 @@ Gets requests created by a member.
 Gets requests assigned to a staff member.
 
 - Path params:
-  - `staffId` (int)
+  - `staffId` (guid)
 - Response `200 OK` result: `SupportRequestListItemDto[]`
 
 ### GET `/api/SupportRequests`
@@ -291,7 +324,7 @@ Gets requests assigned to a staff member.
 Gets all requests with optional filters.
 
 - Query params (`RequestFilterDto`):
-  - `status` (string; `open`, `completed`, `cancelled`)
+  - `status` (string; `open`, `New`, `Assigned`, `InProgress`, `Completed`, `Cancelled`)
   - `categoryId` (int)
   - `search` (string)
   - `service` (string; `IT`, `FM`)
@@ -299,8 +332,13 @@ Gets all requests with optional filters.
   - `sortBy` (string; `newest`, `oldest`)
   - `page` (int, default `1`)
   - `pageSize` (int, default `10`)
-  - `memberId` (int)
-  - `staffId` (int)
+  - `memberId` (guid)
+  - `staffId` (guid)
+
+Current implementation note:
+- The controller/service currently applies `status`, `categoryId`, `service`, `memberId`, and `staffId`.
+- `search`, `priority`, `sortBy`, `page`, and `pageSize` are present in the DTO but are not used yet by the current service implementation.
+
 - Response `200 OK` result: `SupportRequestListItemDto[]`
 
 `SupportRequestListItemDto` shape:
@@ -313,14 +351,21 @@ Gets all requests with optional filters.
   "description": "Projector is not turning on",
   "category": "Hardware",
   "service": "IT",
+  "isBuilding": true,
+  "buildingId": 1,
+  "isRoom": true,
+  "roomId": 204,
+  "areaDetails": null,
   "location": "Building A / Room 204",
   "status": "New",
   "urgency": "Standard",
   "isUrgent": false,
+  "assignedStaffId": "b2c8de34-6f0d-4c4c-b319-4035c4d70f9f",
   "assignedTo": "Jane Staff",
   "unseen": true,
   "createdAt": "2026-04-13T09:00:00Z",
-  "completedAt": null
+  "completedAt": null,
+  "imgUrl": "https://example.com/photo1.jpg"
 }
 ```
 
@@ -340,10 +385,16 @@ Gets request details by id.
   "descriptionFull": "Projector in room 204 is not turning on.",
   "category": "Hardware",
   "service": "IT",
+  "isBuilding": true,
+  "buildingId": 1,
+  "isRoom": true,
+  "roomId": 204,
+  "areaDetails": null,
   "location": "Building A / Room 204",
   "status": "Assigned",
   "isUrgent": false,
   "priority": "Standard",
+  "assignedStaffId": "b2c8de34-6f0d-4c4c-b319-4035c4d70f9f",
   "assignedTo": "Jane Staff",
   "createdAt": "2026-04-13T09:00:00Z",
   "assignedAt": "2026-04-13T09:10:00Z",
@@ -351,10 +402,11 @@ Gets request details by id.
   "completedAt": null,
   "cancelReason": null,
   "rating": null,
+  "imgUrl": "https://example.com/photo1.jpg",
   "reporter": {
-    "memberId": 3001,
-    "fullName": "John Member",
-    "email": "john@example.com"
+    "memberId": "7d75bf0d-c467-4ce7-8872-c58495a6ca8a",
+    "fullName": "",
+    "email": ""
   },
   "attachments": [
     {
@@ -365,7 +417,7 @@ Gets request details by id.
   "timeline": [
     {
       "step": "Assigned",
-      "detail": "Assigned to Jane Staff",
+      "detail": "Assigned to staff member b2c8de34-6f0d-4c4c-b319-4035c4d70f9f.",
       "done": true,
       "createdAt": "2026-04-13T09:10:00Z"
     }
@@ -374,13 +426,21 @@ Gets request details by id.
 }
 ```
 
+### GET `/api/SupportRequests/{requestId}/timeline`
+
+Returns the request timeline.
+
+- Path params:
+  - `requestId` (int)
+- Response `200 OK` result: `TimelineItemDto[]`
+
 ### PUT `/api/SupportRequests/{requestId}/cancel/member/{memberId}`
 
 Cancels a request by member.
 
 - Path params:
   - `requestId` (int)
-  - `memberId` (int)
+  - `memberId` (guid)
 - Request body (`CancelRequestDto`):
 
 ```json
@@ -397,12 +457,12 @@ Assigns a request to staff.
 
 - Path params:
   - `requestId` (int)
-  - `dispatcherId` (int)
+  - `dispatcherId` (guid)
 - Request body (`AssignRequestDto`):
 
 ```json
 {
-  "staffId": 9001,
+  "staffId": "b2c8de34-6f0d-4c4c-b319-4035c4d70f9f",
   "dispatcherInstructions": "Prioritize this request."
 }
 ```
@@ -415,7 +475,7 @@ Reassigns a request to another staff member.
 
 - Path params:
   - `requestId` (int)
-  - `dispatcherId` (int)
+  - `dispatcherId` (guid)
 - Request body (`AssignRequestDto`): same as assign endpoint
 - Response: `204 No Content`
 
@@ -425,7 +485,7 @@ Adds or updates dispatcher instructions.
 
 - Path params:
   - `requestId` (int)
-  - `dispatcherId` (int)
+  - `dispatcherId` (guid)
 - Request body (`DispatcherInstructionDto`):
 
 ```json
@@ -442,7 +502,7 @@ Marks request as started.
 
 - Path params:
   - `requestId` (int)
-  - `staffId` (int)
+  - `staffId` (guid)
 - Request body: none
 - Response: `204 No Content`
 
@@ -452,7 +512,7 @@ Marks request as in progress.
 
 - Path params:
   - `requestId` (int)
-  - `staffId` (int)
+  - `staffId` (guid)
 - Request body: none
 - Response: `204 No Content`
 
@@ -462,7 +522,19 @@ Marks request as completed.
 
 - Path params:
   - `requestId` (int)
-  - `staffId` (int)
+  - `staffId` (guid)
 - Request body: none
 - Response: `204 No Content`
+
+---
+
+## Realtime
+
+Hub endpoint:
+- Gateway: `/support/hubs/support-updates`
+- Local gateway: `http://localhost:5000/support/hubs/support-updates`
+- Direct local: `http://localhost:5184/hubs/support-updates`
+- Direct prod: `http://13.60.31.141:5008/hubs/support-updates`
+
+JWT token is required for hub access.
 

@@ -12,6 +12,8 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
 using ClubManagementService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Npgsql;
 using ClubManagementService.Infrastructure.Persistence.Context;
 
 namespace ClubManagementService.Infrastructure.Services;
@@ -30,6 +32,7 @@ public sealed class ClubAdminService : IClubAdminService
     private readonly IClubMembershipRepository _clubMembershipRepository;
     private readonly ClubManagementDbContext _db;
     private readonly IAuthUserLookupService _authUserLookup;
+    private readonly ILogger<ClubAdminService> _logger;
 
     public ClubAdminService(
         IClubService clubService,
@@ -41,7 +44,9 @@ public sealed class ClubAdminService : IClubAdminService
         IProposalContractService proposalContract,
         IClubRepository clubRepository,
         IClubMembershipRepository clubMembershipRepository,
-        ClubManagementDbContext db, IAuthUserLookupService authUserLookup)
+        ClubManagementDbContext db,
+        IAuthUserLookupService authUserLookup,
+        ILogger<ClubAdminService> logger)
     {
         _clubService = clubService;
         _jobVacancyService = jobVacancyService;
@@ -54,6 +59,7 @@ public sealed class ClubAdminService : IClubAdminService
         _clubMembershipRepository = clubMembershipRepository;
         _db = db;
         _authUserLookup = authUserLookup;
+        _logger = logger;
     }
 
     public async Task<ClubAdminDashboardDto?> GetDashboardAsync(string clubRouteKey, CancellationToken cancellationToken = default)
@@ -869,7 +875,7 @@ public sealed class ClubAdminService : IClubAdminService
             .ConfigureAwait(false);
 
         var userIds = rows.Select(e => e.UserId).Distinct().ToList();
-        var userNames = await _authUserLookup.GetUserNamesByIdsAsync(userIds, cancellationToken).ConfigureAwait(false);
+        var userNames = await TryGetUserNamesAsync(userIds, ctx.Key, cancellationToken).ConfigureAwait(false);
 
         var items = rows.Select(e => new ClubAdminEmployeeDto
         {
@@ -919,7 +925,7 @@ public sealed class ClubAdminService : IClubAdminService
         }
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        var userNames = await _authUserLookup.GetUserNamesByIdsAsync(new[] { userId }, cancellationToken).ConfigureAwait(false);
+        var userNames = await TryGetUserNamesAsync(new[] { userId }, ctx.Key, cancellationToken).ConfigureAwait(false);
 
         return new ClubAdminEmployeeDto
         {
@@ -1550,6 +1556,25 @@ public sealed class ClubAdminService : IClubAdminService
         entity.ModifiedAt = DateTime.UtcNow;
         await _clubRepository.UpdateAsync(entity).ConfigureAwait(false);
         await _clubRepository.SaveChangesAsync().ConfigureAwait(false);
+    }
+
+    private async Task<IReadOnlyDictionary<Guid, string>> TryGetUserNamesAsync(
+        IEnumerable<Guid> userIds,
+        string clubRouteKey,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await _authUserLookup.GetUserNamesByIdsAsync(userIds, cancellationToken).ConfigureAwait(false);
+        }
+        catch (NpgsqlException ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogWarning(
+                ex,
+                "Unable to resolve auth user names for club {ClubRouteKey}. Returning employee records without names.",
+                clubRouteKey);
+            return new Dictionary<Guid, string>();
+        }
     }
 
     private static string NormalizeResourceUrl(string url)
