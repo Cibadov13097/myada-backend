@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"+gdZTs/RT2+K97uQIc0sOrjuSA3VtNY3snqeIPZe1nE=","Source":"LostFoundService.API","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "Dvd5zj36VoebVodBCXc0wTQICYSYItA43Rbou7iUTds=",
+  "Source": "LostFoundService.API",
+  "BasePath": "_content/LostFoundService.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -6,7 +6,7 @@ namespace LostFoundService.Application.Interfaces.Services;
 public interface ILostAndFoundService
 {
     Task<LostFoundItemListResult> GetItemsAsync(LostFoundItemSearchQuery query);
-    Task<LostFoundItem> GetItemByIdAsync(int id);
+    Task<LostFoundItem> GetItemByIdAsync(int id, bool hideTerminalItemsForPublic = false);
     Task<LostFoundStats> GetStatsAsync();
     Task<LostFoundItem> CreateItemAsync(CreateLostFoundItemCommand command);
     Task<LostFoundItem> UpdateItemAsync(int id, UpdateLostFoundItemCommand command);
@@ -15,5 +15,5 @@ public interface ILostAndFoundService
     Task<LostFoundItem> ConfirmReceiptAsync(int id, ConfirmLostFoundReceiptCommand command);
     Task<LostFoundItem> CompleteDeliveryAsync(int id, CompleteLostFoundDeliveryCommand command);
     Task<List<LostFoundItemClaim>> GetItemClaimsAsync(int id);
-    Task<LostFoundItem> GetTimelineItemAsync(int id);
+    Task<LostFoundItem> GetTimelineItemAsync(int id, bool hideTerminalItemsForPublic = false);
 }

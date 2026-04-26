@@ -1,6 +1,6 @@
 # LostFound API Documentation (Gateway First)
 
-Last updated: 2026-04-25
+Last updated: 2026-04-26
 
 This document covers only the LostFound service (`Services/LostFoundService`) and is aligned with:
 - `Services/LostFoundService/LostFoundService.API/Controllers/LostAndFoundController.cs`
@@ -83,34 +83,51 @@ Gateway prefix for all paths in this section:
 | `GET` | `/api/lost-and-found/items/{id:int}/claims` | `admin` or `lost_found_leader` |
 | `GET` | `/api/lost-and-found/items/{id:int}/timeline` | Optional |
 
-### 1.2 List Items
+### 1.2 Public catalog vs admin visibility
+
+For the unified API, **admin workflow** uses `adminStatus`: `pending` → `received` (intake) → `delivered` (handover).
+
+- **Callers without `admin` or `lost_found_leader`** (no token, or a token without those roles):  
+  - `GET /api/lost-and-found/items` omits items whose `adminStatus` is **`received`** or **`delivered`**.  
+  - `GET /api/lost-and-found/items/{id}` and `GET /api/lost-and-found/items/{id}/timeline` return **404** for those items.  
+  - `POST /api/lost-and-found/items/{id}/claims` returns **404** for those items (claims are not accepted once intake/delivery is recorded this way).
+- **`admin` / `lost_found_leader`**: list, detail, and timeline include **all** items, including `received` and `delivered`.
+- **`GET /api/lost-and-found/stats`**: `total`, `active`, and `pendingVerification` count only items **not** in admin `received` or `delivered` (same notion as the public board), regardless of caller role.
+
+### 1.3 List Items
 
 `GET /api/lost-and-found/items`
 
 Query params:
 - `q` or `search`: text search (`q` takes priority)
 - `type`: `lost`, `found`, `all`
-- `postedBy`: `me` to filter current user posts
-- `category`: category name (`All Items` means no category filter)
-- `status`: `active` or `pending`
-- `adminStatus`: `Pending`, `Received`, `Delivered`
+- `postedBy`: `me` to filter current user posts (requires `Authorization`; otherwise 401)
+- `categoryId`: optional category id (integer)
+- `status` (filter): `active` or any of `pending`, `pending verification`, `pending_verification` (maps to pending verification)
+- `adminStatus` (filter): `pending`, `received`, `delivered` (case-insensitive)
 - `page`: default `1`, min `1`
 - `limit`: default `10`, clamped to `1..100`
 
 Response:
 - `{ items: [...], total: number }`
 
-### 1.3 Get Item by Id
+Each item includes a public `status` string; see **§7 Enums and Accepted Values** for response values. Admin-only fields on list responses stay omitted unless noted otherwise (list uses the public projection).
+
+### 1.4 Get Item by Id
 
 `GET /api/lost-and-found/items/{id}`
 
 Response:
-- item object with public fields
-- admin fields are included only for admin/lost_found_leader callers
+- Item object with public fields.
+- Admin-only fields (`adminStatus`, `storageBinId`, `condition`, etc.) are included only on **admin write** responses (manual create, patch, confirm receipt, complete delivery), not on this public GET—even for admins. Use an admin write response or a future admin-read endpoint if you need those fields on read by id.
 
-### 1.4 Stats
+For non-admin callers, terminal items (`adminStatus` `received` / `delivered`) return **404**.
+
+### 1.5 Stats
 
 `GET /api/lost-and-found/stats`
+
+Counts match the **public board** (items excluding admin `received` and `delivered`). See §1.2.
 
 Response:
 
@@ -122,7 +139,7 @@ Response:
 }
 ```
 
-### 1.5 Create Lost Report
+### 1.6 Create Lost Report
 
 `POST /api/lost-and-found/reports/lost`
 
@@ -132,7 +149,7 @@ Accepted content types:
 
 Minimum required fields:
 - `itemName`
-- `category`
+- `categoryId` (integer)
 
 Response:
 
@@ -140,12 +157,12 @@ Response:
 {
   "id": 123,
   "referenceNumber": "LF-000123",
-  "status": "Pending Verification",
+  "status": "pending_verification",
   "message": "Lost item report submitted for review."
 }
 ```
 
-### 1.6 Create Found Report
+### 1.7 Create Found Report
 
 `POST /api/lost-and-found/reports/found`
 
@@ -155,7 +172,7 @@ Accepted content types:
 
 Required for found reports:
 - `itemName`
-- `category`
+- `categoryId` (integer)
 - `locationType`
 - `collectionPlace`
 - at least one photo (uploaded file or image URL)
@@ -171,12 +188,12 @@ Response:
 {
   "id": 124,
   "referenceNumber": "LF-000124",
-  "status": "Pending Verification",
+  "status": "pending_verification",
   "message": "Found item report submitted for review."
 }
 ```
 
-### 1.7 Manual Admin Create
+### 1.8 Manual Admin Create
 
 `POST /api/lost-and-found/items` (admin/lost_found_leader)
 
@@ -187,21 +204,21 @@ Accepted content types:
 Additional required field:
 - `type` (`lost` or `found`)
 
-### 1.8 Admin Patch Item
+### 1.9 Admin Patch Item
 
 `PATCH /api/lost-and-found/items/{id}`
 
-Body fields (all optional):
-- `adminStatus`: `Pending`, `Received`, `Delivered`
+Body fields (all optional; strings are case-insensitive):
+- `adminStatus`: `pending`, `received`, `delivered`
 - `title`
 - `description`
-- `status`: `Active` or `Pending Verification`
+- `status`: `active` or any of `pending`, `pending verification`, `pending_verification`
 - `storageBinId`
 - `condition`: `good`, `fair`, `damaged`
 - `adminNotes`
 - `reportedColor`
 
-### 1.9 Upload Endpoint
+### 1.10 Upload Endpoint
 
 `POST /api/lost-and-found/upload`
 
@@ -222,7 +239,7 @@ Response:
 }
 ```
 
-### 1.10 Claims
+### 1.11 Claims
 
 Create claim:
 - `POST /api/lost-and-found/items/{id}/claims`
@@ -244,7 +261,7 @@ Get item claims:
 - `GET /api/lost-and-found/items/{id}/claims`
 - admin/lost_found_leader only
 
-### 1.11 Notify Owner
+### 1.12 Notify Owner
 
 `POST /api/lost-and-found/items/{id}/notify`
 
@@ -260,7 +277,7 @@ Body:
 }
 ```
 
-### 1.12 Confirm Receipt
+### 1.13 Confirm Receipt
 
 `POST /api/lost-and-found/items/{id}/confirm-receipt`
 
@@ -274,7 +291,9 @@ Fields:
 - `confirmAccuracy` (bool)
 - `adminNotes` (optional)
 
-### 1.13 Complete Delivery
+On success the item is updated to `adminStatus` **`received`** and public `status` **`active`**, and it **drops off** the public list/detail/timeline for non-admin callers (see §1.2).
+
+### 1.14 Complete Delivery
 
 `POST /api/lost-and-found/items/{id}/complete-delivery`
 
@@ -287,9 +306,13 @@ Fields:
 - `studentIdVerified` (bool)
 - `handoverProofFile` (optional file)
 
-### 1.14 Timeline
+On success, `adminStatus` becomes **`delivered`**; the item stays out of the public catalog and cannot receive new claims.
+
+### 1.15 Timeline
 
 `GET /api/lost-and-found/items/{id}/timeline`
+
+Non-admin callers receive **404** for items in admin `received` or `delivered` (same as get-by-id).
 
 Response:
 
@@ -303,12 +326,12 @@ Response:
 }
 ```
 
-### 1.15 Modern Report Payload Reference
+### 1.16 Modern Report Payload Reference
 
 Common payload keys accepted by modern create endpoints:
 - `type`
 - `itemName`
-- `category`
+- `categoryId`
 - `description`
 - `location` (nullable)
 - `locationType`
@@ -490,9 +513,10 @@ Modern API accepted values:
 - `condition`: `good`, `fair`, `damaged`
 - `claimType`: `owner`, `finder`
 
-Modern API response formatting:
-- public `status` is returned as `Active` or `Pending Verification`
-- `adminStatus` is returned as enum string when included
+Modern API response formatting (JSON):
+- Public `status` is always **`active`** or **`pending_verification`** (snake_case).
+- When admin fields are included (admin write responses), `adminStatus` is **`pending`**, **`received`**, or **`delivered`** (snake_case).
+- After **confirm receipt**, the API sets public `status` to **`active`** and `adminStatus` to **`received`** (item then disappears from non-admin list/detail).
 
 ---
 
@@ -549,7 +573,7 @@ Content-Type: application/json
 ```json
 {
   "itemName": "Black Wallet",
-  "category": "Accessories",
+  "categoryId": 5,
   "description": "Found near cafeteria.",
   "locationType": "other",
   "location": "Main cafeteria entrance",

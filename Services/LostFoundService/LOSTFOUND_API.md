@@ -1,6 +1,6 @@
 # LostFound API Documentation
 
-Last updated: 2026-04-25
+Last updated: 2026-04-26
 
 ## Base URLs
 
@@ -32,21 +32,27 @@ http://13.60.31.141:500/lostfound/api/lost-and-found/items
 - `lost`
 - `found`
 
-### Public status
+### Public status (`status` on item responses)
 
-Accepted input values:
+**Query / PATCH input** (case-insensitive; accepted synonyms):
 
 - `active`
-- `pending`
-- `pending verification`
+- `pending`, `pending verification`, `pending_verification` (all map to pending verification)
+
+**JSON response values** (always snake_case):
+
+- `active`
 - `pending_verification`
 
-Response values:
+### Admin status (`adminStatus` when returned on admin write responses)
 
-- `Active`
-- `Pending Verification`
+**Query filter / PATCH input** (case-insensitive):
 
-### Admin status
+- `pending`
+- `received`
+- `delivered`
+
+**JSON response values** (snake_case when admin fields are included):
 
 - `pending`
 - `received`
@@ -96,9 +102,10 @@ Main item responses use:
   "type": "found",
   "title": "AirPods Pro Case",
   "location": "Main Building, Lobby",
-  "category": "Electronics",
-  "status": "Pending Verification",
-  "adminStatus": "Pending",
+  "categoryId": 3,
+  "categoryName": "Electronics",
+  "status": "pending_verification",
+  "adminStatus": "pending",
   "description": "White charging case with scratches.",
   "referenceNumber": "LF-000012",
   "datePosted": "2026-04-25",
@@ -136,9 +143,15 @@ Main item responses use:
 }
 ```
 
-Admin-only fields are not returned by the public GET item endpoints.
+The example above shows **all** fields; public `GET /api/lost-and-found/items/{id}` returns `null` for admin-only properties (`adminStatus`, `storageBinId`, `condition`, `adminNotes`, `reportedColor`, `intakePhotoUrl`, `confirmAccuracy`, `claimantName`, `claimantStudentId`, `studentIdVerified`, `handoverProofUrl`) even when the caller is an admin. Those fields are populated on **admin workflow write** responses (manual create, patch, confirm receipt, complete delivery).
 
-They are only populated on the admin workflow write responses such as manual create, patch, confirm receipt, and complete delivery:
+### Public catalog visibility
+
+- Callers **without** roles `admin` or `lost_found_leader`: `GET /api/lost-and-found/items`, `GET .../items/{id}`, and `GET .../items/{id}/timeline` **exclude** items whose `adminStatus` is `received` or `delivered`. Those paths return **404** for a terminal item by id. `POST .../items/{id}/claims` also returns **404** for terminal items.
+- Callers **with** `admin` or `lost_found_leader`: list, detail, and timeline include **all** items.
+- `GET /api/lost-and-found/stats` counts only items **not** in admin `received` or `delivered` (matches the public board), for every caller.
+
+Fields populated only on admin write responses:
 
 - `adminStatus`
 - `storageBinId`
@@ -165,10 +178,10 @@ Query params:
 - `q`: free-text search
 - `search`: alias of `q`
 - `type`: `lost`, `found`, or `all`
-- `postedBy`: use `me` to limit to the authenticated user
-- `category`
-- `status`: `active` or `pending`
-- `adminStatus`: `pending`, `received`, `delivered`
+- `postedBy`: use `me` to limit to the authenticated user (requires JWT)
+- `categoryId`: optional integer filter
+- `status`: `active` or `pending` / `pending_verification` / `pending verification` (filter)
+- `adminStatus`: `pending`, `received`, `delivered` (filter; case-insensitive)
 - `page`: default `1`
 - `limit`: default `10`, max `100`
 
@@ -188,8 +201,9 @@ Response:
       "type": "found",
       "title": "AirPods Pro Case",
       "location": "Main Building, Lobby",
-      "category": "Electronics",
-      "status": "Pending Verification",
+      "categoryId": 3,
+      "categoryName": "Electronics",
+      "status": "pending_verification",
       "referenceNumber": "LF-000012",
       "datePosted": "2026-04-25",
       "daysAgo": 0,
@@ -210,11 +224,15 @@ Response:
 - Path: `/api/lost-and-found/items/{id}`
 - Auth: optional
 
+Non-admin callers receive **404** for items in admin `received` or `delivered`. Admins can open any item. Public GET responses do not populate admin-only fields (see **Response Shape**).
+
 ### 3. Get stats
 
 - Method: `GET`
 - Path: `/api/lost-and-found/stats`
 - Auth: optional
+
+Counts exclude items in admin `received` or `delivered` (same scope as the public catalog). See **Response Shape → Public catalog visibility**.
 
 Response:
 
@@ -237,7 +255,7 @@ This endpoint is strict. Only these fields are accepted:
 
 - `type`
 - `itemName`
-- `category`
+- `categoryId`
 - `description`
 - `location`
 - `dateLost`
@@ -261,7 +279,7 @@ Working JSON example:
 {
   "type": "lost",
   "itemName": "Black Wallet",
-  "category": "Documents",
+  "categoryId": 2,
   "description": "Black leather wallet with student ID and bank cards.",
   "location": "Main Building lobby",
   "dateLost": "2026-04-24",
@@ -278,7 +296,7 @@ Success response:
 {
   "id": 25,
   "referenceNumber": "LF-000025",
-  "status": "Pending Verification",
+  "status": "pending_verification",
   "message": "Lost item report submitted for review."
 }
 ```
@@ -306,7 +324,7 @@ Recommended multipart example:
 ```bash
 curl -X POST "http://13.60.31.141:500/lostfound/api/lost-and-found/reports/found" \
   -F "itemName=AirPods Pro Case" \
-  -F "category=Electronics" \
+  -F "categoryId=3" \
   -F "description=White charging case with small scratches" \
   -F "locationType=building" \
   -F "buildingCode=MB" \
@@ -326,7 +344,7 @@ Allowed fields:
 
 - `type`
 - `itemName`
-- `category`
+- `categoryId`
 - `description`
 - `location`
 - `locationType`
@@ -363,7 +381,7 @@ Working lost JSON example:
 {
   "type": "lost",
   "itemName": "Black Wallet",
-  "category": "Documents",
+  "categoryId": 2,
   "description": "Black leather wallet with student ID and bank cards.",
   "location": "Main Building lobby",
   "dateLost": "2026-04-24",
@@ -493,6 +511,8 @@ Rules:
 - `condition` must be `good`, `fair`, or `damaged`.
 - `intakePhotoFile` must be PNG or JPG when supplied.
 
+After success, the item has `adminStatus` **`received`** and public `status` **`active`**. It is then **hidden** from non-admin `GET` list/detail/timeline (see **Public catalog visibility**).
+
 Example:
 
 ```bash
@@ -522,6 +542,8 @@ Body fields:
 Rules:
 
 - `handoverProofFile` must be PNG or JPG when supplied.
+
+After success, `adminStatus` becomes **`delivered`**. The item remains excluded from non-admin catalog reads and from new claims.
 
 ### 13. Get item claims
 

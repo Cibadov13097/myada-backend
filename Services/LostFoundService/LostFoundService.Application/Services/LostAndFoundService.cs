@@ -74,6 +74,7 @@ public class LostAndFoundService : ILostAndFoundService
             query.CategoryId,
             parsedStatus,
             parsedAdminStatus,
+            query.ExcludeTerminalAdminItems,
             page,
             limit);
 
@@ -84,19 +85,29 @@ public class LostAndFoundService : ILostAndFoundService
         };
     }
 
-    public async Task<LostFoundItem> GetItemByIdAsync(int id)
+    public async Task<LostFoundItem> GetItemByIdAsync(int id, bool hideTerminalItemsForPublic = false)
     {
         var item = await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: true);
-        return item ?? throw new NotFoundException($"Item {id} was not found.");
+        if (item == null)
+        {
+            throw new NotFoundException($"Item {id} was not found.");
+        }
+
+        if (hideTerminalItemsForPublic && IsTerminalAdminStatus(item.AdminStatus))
+        {
+            throw new NotFoundException($"Item {id} was not found.");
+        }
+
+        return item;
     }
 
     public async Task<LostFoundStats> GetStatsAsync()
     {
         return new LostFoundStats
         {
-            Total = await _repository.CountItemsAsync(),
-            Active = await _repository.CountItemsByStatusAsync(LostFoundPublicStatus.Active),
-            PendingVerification = await _repository.CountItemsByStatusAsync(LostFoundPublicStatus.PendingVerification)
+            Total = await _repository.CountCatalogItemsExcludingTerminalAsync(publicStatus: null),
+            Active = await _repository.CountCatalogItemsExcludingTerminalAsync(LostFoundPublicStatus.Active),
+            PendingVerification = await _repository.CountCatalogItemsExcludingTerminalAsync(LostFoundPublicStatus.PendingVerification)
         };
     }
 
@@ -274,7 +285,7 @@ public class LostAndFoundService : ILostAndFoundService
         item.ModifiedByUserId = command.ModifiedByUserId;
 
         await _repository.SaveChangesAsync();
-        return item;
+        return await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: true) ?? item;
     }
 
     public async Task NotifyOwnerAsync(int id, NotifyLostFoundOwnerCommand command)
@@ -294,8 +305,13 @@ public class LostAndFoundService : ILostAndFoundService
 
     public async Task<LostFoundItemClaim> CreateClaimAsync(int id, CreateLostFoundClaimCommand command)
     {
-        var itemExists = await _repository.ItemExistsAsync(id);
-        if (!itemExists)
+        var item = await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: false);
+        if (item == null)
+        {
+            throw new NotFoundException($"Item {id} was not found.");
+        }
+
+        if (IsTerminalAdminStatus(item.AdminStatus))
         {
             throw new NotFoundException($"Item {id} was not found.");
         }
@@ -338,6 +354,7 @@ public class LostAndFoundService : ILostAndFoundService
         }
 
         item.AdminStatus = LostFoundAdminStatus.Received;
+        item.Status = LostFoundPublicStatus.Active;
         item.StorageBinId = command.StorageBinId;
         item.Condition = parsedCondition;
         item.IntakePhotoUrl = command.IntakePhotoUrl ?? item.IntakePhotoUrl;
@@ -347,7 +364,7 @@ public class LostAndFoundService : ILostAndFoundService
         item.ModifiedByUserId = command.ModifiedByUserId;
 
         await _repository.SaveChangesAsync();
-        return item;
+        return await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: true) ?? item;
     }
 
     public async Task<LostFoundItem> CompleteDeliveryAsync(int id, CompleteLostFoundDeliveryCommand command)
@@ -368,7 +385,7 @@ public class LostAndFoundService : ILostAndFoundService
         item.ModifiedByUserId = command.ModifiedByUserId;
 
         await _repository.SaveChangesAsync();
-        return item;
+        return await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: true) ?? item;
     }
 
     public async Task<List<LostFoundItemClaim>> GetItemClaimsAsync(int id)
@@ -382,11 +399,24 @@ public class LostAndFoundService : ILostAndFoundService
         return await _repository.GetClaimsByItemIdAsync(id);
     }
 
-    public async Task<LostFoundItem> GetTimelineItemAsync(int id)
+    public async Task<LostFoundItem> GetTimelineItemAsync(int id, bool hideTerminalItemsForPublic = false)
     {
         var item = await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: false);
-        return item ?? throw new NotFoundException($"Item {id} was not found.");
+        if (item == null)
+        {
+            throw new NotFoundException($"Item {id} was not found.");
+        }
+
+        if (hideTerminalItemsForPublic && IsTerminalAdminStatus(item.AdminStatus))
+        {
+            throw new NotFoundException($"Item {id} was not found.");
+        }
+
+        return item;
     }
+
+    private static bool IsTerminalAdminStatus(LostFoundAdminStatus? adminStatus) =>
+        adminStatus is LostFoundAdminStatus.Received or LostFoundAdminStatus.Delivered;
 
     private static void ValidateCreateCommand(CreateLostFoundItemCommand command, LostFoundItemType type)
     {

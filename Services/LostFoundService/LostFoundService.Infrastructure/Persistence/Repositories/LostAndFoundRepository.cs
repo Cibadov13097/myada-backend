@@ -32,6 +32,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         int? categoryId,
         LostFoundPublicStatus? status,
         LostFoundAdminStatus? adminStatus,
+        bool excludeTerminalAdminItems,
         int page,
         int limit)
     {
@@ -60,6 +61,11 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         if (adminStatus.HasValue)
         {
             query = query.Where(x => x.AdminStatus == adminStatus.Value);
+        }
+
+        if (excludeTerminalAdminItems)
+        {
+            query = query.Where(x => !IsTerminalAdminStatus(x.AdminStatus));
         }
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -109,6 +115,20 @@ public class LostAndFoundRepository : ILostAndFoundRepository
     {
         return _context.LostFoundItems.CountAsync(x => x.Status == status);
     }
+
+    public Task<int> CountCatalogItemsExcludingTerminalAsync(LostFoundPublicStatus? publicStatus)
+    {
+        var query = _context.LostFoundItems.AsNoTracking().Where(x => !IsTerminalAdminStatus(x.AdminStatus));
+        if (publicStatus.HasValue)
+        {
+            query = query.Where(x => x.Status == publicStatus.Value);
+        }
+
+        return query.CountAsync();
+    }
+
+    private static bool IsTerminalAdminStatus(LostFoundAdminStatus? adminStatus) =>
+        adminStatus is LostFoundAdminStatus.Received or LostFoundAdminStatus.Delivered;
 
     public Task<bool> CategoryExistsAsync(int categoryId)
     {

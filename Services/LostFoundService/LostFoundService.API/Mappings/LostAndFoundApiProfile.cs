@@ -61,10 +61,10 @@ public class LostAndFoundApiProfile : Profile
 
         CreateMap<LostFoundItem, LostFoundItemResponse>()
             .ForMember(d => d.Type, o => o.MapFrom(s => ToItemTypeString(s.Type)))
-            .ForMember(d => d.Status, o => o.MapFrom(s => ToPublicStatusString(s.Status)))
+            .ForMember(d => d.Status, o => o.MapFrom(s => ToPublicStatusApiString(s.Status)))
             .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : null))
             .ForMember(d => d.AdminStatus, o => o.MapFrom((s, _, _, context) =>
-                IncludeAdminFields(context) ? ToAdminStatusString(s.AdminStatus) : null))
+                IncludeAdminFields(context) ? ToAdminStatusApiString(s.AdminStatus) : null))
             .ForMember(d => d.DatePosted, o => o.MapFrom(s => s.PostedAt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)))
             .ForMember(d => d.DaysAgo, o => o.MapFrom(s => Math.Max((int)(DateTime.UtcNow.Date - s.PostedAt.Date).TotalDays, 0)))
             .ForMember(d => d.Image, o => o.MapFrom(s => s.PrimaryImageUrl ?? s.Images.OrderBy(x => x.SortOrder).Select(x => x.Url).FirstOrDefault()))
@@ -103,10 +103,16 @@ public class LostAndFoundApiProfile : Profile
 
     private static string ToItemTypeString(LostFoundItemType type) => type == LostFoundItemType.Found ? "found" : "lost";
 
-    private static string ToPublicStatusString(LostFoundPublicStatus status) =>
-        status == LostFoundPublicStatus.Active ? "Active" : "Pending Verification";
+    private static string ToPublicStatusApiString(LostFoundPublicStatus status) =>
+        status == LostFoundPublicStatus.Active ? "active" : "pending_verification";
 
-    private static string? ToAdminStatusString(LostFoundAdminStatus? status) => status?.ToString();
+    private static string? ToAdminStatusApiString(LostFoundAdminStatus? status) => status switch
+    {
+        LostFoundAdminStatus.Pending => "pending",
+        LostFoundAdminStatus.Received => "received",
+        LostFoundAdminStatus.Delivered => "delivered",
+        _ => null
+    };
 
     private static string? ToConditionString(LostFoundItemCondition? condition)
     {

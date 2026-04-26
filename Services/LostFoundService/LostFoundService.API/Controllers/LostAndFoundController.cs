@@ -162,7 +162,8 @@ public class LostAndFoundController : ControllerBase
                 Page = page,
                 Limit = limit,
                 CurrentUserId = TryGetUserId(),
-                IncludeAdminFields = false
+                IncludeAdminFields = false,
+                ExcludeTerminalAdminItems = !IsAdmin()
             });
 
             return Ok(new ItemListResponse
@@ -188,7 +189,7 @@ public class LostAndFoundController : ControllerBase
     {
         try
         {
-            var item = await _lostAndFoundService.GetItemByIdAsync(id);
+            var item = await _lostAndFoundService.GetItemByIdAsync(id, hideTerminalItemsForPublic: !IsAdmin());
             return Ok(MapItemResponse(item, includeAdminFields: false));
         }
         catch (NotFoundException ex)
@@ -572,7 +573,7 @@ public class LostAndFoundController : ControllerBase
     {
         try
         {
-            var item = await _lostAndFoundService.GetTimelineItemAsync(id);
+            var item = await _lostAndFoundService.GetTimelineItemAsync(id, hideTerminalItemsForPublic: !IsAdmin());
             return Ok(new TimelineResponse
             {
                 Events = new List<TimelineEventResponse>

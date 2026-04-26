@@ -12,6 +12,7 @@ public interface ILostAndFoundRepository
         int? categoryId,
         LostFoundPublicStatus? status,
         LostFoundAdminStatus? adminStatus,
+        bool excludeTerminalAdminItems,
         int page,
         int limit);
 
@@ -19,6 +20,12 @@ public interface ILostAndFoundRepository
     Task<LostFoundItem?> GetTrackedItemAsync(int id, bool includeImages = false);
     Task<int> CountItemsAsync();
     Task<int> CountItemsByStatusAsync(LostFoundPublicStatus status);
+
+    /// <summary>
+    /// Counts items shown on the public catalog (excludes Received/Delivered admin states).
+    /// When <paramref name="publicStatus"/> is null, counts all such items.
+    /// </summary>
+    Task<int> CountCatalogItemsExcludingTerminalAsync(LostFoundPublicStatus? publicStatus);
     Task<bool> CategoryExistsAsync(int categoryId);
     Task AddItemAsync(LostFoundItem item);
     Task AssignUniqueReferenceNumberAsync(LostFoundItem item);

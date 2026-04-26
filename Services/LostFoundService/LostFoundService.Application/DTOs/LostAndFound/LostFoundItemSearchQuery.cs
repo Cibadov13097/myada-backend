@@ -13,4 +13,9 @@ public sealed class LostFoundItemSearchQuery
     public int Limit { get; set; } = 10;
     public string? CurrentUserId { get; set; }
     public bool IncludeAdminFields { get; set; }
+
+    /// <summary>
+    /// When true, items with admin workflow Received or Delivered are omitted (public / frontend catalog).
+    /// </summary>
+    public bool ExcludeTerminalAdminItems { get; set; }
 }
