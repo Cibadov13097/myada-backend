@@ -184,6 +184,7 @@ public sealed class ClubAdminEmployeeDto
     public string Id { get; init; } = string.Empty;
     public string ClubId { get; init; } = string.Empty;
     public string StudentId { get; init; } = string.Empty;
+    public string? EmployeeName { get; set; }
     public string? PositionId { get; init; }
     /// <summary>Human-readable role title such as President or Vice President.</summary>
     public string? PositionTitle { get; init; }

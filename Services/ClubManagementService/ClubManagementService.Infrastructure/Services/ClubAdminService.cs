@@ -29,6 +29,7 @@ public sealed class ClubAdminService : IClubAdminService
     private readonly IClubRepository _clubRepository;
     private readonly IClubMembershipRepository _clubMembershipRepository;
     private readonly ClubManagementDbContext _db;
+    private readonly IAuthUserLookupService _authUserLookup;
 
     public ClubAdminService(
         IClubService clubService,
@@ -40,7 +41,7 @@ public sealed class ClubAdminService : IClubAdminService
         IProposalContractService proposalContract,
         IClubRepository clubRepository,
         IClubMembershipRepository clubMembershipRepository,
-        ClubManagementDbContext db)
+        ClubManagementDbContext db, IAuthUserLookupService authUserLookup)
     {
         _clubService = clubService;
         _jobVacancyService = jobVacancyService;
@@ -52,6 +53,7 @@ public sealed class ClubAdminService : IClubAdminService
         _clubRepository = clubRepository;
         _clubMembershipRepository = clubMembershipRepository;
         _db = db;
+        _authUserLookup = authUserLookup;
     }
 
     public async Task<ClubAdminDashboardDto?> GetDashboardAsync(string clubRouteKey, CancellationToken cancellationToken = default)
@@ -866,11 +868,15 @@ public sealed class ClubAdminService : IClubAdminService
             .ToDictionaryAsync(p => p.Id, p => p.Title, cancellationToken)
             .ConfigureAwait(false);
 
+        var userIds = rows.Select(e => e.UserId).Distinct().ToList();
+        var userNames = await _authUserLookup.GetUserNamesByIdsAsync(userIds, cancellationToken).ConfigureAwait(false);
+
         var items = rows.Select(e => new ClubAdminEmployeeDto
         {
             Id = e.Id.ToString(CultureInfo.InvariantCulture),
             ClubId = ctx.Key,
             StudentId = e.UserId.ToString("D"),
+            EmployeeName = userNames.TryGetValue(e.UserId, out var name) ? name : null,
             PositionId = e.PositionId?.ToString(CultureInfo.InvariantCulture),
             PositionTitle = e.PositionId.HasValue && positionTitlesById.TryGetValue(e.PositionId.Value, out var title) ? title : null,
             PositionName = e.PositionId.HasValue && positionTitlesById.TryGetValue(e.PositionId.Value, out var legacyTitle) ? legacyTitle : null
@@ -913,11 +919,14 @@ public sealed class ClubAdminService : IClubAdminService
         }
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
+        var userNames = await _authUserLookup.GetUserNamesByIdsAsync(new[] { userId }, cancellationToken).ConfigureAwait(false);
+
         return new ClubAdminEmployeeDto
         {
             Id = existing.Id.ToString(CultureInfo.InvariantCulture),
             ClubId = ctx.Key,
             StudentId = existing.UserId.ToString("D"),
+            EmployeeName = userNames.TryGetValue(userId, out var name) ? name : null,
             PositionId = existing.PositionId?.ToString(CultureInfo.InvariantCulture),
             PositionTitle = positionTitle,
             PositionName = positionTitle

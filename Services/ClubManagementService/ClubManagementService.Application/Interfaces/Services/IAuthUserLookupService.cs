@@ -5,4 +5,8 @@ public interface IAuthUserLookupService
     Task<IReadOnlyDictionary<string, Guid>> GetUserIdsByOrganizationalIdsAsync(
         IEnumerable<string> organizationalIds,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyDictionary<Guid, string>> GetUserNamesByIdsAsync(
+        IEnumerable<Guid> userIds,
+        CancellationToken cancellationToken = default);
 }
