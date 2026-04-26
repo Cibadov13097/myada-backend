@@ -1,6 +1,6 @@
 # Club Management API — Frontend integration guide
 
-This document describes backend behavior and contracts **implemented in this project** for FrontWeb / SPA integration. Base URL is assumed to be `{CLUB_API_BASE}/api/v1` (no trailing slash on the base). API versioning uses `v1` in the path.
+This document describes backend behavior and contracts **implemented in this project** for FrontWeb / SPA integration. Base URL is assumed to be `{CLUB_API_BASE}/api/v1` (no trailing slash on the base). For the deployment shared in this thread, use `http://13.60.31.141:5000/api/v1`. API versioning uses `v1` in the path.
 
 Unless noted otherwise, responses are wrapped by **AutoWrapper** as `{ "result": ... }` or `{ "data": ... }` (depending on configuration). Your `unwrapApiResponse` should read **`result`** or **`data`**.
 
@@ -208,13 +208,15 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
 
 ---
 
-## 3. Event proposals (JSON)
+## 3. Event proposals (JSON or multipart)
 
 ### 3.1 Club admin — suggest event
 
 - `POST /api/v1/club-admin/{clubId}/events/proposals`  
-- `Content-Type: application/json`  
-- Body: **`EventProposalSubmitDto`** (see types below).
+- `Content-Type: application/json` or `multipart/form-data`
+- JSON body: **`EventProposalSubmitDto`** (see types below).
+- Multipart fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `description`, `objectives`, `submittedByOrganization?`, `imageUrl?`, `imageFile?`, `subEventsJson?`, `logisticsJson?`
+- In Swagger, choose `multipart/form-data` to get the file picker for `imageFile`.
 
 **Success (`result`)**
 
@@ -223,17 +225,20 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
   "proposalId": "1",
   "id": "1",
   "status": "pending_review",
-  "clubId": "{clubId}"
+  "clubId": "{clubId}",
+  "imageUrl": "https://cdn.example/event-proposals/poster.png"
 }
 ```
 
-(`clubId` is the route string; `proposalId` / `id` are numeric strings from a server counter.)
+(`clubId` is the route string; `proposalId` / `id` are numeric strings from a server counter. `imageUrl` is present when an image URL or uploaded file was supplied.)
 
 ### 3.2 Student Services — staff event proposal + queue
 
 **Create (staff)**
 
 - `POST /api/v1/student-services/events/proposals`
+- Same create contract as the club-admin route: `application/json` or `multipart/form-data`.
+- Multipart uploads use `imageFile`; JSON requests use `imageUrl` when the file is already uploaded elsewhere.
 
 **List / detail / actions**
 
@@ -243,7 +248,7 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
 - POST `/api/v1/student-services/events/proposals/{proposalId}/reject` — `{ "reason": "..." }`
 - POST `/api/v1/student-services/events/proposals/{proposalId}/request-revision` — `{ "changes": "..." }`
 
-**Event proposal JSON body (club + staff)**
+**Event proposal body (club + staff)**
 
 Shared shape (`EventProposalSubmitDto`):
 
@@ -256,15 +261,25 @@ Shared shape (`EventProposalSubmitDto`):
 | `venue` | string | |
 | `description` | string | |
 | `objectives` | string | |
+| `imageUrl` | string? | Existing uploaded image URL/reference. Also returned on proposal reads. |
 | `subEvents` | array | `{ title, capacity, start, end, date }` strings |
 | `logistics` | object | `avSetup`, `security`, `catering`, `cleaning`, `otherNeeds` (camelCase JSON) |
 | `submittedByOrganization` | string? | Staff flow only |
+
+**Multipart-specific notes**
+
+- `imageFile` is the direct upload field for Swagger/Postman/browser forms.
+- `subEventsJson` must be a JSON array string.
+- `logisticsJson` must be a JSON object string.
+- If both `imageUrl` and `imageFile` are sent, the uploaded file wins and its stored URL becomes the proposal image.
 
 **Persistence**
 
 - Event proposals are persisted to Postgres in `club.EventProposals`.
 - Proposing an event (club admin or staff) **does not** create an `club.Events` row.
 - Only Student Services **approval** creates the actual event in `club.Events`.
+- Proposal list/detail payloads expose the proposal image as both `imageUrl` and legacy alias `posterUrl`.
+- When Student Services approves the proposal, that same image URL is copied into the created event's `ImageUrl`.
 
 **Approve body (`EventProposalApproveDto`)**
 
@@ -412,6 +427,7 @@ type EventProposalSubmitDto = {
   venue: string
   description: string
   objectives: string
+  imageUrl?: string
   subEvents: Array<{
     title: string
     capacity: string

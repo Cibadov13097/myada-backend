@@ -65,7 +65,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
 
         if (excludeTerminalAdminItems)
         {
-            query = query.Where(x => !IsTerminalAdminStatus(x.AdminStatus));
+            query = ExcludeTerminalAdminItems(query);
         }
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -118,7 +118,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
 
     public Task<int> CountCatalogItemsExcludingTerminalAsync(LostFoundPublicStatus? publicStatus)
     {
-        var query = _context.LostFoundItems.AsNoTracking().Where(x => !IsTerminalAdminStatus(x.AdminStatus));
+        var query = ExcludeTerminalAdminItems(_context.LostFoundItems.AsNoTracking());
         if (publicStatus.HasValue)
         {
             query = query.Where(x => x.Status == publicStatus.Value);
@@ -127,8 +127,13 @@ public class LostAndFoundRepository : ILostAndFoundRepository
         return query.CountAsync();
     }
 
-    private static bool IsTerminalAdminStatus(LostFoundAdminStatus? adminStatus) =>
-        adminStatus is LostFoundAdminStatus.Received or LostFoundAdminStatus.Delivered;
+    private static IQueryable<LostFoundItem> ExcludeTerminalAdminItems(IQueryable<LostFoundItem> query)
+    {
+        return query.Where(x =>
+            x.AdminStatus == null ||
+            (x.AdminStatus != LostFoundAdminStatus.Received &&
+             x.AdminStatus != LostFoundAdminStatus.Delivered));
+    }
 
     public Task<bool> CategoryExistsAsync(int categoryId)
     {
