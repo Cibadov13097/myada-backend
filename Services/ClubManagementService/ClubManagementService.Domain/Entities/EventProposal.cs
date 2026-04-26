@@ -11,6 +11,7 @@ public sealed class EventProposal
     public string ClubName { get; set; } = string.Empty;
 
     public string BodyJson { get; set; } = "{}";
+    public string? ImageUrl { get; set; }
 
     public string Status { get; set; } = "pending_review";
     public DateTimeOffset SubmittedAt { get; set; }
@@ -28,4 +29,3 @@ public sealed class EventProposal
     public JsonDocument BodyAsJson()
         => JsonDocument.Parse(string.IsNullOrWhiteSpace(BodyJson) ? "{}" : BodyJson);
 }
-

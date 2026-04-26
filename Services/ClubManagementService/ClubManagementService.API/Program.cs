@@ -203,6 +203,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
     c.OperationFilter<ClubProposalCreateRequestBodyOperationFilter>();
+    c.OperationFilter<EventProposalCreateRequestBodyOperationFilter>();
 
     // One OpenAPI document per API group from the version explorer.
     c.DocInclusionPredicate((documentName, apiDescription) =>

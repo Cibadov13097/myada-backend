@@ -112,6 +112,7 @@ public sealed class EventProposalResultDto
     public string Id { get; init; } = string.Empty;
     public string Status { get; init; } = "pending_review";
     public string ClubId { get; init; } = string.Empty;
+    public string? ImageUrl { get; init; }
 }
 
 public sealed class ProfilePatchResultDto

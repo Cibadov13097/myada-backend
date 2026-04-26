@@ -326,8 +326,8 @@ Shared shape (`EventProposalSubmitDto`):
 | `socialLinks` | string (JSON object) | Social links **unchanged** (merge-patch; see below) |
 | `email` | string | Email **unchanged** |
 | `resourcesJson` | string (UTF-8 JSON array) | Resources list **unchanged** |
-| `logoFile` | file | Not persisted yet (hint only) |
-| `backgroundFile` | file | Not persisted yet (hint only) |
+| `logoFile` | file | When uploaded successfully, persisted into the club's published `ProfileImageUrl` |
+| `backgroundFile` | file | When uploaded successfully, persisted into the club's published `BackgroundImageUrl` |
 
 **`focusAreasJson`**
 
@@ -376,6 +376,8 @@ Shared shape (`EventProposalSubmitDto`):
   "clubId": "1",
   "updated": true,
   "pendingReview": false,
+  "profileImageUrl": "https://cdn.example/club/logo.png",
+  "backgroundImageUrl": "https://cdn.example/club/background.jpg",
   "focusAreas": [
     { "icon": "code", "title": "Software", "description": "Open source and campus tooling." }
   ],
@@ -385,8 +387,8 @@ Shared shape (`EventProposalSubmitDto`):
 }
 ```
 
-- **`focusAreas`**, **`email`**, **`socialLinks`**, **`resources`** echo the **published** state after the call (even when `updated` is `false` because no part caused a write).
-- **`updated`**: `true` if `FocusAreasJson`, `SocialLinksJson`, `Email`, and/or `ResourcesJson` was written in that request.
+- **`focusAreas`**, **`email`**, **`socialLinks`**, **`resources`**, **`profileImageUrl`**, and **`backgroundImageUrl`** echo the published state after the call (even when `updated` is `false` because no part caused a write).
+- **`updated`**: `true` if `FocusAreasJson`, `SocialLinksJson`, `Email`, `ResourcesJson`, `ProfileImageUrl`, and/or `BackgroundImageUrl` was written in that request.
 
 **Allowed `icon` keys (whitelist)**
 

@@ -404,6 +404,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                     b.Property<int?>("CreatedEventId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("LastApproveAssignmentsJson")
                         .HasColumnType("text");
 

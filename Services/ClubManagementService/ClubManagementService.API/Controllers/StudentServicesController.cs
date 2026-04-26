@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using ClubManagementService.API.Models;
 using ClubManagementService.API.Responses;
 using ClubManagementService.API.Security;
 using ClubManagementService.Application.DTOs.Club;
@@ -10,9 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Events.Notifications;
 using System.Globalization;
+using System.IO;
+using System.Text.Json;
 
 namespace ClubManagementService.API.Controllers;
 
@@ -27,6 +31,7 @@ public class StudentServicesController : ControllerBase
     private readonly IEventService _eventService;
     private readonly IClubNotificationService _notificationService;
     private readonly IProposalContractService _proposalContract;
+    private readonly IImageStorageService _imageStorageService;
     private readonly ClubManagementDbContext _db;
 
     public StudentServicesController(
@@ -34,12 +39,14 @@ public class StudentServicesController : ControllerBase
         IEventService eventService,
         IClubNotificationService notificationService,
         IProposalContractService proposalContract,
+        IImageStorageService imageStorageService,
         ClubManagementDbContext db)
     {
         _clubService = clubService;
         _eventService = eventService;
         _notificationService = notificationService;
         _proposalContract = proposalContract;
+        _imageStorageService = imageStorageService;
         _db = db;
     }
 
@@ -215,15 +222,35 @@ public class StudentServicesController : ControllerBase
     }
 
     [HttpPost("events/proposals")]
-    public async Task<IActionResult> CreateStaffEventProposal([FromBody] EventProposalSubmitDto body, CancellationToken cancellationToken)
+    [Consumes("application/json", "multipart/form-data")]
+    public async Task<IActionResult> CreateStaffEventProposal(CancellationToken cancellationToken)
     {
         var denied = EnsureStudentServices();
         if (denied != null) return denied;
-        var actor = GetCurrentUserIdOrDefault();
-        var result = await _proposalContract.SubmitStaffEventProposalAsync(body, actor, cancellationToken).ConfigureAwait(false);
-        if (!result.Success)
-            return BadRequest(result.ErrorBody ?? new { message = result.ErrorMessage });
-        return Ok(result.Payload);
+
+        var (body, uploadedImageUrl, errorResult) = await TryReadEventProposalBodyAsync(
+            "student-services/event-proposals",
+            cancellationToken).ConfigureAwait(false);
+        if (errorResult != null)
+            return errorResult;
+
+        try
+        {
+            var actor = GetCurrentUserIdOrDefault();
+            var result = await _proposalContract.SubmitStaffEventProposalAsync(body!, actor, cancellationToken).ConfigureAwait(false);
+            if (!result.Success)
+            {
+                await TryDeleteStoredFileAsync(uploadedImageUrl, cancellationToken).ConfigureAwait(false);
+                return BadRequest(result.ErrorBody ?? new { message = result.ErrorMessage });
+            }
+
+            return Ok(result.Payload);
+        }
+        catch
+        {
+            await TryDeleteStoredFileAsync(uploadedImageUrl, cancellationToken).ConfigureAwait(false);
+            throw;
+        }
     }
 
     [HttpGet("events/proposals")]
@@ -699,6 +726,103 @@ public class StudentServicesController : ControllerBase
     {
         var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
+    }
+
+    private async Task<string?> UploadFileIfPresentAsync(string directory, IFormFile? file, CancellationToken cancellationToken)
+    {
+        if (file == null || file.Length == 0)
+            return null;
+
+        if (!_imageStorageService.IsSupportedImage(file.FileName))
+            return string.Empty;
+
+        await using var stream = file.OpenReadStream();
+        return await _imageStorageService.UploadImageAsync(
+            stream,
+            file.FileName,
+            file.ContentType,
+            directory,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task TryDeleteStoredFileAsync(string? fileUrl, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(fileUrl))
+            return;
+
+        try
+        {
+            await _imageStorageService.DeleteFileAsync(fileUrl, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Failed cleanup should not mask the original submit error.
+        }
+    }
+
+    private async Task<(EventProposalSubmitDto? Body, string? UploadedImageUrl, IActionResult? ErrorResult)> TryReadEventProposalBodyAsync(
+        string uploadDirectory,
+        CancellationToken cancellationToken)
+    {
+        if (EventProposalRequestParser.IsMultipartRequest(Request))
+        {
+            IFormCollection form;
+            try
+            {
+                form = HttpContext.Features.Get<IFormFeature>()?.Form
+                       ?? await Request.ReadFormAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (InvalidDataException)
+            {
+                return (null, null, BadRequest(new
+                {
+                    message = "Invalid multipart form data. Use multipart/form-data for file uploads and let the client set the boundary automatically."
+                }));
+            }
+
+            try
+            {
+                var multipart = EventProposalRequestParser.ToMultipartForm(form);
+                var body = multipart.ToSubmissionDto();
+                var uploadedImageUrl = await UploadFileIfPresentAsync(uploadDirectory, multipart.ImageFile, cancellationToken).ConfigureAwait(false);
+                if (uploadedImageUrl == string.Empty)
+                {
+                    return (null, null, BadRequest(new { message = "imageFile has an unsupported file type." }));
+                }
+
+                if (!string.IsNullOrWhiteSpace(uploadedImageUrl))
+                    body.ImageUrl = uploadedImageUrl;
+
+                return (body, uploadedImageUrl, null);
+            }
+            catch (JsonException)
+            {
+                return (null, null, BadRequest(new
+                {
+                    message = "Invalid multipart form data. subEventsJson must be a JSON array and logisticsJson must be a JSON object."
+                }));
+            }
+        }
+
+        if (EventProposalRequestParser.IsJsonRequest(Request))
+        {
+            try
+            {
+                return (await EventProposalRequestParser.ReadJsonBodyAsync(Request, cancellationToken).ConfigureAwait(false), null, null);
+            }
+            catch (JsonException)
+            {
+                return (null, null, BadRequest(new
+                {
+                    message = "Invalid JSON request body. Use multipart/form-data for direct image uploads, or application/json when imageUrl is already available."
+                }));
+            }
+        }
+
+        return (null, null, StatusCode(StatusCodes.Status415UnsupportedMediaType, new
+        {
+            message = "Unsupported content type. Use multipart/form-data for direct image uploads, or application/json when imageUrl is already available."
+        }));
     }
 
     private IActionResult? EnsureStudentServices()

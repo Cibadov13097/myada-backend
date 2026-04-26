@@ -145,9 +145,11 @@ Auth: Bearer required for all routes in this controller
 Image behavior on club `GET` routes:
 
 - `profileImageUrl` is read from the club row in the database.
-- If that stored value is an S3/bucket URL, the API returns that same absolute URL.
-- If that stored value is a relative local upload path, the API returns that relative path.
-- `image` is the display-safe field: it returns `profileImageUrl` when present, otherwise `/clubs/default.png`.
+- `backgroundImageUrl` is also read from the club row in the database.
+- If either stored value is an S3/bucket URL, the API returns that same absolute URL.
+- If either stored value is a relative local upload path, the API returns that relative path.
+- `backgroundImage` is the display-safe field: it returns `backgroundImageUrl` when present, otherwise `/clubs/default.png`.
+- `image` currently mirrors `backgroundImage`, not `profileImageUrl`.
 - Public club detail does not expose `proposedProfileImageUrl`; that pending image is only surfaced on student-services routes.
 
 Representative list item:
@@ -158,7 +160,9 @@ Representative list item:
   "name": "Robotics Club",
   "category": "Technology",
   "profileImageUrl": "https://bucket.example/clubs/robotics/logo.png",
-  "image": "https://bucket.example/clubs/robotics/logo.png",
+  "backgroundImageUrl": "https://bucket.example/clubs/robotics/cover.png",
+  "backgroundImage": "https://bucket.example/clubs/robotics/cover.png",
+  "image": "https://bucket.example/clubs/robotics/cover.png",
   "tags": [],
   "members": 0,
   "about": "Build and learn",
@@ -169,6 +173,8 @@ Representative list item:
 Representative detail fields:
 
 - `profileImageUrl`
+- `backgroundImageUrl`
+- `backgroundImage`
 - `image`
 - `focusAreas`
 - `socialLinks`
@@ -547,7 +553,7 @@ Most routes in this controller also require the caller to be a MyAda administrat
 | Method | Path | Notes |
 |--------|------|-------|
 | `GET` | `/api/v1/student-services/dashboard` | Admin-only. |
-| `GET` | `/api/v1/student-services/clubs` | Admin-only. Query: `search`, `page`, `limit`. Includes `profileImageUrl`, `image`, and `proposedProfileImageUrl`. |
+| `GET` | `/api/v1/student-services/clubs` | Admin-only. Query: `search`, `page`, `limit`. Includes `profileImageUrl`, `backgroundImageUrl`, `backgroundImage`, `image`, and `proposedProfileImageUrl`. |
 | `GET` | `/api/v1/student-services/clubs/{clubId}` | Admin-only. Returns `ClubDto`, including image fields from the club row. |
 | `GET` | `/api/v1/student-services/events` | Admin-only. |
 | `POST` | `/api/v1/student-services/events` | Admin-only. Body: `CreateEventRequest`. |
@@ -602,9 +608,11 @@ Image behavior on student-services club routes:
 
 - `GET /api/v1/student-services/clubs` returns:
   - `profileImageUrl`: approved/public image currently stored on the club row
-  - `image`: same value as `profileImageUrl` when present, otherwise `/clubs/default.png`
+  - `backgroundImageUrl`: approved/public background image currently stored on the club row
+  - `backgroundImage`: same value as `backgroundImageUrl` when present, otherwise `/clubs/default.png`
+  - `image`: currently the same value as `backgroundImage`
   - `proposedProfileImageUrl`: pending student-services upload when one exists
-- `GET /api/v1/student-services/clubs/{clubId}` returns the mapped `ClubDto`, so clients should expect `ProfileImageUrl` and `ProposedProfileImageUrl`.
+- `GET /api/v1/student-services/clubs/{clubId}` returns the mapped `ClubDto`, so clients should expect `ProfileImageUrl`, `BackgroundImageUrl`, and `ProposedProfileImageUrl`.
 - `POST /api/v1/student-services/clubs/{clubId}/profile-image` stores a pending image path in `ProposedProfileImageUrl`.
 - `POST /api/v1/student-services/clubs/{clubId}/profile-image/approve` moves that pending value into `ProfileImageUrl`.
 
@@ -747,24 +755,45 @@ Current file-management notes:
 - Older `resourcesJson` payloads without item ids are normalized on read and on write so item-level CRUD can work reliably.
 - Public club `GET` responses continue exposing these items through `resources` and the legacy alias `documents`.
 
+Profile patch field semantics:
+
+- `socialLinks` is a JSON object string and behaves as a merge patch. Supported keys are `website`, `instagram`, `x`, `twitter`, and `tiktok`. Keys you omit stay unchanged; send `null` or an empty string to clear one field.
+- `focusAreasJson` is a replace-only JSON array string. Each item must be an object with `icon`, `title`, and `description`. The API allows at most 6 items.
+- `email` is optional; send an empty string to clear the stored contact email.
+- `resourcesJson` is a replace-only JSON array string. The API allows at most 50 items and normalizes each URL.
+- `logoFile` and `backgroundFile` are optional file parts. Accepted extensions currently include `.png`, `.jpg`, `.jpeg`, `.webp`, `.pdf`, `.doc`, and `.docx`, although profile uploads are normally image files.
+
+Representative curl example:
+
+```bash
+curl -X PATCH "http://13.60.31.141/club/api/v1/club-admin/7/profile" \
+  -H "Authorization: Bearer <JWT>" \
+  -H "Accept: application/json" \
+  -F 'email=robotics@ada.edu.az' \
+  -F 'socialLinks={"website":"https://robotics.ada.edu.az","instagram":"https://instagram.com/ada_robotics","x":"https://x.com/ada_robotics"}' \
+  -F 'focusAreasJson=[{"icon":"cpu","title":"AI Projects","description":"Building practical AI and robotics projects."},{"icon":"users","title":"Community","description":"Weekly meetups, workshops, and team challenges."}]' \
+  -F 'resourcesJson=[{"title":"Club Handbook","url":"https://example.com/club-handbook.pdf"},{"title":"Registration Form","url":"https://example.com/register"}]' \
+  -F 'logoFile=@logo.png' \
+  -F 'backgroundFile=@background.jpg'
+```
+
 Current profile patch response highlights:
 
 - `clubId`
 - `updated`
 - `pendingReview`
 - `profileImageUrl`
+- `backgroundImageUrl`
 - `focusAreas`
 - `email`
 - `socialLinks`
 - `resources`
-- `logoUrl`
-- `backgroundUrl`
 
 Important image note:
 
-- `logoUrl` is the direct uploaded file URL returned from storage for that request.
-- `profileImageUrl` is the value persisted onto the club row and is what public club `GET` endpoints now read.
-- `backgroundUrl` is returned when uploaded, but current public club `GET` endpoints do not expose a background image field.
+- Uploading `logoFile` updates the persisted `profileImageUrl` when the patch succeeds.
+- Uploading `backgroundFile` updates the persisted `backgroundImageUrl` when the patch succeeds.
+- Public club and student-services `GET` endpoints now expose `backgroundImageUrl`, and their display-safe `image` field is derived from the background image rather than the logo/profile image.
 
 ---
 

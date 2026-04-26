@@ -1074,12 +1074,14 @@ public sealed class ClubAdminService : IClubAdminService
         d.TryGetValue("id", out var id);
         d.TryGetValue("status", out var st);
         d.TryGetValue("clubId", out var cid);
+        d.TryGetValue("imageUrl", out var img);
         return new EventProposalResultDto
         {
             ProposalId = pid?.ToString() ?? string.Empty,
             Id = id?.ToString() ?? pid?.ToString() ?? string.Empty,
             Status = st?.ToString() ?? "pending_review",
-            ClubId = cid?.ToString() ?? ctx.Key
+            ClubId = cid?.ToString() ?? ctx.Key,
+            ImageUrl = img?.ToString()
         };
     }
 

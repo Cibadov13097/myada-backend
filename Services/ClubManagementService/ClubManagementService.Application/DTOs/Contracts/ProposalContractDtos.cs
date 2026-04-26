@@ -46,6 +46,7 @@ public sealed class EventProposalSubmitDto
     public string Venue { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Objectives { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
     public List<EventProposalSubEventDto> SubEvents { get; set; } = new();
     public EventProposalLogisticsDto Logistics { get; set; } = new();
     public string? SubmittedByOrganization { get; set; }

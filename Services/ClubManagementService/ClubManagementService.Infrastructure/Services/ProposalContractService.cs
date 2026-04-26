@@ -279,6 +279,8 @@ public sealed class ProposalContractService : IProposalContractService
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        body = CloneBody(body);
+        body.ImageUrl = NormalizeOptionalText(body.ImageUrl);
         var err = ValidateEventBody(body);
         if (err != null)
         {
@@ -297,6 +299,7 @@ public sealed class ProposalContractService : IProposalContractService
             ClubNumericId = null,
             ClubRouteKey = null,
             ClubName = body.SubmittedByOrganization ?? "Student Services",
+            ImageUrl = body.ImageUrl,
             BodyJson = JsonSerializer.Serialize(body, ProposalJson.Options),
             Status = "pending_review",
             SubmittedAt = now,
@@ -319,7 +322,9 @@ public sealed class ProposalContractService : IProposalContractService
                 ["proposalId"] = proposalId,
                 ["id"] = proposalId,
                 ["status"] = "pending_review",
-                ["clubId"] = record.ClubRouteKey
+                ["clubId"] = record.ClubRouteKey,
+                ["imageUrl"] = record.ImageUrl,
+                ["posterUrl"] = record.ImageUrl
             }
         };
     }
@@ -331,6 +336,8 @@ public sealed class ProposalContractService : IProposalContractService
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        body = CloneBody(body);
+        body.ImageUrl = NormalizeOptionalText(body.ImageUrl);
         if (!ClubRouteId.TryParseClubKey(clubRouteKey, out var clubNum))
         {
             return new EventProposalSubmitResult
@@ -370,6 +377,7 @@ public sealed class ProposalContractService : IProposalContractService
             ClubNumericId = clubNum,
             ClubRouteKey = clubRouteKey.Trim(),
             ClubName = club.Name,
+            ImageUrl = body.ImageUrl,
             BodyJson = JsonSerializer.Serialize(body, ProposalJson.Options),
             Status = "pending_review",
             SubmittedAt = now,
@@ -462,6 +470,7 @@ public sealed class ProposalContractService : IProposalContractService
         }
 
         var proposalBody = JsonSerializer.Deserialize<EventProposalSubmitDto>(r.BodyJson, ProposalJson.Options) ?? new EventProposalSubmitDto();
+        proposalBody.ImageUrl = NormalizeOptionalText(proposalBody.ImageUrl) ?? NormalizeOptionalText(r.ImageUrl);
         var subCount = proposalBody.SubEvents?.Count ?? 0;
         if (subCount > 0)
         {
@@ -495,6 +504,7 @@ public sealed class ProposalContractService : IProposalContractService
             ClubId = clubId,
             Name = proposalBody.Name,
             Description = proposalBody.Description,
+            ImageUrl = proposalBody.ImageUrl,
             StartTime = start,
             EndTime = end,
             Location = proposalBody.Venue,
@@ -632,6 +642,7 @@ public sealed class ProposalContractService : IProposalContractService
     private static object MapEventProposal(EventProposal r)
     {
         var b = JsonSerializer.Deserialize<EventProposalSubmitDto>(r.BodyJson, ProposalJson.Options) ?? new EventProposalSubmitDto();
+        var imageUrl = NormalizeOptionalText(b.ImageUrl) ?? NormalizeOptionalText(r.ImageUrl);
         var (eventDateShort, timeRange, durationLabel) = FormatScheduleLabels(b);
         return new
         {
@@ -659,10 +670,11 @@ public sealed class ProposalContractService : IProposalContractService
             requestedRoomId = (string?)null,
             description = b.Description,
             objectives = b.Objectives,
+            imageUrl,
             subEvents = b.SubEvents ?? new List<EventProposalSubEventDto>(),
             logistics = b.Logistics ?? new EventProposalLogisticsDto(),
             submittedByOrganization = b.SubmittedByOrganization,
-            posterUrl = (string?)null,
+            posterUrl = imageUrl,
             clubId = r.ClubRouteKey
         };
     }
@@ -718,6 +730,9 @@ public sealed class ProposalContractService : IProposalContractService
             return string.Empty;
         return JsonSerializer.Serialize(l, ProposalJson.Options);
     }
+
+    private static string? NormalizeOptionalText(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static void ValidateStructured(Dictionary<string, List<string>> errors, ClubProposalSubmissionDto s)
     {
