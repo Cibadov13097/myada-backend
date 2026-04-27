@@ -9,6 +9,7 @@ using NotificationAppService = NotificationService.Application.Services.Notifica
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("notification-service");
 
 // Add services to the container.
 

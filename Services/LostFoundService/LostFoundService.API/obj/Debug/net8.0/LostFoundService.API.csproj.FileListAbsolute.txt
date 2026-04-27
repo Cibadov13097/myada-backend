@@ -638,3 +638,12 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFo
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Shared.Observability.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Shared.Observability.pdb
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.AspNetCore.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Serilog.Sinks.File.dll

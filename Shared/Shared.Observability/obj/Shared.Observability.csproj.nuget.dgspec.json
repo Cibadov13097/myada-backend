@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj": {}
+    "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj": {
+    "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj",
+        "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj",
         "projectName": "Shared.Observability",
-        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj",
+        "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\obj\\",
+        "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -68,6 +68,18 @@
             "OpenTelemetry.Instrumentation.Runtime": {
               "target": "Package",
               "version": "[1.10.0, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Serilog.Sinks.Console": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Serilog.Sinks.File": {
+              "target": "Package",
+              "version": "[6.0.0, )"
             }
           },
           "imports": [

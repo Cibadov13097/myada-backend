@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>MyAda.Testing.Integration.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.11" />
+    <PackageReference Include="Npgsql" Version="8.0.6" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="3.10.0" />
+    <PackageReference Include="Testcontainers.Redis" Version="3.10.0" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\AuthService\AuthService.Api\AuthService.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Services\AuthService\AuthService.Api\keys\private.pem" LogicalName="MyAda.Testing.Integration.Infrastructure.AuthKeys.private.pem" />
+    <EmbeddedResource Include="..\..\Services\AuthService\AuthService.Api\keys\public.pem" LogicalName="MyAda.Testing.Integration.Infrastructure.AuthKeys.public.pem" />
+  </ItemGroup>
+
+</Project>

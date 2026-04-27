@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("call-service");
 
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
 if (string.IsNullOrWhiteSpace(jwksUrl))

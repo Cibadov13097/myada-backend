@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lE9RalBrje4=",
+  "dgSpecHash": "0F0oFMVeF8w=",
   "success": true,
   "projectFilePath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\ApiGateway.Tests\\ApiGateway.Tests.csproj",
   "expectedPackageFiles": [
@@ -48,6 +48,15 @@
     "C:\\Users\\User\\.nuget\\packages\\opentelemetry.instrumentation.aspnetcore\\1.10.1\\opentelemetry.instrumentation.aspnetcore.1.10.1.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\opentelemetry.instrumentation.http\\1.10.0\\opentelemetry.instrumentation.http.1.10.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\opentelemetry.instrumentation.runtime\\1.10.0\\opentelemetry.instrumentation.runtime.1.10.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog\\4.0.0\\serilog.4.0.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.aspnetcore\\8.0.3\\serilog.aspnetcore.8.0.3.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.extensions.hosting\\8.0.0\\serilog.extensions.hosting.8.0.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.extensions.logging\\8.0.0\\serilog.extensions.logging.8.0.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.formatting.compact\\2.0.0\\serilog.formatting.compact.2.0.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.settings.configuration\\8.0.4\\serilog.settings.configuration.8.0.4.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.sinks.console\\6.0.0\\serilog.sinks.console.6.0.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.sinks.debug\\2.0.0\\serilog.sinks.debug.2.0.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\serilog.sinks.file\\6.0.0\\serilog.sinks.file.6.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\system.collections.immutable\\8.0.0\\system.collections.immutable.8.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\system.configuration.configurationmanager\\4.4.0\\system.configuration.configurationmanager.4.4.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\system.diagnostics.diagnosticsource\\9.0.0\\system.diagnostics.diagnosticsource.9.0.0.nupkg.sha512",

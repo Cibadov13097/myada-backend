@@ -22,7 +22,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "myada-loki" },
-          "expr": "{job=~\"docker|myada_test_results\"}",
+          "expr": "{job=~\"docker|myada_file_logs|myada_test_results\"}",
           "refId": "A",
           "queryType": "range"
         }

@@ -21,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using Shared.Shared.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("lostfound-service");
 
 // =====================================================
 // 1. JWT: JWKS endpoint only (no local public key files)

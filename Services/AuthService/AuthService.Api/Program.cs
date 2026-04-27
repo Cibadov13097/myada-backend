@@ -20,6 +20,7 @@ using System.Security.Cryptography;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("auth-service");
 
 // 1. Database
 builder.Services.AddDbContext<MyAdaDbContext>(options =>
@@ -220,3 +221,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program;

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MyAda.Testing.Integration.Infrastructure\MyAda.Testing.Integration.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Services\AuthService\AuthService.Api\AuthService.Api.csproj" />
     <ProjectReference Include="..\..\Services\AuthService\AuthService.Application\AuthService.Application.csproj" />
     <ProjectReference Include="..\..\Services\AuthService\AuthService.Domain\AuthService.Domain.csproj" />

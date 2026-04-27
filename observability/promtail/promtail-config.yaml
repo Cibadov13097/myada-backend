@@ -23,3 +23,20 @@ scrape_configs:
         target_label: container
     pipeline_stages:
       - docker: {}
+  - job_name: myada_file_logs
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: myada_file_logs
+          __path__: /var/log/myada/**/*.log
+      - targets: [localhost]
+        labels:
+          job: myada_file_logs
+          __path__: /host/myada/logs/**/*.log
+    pipeline_stages:
+      - regex:
+          source: __path__
+          expression: ".*/(?P<service>[^/]+)/app-.+\\.log$"
+      - labels:
+          service: service
+

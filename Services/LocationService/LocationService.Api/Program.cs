@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("location-service");
 
 // =====================================================
 // 1. JWT: JWKS endpoint only (no local public key files)

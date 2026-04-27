@@ -22,6 +22,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("clubmanagement-service");
 var isDevelopment = builder.Environment.IsDevelopment();
 
 // ==========================

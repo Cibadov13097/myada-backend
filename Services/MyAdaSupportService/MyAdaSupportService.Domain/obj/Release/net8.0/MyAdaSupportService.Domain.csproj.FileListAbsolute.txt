@@ -1,0 +1,12 @@
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\bin\Release\net8.0\MyAdaSupportService.Domain.deps.json
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\bin\Release\net8.0\MyAdaSupportService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\bin\Release\net8.0\MyAdaSupportService.Domain.pdb
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\MyAdaSupportService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\MyAdaSupportService.Domain.AssemblyInfoInputs.cache
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\MyAdaSupportService.Domain.AssemblyInfo.cs
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\MyAdaSupportService.Domain.csproj.CoreCompileInputs.cache
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\MyAdaSupportService.Domain.sourcelink.json
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\MyAdaSupportService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\refint\MyAdaSupportService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\MyAdaSupportService.Domain.pdb
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Domain\obj\Release\net8.0\ref\MyAdaSupportService.Domain.dll

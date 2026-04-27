@@ -6,27 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using MyAdaAttendanceService.Application.Services.Interfaces;
 using MyAdaAttendanceService.Infrastructure;
 using MyAdaAttendanceService.Web.Seeding;
-using Serilog;
 using Microsoft.OpenApi.Models;
 
 namespace MyAdaAttendanceService.Web;
-public class Program
+public partial class Program
 {
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-        builder.Host.UseSerilog((_, loggerConfiguration) =>
-        {
-            loggerConfiguration
-                .WriteTo.Console()
-                .WriteTo.File(
-                    path: "logs/log-.txt",
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 10,
-                    shared: true);
-        });
+        builder.AddMyAdaSerilog("myada-attendance-service");
 
         builder.Services.AddHttpLogging(options =>
         {

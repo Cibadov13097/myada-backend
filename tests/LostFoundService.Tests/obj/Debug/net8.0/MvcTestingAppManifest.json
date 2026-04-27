@@ -1,0 +1,10 @@
+{
+  "LostFoundService.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.API",
+  "LostFoundService.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application",
+  "LostFoundService.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain",
+  "LostFoundService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure",
+  "MyAda.Testing.JwksStub, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.JwksStub",
+  "Shared.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Contracts",
+  "Shared.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Infrastructure",
+  "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability"
+}

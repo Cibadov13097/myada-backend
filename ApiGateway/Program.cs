@@ -1,6 +1,7 @@
 using MyAda.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("api-gateway");
 
 var corsSection = builder.Configuration.GetSection("Cors");
 var allowedOrigins = corsSection.GetSection("AllowedOrigins").Get<string[]>() ?? [];
