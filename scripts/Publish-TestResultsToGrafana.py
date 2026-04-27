@@ -10,6 +10,7 @@ Windows usage:
 Environment variables:
     PUSHGATEWAY_URL  default http://localhost:9091
     LOKI_URL         default http://localhost:3100
+    MYADA_SKIP_DOTNET_TEST=1   publish existing .trx files without running dotnet test
 """
 
 from __future__ import annotations
@@ -68,32 +69,52 @@ def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     push_url = os.environ.get("PUSHGATEWAY_URL", "http://localhost:9091").rstrip("/")
     loki_url = os.environ.get("LOKI_URL", "http://localhost:3100").rstrip("/")
+    skip_dotnet_test = (
+        "--skip-test-run" in sys.argv[1:]
+        or os.environ.get("MYADA_SKIP_DOTNET_TEST", "").strip().lower() in {"1", "true", "yes"}
+    )
     out_dir = repo_root / ".artifacts" / "test-results"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"Running dotnet test - results: {out_dir}")
-    test_command = [
-        "dotnet",
-        "test",
-        str(repo_root / "MyAda.sln"),
-        "--results-directory",
-        str(out_dir),
-        "--logger",
-        "trx",
-        "--nologo",
-    ]
+    if skip_dotnet_test:
+        print(f"Skipping dotnet test. Using existing results from: {out_dir}")
+    else:
+        print(f"Running dotnet test - results: {out_dir}")
+        test_command = [
+            "dotnet",
+            "test",
+            str(repo_root / "MyAda.sln"),
+            "--results-directory",
+            str(out_dir),
+            "--logger",
+            "trx",
+            "--nologo",
+        ]
 
-    try:
-        test_result = subprocess.run(test_command, check=False, cwd=repo_root)
-        if test_result.returncode != 0:
-            print(
-                f"Warning: dotnet test exited with code {test_result.returncode}. "
-                "Continuing so results can still be published.",
-                file=sys.stderr,
-            )
-    except FileNotFoundError:
-        print("Error: 'dotnet' was not found on PATH.", file=sys.stderr)
-        return 1
+        try:
+            test_result = subprocess.run(test_command, check=False, cwd=repo_root)
+            if test_result.returncode != 0:
+                print(
+                    f"Warning: dotnet test exited with code {test_result.returncode}. "
+                    "Continuing so results can still be published.",
+                    file=sys.stderr,
+                )
+        except FileNotFoundError:
+            existing_trx = sorted(out_dir.rglob("*.trx"))
+            if existing_trx:
+                print(
+                    "Warning: 'dotnet' was not found on PATH. "
+                    "Publishing existing .trx files instead.",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    "Error: 'dotnet' was not found on PATH and no existing .trx files were found.\n"
+                    "Either install a .NET 8 SDK, run tests in Docker first, or rerun with "
+                    "--skip-test-run after .trx files already exist.",
+                    file=sys.stderr,
+                )
+                return 1
 
     trx_files = sorted(out_dir.rglob("*.trx"))
     if not trx_files:
