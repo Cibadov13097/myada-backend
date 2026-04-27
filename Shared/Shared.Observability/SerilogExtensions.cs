@@ -22,8 +22,7 @@ public static class SerilogExtensions
         var name = SanitizeServiceName(serviceName);
         var logDir = ResolveServiceLogDirectory(builder, name);
         var logDirFromEnv = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(LogDirectoryEnvVar));
-
-        Directory.CreateDirectory(logDir);
+        var fileLoggingEnabled = TryPrepareLogDirectory(logDir, out var fileLoggingError);
 
         builder.Host.UseSerilog((_, config) =>
         {
@@ -35,16 +34,28 @@ public static class SerilogExtensions
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-                .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
-                .WriteTo.File(
+                .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning);
+
+            if (fileLoggingEnabled)
+            {
+                config.WriteTo.File(
                     path: Path.Combine(logDir, "app-.log"),
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 14,
                     shared: true,
                     outputTemplate: template);
+            }
 
-            if (!logDirFromEnv) config.WriteTo.Console(outputTemplate: template);
+            if (!logDirFromEnv || !fileLoggingEnabled)
+                config.WriteTo.Console(outputTemplate: template);
         }, preserveStaticLogger: false);
+
+        if (!fileLoggingEnabled)
+        {
+            Console.Error.WriteLine(
+                $"[MyAda.Observability] File logging disabled for '{name}' because '{logDir}' is not writable. " +
+                $"Falling back to console logging only. {fileLoggingError?.GetType().Name}: {fileLoggingError?.Message}");
+        }
 
         return builder;
     }
@@ -71,6 +82,27 @@ public static class SerilogExtensions
 
         return Path.GetFullPath(
             Path.Combine(builder.Environment.ContentRootPath, "logs", serviceName));
+    }
+
+    private static bool TryPrepareLogDirectory(string logDir, out Exception? error)
+    {
+        try
+        {
+            Directory.CreateDirectory(logDir);
+
+            var probePath = Path.Combine(logDir, $".write-test-{Guid.NewGuid():N}.tmp");
+            using (new FileStream(probePath, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose))
+            {
+            }
+
+            error = null;
+            return true;
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException || ex is IOException || ex is NotSupportedException)
+        {
+            error = ex;
+            return false;
+        }
     }
 
     private static string? FindParentDirectoryWithFile(string start, string fileName)
