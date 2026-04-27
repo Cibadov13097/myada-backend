@@ -3,6 +3,7 @@
 #
 # Usage:  powershell -File .\scripts\Publish-TestResultsToGrafana.ps1
 #           (or: pwsh -File ...  if you installed PowerShell 7+)
+# Linux:  python3 ./scripts/Publish-TestResultsToGrafana.py
 # Env:   PUSHGATEWAY_URL (default http://localhost:9091)  LOKI_URL (default http://localhost:3100)
 
 $ErrorActionPreference = "Stop"
@@ -164,4 +165,4 @@ try {
   if ($_.ErrorDetails -and $_.ErrorDetails.Message) { Write-Warning $_.ErrorDetails.Message }
 }
 
-Write-Host "Done. Open Grafana: http://localhost:3001 -> dashboard MyADA - Logs and test results" -ForegroundColor Green
+Write-Host "Done. Open Grafana: http://localhost:3000 -> dashboard MyADA - Logs and test results" -ForegroundColor Green
