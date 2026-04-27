@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using System.Security.Claims;
 using System.Text.Json;
 using CallService.Api.Hubs;
@@ -13,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("call-service");
 
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
 if (string.IsNullOrWhiteSpace(jwksUrl))
@@ -159,6 +161,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.AddMyAdaOpenTelemetry("call-service");
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -189,6 +193,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseAuthentication();
 app.UseAuthorization();
 

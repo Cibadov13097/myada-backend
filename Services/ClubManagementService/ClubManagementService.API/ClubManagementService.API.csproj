@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ClubManagementService.Application\ClubManagementService.Application.csproj" />
     <ProjectReference Include="..\ClubManagementService.Infrastructure\ClubManagementService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Observability\Shared.Observability.csproj" />
   </ItemGroup>
 
 </Project>

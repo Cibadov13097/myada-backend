@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using AutoMapper;
 using LostFoundService.Api.Mappings;
 using LostFoundService.Api.Middlewares;
@@ -20,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using Shared.Shared.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("lostfound-service");
 
 // =====================================================
 // 1. JWT: JWKS endpoint only (no local public key files)
@@ -185,6 +187,8 @@ builder.Services.AddDbContext<LostFoundDbContext>(options =>
 // 6. BUILD APP
 // ==========================
 
+builder.AddMyAdaOpenTelemetry("lostfound-service");
+
 var app = builder.Build();
 
 
@@ -218,6 +222,7 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();

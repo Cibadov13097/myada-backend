@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using LocationService.Api.Middlewares;
 using LocationService.Api.Security;
 using LocationService.Application.Interfaces.Repositories;
@@ -11,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("location-service");
 
 // =====================================================
 // 1. JWT: JWKS endpoint only (no local public key files)
@@ -120,6 +122,8 @@ builder.Services.AddDbContext<LocationDbContext>(options =>
 // 6. BUILD APP
 // ==========================
 
+builder.AddMyAdaOpenTelemetry("location-service");
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -145,6 +149,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();

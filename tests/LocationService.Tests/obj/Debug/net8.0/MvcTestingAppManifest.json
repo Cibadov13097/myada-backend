@@ -1,0 +1,8 @@
+{
+  "LocationService.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Api",
+  "LocationService.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Application",
+  "LocationService.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Domain",
+  "LocationService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LocationService\\LocationService.Infrastructure",
+  "MyAda.Testing.JwksStub, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.JwksStub",
+  "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability"
+}

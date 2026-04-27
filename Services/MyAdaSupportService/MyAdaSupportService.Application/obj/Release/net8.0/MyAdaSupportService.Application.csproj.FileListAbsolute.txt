@@ -1,0 +1,16 @@
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Release\net8.0\MyAdaSupportService.Application.deps.json
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Release\net8.0\MyAdaSupportService.Application.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Release\net8.0\MyAdaSupportService.Application.pdb
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Release\net8.0\MyAdaSupportService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Release\net8.0\MyAdaSupportService.Domain.pdb
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.csproj.AssemblyReference.cache
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.AssemblyInfoInputs.cache
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.AssemblyInfo.cs
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.csproj.CoreCompileInputs.cache
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.sourcelink.json
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSup.444B4426.Up2Date
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\refint\MyAdaSupportService.Application.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\MyAdaSupportService.Application.pdb
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Release\net8.0\ref\MyAdaSupportService.Application.dll

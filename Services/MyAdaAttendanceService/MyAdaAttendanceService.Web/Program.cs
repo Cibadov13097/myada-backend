@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using System.Text.Json.Serialization;
 using AutoWrapper;
 using Microsoft.AspNetCore.HttpLogging;
@@ -5,27 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using MyAdaAttendanceService.Application.Services.Interfaces;
 using MyAdaAttendanceService.Infrastructure;
 using MyAdaAttendanceService.Web.Seeding;
-using Serilog;
 using Microsoft.OpenApi.Models;
 
 namespace MyAdaAttendanceService.Web;
-public class Program
+public partial class Program
 {
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-        builder.Host.UseSerilog((_, loggerConfiguration) =>
-        {
-            loggerConfiguration
-                .WriteTo.Console()
-                .WriteTo.File(
-                    path: "logs/log-.txt",
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 10,
-                    shared: true);
-        });
+        builder.AddMyAdaSerilog("myada-attendance-service");
 
         builder.Services.AddHttpLogging(options =>
         {
@@ -88,6 +77,8 @@ public class Program
                 builder.Configuration.GetConnectionString("DefaultConnection"),
                 npgsql => npgsql.MigrationsAssembly(typeof(AppDbContext).Assembly.GetName().Name)));
 
+        builder.AddMyAdaOpenTelemetry("myada-attendance-service");
+
         var app = builder.Build();
 
         await using (var scope = app.Services.CreateAsyncScope())
@@ -136,6 +127,7 @@ public class Program
         app.UseHttpLogging();
         app.UseHttpsRedirection();
         app.UseCors();
+        app.UseMyAdaPrometheusScraping();
 
         app.MapControllers();
         app.Logger.LogInformation("MyAdaAttendanceService.Web started.");

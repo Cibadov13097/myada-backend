@@ -85,10 +85,8 @@
     {
       "code": "NU1603",
       "level": "Warning",
-      "message": "LostFoundService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. AWSSDK.S3 3.7.414 was resolved instead.",
-      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
+      "message": "LostFoundService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. An approximate best match of AWSSDK.S3 3.7.414 was resolved.",
       "libraryId": "AWSSDK.S3",
       "targetGraphs": [
         "net8.0"

@@ -67,6 +67,7 @@ services:
     volumes:
       - ./keys/private.pem:/keys/private.pem:ro
       - ./keys/public.pem:/keys/public.pem:ro
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -93,6 +94,7 @@ services:
       S3__PublicBaseUrl: ${SUPPORT_S3_PUBLIC_BASE_URL:-}
       S3__KeyPrefix: ${AUTH_S3_KEY_PREFIX:-users}
       S3__AutoCreateBucket: ${AUTH_S3_AUTO_CREATE_BUCKET:-false}
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - myada
       - myada-redis
@@ -108,6 +110,7 @@ services:
       - "5002:8080"
     volumes:
       - ./keys/public.pem:/keys/public.pem:ro
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -127,6 +130,7 @@ services:
       S3__PublicBaseUrl: ${LOSTFOUND_S3_PUBLIC_BASE_URL:-}
       S3__KeyPrefix: ${LOSTFOUND_S3_KEY_PREFIX:-lost-and-found}
       S3__AutoCreateBucket: ${LOSTFOUND_S3_AUTO_CREATE_BUCKET:-false}
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - authservice
       - myada
@@ -140,6 +144,8 @@ services:
     container_name: clubmanagement-service
     ports:
       - "5003:8080"
+    volumes:
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -163,6 +169,7 @@ services:
       Tickets__SigningKey: dev-only-change-me-please-32chars-min!!
       Tickets__Issuer: myada-tickets
       Tickets__Audience: myada-scanner
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - authservice
       - myada
@@ -176,6 +183,8 @@ services:
     container_name: notification-service
     ports:
       - "5004:8080"
+    volumes:
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -189,6 +198,7 @@ services:
       SMTP__FromName: ${NOTIFICATION_SMTP_FROM_NAME:-MyADA Notifications}
       SMTP__EnableSsl: ${NOTIFICATION_SMTP_ENABLE_SSL:-true}
       SMTP__UseDefaultCredentials: ${NOTIFICATION_SMTP_USE_DEFAULT_CREDENTIALS:-false}
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - rabbitmq
       - myada
@@ -201,6 +211,8 @@ services:
     container_name: call-service
     ports:
       - "5006:8080"
+    volumes:
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -218,6 +230,7 @@ services:
       Turn__Urls__2: "turn:${TURN_PUBLIC_HOST:-13.60.31.141}:3478?transport=tcp"
       Turn__SharedSecret: ${TURN_SHARED_SECRET:-myada-turn-secret-change-me}
       Turn__CredentialTtlSeconds: 3600
+      MYADA_LOG_DIR: /app/logs
     restart: always
     depends_on:
       - authservice
@@ -233,11 +246,14 @@ services:
     container_name: location-service
     ports:
       - "5005:8080"
+    volumes:
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__LocationService: Host=myada;Port=5432;Database=MyAdaLocationDb;Username=postgres;Password=123
       Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - myada
       - authservice
@@ -250,6 +266,8 @@ services:
     container_name: myada-support-service
     ports:
       - "5008:8080"
+    volumes:
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -269,6 +287,7 @@ services:
       S3__PublicBaseUrl: ${SUPPORT_S3_PUBLIC_BASE_URL:-}
       S3__KeyPrefix: ${SUPPORT_S3_KEY_PREFIX:-support}
       S3__AutoCreateBucket: ${SUPPORT_S3_AUTO_CREATE_BUCKET:-false}
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - myada
       - authservice
@@ -276,11 +295,13 @@ services:
 
   myadaattendanceservice:
     build:
-      context: ./Services/MyAdaAttendanceService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Services/MyAdaAttendanceService/Dockerfile
     container_name: myada-attendance-service
     ports:
       - "5009:8080"
+    volumes:
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
@@ -289,6 +310,7 @@ services:
       AuthService__BaseUrl: http://authservice:8080/
       AuthService__RefreshPath: api/auth/refresh
       Authentication__RequireHttpsMetadata: "false"
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - myada
       - authservice
@@ -302,8 +324,11 @@ services:
     container_name: api-gateway
     ports:
       - "5000:8080"
+    volumes:
+      - myada_app_logs:/app/logs
     environment:
       ASPNETCORE_URLS: http://+:8080
+      MYADA_LOG_DIR: /app/logs
     depends_on:
       - authservice
       - lostfoundservice
@@ -315,8 +340,77 @@ services:
       - myadaattendanceservice
     restart: always
 
+  loki:
+    image: grafana/loki:3.1.1
+    container_name: myada-loki
+    command: -config.file=/etc/loki/loki-config.yaml
+    user: "0:0"
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+      - ./observability/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+    restart: always
+
+  promtail:
+    image: grafana/promtail:3.1.1
+    container_name: myada-promtail
+    user: "0:0"
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - myada_app_logs:/var/log/myada:ro
+      - .:/host/myada:ro
+      - ./observability/promtail/promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
+    depends_on:
+      - loki
+    restart: always
+
+  pushgateway:
+    image: prom/pushgateway:v1.9.0
+    container_name: myada-pushgateway
+    ports:
+      - "9091:9091"
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: myada-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - loki
+      - pushgateway
+    restart: always
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: myada-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+      - loki
+      - pushgateway
+    restart: always
+
 volumes:
   myada_postgres_data:
+  grafana_data:
+  loki_data:
+  myada_app_logs:
 
 # Optional: attach API Gateway to an external Docker network (e.g. another Compose stack).
 # 1) Create once: docker network create gateway-shared

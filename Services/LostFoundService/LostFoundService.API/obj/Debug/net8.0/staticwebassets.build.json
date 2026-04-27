@@ -1,11 +1,23 @@
 {
   "Version": 1,
-  "Hash": "K6+svycnXliYwgFs5T8DtqOYr3tpugq+mgF1GB+5zKo=",
+  "Hash": "5Q8cAUOYEvM5zWklSVIc9Oo9rqFhzD5suEVtMVludOY=",
   "Source": "LostFoundService.Api",
   "BasePath": "_content/LostFoundService.Api",
   "Mode": "Default",
   "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj",
+      "Version": 2,
+      "Source": "Shared.Observability",
+      "GetPublishAssetsTargets": "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
+    }
+  ],
   "DiscoveryPatterns": [],
   "Assets": []
 }

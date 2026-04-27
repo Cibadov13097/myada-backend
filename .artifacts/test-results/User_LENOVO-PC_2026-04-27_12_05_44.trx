@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="01a9725b-14ac-43cf-a0a3-c562b9e0bf66" name="User@LENOVO-PC 2026-04-27 12:05:44" runUser="LENOVO-PC\User" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-04-27T12:05:44.3499774+04:00" queuing="2026-04-27T12:05:44.3499778+04:00" start="2026-04-27T12:05:43.1781197+04:00" finish="2026-04-27T12:05:44.3935198+04:00" />
+  <TestSettings name="default" id="e8f67bb1-df52-450c-a92d-6959f599299e">
+    <Deployment runDeploymentRoot="User_LENOVO-PC_2026-04-27_12_05_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b1c3b7c6-2981-430c-bad0-10ff85caa273" testId="2e0dbc99-3068-ed27-9ed8-4685833265e8" testName="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetHistory_returns_unauthorized_without_sub" computerName="LENOVO-PC" duration="00:00:00.0035373" startTime="2026-04-27T12:05:44.3101932+04:00" endTime="2026-04-27T12:05:44.3102838+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1c3b7c6-2981-430c-bad0-10ff85caa273" />
+    <UnitTestResult executionId="05497e69-750d-4e5c-9136-54cbe248f162" testId="ac0b1610-11bc-bc05-0271-821b9200b02e" testName="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetHistory_clamps_limit_to_max" computerName="LENOVO-PC" duration="00:00:00.0218612" startTime="2026-04-27T12:05:44.2587283+04:00" endTime="2026-04-27T12:05:44.2804012+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="05497e69-750d-4e5c-9136-54cbe248f162" />
+    <UnitTestResult executionId="0136b76a-92ef-40d4-a557-331872dee650" testId="a7506639-f3ea-b98f-1ada-5a9d61d37c51" testName="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Cancelled)" computerName="LENOVO-PC" duration="00:00:00.0000087" startTime="2026-04-27T12:05:44.2207509+04:00" endTime="2026-04-27T12:05:44.2208027+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0136b76a-92ef-40d4-a557-331872dee650" />
+    <UnitTestResult executionId="850bb0ce-89ea-4022-8522-158b09487dce" testId="37ef0f90-0f88-b0c4-ed68-d00296739f48" testName="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetHistory_returns_bad_request_for_invalid_status" computerName="LENOVO-PC" duration="00:00:00.0621679" startTime="2026-04-27T12:05:44.1915849+04:00" endTime="2026-04-27T12:05:44.2584214+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="850bb0ce-89ea-4022-8522-158b09487dce" />
+    <UnitTestResult executionId="271c625e-141b-4f29-b442-2e9d4f75338c" testId="04b91d8f-577e-5ed6-c9c2-eafa16ce57c5" testName="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Accepted)" computerName="LENOVO-PC" duration="00:00:00.0002356" startTime="2026-04-27T12:05:44.2200741+04:00" endTime="2026-04-27T12:05:44.2201509+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="271c625e-141b-4f29-b442-2e9d4f75338c" />
+    <UnitTestResult executionId="7bee115a-9d65-4026-b352-a31dd0a4d83d" testId="6ced4d9b-3f7a-0479-defc-71e50c2b0e6c" testName="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Rejected)" computerName="LENOVO-PC" duration="00:00:00.0000092" startTime="2026-04-27T12:05:44.2209688+04:00" endTime="2026-04-27T12:05:44.2210409+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7bee115a-9d65-4026-b352-a31dd0a4d83d" />
+    <UnitTestResult executionId="7aaa4a16-c721-421f-9b1e-4e3beba7cb40" testId="8ca95970-89c7-18c9-83f1-07e91d68b37f" testName="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetByCallId_returns_bad_request_for_empty_id" computerName="LENOVO-PC" duration="00:00:00.0012962" startTime="2026-04-27T12:05:44.3105815+04:00" endTime="2026-04-27T12:05:44.3106310+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7aaa4a16-c721-421f-9b1e-4e3beba7cb40" />
+    <UnitTestResult executionId="5b8785b7-9616-4d44-a316-e0d126f5e7d3" testId="d97e4160-e1f5-6abe-457a-f8b3e06faa50" testName="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestState_defaults_to_pending" computerName="LENOVO-PC" duration="00:00:00.0013983" startTime="2026-04-27T12:05:44.2219347+04:00" endTime="2026-04-27T12:05:44.2220539+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b8785b7-9616-4d44-a316-e0d126f5e7d3" />
+    <UnitTestResult executionId="b16a44eb-50ae-42f2-9804-798a0b7ee60a" testId="9231b87c-e08e-76c7-288d-778faca6ddfd" testName="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Pending)" computerName="LENOVO-PC" duration="00:00:00.0000017" startTime="2026-04-27T12:05:44.2211424+04:00" endTime="2026-04-27T12:05:44.2211891+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b16a44eb-50ae-42f2-9804-798a0b7ee60a" />
+    <UnitTestResult executionId="d3d406d3-a2d3-43e0-8703-3e75865f6613" testId="9a0bdcbb-8f0e-450d-58a7-efaae108aa29" testName="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.TurnOptions_defaults_are_sane" computerName="LENOVO-PC" duration="00:00:00.0021982" startTime="2026-04-27T12:05:44.2222332+04:00" endTime="2026-04-27T12:05:44.2222839+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3d406d3-a2d3-43e0-8703-3e75865f6613" />
+    <UnitTestResult executionId="830c5e51-3923-40ff-b6c6-c5bcbf19cced" testId="cbc7e3ce-19e5-d9a9-9bf5-45853b4720fd" testName="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: TimedOut)" computerName="LENOVO-PC" duration="00:00:00.0108988" startTime="2026-04-27T12:05:44.1900620+04:00" endTime="2026-04-27T12:05:44.2096632+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="830c5e51-3923-40ff-b6c6-c5bcbf19cced" />
+    <UnitTestResult executionId="0a3bb084-c606-4ece-934a-a8ec54e6f7d8" testId="54f36784-2da8-9c97-400a-fc8f8ca74d18" testName="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetByCallId_returns_not_found_when_service_returns_null" computerName="LENOVO-PC" duration="00:00:00.0019141" startTime="2026-04-27T12:05:44.3107619+04:00" endTime="2026-04-27T12:05:44.3108144+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a3bb084-c606-4ece-934a-a8ec54e6f7d8" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.TurnOptions_defaults_are_sane" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="9a0bdcbb-8f0e-450d-58a7-efaae108aa29">
+      <Execution id="d3d406d3-a2d3-43e0-8703-3e75865f6613" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests" name="TurnOptions_defaults_are_sane" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetHistory_returns_bad_request_for_invalid_status" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="37ef0f90-0f88-b0c4-ed68-d00296739f48">
+      <Execution id="850bb0ce-89ea-4022-8522-158b09487dce" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests" name="GetHistory_returns_bad_request_for_invalid_status" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Cancelled)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="a7506639-f3ea-b98f-1ada-5a9d61d37c51">
+      <Execution id="0136b76a-92ef-40d4-a557-331872dee650" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests" name="CallRequestStatus_values_are_defined" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: TimedOut)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="cbc7e3ce-19e5-d9a9-9bf5-45853b4720fd">
+      <Execution id="830c5e51-3923-40ff-b6c6-c5bcbf19cced" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests" name="CallRequestStatus_values_are_defined" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetByCallId_returns_bad_request_for_empty_id" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="8ca95970-89c7-18c9-83f1-07e91d68b37f">
+      <Execution id="7aaa4a16-c721-421f-9b1e-4e3beba7cb40" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests" name="GetByCallId_returns_bad_request_for_empty_id" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetHistory_returns_unauthorized_without_sub" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="2e0dbc99-3068-ed27-9ed8-4685833265e8">
+      <Execution id="b1c3b7c6-2981-430c-bad0-10ff85caa273" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests" name="GetHistory_returns_unauthorized_without_sub" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetHistory_clamps_limit_to_max" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="ac0b1610-11bc-bc05-0271-821b9200b02e">
+      <Execution id="05497e69-750d-4e5c-9136-54cbe248f162" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests" name="GetHistory_clamps_limit_to_max" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestState_defaults_to_pending" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="d97e4160-e1f5-6abe-457a-f8b3e06faa50">
+      <Execution id="5b8785b7-9616-4d44-a316-e0d126f5e7d3" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests" name="CallRequestState_defaults_to_pending" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Pending)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="9231b87c-e08e-76c7-288d-778faca6ddfd">
+      <Execution id="b16a44eb-50ae-42f2-9804-798a0b7ee60a" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests" name="CallRequestStatus_values_are_defined" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests.GetByCallId_returns_not_found_when_service_returns_null" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="54f36784-2da8-9c97-400a-fc8f8ca74d18">
+      <Execution id="0a3bb084-c606-4ece-934a-a8ec54e6f7d8" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Api.CallHistoryControllerLayerTests" name="GetByCallId_returns_not_found_when_service_returns_null" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Accepted)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="04b91d8f-577e-5ed6-c9c2-eafa16ce57c5">
+      <Execution id="271c625e-141b-4f29-b442-2e9d4f75338c" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests" name="CallRequestStatus_values_are_defined" />
+    </UnitTest>
+    <UnitTest name="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests.CallRequestStatus_values_are_defined(status: Rejected)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\callservice.tests\bin\debug\net8.0\callservice.tests.dll" id="6ced4d9b-3f7a-0479-defc-71e50c2b0e6c">
+      <Execution id="7bee115a-9d65-4026-b352-a31dd0a4d83d" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\CallService.Tests\bin\Debug\net8.0\CallService.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CallService.Tests.Layers.Domain.CallServiceDomainLayerTests" name="CallRequestStatus_values_are_defined" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2e0dbc99-3068-ed27-9ed8-4685833265e8" executionId="b1c3b7c6-2981-430c-bad0-10ff85caa273" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac0b1610-11bc-bc05-0271-821b9200b02e" executionId="05497e69-750d-4e5c-9136-54cbe248f162" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a7506639-f3ea-b98f-1ada-5a9d61d37c51" executionId="0136b76a-92ef-40d4-a557-331872dee650" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="37ef0f90-0f88-b0c4-ed68-d00296739f48" executionId="850bb0ce-89ea-4022-8522-158b09487dce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04b91d8f-577e-5ed6-c9c2-eafa16ce57c5" executionId="271c625e-141b-4f29-b442-2e9d4f75338c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ced4d9b-3f7a-0479-defc-71e50c2b0e6c" executionId="7bee115a-9d65-4026-b352-a31dd0a4d83d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ca95970-89c7-18c9-83f1-07e91d68b37f" executionId="7aaa4a16-c721-421f-9b1e-4e3beba7cb40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d97e4160-e1f5-6abe-457a-f8b3e06faa50" executionId="5b8785b7-9616-4d44-a316-e0d126f5e7d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9231b87c-e08e-76c7-288d-778faca6ddfd" executionId="b16a44eb-50ae-42f2-9804-798a0b7ee60a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a0bdcbb-8f0e-450d-58a7-efaae108aa29" executionId="d3d406d3-a2d3-43e0-8703-3e75865f6613" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cbc7e3ce-19e5-d9a9-9bf5-45853b4720fd" executionId="830c5e51-3923-40ff-b6c6-c5bcbf19cced" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54f36784-2da8-9c97-400a-fc8f8ca74d18" executionId="0a3bb084-c606-4ece-934a-a8ec54e6f7d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="12" executed="12" passed="12" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.12]   Discovering: CallService.Tests&#xD;
+[xUnit.net 00:00:00.21]   Discovered:  CallService.Tests&#xD;
+[xUnit.net 00:00:00.24]   Starting:    CallService.Tests&#xD;
+[xUnit.net 00:00:00.39]   Finished:    CallService.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

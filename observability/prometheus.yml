@@ -1,0 +1,65 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: api-gateway
+    static_configs:
+      - targets: ["apigateway:8080"]
+        labels:
+          service: api-gateway
+
+  - job_name: auth-service
+    static_configs:
+      - targets: ["authservice:8080"]
+        labels:
+          service: auth-service
+
+  - job_name: lostfound-service
+    static_configs:
+      - targets: ["lostfoundservice:8080"]
+        labels:
+          service: lostfound-service
+
+  - job_name: clubmanagement-service
+    static_configs:
+      - targets: ["clubmanagementservice:8080"]
+        labels:
+          service: clubmanagement-service
+
+  - job_name: notification-service
+    static_configs:
+      - targets: ["notificationservice:8080"]
+        labels:
+          service: notification-service
+
+  - job_name: call-service
+    static_configs:
+      - targets: ["callservice:8080"]
+        labels:
+          service: call-service
+
+  - job_name: location-service
+    static_configs:
+      - targets: ["locationservice:8080"]
+        labels:
+          service: location-service
+
+  - job_name: myada-support-service
+    static_configs:
+      - targets: ["myadasupportservice:8080"]
+        labels:
+          service: myada-support-service
+
+  - job_name: myada-attendance-service
+    static_configs:
+      - targets: ["myadaattendanceservice:8080"]
+        labels:
+          service: myada-attendance-service
+
+  - job_name: pushgateway
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+        labels:
+          service: test-results

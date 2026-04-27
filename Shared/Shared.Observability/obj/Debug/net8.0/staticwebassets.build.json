@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "LMrJshWqrWRINSOu4GtMWn20EBLpf38O7o0zpf28M8o=",
+  "Source": "Shared.Observability",
+  "BasePath": "_content/Shared.Observability",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

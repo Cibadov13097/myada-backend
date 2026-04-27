@@ -1,0 +1,122 @@
+{
+  "annotations": { "list": [] },
+  "description": "Docker logs (Loki) + last test run (Prometheus from Pushgateway + script)",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "loki", "uid": "myada-loki" },
+      "gridPos": { "h": 16, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "showLabels": true,
+        "showTime": true,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "dedupStrategy": "none"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "myada-loki" },
+          "expr": "{job=~\"docker|myada_file_logs|myada_test_results\"}",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "title": "Logs (Promtail Docker and published test lines)",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "myada-prometheus" },
+      "fieldConfig": {
+        "defaults": { "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] } },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 16 },
+      "id": 2,
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "values": false, "calcs": [ "lastNotNull" ] }, "text": {} },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "myada-prometheus" },
+          "expr": "max(myada_test_outcome_last{outcome=\"Passed\"})",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "title": "Tests passed (last run)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "myada-prometheus" },
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null } ] } }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 16 },
+      "id": 3,
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "reduceOptions": { "values": false, "calcs": [ "lastNotNull" ] } },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "myada-prometheus" }, "expr": "max(myada_test_outcome_last{outcome=\"Failed\"})", "refId": "A", "instant": true } ],
+      "title": "Tests failed (last run)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "myada-prometheus" },
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [ { "color": "yellow", "value": null } ] } }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 16 },
+      "id": 4,
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "values": false, "calcs": [ "lastNotNull" ] } },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "myada-prometheus" }, "expr": "max(myada_test_outcome_last{outcome=\"NotExecuted\"})", "refId": "A", "instant": true } ],
+      "title": "Not executed (last run)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "myada-prometheus" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 16 },
+      "id": 5,
+      "options": { "colorMode": "value", "reduceOptions": { "calcs": [ "lastNotNull" ] } },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "myada-prometheus" }, "expr": "max(myada_test_outcome_last{outcome=\"Inconclusive\"})", "refId": "A", "instant": true } ],
+      "title": "Inconclusive (last run)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "myada-loki" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+      "id": 6,
+      "options": { "showLabels": true, "showTime": true, "wrapLogMessage": true },
+      "targets": [ { "datasource": { "type": "loki", "uid": "myada-loki" }, "expr": "{job=\"myada_test_results\"}", "refId": "A" } ],
+      "title": "Test run (Loki, from Publish-TestResultsToGrafana script)",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "myada-prometheus" },
+      "fieldConfig": { "defaults": { "custom": { "align": "auto" } } },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 28 },
+      "id": 7,
+      "options": { "showHeader": true },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "myada-prometheus" },
+          "expr": "myada_test_by_assembly_outcome",
+          "refId": "A",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "title": "By TRX / assembly (last push) — Pushgateway / Prometheus",
+      "transformations": [],
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [ "myada" ],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "MyADA - Logs and test results",
+  "uid": "myada-logs-tests",
+  "version": 1
+}

@@ -10,3 +10,15 @@ c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\refint\AuthService.Domain.dll
 c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.pdb
 c:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\ref\AuthService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\bin\Release\net8.0\AuthService.Domain.deps.json
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\bin\Release\net8.0\AuthService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\bin\Release\net8.0\AuthService.Domain.pdb
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.AssemblyInfoInputs.cache
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.AssemblyInfo.cs
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.csproj.CoreCompileInputs.cache
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.sourcelink.json
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\refint\AuthService.Domain.dll
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\AuthService.Domain.pdb
+c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\AuthService\AuthService.Domain\obj\Release\net8.0\ref\AuthService.Domain.dll

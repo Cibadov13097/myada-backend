@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4ac616a8-9b21-4a1d-8f88-52fbef18b1a6" name="User@LENOVO-PC 2026-04-27 12:13:23" runUser="LENOVO-PC\User" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-04-27T12:13:23.7637416+04:00" queuing="2026-04-27T12:13:23.7637418+04:00" start="2026-04-27T12:13:19.9301497+04:00" finish="2026-04-27T12:13:23.7742328+04:00" />
+  <TestSettings name="default" id="6048c86d-cb82-45c7-8e86-9ccfffcc435a">
+    <Deployment runDeploymentRoot="User_LENOVO-PC_2026-04-27_12_13_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="883cccf6-ea3f-4dec-83f7-32015bc3c537" testId="e4f9d220-0528-f698-8619-d91a65c9377c" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Root_should_return_plain_text" computerName="LENOVO-PC" duration="00:00:00.1488990" startTime="2026-04-27T12:13:23.2882227+04:00" endTime="2026-04-27T12:13:23.4566471+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="883cccf6-ea3f-4dec-83f7-32015bc3c537" />
+    <UnitTestResult executionId="33396fe6-8075-4759-9697-6137bb0258a8" testId="c1c2b5d1-49a9-6766-e801-94cf5de41332" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Health_should_return_ok_payload" computerName="LENOVO-PC" duration="00:00:00.0686512" startTime="2026-04-27T12:13:23.4569679+04:00" endTime="2026-04-27T12:13:23.5555073+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33396fe6-8075-4759-9697-6137bb0258a8" />
+    <UnitTestResult executionId="b1f11d13-a1ac-4ccb-b0be-1e57650ae119" testId="f48a2164-41af-02b1-bdf6-76a296d467fd" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/health&quot;)" computerName="LENOVO-PC" duration="00:00:01.2227145" startTime="2026-04-27T12:13:21.8327074+04:00" endTime="2026-04-27T12:13:23.0864084+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1f11d13-a1ac-4ccb-b0be-1e57650ae119" />
+    <UnitTestResult executionId="35709446-9de0-4619-a378-dc356945a348" testId="233749fb-202a-513b-017c-f594e7565e6c" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/&quot;)" computerName="LENOVO-PC" duration="00:00:00.1428730" startTime="2026-04-27T12:13:23.1007176+04:00" endTime="2026-04-27T12:13:23.2754361+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35709446-9de0-4619-a378-dc356945a348" />
+    <UnitTestResult executionId="dfd00d05-580b-4a59-9705-65ba56089196" testId="b730ce62-edd2-0566-0da7-095ac86fda86" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Options_preflight_should_include_cors_headers_when_origin_allowed" computerName="LENOVO-PC" duration="00:00:00.0306973" startTime="2026-04-27T12:13:23.5558125+04:00" endTime="2026-04-27T12:13:23.5872435+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dfd00d05-580b-4a59-9705-65ba56089196" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Options_preflight_should_include_cors_headers_when_origin_allowed" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="b730ce62-edd2-0566-0da7-095ac86fda86">
+      <Execution id="dfd00d05-580b-4a59-9705-65ba56089196" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Options_preflight_should_include_cors_headers_when_origin_allowed" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/health&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="f48a2164-41af-02b1-bdf6-76a296d467fd">
+      <Execution id="b1f11d13-a1ac-4ccb-b0be-1e57650ae119" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Anonymous_endpoints_should_allow_get" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Health_should_return_ok_payload" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="c1c2b5d1-49a9-6766-e801-94cf5de41332">
+      <Execution id="33396fe6-8075-4759-9697-6137bb0258a8" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Health_should_return_ok_payload" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Root_should_return_plain_text" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="e4f9d220-0528-f698-8619-d91a65c9377c">
+      <Execution id="883cccf6-ea3f-4dec-83f7-32015bc3c537" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Root_should_return_plain_text" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="233749fb-202a-513b-017c-f594e7565e6c">
+      <Execution id="35709446-9de0-4619-a378-dc356945a348" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Anonymous_endpoints_should_allow_get" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e4f9d220-0528-f698-8619-d91a65c9377c" executionId="883cccf6-ea3f-4dec-83f7-32015bc3c537" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c1c2b5d1-49a9-6766-e801-94cf5de41332" executionId="33396fe6-8075-4759-9697-6137bb0258a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f48a2164-41af-02b1-bdf6-76a296d467fd" executionId="b1f11d13-a1ac-4ccb-b0be-1e57650ae119" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="233749fb-202a-513b-017c-f594e7565e6c" executionId="35709446-9de0-4619-a378-dc356945a348" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b730ce62-edd2-0566-0da7-095ac86fda86" executionId="dfd00d05-580b-4a59-9705-65ba56089196" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: ApiGateway.Tests&#xD;
+[xUnit.net 00:00:00.44]   Discovered:  ApiGateway.Tests&#xD;
+[xUnit.net 00:00:00.51]   Starting:    ApiGateway.Tests&#xD;
+info: Yarp.ReverseProxy.Configuration.ConfigProvider.ConfigurationConfigProvider[1]&#xD;
+      Loading proxy data from config.&#xD;
+[xUnit.net 00:00:02.33]   Finished:    ApiGateway.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

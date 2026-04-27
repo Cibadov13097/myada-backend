@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using Microsoft.EntityFrameworkCore;
 using NotificationService.Application.Interfaces;
 using NotificationService.Infrastructure.Email;
@@ -8,6 +9,7 @@ using NotificationAppService = NotificationService.Application.Services.Notifica
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("notification-service");
 
 // Add services to the container.
 
@@ -34,6 +36,8 @@ builder.Services.AddDbContext<NotificationDbContext>(options=>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Develop"));
 });
+
+builder.AddMyAdaOpenTelemetry("notification-service");
 
 var app = builder.Build();
 
@@ -65,6 +69,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

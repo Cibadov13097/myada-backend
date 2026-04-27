@@ -1,0 +1,8 @@
+{
+  "NotificationService.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\NotificationService\\NotificationService.Api",
+  "NotificationService.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\NotificationService\\NotificationService.Application",
+  "NotificationService.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\NotificationService\\NotificationService.Domain",
+  "NotificationService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure",
+  "Shared.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Contracts",
+  "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability"
+}

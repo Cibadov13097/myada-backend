@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>MyAda.Testing.JwksStub</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.2.1" />
+    <EmbeddedResource Include="..\..\Services\AuthService\AuthService.Api\keys\public.pem" LogicalName="MyAda.Testing.JwksStub.AuthKeys.public.pem" />
+  </ItemGroup>
+
+</Project>

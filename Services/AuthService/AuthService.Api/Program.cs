@@ -1,3 +1,4 @@
+using MyAda.Observability;
 using AuthService.Application.Interfaces;
 using AuthService.Application.Options;
 using AuthService.Application.Services;
@@ -19,6 +20,7 @@ using System.Security.Cryptography;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMyAdaSerilog("auth-service");
 
 // 1. Database
 builder.Services.AddDbContext<MyAdaDbContext>(options =>
@@ -190,6 +192,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.AddMyAdaOpenTelemetry("auth-service");
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -208,6 +212,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseMyAdaPrometheusScraping();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -216,3 +221,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program;

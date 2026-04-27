@@ -1,11 +1,23 @@
 {
   "Version": 1,
-  "Hash": "v1X+90TbyNsEbDlAEnF9y41HUxWa9PpHhPlSQ3YX1Jo=",
+  "Hash": "kMvHTlc19JN7SbwcO+tMAn3hwRNepB4Noh8CTLGRFyo=",
   "Source": "CallService.Api",
   "BasePath": "_content/CallService.Api",
   "Mode": "Default",
   "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj",
+      "Version": 2,
+      "Source": "Shared.Observability",
+      "GetPublishAssetsTargets": "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
+    }
+  ],
   "DiscoveryPatterns": [],
   "Assets": []
 }

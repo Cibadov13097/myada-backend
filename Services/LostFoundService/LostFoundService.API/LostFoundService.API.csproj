@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\LostFoundService.Application\LostFoundService.Application.csproj" />
     <ProjectReference Include="..\LostFoundService.Infrastructure\LostFoundService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Observability\Shared.Observability.csproj" />
   </ItemGroup>
 
   <ItemGroup>
