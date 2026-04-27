@@ -17,19 +17,30 @@ public partial class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        // Prefer config (WebApplicationFactory UseSetting); env used for CI/local scripts.
+        var integrationTest =
+            string.Equals(
+                builder.Configuration["IntegrationTests:UseEmbeddedJwtKey"],
+                "true",
+                StringComparison.OrdinalIgnoreCase)
+            || !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("MYADA_TEST_JWKS_URL"));
+
         builder.AddMyAdaSerilog("myada-support-service");
 
         var jwksUrl = builder.Configuration["Auth:JwksUrl"];
-        if (string.IsNullOrWhiteSpace(jwksUrl))
+        if (string.IsNullOrWhiteSpace(jwksUrl) && !integrationTest)
             throw new InvalidOperationException(
                 "Auth:JwksUrl is required for JWT validation. Set to AuthService JWKS URL, e.g. http://localhost:5001/.well-known/jwks.json");
 
-        await JwksProvider.InitializeAsync(jwksUrl);
+        // Integration tests use embedded public key for JWT validation; JWKS HTTP fetch is optional.
+        await JwksProvider.InitializeAsync(
+            integrationTest ? "http://127.0.0.1:1/.well-known/jwks.json" : jwksUrl!);
 
         var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
         var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
 
-        builder.Services.AddHostedService<JwksRefreshHostedService>();
+        if (!integrationTest)
+            builder.Services.AddHostedService<JwksRefreshHostedService>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -37,17 +48,34 @@ public partial class Program
                 options.RequireHttpsMetadata = false;
                 options.MapInboundClaims = false;
 
-                options.TokenValidationParameters = new TokenValidationParameters
+                if (integrationTest)
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = validIssuer,
-                    ValidateAudience = true,
-                    ValidAudience = validAudience,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ClockSkew = TimeSpan.Zero,
-                    IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => JwksProvider.GetKeys()
-                };
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = validIssuer,
+                        ValidateAudience = true,
+                        ValidAudience = validAudience,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.Zero,
+                        IssuerSigningKey = SupportApiTestKeys.CreateRsaSecurityKey()
+                    };
+                }
+                else
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = validIssuer,
+                        ValidateAudience = true,
+                        ValidAudience = validAudience,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.Zero,
+                        IssuerSigningKeyResolver = (_, _, _, _) => JwksProvider.GetKeys()
+                    };
+                }
             });
 
         builder.Services.AddAuthorization();
@@ -134,7 +162,12 @@ public partial class Program
             UseCustomSchema = false,
             EnableExceptionLogging = true
         });
-        app.UseHttpsRedirection();
+        // MvcTest HttpClient is HTTP-only; following https redirects drops Authorization. Integration tests set TestHost:DisableHttpsRedirection.
+        if (!string.Equals(
+                app.Configuration["TestHost:DisableHttpsRedirection"],
+                "true",
+                StringComparison.OrdinalIgnoreCase))
+            app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseCors();
         app.UseMyAdaPrometheusScraping();

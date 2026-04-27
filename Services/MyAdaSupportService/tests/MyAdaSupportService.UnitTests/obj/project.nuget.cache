@@ -152,8 +152,10 @@
     {
       "code": "NU1603",
       "level": "Warning",
+      "message": "MyAdaSupportService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. AWSSDK.S3 3.7.414 was resolved instead.",
+      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\tests\\MyAdaSupportService.UnitTests\\MyAdaSupportService.UnitTests.csproj",
       "warningLevel": 1,
-      "message": "AuthService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. An approximate best match of AWSSDK.S3 3.7.414 was resolved.",
+      "filePath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\tests\\MyAdaSupportService.UnitTests\\MyAdaSupportService.UnitTests.csproj",
       "libraryId": "AWSSDK.S3",
       "targetGraphs": [
         "net8.0"

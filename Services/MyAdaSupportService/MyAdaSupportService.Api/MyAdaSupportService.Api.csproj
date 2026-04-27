@@ -25,4 +25,8 @@
     <ProjectReference Include="..\..\..\Shared\Shared.Observability\Shared.Observability.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\AuthService\AuthService.Api\keys\public.pem" Link="AuthKeys.public.pem" LogicalName="MyAdaSupportService.Api.AuthKeys.public.pem" />
+  </ItemGroup>
+
 </Project>

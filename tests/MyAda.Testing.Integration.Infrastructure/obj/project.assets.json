@@ -5945,11 +5945,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj",
       "projectName": "MyAda.Testing.Integration.Infrastructure",
-      "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\obj\\",
+      "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -5970,8 +5970,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj"
             }
           }
         }

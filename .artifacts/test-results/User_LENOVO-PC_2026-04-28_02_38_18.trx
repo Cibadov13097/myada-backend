@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3d3030e3-b83e-454a-ab4e-960a6a53e8e0" name="User@LENOVO-PC 2026-04-28 02:38:18" runUser="LENOVO-PC\User" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-04-28T02:38:18.4206166+04:00" queuing="2026-04-28T02:38:18.4206175+04:00" start="2026-04-28T02:38:14.1943752+04:00" finish="2026-04-28T02:38:22.7805617+04:00" />
+  <TestSettings name="default" id="1b678dde-e44f-4825-93ca-762912f365fd">
+    <Deployment runDeploymentRoot="User_LENOVO-PC_2026-04-28_02_38_18" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1c800bea-404c-42a8-9d1e-ad008b96d5a0" testId="b6e795c1-7851-4508-be26-c0f07f8e15bd" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/attendance/api/admin/courses&quot;)" computerName="LENOVO-PC" duration="00:00:00.1300009" startTime="2026-04-28T02:38:21.7544762+04:00" endTime="2026-04-28T02:38:21.9047058+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c800bea-404c-42a8-9d1e-ad008b96d5a0" />
+    <UnitTestResult executionId="ea5bddfd-817c-4356-9441-31cde5fc27b7" testId="c1c2b5d1-49a9-6766-e801-94cf5de41332" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Health_should_return_ok_payload" computerName="LENOVO-PC" duration="00:00:00.0169881" startTime="2026-04-28T02:38:17.1300791+04:00" endTime="2026-04-28T02:38:17.1476273+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea5bddfd-817c-4356-9441-31cde5fc27b7" />
+    <UnitTestResult executionId="60f5b8ec-2028-4cea-a64b-67337fbc0277" testId="fcc9bb6a-8ce1-a7d5-1d17-4f8131cfa93c" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/api/auth/login&quot;)" computerName="LENOVO-PC" duration="00:00:00.0453183" startTime="2026-04-28T02:38:22.0468362+04:00" endTime="2026-04-28T02:38:22.1089025+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60f5b8ec-2028-4cea-a64b-67337fbc0277" />
+    <UnitTestResult executionId="dc69a0b0-59d8-4aed-b6c5-03c3ea209bdd" testId="99845cdd-1181-b970-dd45-2fc0ba8095ff" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/club/api/v1/categories&quot;)" computerName="LENOVO-PC" duration="00:00:00.0740500" startTime="2026-04-28T02:38:22.1985948+04:00" endTime="2026-04-28T02:38:22.2793620+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc69a0b0-59d8-4aed-b6c5-03c3ea209bdd" />
+    <UnitTestResult executionId="1b2add96-d2ba-4087-ae87-eb06222cb39f" testId="b730ce62-edd2-0566-0da7-095ac86fda86" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Options_preflight_should_include_cors_headers_when_origin_allowed" computerName="LENOVO-PC" duration="00:00:00.0128422" startTime="2026-04-28T02:38:17.1478637+04:00" endTime="2026-04-28T02:38:17.1611917+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b2add96-d2ba-4087-ae87-eb06222cb39f" />
+    <UnitTestResult executionId="12a4bcc4-a7a1-4e8a-aca0-2970048ac13a" testId="b2b8f2f8-4c45-c7cc-b40c-f9fc96aae2ff" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/support/api/Categories&quot;)" computerName="LENOVO-PC" duration="00:00:00.0687064" startTime="2026-04-28T02:38:21.9619649+04:00" endTime="2026-04-28T02:38:22.0460492+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12a4bcc4-a7a1-4e8a-aca0-2970048ac13a" />
+    <UnitTestResult executionId="36e7b868-1ef7-4fdb-aaff-1e8a87cae0b3" testId="233749fb-202a-513b-017c-f594e7565e6c" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/&quot;)" computerName="LENOVO-PC" duration="00:00:00.0070568" startTime="2026-04-28T02:38:17.1202801+04:00" endTime="2026-04-28T02:38:17.1205170+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36e7b868-1ef7-4fdb-aaff-1e8a87cae0b3" />
+    <UnitTestResult executionId="59a3ace4-8a57-4faa-90f2-c74bbe556669" testId="e4f9d220-0528-f698-8619-d91a65c9377c" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Root_should_return_plain_text" computerName="LENOVO-PC" duration="00:00:00.0134414" startTime="2026-04-28T02:38:17.1232544+04:00" endTime="2026-04-28T02:38:17.1297490+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="59a3ace4-8a57-4faa-90f2-c74bbe556669" />
+    <UnitTestResult executionId="911f2294-03de-4017-9f30-89ba20b4b4f4" testId="d80af1bb-3cc3-17cd-c671-600f720d9b33" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/lostfound/api/v1/categories&quot;)" computerName="LENOVO-PC" duration="00:00:00.2223837" startTime="2026-04-28T02:38:21.5298496+04:00" endTime="2026-04-28T02:38:21.7535004+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="911f2294-03de-4017-9f30-89ba20b4b4f4" />
+    <UnitTestResult executionId="218329e2-ad40-4d89-b086-85e1b0eddc80" testId="22d234ba-180c-bb70-3a6c-5d1313c0f5a5" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/call/health&quot;)" computerName="LENOVO-PC" duration="00:00:05.4335905" startTime="2026-04-28T02:38:16.0300803+04:00" endTime="2026-04-28T02:38:21.5138655+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="218329e2-ad40-4d89-b086-85e1b0eddc80" />
+    <UnitTestResult executionId="60f040f0-5dd8-4f54-a481-7063b301b40d" testId="f48a2164-41af-02b1-bdf6-76a296d467fd" testName="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/health&quot;)" computerName="LENOVO-PC" duration="00:00:01.0561560" startTime="2026-04-28T02:38:16.0324031+04:00" endTime="2026-04-28T02:38:17.1040118+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60f040f0-5dd8-4f54-a481-7063b301b40d" />
+    <UnitTestResult executionId="52f3669f-7ea1-4a92-b387-b448d18d9060" testId="729da9c5-9c07-ced6-12be-896a64642728" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/location/api/v1/buildings&quot;)" computerName="LENOVO-PC" duration="00:00:00.0813505" startTime="2026-04-28T02:38:22.1099959+04:00" endTime="2026-04-28T02:38:22.1976165+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="52f3669f-7ea1-4a92-b387-b448d18d9060" />
+    <UnitTestResult executionId="4e91f3a3-47d9-40ff-bae3-8030b4bb0bb3" testId="aa8b4665-2f22-74da-5b4d-17cabe918250" testName="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/notification/api/v1/notifications&quot;)" computerName="LENOVO-PC" duration="00:00:00.0504736" startTime="2026-04-28T02:38:21.9056882+04:00" endTime="2026-04-28T02:38:21.9608541+04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e91f3a3-47d9-40ff-bae3-8030b4bb0bb3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/attendance/api/admin/courses&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="b6e795c1-7851-4508-be26-c0f07f8e15bd">
+      <Execution id="1c800bea-404c-42a8-9d1e-ad008b96d5a0" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/call/health&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="22d234ba-180c-bb70-3a6c-5d1313c0f5a5">
+      <Execution id="218329e2-ad40-4d89-b086-85e1b0eddc80" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/api/auth/login&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="fcc9bb6a-8ce1-a7d5-1d17-4f8131cfa93c">
+      <Execution id="60f5b8ec-2028-4cea-a64b-67337fbc0277" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Options_preflight_should_include_cors_headers_when_origin_allowed" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="b730ce62-edd2-0566-0da7-095ac86fda86">
+      <Execution id="1b2add96-d2ba-4087-ae87-eb06222cb39f" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Options_preflight_should_include_cors_headers_when_origin_allowed" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/support/api/Categories&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="b2b8f2f8-4c45-c7cc-b40c-f9fc96aae2ff">
+      <Execution id="12a4bcc4-a7a1-4e8a-aca0-2970048ac13a" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/lostfound/api/v1/categories&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="d80af1bb-3cc3-17cd-c671-600f720d9b33">
+      <Execution id="911f2294-03de-4017-9f30-89ba20b4b4f4" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/health&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="f48a2164-41af-02b1-bdf6-76a296d467fd">
+      <Execution id="60f040f0-5dd8-4f54-a481-7063b301b40d" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Anonymous_endpoints_should_allow_get" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Health_should_return_ok_payload" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="c1c2b5d1-49a9-6766-e801-94cf5de41332">
+      <Execution id="ea5bddfd-817c-4356-9441-31cde5fc27b7" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Health_should_return_ok_payload" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/notification/api/v1/notifications&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="aa8b4665-2f22-74da-5b4d-17cabe918250">
+      <Execution id="4e91f3a3-47d9-40ff-bae3-8030b4bb0bb3" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/location/api/v1/buildings&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="729da9c5-9c07-ced6-12be-896a64642728">
+      <Execution id="52f3669f-7ea1-4a92-b387-b448d18d9060" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests.Proxied_routes_respond_for_configured_path(path: &quot;/club/api/v1/categories&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="99845cdd-1181-b970-dd45-2fc0ba8095ff">
+      <Execution id="dc69a0b0-59d8-4aed-b6c5-03c3ea209bdd" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Integration.GatewayReverseProxyRouteIntegrationTests" name="Proxied_routes_respond_for_configured_path" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Root_should_return_plain_text" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="e4f9d220-0528-f698-8619-d91a65c9377c">
+      <Execution id="59a3ace4-8a57-4faa-90f2-c74bbe556669" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Root_should_return_plain_text" />
+    </UnitTest>
+    <UnitTest name="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests.Anonymous_endpoints_should_allow_get(path: &quot;/&quot;)" storage="c:\users\user\desktop\sdp\backend\myada-backend\tests\apigateway.tests\bin\debug\net8.0\apigateway.tests.dll" id="233749fb-202a-513b-017c-f594e7565e6c">
+      <Execution id="36e7b868-1ef7-4fdb-aaff-1e8a87cae0b3" />
+      <TestMethod codeBase="C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\ApiGateway.Tests\bin\Debug\net8.0\ApiGateway.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="ApiGateway.Tests.Layers.Gateway.GatewayPresentationLayerTests" name="Anonymous_endpoints_should_allow_get" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b6e795c1-7851-4508-be26-c0f07f8e15bd" executionId="1c800bea-404c-42a8-9d1e-ad008b96d5a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c1c2b5d1-49a9-6766-e801-94cf5de41332" executionId="ea5bddfd-817c-4356-9441-31cde5fc27b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fcc9bb6a-8ce1-a7d5-1d17-4f8131cfa93c" executionId="60f5b8ec-2028-4cea-a64b-67337fbc0277" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99845cdd-1181-b970-dd45-2fc0ba8095ff" executionId="dc69a0b0-59d8-4aed-b6c5-03c3ea209bdd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b730ce62-edd2-0566-0da7-095ac86fda86" executionId="1b2add96-d2ba-4087-ae87-eb06222cb39f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2b8f2f8-4c45-c7cc-b40c-f9fc96aae2ff" executionId="12a4bcc4-a7a1-4e8a-aca0-2970048ac13a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="233749fb-202a-513b-017c-f594e7565e6c" executionId="36e7b868-1ef7-4fdb-aaff-1e8a87cae0b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e4f9d220-0528-f698-8619-d91a65c9377c" executionId="59a3ace4-8a57-4faa-90f2-c74bbe556669" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d80af1bb-3cc3-17cd-c671-600f720d9b33" executionId="911f2294-03de-4017-9f30-89ba20b4b4f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22d234ba-180c-bb70-3a6c-5d1313c0f5a5" executionId="218329e2-ad40-4d89-b086-85e1b0eddc80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f48a2164-41af-02b1-bdf6-76a296d467fd" executionId="60f040f0-5dd8-4f54-a481-7063b301b40d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="729da9c5-9c07-ced6-12be-896a64642728" executionId="52f3669f-7ea1-4a92-b387-b448d18d9060" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa8b4665-2f22-74da-5b4d-17cabe918250" executionId="4e91f3a3-47d9-40ff-bae3-8030b4bb0bb3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="13" executed="13" passed="13" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.38]   Discovering: ApiGateway.Tests&#xD;
+[xUnit.net 00:00:00.52]   Discovered:  ApiGateway.Tests&#xD;
+[xUnit.net 00:00:00.57]   Starting:    ApiGateway.Tests&#xD;
+[2026-04-28T02:38:16.7464745+04:00] [INF] Yarp.ReverseProxy.Configuration.ConfigProvider.ConfigurationConfigProvider: Loading proxy data from config.&#xD;
+[2026-04-28T02:38:16.7464583+04:00] [INF] Yarp.ReverseProxy.Configuration.ConfigProvider.ConfigurationConfigProvider: Loading proxy data from config.&#xD;
+[2026-04-28T02:38:17.0926604+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5006/health HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:21.2527095+04:00] [WRN] Yarp.ReverseProxy.Forwarder.HttpForwarder: Request: An error was encountered before receiving a response.&#xD;
+System.Net.Http.HttpRequestException: No connection could be made because the target machine actively refused it. (localhost:5006)&#xD;
+ ---&gt; System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.&#xD;
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)&#xD;
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)&#xD;
+   at System.Net.Sockets.Socket.&lt;ConnectAsync&gt;g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)&#xD;
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)&#xD;
+   --- End of inner exception stack trace ---&#xD;
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)&#xD;
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)&#xD;
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)&#xD;
+   at System.Net.Http.HttpConnectionPool.HttpConnectionWaiter`1.WaitForConnectionWithTelemetryAsync(HttpRequestMessage request, HttpConnectionPool pool, Boolean async, CancellationToken requestCancellationToken)&#xD;
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)&#xD;
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+   at System.Net.Http.Metrics.MetricsHandler.SendAsyncWithMetrics(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+   at Yarp.ReverseProxy.Forwarder.HttpForwarder.SendAsync(HttpContext context, String destinationPrefix, HttpMessageInvoker httpClient, ForwarderRequestConfig requestConfig, HttpTransformer transformer, CancellationToken cancellationToken)&#xD;
+[2026-04-28T02:38:21.5395510+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5002/api/v1/categories HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:21.6488874+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Received HTTP/1.1 response 404.&#xD;
+[2026-04-28T02:38:21.7640754+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5009/api/admin/courses HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:21.8196225+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Received HTTP/1.1 response 200.&#xD;
+[2026-04-28T02:38:21.9081647+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5004/api/v1/notifications HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:21.9282561+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Received HTTP/1.1 response 404.&#xD;
+[2026-04-28T02:38:21.9633090+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5008/api/Categories HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:21.9791157+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Received HTTP/1.1 response 401.&#xD;
+[2026-04-28T02:38:22.0487446+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5001/api/auth/login HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:22.0627228+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Received HTTP/1.1 response 405.&#xD;
+[2026-04-28T02:38:22.1111669+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5005/api/v1/buildings HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:22.1647018+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Received HTTP/1.1 response 200.&#xD;
+[2026-04-28T02:38:22.1999335+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Proxying to http://localhost:5003/api/v1/categories HTTP/2 RequestVersionOrLower &#xD;
+[2026-04-28T02:38:22.2415482+04:00] [INF] Yarp.ReverseProxy.Forwarder.HttpForwarder: Received HTTP/1.1 response 200.&#xD;
+[xUnit.net 00:00:06.89]   Finished:    ApiGateway.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

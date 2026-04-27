@@ -5797,11 +5797,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
       "projectName": "AuthService.Api",
-      "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
+      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\obj\\",
+      "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -5822,14 +5822,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
             },
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj"
             },
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability\\Shared.Observability.csproj"
             }
           }
         }

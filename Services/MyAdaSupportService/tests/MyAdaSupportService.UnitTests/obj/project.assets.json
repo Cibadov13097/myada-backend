@@ -7335,7 +7335,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "AuthService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. An approximate best match of AWSSDK.S3 3.7.414 was resolved.",
+      "message": "MyAdaSupportService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. AWSSDK.S3 3.7.414 was resolved instead.",
       "libraryId": "AWSSDK.S3",
       "targetGraphs": [
         "net8.0"

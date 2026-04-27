@@ -7010,11 +7010,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\AuthService.Tests\\AuthService.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\AuthService.Tests\\AuthService.Tests.csproj",
       "projectName": "AuthService.Tests",
-      "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\AuthService.Tests\\AuthService.Tests.csproj",
+      "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\AuthService.Tests\\AuthService.Tests.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\AuthService.Tests\\obj\\",
+      "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\AuthService.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -7035,20 +7035,20 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj"
             },
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
             },
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj"
             },
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj"
             },
-            "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj": {
-              "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj"
+            "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure\\MyAda.Testing.Integration.Infrastructure.csproj"
             }
           }
         }
@@ -7122,7 +7122,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "AuthService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. An approximate best match of AWSSDK.S3 3.7.414 was resolved.",
+      "message": "AuthService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. AWSSDK.S3 3.7.414 was resolved instead.",
       "libraryId": "AWSSDK.S3",
       "targetGraphs": [
         "net8.0"
