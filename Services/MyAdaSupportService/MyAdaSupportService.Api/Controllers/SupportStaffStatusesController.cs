@@ -13,6 +13,8 @@ namespace MyAdaSupportService.Api.Controllers;
 [Authorize]
 public class SupportStaffStatusesController : ControllerBase
 {
+    private const string StudentRole = "student";
+
     private readonly ISupportStaffStatusService _supportStaffStatusService;
     private readonly IConfiguration _configuration;
 
@@ -24,12 +26,14 @@ public class SupportStaffStatusesController : ControllerBase
         _configuration = configuration;
     }
 
-    [Authorize(Roles = "support,dispatcher,staff,admin")]
     [HttpPost]
     public async Task<ActionResult<SupportStaffStatusDto>> Create([FromBody] CreateSupportStaffStatusDto dto)
     {
         if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
             return authError!;
+
+        if (IsStudent(User))
+            return Forbid();
 
         var isAdmin = User.IsInRole("admin");
 
@@ -53,15 +57,10 @@ public class SupportStaffStatusesController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "support,dispatcher,staff,admin")]
     [HttpGet("member/{memberId:guid}")]
     public async Task<ActionResult<SupportStaffStatusDto>> GetByMemberId(Guid memberId)
     {
-        if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
-            return authError!;
-
-        var isAdmin = User.IsInRole("admin");
-        if (!isAdmin && memberId != authorizedMemberId)
+        if (IsStudent(User))
             return Forbid();
 
         var result = await _supportStaffStatusService.GetOrCreateByMemberIdAsync(memberId);
@@ -71,6 +70,9 @@ public class SupportStaffStatusesController : ControllerBase
     [HttpGet("status/{status}")]
     public async Task<ActionResult<List<SupportStaffStatusDto>>> GetByStatus(string status)
     {
+        if (IsStudent(User))
+            return Forbid();
+
         var result = await _supportStaffStatusService.GetByStatusAsync(status);
         return Ok(result);
     }
@@ -100,12 +102,14 @@ public class SupportStaffStatusesController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "support,dispatcher,staff,admin")]
     [HttpPut("member/{memberId:guid}")]
     public async Task<IActionResult> UpdateStatus(Guid memberId, [FromBody] UpdateSupportStaffStatusDto dto)
     {
         if (!TryGetAuthorizedMemberId(out var authorizedMemberId, out var authError))
             return authError!;
+
+        if (IsStudent(User))
+            return Forbid();
 
         var isAdmin = User.IsInRole("admin");
         if (!isAdmin && memberId != authorizedMemberId)
@@ -152,5 +156,15 @@ public class SupportStaffStatusesController : ControllerBase
         var expectedBytes = Encoding.UTF8.GetBytes(expectedKey);
         var providedBytes = Encoding.UTF8.GetBytes(providedKey);
         return CryptographicOperations.FixedTimeEquals(expectedBytes, providedBytes);
+    }
+
+    private static bool IsStudent(ClaimsPrincipal user)
+    {
+        return user.IsInRole(StudentRole)
+               || user.Claims.Any(claim =>
+                   (string.Equals(claim.Type, ClaimTypes.Role, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(claim.Type, "role", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(claim.Type, "roles", StringComparison.OrdinalIgnoreCase))
+                   && string.Equals(claim.Value, StudentRole, StringComparison.OrdinalIgnoreCase));
     }
 }

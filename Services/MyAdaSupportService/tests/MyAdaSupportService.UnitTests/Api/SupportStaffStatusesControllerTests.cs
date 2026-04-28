@@ -13,7 +13,8 @@ public class SupportStaffStatusesControllerTests
 {
     private static SupportStaffStatusesController CreateController(
         ISupportStaffStatusService service,
-        Guid? authorizedUserId = null)
+        Guid? authorizedUserId = null,
+        params string[] roles)
     {
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -26,6 +27,7 @@ public class SupportStaffStatusesControllerTests
         var claims = new List<Claim>();
         if (authorizedUserId.HasValue)
             claims.Add(new Claim("sub", authorizedUserId.Value.ToString()));
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         controller.ControllerContext = new ControllerContext
         {
@@ -47,7 +49,7 @@ public class SupportStaffStatusesControllerTests
         var createdDto = new SupportStaffStatusDto { Id = 1, MemberId = memberId, Status = "Online" };
         svc.Setup(s => s.CreateStatusAsync(It.Is<CreateSupportStaffStatusDto>(d => d.MemberId == memberId && d.Status == "Online")))
             .ReturnsAsync(createdDto);
-        var controller = CreateController(svc.Object, memberId);
+        var controller = CreateController(svc.Object, memberId, "instructor");
 
         var result = await controller.Create(createDto);
 
@@ -63,7 +65,7 @@ public class SupportStaffStatusesControllerTests
         var authorizedUserId = Guid.NewGuid();
         var anotherMemberId = Guid.NewGuid();
         var svc = new Mock<ISupportStaffStatusService>();
-        var controller = CreateController(svc.Object, authorizedUserId);
+        var controller = CreateController(svc.Object, authorizedUserId, "instructor");
 
         var result = await controller.Create(new CreateSupportStaffStatusDto
         {
@@ -82,7 +84,7 @@ public class SupportStaffStatusesControllerTests
         var svc = new Mock<ISupportStaffStatusService>();
         svc.Setup(s => s.GetOrCreateByMemberIdAsync(memberId))
             .ReturnsAsync(new SupportStaffStatusDto { MemberId = memberId, Status = "Online" });
-        var controller = CreateController(svc.Object, memberId);
+        var controller = CreateController(svc.Object, memberId, "instructor");
 
         var result = await controller.GetByMemberId(memberId);
 
@@ -90,14 +92,32 @@ public class SupportStaffStatusesControllerTests
     }
 
     [Fact]
-    public async Task GetByMemberId_returns_Forbid_when_member_does_not_match_authorized_user()
+    public async Task GetByMemberId_returns_Ok_for_non_student_requesting_another_member()
     {
         var authorizedUserId = Guid.NewGuid();
         var anotherMemberId = Guid.NewGuid();
         var svc = new Mock<ISupportStaffStatusService>();
-        var controller = CreateController(svc.Object, authorizedUserId);
+        svc.Setup(s => s.GetOrCreateByMemberIdAsync(anotherMemberId))
+            .ReturnsAsync(new SupportStaffStatusDto { MemberId = anotherMemberId, Status = "Offline" });
+        var controller = CreateController(svc.Object, authorizedUserId, "instructor");
 
         var result = await controller.GetByMemberId(anotherMemberId);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var payload = Assert.IsType<SupportStaffStatusDto>(ok.Value);
+        Assert.Equal(anotherMemberId, payload.MemberId);
+        svc.Verify(s => s.GetOrCreateByMemberIdAsync(anotherMemberId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetByMemberId_returns_Forbid_for_students()
+    {
+        var memberId = Guid.NewGuid();
+        var targetMemberId = Guid.NewGuid();
+        var svc = new Mock<ISupportStaffStatusService>();
+        var controller = CreateController(svc.Object, memberId, "student");
+
+        var result = await controller.GetByMemberId(targetMemberId);
 
         Assert.IsType<ForbidResult>(result.Result);
         svc.Verify(s => s.GetOrCreateByMemberIdAsync(It.IsAny<Guid>()), Times.Never);
@@ -108,10 +128,43 @@ public class SupportStaffStatusesControllerTests
     {
         var svc = new Mock<ISupportStaffStatusService>();
         svc.Setup(s => s.GetByStatusAsync("Online")).ReturnsAsync(new List<SupportStaffStatusDto>());
-        var controller = CreateController(svc.Object);
+        var controller = CreateController(svc.Object, Guid.NewGuid(), "dispatcher");
 
         var result = await controller.GetByStatus("Online");
 
         Assert.IsType<OkObjectResult>(result.Result);
+    }
+
+    [Fact]
+    public async Task Create_returns_Forbid_for_students()
+    {
+        var memberId = Guid.NewGuid();
+        var svc = new Mock<ISupportStaffStatusService>();
+        var controller = CreateController(svc.Object, memberId, "student");
+
+        var result = await controller.Create(new CreateSupportStaffStatusDto
+        {
+            MemberId = memberId,
+            Status = "Online"
+        });
+
+        Assert.IsType<ForbidResult>(result.Result);
+        svc.Verify(s => s.CreateStatusAsync(It.IsAny<CreateSupportStaffStatusDto>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_returns_Forbid_for_students()
+    {
+        var memberId = Guid.NewGuid();
+        var svc = new Mock<ISupportStaffStatusService>();
+        var controller = CreateController(svc.Object, memberId, "student");
+
+        var result = await controller.UpdateStatus(memberId, new UpdateSupportStaffStatusDto
+        {
+            Status = "Online"
+        });
+
+        Assert.IsType<ForbidResult>(result);
+        svc.Verify(s => s.UpdateStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateSupportStaffStatusDto>()), Times.Never);
     }
 }

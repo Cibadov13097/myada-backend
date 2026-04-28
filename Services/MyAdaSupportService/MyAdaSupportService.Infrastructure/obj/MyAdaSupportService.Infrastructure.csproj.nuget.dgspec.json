@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj": {}
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj": {
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj",
+        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj",
         "projectName": "MyAdaSupportService.Application",
-        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\obj\\",
+        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj",
+        "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\cavid\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,8 +32,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj": {
-                "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj"
+              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj": {
+                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj"
               }
             }
           }
@@ -47,7 +47,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -69,29 +70,43 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj": {
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj",
         "projectName": "MyAdaSupportService.Domain",
-        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\obj\\",
+        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj",
+        "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\cavid\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -117,7 +132,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -133,29 +149,43 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj": {
+    "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj",
         "projectName": "MyAdaSupportService.Infrastructure",
-        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\MyAdaSupportService.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\cavid\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -170,11 +200,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj": {
-                "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj"
+              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj": {
+                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application\\MyAdaSupportService.Application.csproj"
               },
-              "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj": {
-                "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj"
+              "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj": {
+                "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain\\MyAdaSupportService.Domain.csproj"
               }
             }
           }
@@ -188,7 +218,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -240,12 +271,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
