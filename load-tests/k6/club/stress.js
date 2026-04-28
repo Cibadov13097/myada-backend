@@ -2,6 +2,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { getConfig, randomThinkTimeMs } from '../lib/config.js';
 import { login, authHeaders } from '../lib/auth.js';
+import { unwrapApiBody } from '../lib/unwrap.js';
 
 export const options = (() => {
   const cfg = getConfig();
@@ -47,7 +48,7 @@ function getEventIds(cfg, accessToken) {
     tags: { name: 'club_events_list' },
   });
   check(res, { 'events list status 200': (r) => r.status === 200 });
-  const body = res.json();
+  const body = unwrapApiBody(res.json());
   const items = body && body.items ? body.items : [];
   const eventIds = items.map((e) => e.id).filter((x) => Number.isFinite(x));
   if (eventIds.length === 0) {
@@ -90,7 +91,8 @@ export default function (data) {
   check(regRes, { 'register status 200 or 409': (r) => r.status === 200 || r.status === 409 });
 
   if (regRes.status === 200) {
-    const ticketJwt = (regRes.json() && regRes.json().jwt) ? String(regRes.json().jwt) : '';
+    const body = unwrapApiBody(regRes.json());
+    const ticketJwt = (body && body.jwt) ? String(body.jwt) : '';
     if (ticketJwt) {
       const checkinUrl = `${cfg.baseUrl}${cfg.clubPrefix}/api/v1/events/${eventId}/check-in`;
       const checkinRes = http.post(

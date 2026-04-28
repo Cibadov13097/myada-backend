@@ -2,6 +2,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { getConfig, randomThinkTimeMs } from '../lib/config.js';
 import { login, authHeaders } from '../lib/auth.js';
+import { unwrapApiBody } from '../lib/unwrap.js';
 
 export const options = (() => {
   const cfg = getConfig();
@@ -42,7 +43,7 @@ function getEventIds(cfg, accessToken) {
     tags: { name: 'club_events_list' },
   });
   check(res, { 'events list status 200': (r) => r.status === 200 });
-  const body = res.json();
+  const body = unwrapApiBody(res.json());
   const items = body && body.items ? body.items : [];
   const eventIds = items.map((e) => e.id).filter((x) => Number.isFinite(x));
   if (eventIds.length === 0) {
@@ -95,7 +96,7 @@ export default function (data) {
   // If seats are full, we still keep load going but skip check-in.
   if (!regOk || regRes.status !== 200) return;
 
-  const regBody = regRes.json();
+  const regBody = unwrapApiBody(regRes.json());
   const ticketJwt = regBody && regBody.jwt ? String(regBody.jwt) : '';
   check(regRes, { 'registration includes jwt': () => ticketJwt.length > 0 });
   if (!ticketJwt) return;
@@ -109,7 +110,10 @@ export default function (data) {
   );
   check(checkinRes, {
     'check-in status 200': (r) => r.status === 200,
-    'check-in has success field': (r) => r.json() && typeof r.json().success === 'boolean',
+    'check-in has success field': (r) => {
+      const b = unwrapApiBody(r.json());
+      return b && typeof b.success === 'boolean';
+    },
   });
 
   sleep(randomThinkTimeMs(cfg) / 1000);

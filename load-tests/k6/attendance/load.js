@@ -3,6 +3,7 @@ import { check, sleep } from 'k6';
 import { getConfig, randomThinkTimeMs } from '../lib/config.js';
 import { login, authHeaders } from '../lib/auth.js';
 import { getUserIdFromAccessToken } from '../lib/jwt.js';
+import { unwrapApiBody } from '../lib/unwrap.js';
 
 export const options = (() => {
   const cfg = getConfig();
@@ -58,7 +59,7 @@ export function setup() {
   const lessonsUrl = `${cfg.baseUrl}${cfg.attendancePrefix}/api/instructors/${instructorId}/lessons`;
   const lessonsRes = http.get(lessonsUrl, { headers: authHeaders(instructor.accessToken), tags: { name: 'attendance_instructor_lessons' } });
   check(lessonsRes, { 'instructor lessons 200': (r) => r.status === 200 });
-  const lessons = lessonsRes.json() || [];
+  const lessons = unwrapApiBody(lessonsRes.json()) || [];
   if (!Array.isArray(lessons) || lessons.length === 0) {
     throw new Error(`No lessons for instructor ${instructorId}. Seed attendance lessons or use an instructor that has lessons.`);
   }
@@ -67,7 +68,7 @@ export function setup() {
   const sessionsUrl = `${cfg.baseUrl}${cfg.attendancePrefix}/api/instructors/${instructorId}/lessons/${lessonId}/sessions`;
   const sessionsRes = http.get(sessionsUrl, { headers: authHeaders(instructor.accessToken), tags: { name: 'attendance_instructor_sessions' } });
   check(sessionsRes, { 'instructor sessions 200': (r) => r.status === 200 });
-  const sessions = sessionsRes.json() || [];
+  const sessions = unwrapApiBody(sessionsRes.json()) || [];
   if (!Array.isArray(sessions) || sessions.length === 0) {
     throw new Error(`No sessions for lesson ${lessonId}. Create or generate sessions first.`);
   }
@@ -100,7 +101,7 @@ export default function (data) {
   const tokenUrl = `${cfg.baseUrl}${cfg.attendancePrefix}/api/instructors/${data.instructorId}/sessions/${data.sessionId}/qr-token`;
   const tokenRes = http.post(tokenUrl, null, { headers: authHeaders(data.instructorToken), tags: { name: 'attendance_issue_qr_token' } });
   check(tokenRes, { 'qr-token status 200': (r) => r.status === 200 });
-  const tokenBody = tokenRes.json();
+  const tokenBody = unwrapApiBody(tokenRes.json());
   const qrToken = tokenBody && tokenBody.token ? String(tokenBody.token) : '';
   check(tokenRes, { 'qr-token includes token': () => qrToken.length > 0 });
   if (!qrToken) return;
@@ -116,7 +117,10 @@ export default function (data) {
   );
   check(scanRes, {
     'scan status 200': (r) => r.status === 200,
-    'scan response has success': (r) => r.json() && typeof r.json().success === 'boolean',
+    'scan response has success': (r) => {
+      const b = unwrapApiBody(r.json());
+      return b && typeof b.success === 'boolean';
+    },
   });
 
   sleep(randomThinkTimeMs(cfg) / 1000);

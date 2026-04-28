@@ -1,5 +1,6 @@
 import http from 'k6/http';
 import { check } from 'k6';
+import { unwrapApiBody } from './unwrap.js';
 
 export function login(baseUrl, username, password) {
   const url = `${baseUrl}/api/auth/login`;
@@ -15,7 +16,7 @@ export function login(baseUrl, username, password) {
   if (!ok) {
     throw new Error(`Login failed for '${username}'. status=${res.status} body=${res.body}`);
   }
-  const body = res.json();
+  const body = unwrapApiBody(res.json());
   if (!body || !body.accessToken) throw new Error(`Login response missing accessToken for '${username}'.`);
   return {
     accessToken: body.accessToken,
