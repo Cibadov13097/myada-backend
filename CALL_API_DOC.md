@@ -333,10 +333,9 @@ Parameters:
 Behavior:
 - Creates `callId` and `roomId` internally.
 - Allowed call matrix:
-  - any authenticated user -> dispatcher
-  - dispatcher -> any non-student user
-  - instructor -> support/staff/student_services/*_staff
-  - support/staff/student_services/*_staff -> instructor
+  - any authenticated non-student user -> any authenticated non-student user
+  - students cannot place calls
+  - students cannot receive calls
 - Sends `IncomingCall` to all SignalR connections of the target user.
 - Sends `CallRinging` to caller user connections.
 - Starts server-side timeout for invite expiration.
@@ -640,8 +639,8 @@ Payload:
 Hub errors are returned as SignalR `HubException` messages, for example:
 - `targetUserId is required.`
 - `Target user is offline.`
-- `Only dispatchers can call non-dispatcher users.`
-- `Dispatchers cannot call students.`
+- `Students cannot place calls.`
+- `Students cannot receive calls.`
 - `Call request expired.`
 - `You must be in a call room before sending signaling messages.`
 - `Target connection is not online.`

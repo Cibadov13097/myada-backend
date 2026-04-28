@@ -685,26 +685,14 @@ public class CallHub : Hub
         ConnectedUserConnection caller,
         IReadOnlyList<ConnectedUserConnection> targetConnections)
     {
-        var targetIsDispatcher = targetConnections.Any(connection => connection.IsDispatcher);
+        var callerIsStudent = HasRole(caller, StudentRole);
         var targetIsStudent = targetConnections.Any(connection => HasRole(connection, StudentRole));
-        var targetIsInstructor = targetConnections.Any(IsInstructor);
-        var targetIsTech = targetConnections.Any(IsTech);
-        var callerIsInstructor = IsInstructor(caller);
-        var callerIsTech = IsTech(caller);
 
-        if (caller.IsDispatcher)
-        {
-            if (!targetIsDispatcher && targetIsStudent)
-                throw new HubException("Dispatchers cannot call students.");
+        if (callerIsStudent)
+            throw new HubException("Students cannot place calls.");
 
-            return;
-        }
-
-        if ((callerIsInstructor && targetIsTech) || (callerIsTech && targetIsInstructor))
-            return;
-
-        if (!targetIsDispatcher)
-            throw new HubException("Only dispatchers can call non-dispatcher users.");
+        if (targetIsStudent)
+            throw new HubException("Students cannot receive calls.");
     }
 
     private static string[] GetRoleValues(ClaimsPrincipal? user)
