@@ -35,6 +35,28 @@ function parseCsvEnv(name) {
     .filter((s) => s.length > 0);
 }
 
+function getEventIds(cfg, accessToken) {
+  const explicitEventId = (__ENV.EVENT_ID || '').trim();
+  if (explicitEventId) {
+    return [Number(explicitEventId)];
+  }
+
+  const eventsUrl = `${cfg.baseUrl}${cfg.clubPrefix}/api/v1/events?myClubsOnly=false&page=1&limit=0`;
+  const res = http.get(eventsUrl, {
+    headers: authHeaders(accessToken),
+    tags: { name: 'club_events_list' },
+  });
+  check(res, { 'events list status 200': (r) => r.status === 200 });
+  const body = res.json();
+  const items = body && body.items ? body.items : [];
+  const eventIds = items.map((e) => e.id).filter((x) => Number.isFinite(x));
+  if (eventIds.length === 0) {
+    throw new Error(`No events found at ${eventsUrl}. Create/seed events first, or set EVENT_ID.`);
+  }
+
+  return eventIds;
+}
+
 export function setup() {
   const cfg = getConfig();
 
@@ -49,14 +71,7 @@ export function setup() {
 
   const admin = login(cfg.baseUrl, adminUser, adminPass);
   const students = studentUsernames.map((u, i) => login(cfg.baseUrl, u, studentPasswords[i]));
-
-  const eventsUrl = `${cfg.baseUrl}${cfg.clubPrefix}/api/v1/events?page=1&limit=50`;
-  const res = http.get(eventsUrl, { headers: authHeaders(admin.accessToken), tags: { name: 'club_events_list' } });
-  check(res, { 'events list status 200': (r) => r.status === 200 });
-  const body = res.json();
-  const items = body && body.items ? body.items : [];
-  const eventIds = items.map((e) => e.id).filter((x) => Number.isFinite(x));
-  if (eventIds.length === 0) throw new Error('No events found. Seed events first.');
+  const eventIds = getEventIds(cfg, admin.accessToken);
 
   return { cfg, admin: admin.accessToken, students: students.map((s) => s.accessToken), eventIds };
 }

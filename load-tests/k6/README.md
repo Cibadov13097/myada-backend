@@ -22,6 +22,7 @@ They do **not** call any `DELETE` endpoints.
 
 - `ADMIN_USERNAME` / `ADMIN_PASSWORD` (used for `/events/{id}/check-in`)
 - `STUDENT_USERNAMES` / `STUDENT_PASSWORDS` (comma-separated lists, same length)
+- Optional: `EVENT_ID` to skip event discovery and test one known event directly
 
 ### Attendance QR tests
 
@@ -50,6 +51,19 @@ export ADMIN_PASSWORD='Admin123*'
 export STUDENT_USERNAMES="seed_user1,seed_user02"
 export STUDENT_PASSWORDS="pass1,pass2"
 
+k6 run load-tests/k6/club/load.js
+```
+
+By default the script discovers events with:
+
+```text
+GET /club/api/v1/events?myClubsOnly=false&page=1&limit=0
+```
+
+If you already know a valid event id, you can bypass discovery:
+
+```bash
+export EVENT_ID=123
 k6 run load-tests/k6/club/load.js
 ```
 
