@@ -96,8 +96,6 @@ HTTP response item shape:
 
 ### `GET /api/v1/notifications`
 
-### `GET /api/v1/notifications/me`
-
 Returns paginated notifications ordered from newest to oldest.
 
 Query parameters:
@@ -149,6 +147,23 @@ Example invalid channel response:
   "error": "Invalid channel value. Allowed: all, Email, Push, Sms"
 }
 ```
+
+### `GET /api/v1/notifications/me`
+
+Returns notifications for the user identified by the bearer access token.
+
+Query parameters:
+
+- `type` (`string`, optional, default `all`)
+- `channel` (`string`, optional, default `all`)
+- `page` (`int`, optional, default `1`)
+- `limit` (`int`, optional, default `20`, clamped to `1..100`)
+
+Important behavior:
+
+- this route automatically resolves the current user from the access token
+- it does not need `recipientUserId`
+- supported user id claim lookup includes `sub`, `user_id`, `nameid`, and `ClaimTypes.NameIdentifier`
 
 ### `GET /api/v1/notifications/{id}`
 

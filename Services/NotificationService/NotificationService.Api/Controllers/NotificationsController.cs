@@ -30,14 +30,34 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpGet]
-    [HttpGet("me")]
     [Authorize]
-    public async Task<IActionResult> GetAll(
+    public Task<IActionResult> GetAll(
         [FromQuery] string type = "all",
         [FromQuery] string channel = "all",
         [FromQuery] Guid? recipientUserId = null,
         [FromQuery] int page = 1,
         [FromQuery] int limit = 20)
+    {
+        return GetVisibleNotificationsAsync(type, channel, recipientUserId, page, limit);
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    public Task<IActionResult> GetMine(
+        [FromQuery] string type = "all",
+        [FromQuery] string channel = "all",
+        [FromQuery] int page = 1,
+        [FromQuery] int limit = 20)
+    {
+        return GetVisibleNotificationsAsync(type, channel, null, page, limit);
+    }
+
+    private async Task<IActionResult> GetVisibleNotificationsAsync(
+        string type,
+        string channel,
+        Guid? recipientUserId,
+        int page,
+        int limit)
     {
         var userId = GetCurrentUserIdOrDefault();
         if (userId == Guid.Empty)
@@ -244,7 +264,10 @@ public class NotificationsController : ControllerBase
 
     private Guid GetCurrentUserIdOrDefault()
     {
-        var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
+        var claim = User.FindFirst("sub")?.Value
+                    ?? User.FindFirst("user_id")?.Value
+                    ?? User.FindFirst("nameid")?.Value
+                    ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
     }
 

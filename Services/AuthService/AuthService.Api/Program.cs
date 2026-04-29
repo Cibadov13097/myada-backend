@@ -211,13 +211,22 @@ if (app.Environment.IsDevelopment())
     {
         c.PreSerializeFilters.Add((swagger, httpReq) =>
         {
-            var forwardedPrefix = httpReq.Headers["X-Forwarded-Prefix"].FirstOrDefault();
             var forwardedProto = httpReq.Headers["X-Forwarded-Proto"].FirstOrDefault();
             var forwardedHost = httpReq.Headers["X-Forwarded-Host"].FirstOrDefault();
+            var isProxied = httpReq.Headers.ContainsKey("X-Forwarded-Prefix")
+                            || !string.IsNullOrWhiteSpace(forwardedProto)
+                            || !string.IsNullOrWhiteSpace(forwardedHost);
 
             var scheme = string.IsNullOrWhiteSpace(forwardedProto) ? httpReq.Scheme : forwardedProto;
             var host = string.IsNullOrWhiteSpace(forwardedHost) ? httpReq.Host.Value : forwardedHost;
-            var prefix = string.IsNullOrWhiteSpace(forwardedPrefix) ? string.Empty : forwardedPrefix;
+            var isProductionGatewayHost =
+                host.Equals("myada.site", StringComparison.OrdinalIgnoreCase)
+                || host.StartsWith("myada.site:", StringComparison.OrdinalIgnoreCase);
+
+            if (isProductionGatewayHost)
+                scheme = "https";
+
+            var prefix = isProxied || isProductionGatewayHost ? "/auth" : string.Empty;
 
             swagger.Servers = new List<OpenApiServer>
             {
@@ -228,7 +237,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.RoutePrefix = "swagger";
-        c.SwaggerEndpoint("/auth/swagger/v1/swagger.json", "Auth API v1");
+        c.SwaggerEndpoint("v1/swagger.json", "Auth API v1");
     });
 }
 
