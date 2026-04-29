@@ -1,5 +1,6 @@
 using System.Net;
 using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -13,8 +14,8 @@ public sealed class GatewayReverseProxyRouteIntegrationTests : IClassFixture<Web
 
     public GatewayReverseProxyRouteIntegrationTests(WebApplicationFactory<Program> factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
+        _factory = factory.WithWebHostBuilder(builder => builder.UseEnvironment("Development"));
+        _client = _factory.CreateClient();
     }
 
     public void Dispose() => _client.Dispose();

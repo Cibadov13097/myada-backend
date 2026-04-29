@@ -1,33 +1,34 @@
 # Call Service API Documentation for Frontend
 
-Last updated: 2026-04-26
+Last updated: 2026-04-29
 
 ## What Frontend Should Use
 
 Use API Gateway for realtime call signaling:
-- Base URL: `http://13.60.31.141:500`
+- Base URL: `https://myada.duckdns.org`
 - Gateway prefix: `/call`
-- Hub URL: `http://13.60.31.141:500/call/hub`
+- Hub URL: `https://myada.duckdns.org/call/hub`
+- Swagger URL (when enabled): `https://myada.duckdns.org/call/swagger/index.html`
 
-Direct service (diagnostics only):
-- `http://13.60.31.141:5006/hub`
+Direct service (local / diagnostics only, not recommended for frontend):
+- `http://localhost:5006/hub`
 
 Local equivalents:
 - Gateway hub: `http://localhost:5000/call/hub`
 - Direct call hub: `http://localhost:5006/hub`
 
 Common 404 rule:
-- If host is the deployed gateway (`:500`), call endpoints must include `/call`.
-- Correct: `http://13.60.31.141:500/call/hub`
-- Wrong: `http://13.60.31.141:500/hub`
+- If host is the deployed gateway, call endpoints must include `/call`.
+- Correct: `https://myada.duckdns.org/call/hub`
+- Wrong: `https://myada.duckdns.org/hub`
 
 ## ICE Server Configuration (STUN/TURN)
 
 CallService now issues short-lived TURN credentials for cross-network WebRTC calls.
 
 HTTP endpoint (recommended):
-- Gateway: `GET http://13.60.31.141:500/call/webrtc/ice-servers`
-- Direct service: `GET http://13.60.31.141:5006/webrtc/ice-servers`
+- Gateway: `GET https://myada.duckdns.org/call/webrtc/ice-servers`
+- Direct service (local / diagnostics): `GET http://localhost:5006/webrtc/ice-servers`
 - Local gateway: `GET http://localhost:5000/call/webrtc/ice-servers`
 - Local direct: `GET http://localhost:5006/webrtc/ice-servers`
 
@@ -46,9 +47,9 @@ Payload example:
   "iceServers": [
     {
       "urls": [
-        "stun:13.60.31.141:3478",
-        "turn:13.60.31.141:3478?transport=udp",
-        "turn:13.60.31.141:3478?transport=tcp"
+        "stun:myada.duckdns.org:3478",
+        "turn:myada.duckdns.org:3478?transport=udp",
+        "turn:myada.duckdns.org:3478?transport=tcp"
       ],
       "username": "1760944800:user-guid",
       "credential": "base64-hmac-value"
@@ -58,11 +59,15 @@ Payload example:
 ```
 
 Docker env keys used by current compose setup:
-- `TURN_PUBLIC_HOST`: host/domain clients use in ICE URLs (default `13.60.31.141`)
-- `TURN_EXTERNAL_IP`: public IP coturn advertises (default `13.60.31.141`, or NAT mapping `PUBLIC_IP/CONTAINER_IP`)
+- `TURN_PUBLIC_HOST`: host/domain clients use in ICE URLs. For public deployment, set this to `myada.duckdns.org`.
+- `TURN_EXTERNAL_IP`: public IP coturn advertises, or NAT mapping `PUBLIC_IP/CONTAINER_IP`
 - `TURN_LISTENING_IP`: coturn listener interface (default `0.0.0.0`)
 - `TURN_RELAY_IP`: coturn relay interface (default `0.0.0.0`)
 - `TURN_SHARED_SECRET`: shared secret used by both coturn and CallService credential generation
+
+Important runtime note:
+- The actual `iceServers[].urls` values come from the service's `Turn:Urls` configuration.
+- If the live API still returns `13.60.31.141` in ICE URLs, update `TURN_PUBLIC_HOST` or `Turn__Urls__*` in deployment config.
 
 ## Frontend Impact When Coturn Is Added
 
@@ -91,7 +96,7 @@ docker logs --tail=100 call-service
 Verify ICE endpoint response is non-empty:
 
 ```bash
-curl -H "Authorization: Bearer <JWT>" http://localhost:5000/call/webrtc/ice-servers
+curl -H "Authorization: Bearer <JWT>" https://myada.duckdns.org/call/webrtc/ice-servers
 ```
 
 Expected:
@@ -132,12 +137,9 @@ Token validation settings:
 
 ## Authorization Rules
 
-- Any authenticated user can call a dispatcher with `RequestCall`.
-- Dispatcher users can call any online non-student user with `RequestCall`.
-- Teacher users with role `instructor` can call tech users with roles `support`, `staff`, `student_services`, or roles ending in `_staff`.
-- Tech users with roles `support`, `staff`, `student_services`, or roles ending in `_staff` can call teacher users with role `instructor`.
-- Non-dispatcher users cannot call other non-dispatcher users.
-  Exception: `instructor` and tech roles listed above can call each other.
+- Any authenticated non-student user can call any online non-student user with `RequestCall`.
+- Students cannot place calls.
+- Students cannot receive calls.
 - The called user can call `AcceptCall` and `RejectCall`.
 - Caller who created the request can call `CancelCall`.
 - WebRTC signaling methods require both connections to be in the same accepted room.
@@ -178,14 +180,14 @@ History endpoint auth:
 ## Call History REST API
 
 Recommended gateway URLs:
-- List history: `GET http://13.60.31.141:500/call/api/call-history`
-- Get single call: `GET http://13.60.31.141:500/call/api/call-history/{callId}`
-- Alias list route: `GET http://13.60.31.141:500/call/api/calls/history`
+- List history: `GET https://myada.duckdns.org/call/api/call-history`
+- Get single call: `GET https://myada.duckdns.org/call/api/call-history/{callId}`
+- Alias list route: `GET https://myada.duckdns.org/call/api/calls/history`
 
-Direct service URLs:
-- List history: `GET http://13.60.31.141:5006/api/call-history`
-- Get single call: `GET http://13.60.31.141:5006/api/call-history/{callId}`
-- Alias list route: `GET http://13.60.31.141:5006/api/calls/history`
+Direct service URLs (local / diagnostics):
+- List history: `GET http://localhost:5006/api/call-history`
+- Get single call: `GET http://localhost:5006/api/call-history/{callId}`
+- Alias list route: `GET http://localhost:5006/api/calls/history`
 
 Local equivalents:
 - Gateway list history: `GET http://localhost:5000/call/api/call-history`
@@ -423,9 +425,9 @@ Payload:
     "iceServers": [
       {
         "urls": [
-          "stun:13.60.31.141:3478",
-          "turn:13.60.31.141:3478?transport=udp",
-          "turn:13.60.31.141:3478?transport=tcp"
+          "stun:myada.duckdns.org:3478",
+          "turn:myada.duckdns.org:3478?transport=udp",
+          "turn:myada.duckdns.org:3478?transport=tcp"
         ],
         "username": "1760944800:user-guid",
         "credential": "base64-hmac-value"
@@ -654,7 +656,7 @@ import * as signalR from "@microsoft/signalr";
 const accessToken = "<JWT_ACCESS_TOKEN>";
 
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("http://13.60.31.141:500/call/hub", {
+  .withUrl("https://myada.duckdns.org/call/hub", {
     accessTokenFactory: () => accessToken
   })
   .withAutomaticReconnect()
@@ -671,7 +673,7 @@ connection.on("JoinedRoom", ({ roomId, otherParticipants }) => {
   console.log("Joined room:", roomId, otherParticipants);
 });
 
-const iceResponse = await fetch("http://13.60.31.141:500/call/webrtc/ice-servers", {
+const iceResponse = await fetch("https://myada.duckdns.org/call/webrtc/ice-servers", {
   headers: {
     Authorization: `Bearer ${accessToken}`
   }
@@ -707,7 +709,7 @@ Target id note:
 ## Health Endpoints
 
 - Gateway health route for call service container reachability test:
-  - `GET http://13.60.31.141:500/call/health`
+  - `GET https://myada.duckdns.org/call/health`
 - Direct call service:
-  - `GET http://13.60.31.141:5006/health`
+  - `GET http://localhost:5006/health`
 

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace ApiGateway.Tests.Layers.Gateway;
@@ -13,8 +14,8 @@ public sealed class GatewayPresentationLayerTests : IClassFixture<WebApplication
 
     public GatewayPresentationLayerTests(WebApplicationFactory<Program> factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
+        _factory = factory.WithWebHostBuilder(builder => builder.UseEnvironment("Development"));
+        _client = _factory.CreateClient();
     }
 
     public void Dispose() => _client.Dispose();
