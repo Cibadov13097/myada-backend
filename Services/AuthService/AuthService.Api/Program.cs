@@ -207,8 +207,29 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swagger, httpReq) =>
+        {
+            var forwardedPrefix = httpReq.Headers["X-Forwarded-Prefix"].FirstOrDefault();
+            var forwardedProto = httpReq.Headers["X-Forwarded-Proto"].FirstOrDefault();
+            var forwardedHost = httpReq.Headers["X-Forwarded-Host"].FirstOrDefault();
+
+            var scheme = string.IsNullOrWhiteSpace(forwardedProto) ? httpReq.Scheme : forwardedProto;
+            var host = string.IsNullOrWhiteSpace(forwardedHost) ? httpReq.Host.Value : forwardedHost;
+            var prefix = string.IsNullOrWhiteSpace(forwardedPrefix) ? string.Empty : forwardedPrefix;
+
+            swagger.Servers = new List<OpenApiServer>
+            {
+                new() { Url = $"{scheme}://{host}{prefix}" }
+            };
+        });
+    });
+    app.UseSwaggerUI(c =>
+    {
+        c.RoutePrefix = "swagger";
+        c.SwaggerEndpoint("/auth/swagger/v1/swagger.json", "Auth API v1");
+    });
 }
 
 app.UseCors("AllowAll");
