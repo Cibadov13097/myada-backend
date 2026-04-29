@@ -327,7 +327,7 @@ services:
     volumes:
       - myada_app_logs:/app/logs
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
       MYADA_LOG_DIR: /app/logs
     depends_on:
