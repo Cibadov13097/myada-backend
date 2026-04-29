@@ -98,7 +98,6 @@ services:
     depends_on:
       - myada
       - myada-redis
-      - notificationservice
     restart: always
 
   lostfoundservice:

@@ -4,15 +4,17 @@ Last updated: 2026-04-30
 
 ## Overview
 
-The Notification Service is responsible for:
+The Notification Service stores and serves in-app notifications and also handles email delivery.
 
-- listing stored notifications
-- returning a single notification by id
-- deleting a stored notification
-- sending direct email notifications over SMTP
-- consuming queued notification messages from RabbitMQ and persisting them
+Current responsibilities:
 
-Supported notification channels in the domain model are:
+- list notifications for the signed-in user
+- return one notification by id
+- delete one owned notification
+- send direct email notifications
+- consume queued notification events from RabbitMQ and persist them
+
+Supported channels:
 
 - `Email`
 - `Push`
@@ -20,83 +22,55 @@ Supported notification channels in the domain model are:
 
 Important current behavior:
 
-- The user-facing HTTP API now requires JWT auth for notification reads.
-- The primary frontend read route is `GET /api/v1/notifications/me`.
-- `GET /api/v1/notifications` is also user-scoped and returns the signed-in user's visible notifications.
-- The HTTP API only creates notifications through `POST /api/v1/notifications/email`.
-- `Push` and `Sms` notifications are normally created through RabbitMQ or seeded demo data.
-- Direct email requests store `type`, `message`, `channel`, `createdAt`, and optional `recipientUserId` in the database, but do not store recipient email or email subject.
+- public/backend access should use the API Gateway route on `myada.site`
+- read and delete endpoints require JWT bearer auth
+- direct email sending is exposed through HTTP
+- queue-based notifications are used by backend services for most in-app notifications
+- queued notifications are now stored for `recipientUserId` only; there is no fallback to `actorUserId`
 
-## Base URLs
+## Base URL
 
-Use the API Gateway for frontend/public access:
+Primary production backend URL:
 
-- Production gateway base: `https://myada.site/notification`
-- Local gateway base: `http://localhost:5000/notification`
-- Gateway path prefix: `/notification`
+- `https://myada.site/notification`
 
-Use the service directly only for local debugging or internal service-to-service calls:
+Useful local URLs:
 
-- Production direct base: `http://13.60.31.141:5004`
-- Local direct base: `http://localhost:5004`
-- Docker internal base: `http://notificationservice:8080`
+- gateway: `http://localhost:5000/notification`
+- service direct: `http://localhost:5004`
+- docker internal: `http://notificationservice:8080`
 
-Examples:
+Production examples:
 
-- Gateway list endpoint: `GET https://myada.site/notification/api/v1/notifications`
-- Direct list endpoint: `GET http://13.60.31.141:5004/api/v1/notifications`
-
-Swagger is registered by the Notification Service only in Development environment.
-
-In the current repo `docker-compose.yml`:
-
-- `notificationservice` runs with `ASPNETCORE_ENVIRONMENT=Development`
-- `apigateway` runs with `ASPNETCORE_ENVIRONMENT=Production`
-
-That means the upstream service exposes Swagger, and the gateway can proxy it at the notification route prefix.
-
-Known swagger URLs:
-
-- Production gateway swagger: `https://myada.site/notification/swagger/index.html`
-- Production direct swagger: `http://13.60.31.141:5004/swagger/index.html`
-- Local gateway swagger: `http://localhost:5000/notification/swagger/index.html`
-- Local direct swagger: `http://localhost:5004/swagger/index.html`
-
-Important routing note:
-
-- the deployed notification gateway route is `https://myada.site/notification/...`
-- `https://myada.site/` by itself is the site root, not the Notification Service base path
+- list notifications: `GET https://myada.site/notification/api/v1/notifications`
+- current user notifications: `GET https://myada.site/notification/api/v1/notifications/me`
+- send email: `POST https://myada.site/notification/api/v1/notifications/email`
 
 ## Authentication
 
-Notification Service now validates JWT bearer tokens using the AuthService JWKS endpoint for user-scoped read operations.
-
-That means:
+These endpoints require `Authorization: Bearer <access-token>`:
 
 - `GET /api/v1/notifications`
 - `GET /api/v1/notifications/me`
 - `GET /api/v1/notifications/{id}`
 - `DELETE /api/v1/notifications/{id}`
 
-all require a bearer token and are scoped to the signed-in user.
+Behavior:
 
-`POST /api/v1/notifications/email` remains available for internal callers such as AuthService.
+- notification reads are always scoped to the signed-in user
+- visible records are notifications where `recipientUserId == currentUserId`
+- legacy records with `recipientUserId = null` are also visible
+- delete only works for records where `recipientUserId == currentUserId`
 
-## CORS
+This endpoint does not require bearer auth:
 
-Notification Service currently registers an `AllowAll` CORS policy and applies it globally.
+- `POST /api/v1/notifications/email`
 
-That means the service allows:
+If `POST /email` is called without auth and without `recipientUserId`, the stored notification is created with `recipientUserId = null`.
 
-- any origin
-- any header
-- any HTTP method
+## Notification Shape
 
-If stricter browser access rules are needed later, they would need to be added in this service or enforced at the gateway.
-
-## Stored Notification Shape
-
-Each stored notification contains:
+Stored notification fields:
 
 - `id` (`Guid`)
 - `type` (`string`)
@@ -105,23 +79,33 @@ Each stored notification contains:
 - `recipientUserId` (`Guid?`)
 - `createdAt` (`DateTime`, UTC)
 
+HTTP response item shape:
+
+```json
+{
+  "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001",
+  "type": "club",
+  "message": "New event alert",
+  "channel": "Push",
+  "recipientUserId": "00000000-0000-0000-0000-000000000001",
+  "createdAt": "2026-04-30T09:30:00Z"
+}
+```
+
 ## HTTP Endpoints
 
 ### `GET /api/v1/notifications`
 
 ### `GET /api/v1/notifications/me`
 
-Returns paginated notifications ordered by newest first for the signed-in user.
-
-Authentication:
-
-- requires `Authorization: Bearer <token>`
+Returns paginated notifications ordered from newest to oldest.
 
 Query parameters:
 
 - `type` (`string`, optional, default `all`)
 - `channel` (`string`, optional, default `all`)
-- `page` (`int`, optional, default `1`, minimum effective value `1`)
+- `recipientUserId` (`Guid`, optional)
+- `page` (`int`, optional, default `1`)
 - `limit` (`int`, optional, default `20`, clamped to `1..100`)
 
 Filter behavior:
@@ -129,26 +113,27 @@ Filter behavior:
 - `type` uses case-insensitive substring matching
 - `channel` accepts `all`, `Email`, `Push`, or `Sms`
 - invalid `channel` returns `400 Bad Request`
-- results are scoped to notifications whose `recipientUserId` matches the current user
-- legacy notifications with `recipientUserId = null` are also visible for backward compatibility
+- `recipientUserId` only narrows the already user-visible set; it does not bypass auth scoping
 
 Example request:
 
 ```http
 GET /api/v1/notifications?type=club&channel=Push&page=1&limit=10
+Authorization: Bearer <access-token>
 ```
 
-Example success response:
+Example response:
 
 ```json
 {
   "items": [
     {
       "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001",
-      "type": "club",
-      "message": "ADA Entrepreneurship Club: Startup Weekend registration closes this Friday at 18:00 Baku time.",
+      "type": "New Event Alert",
+      "message": "AI Career Fair",
       "channel": "Push",
-      "createdAt": "2026-04-22T10:00:00Z"
+      "recipientUserId": "00000000-0000-0000-0000-000000000001",
+      "createdAt": "2026-04-30T09:30:00Z"
     }
   ],
   "total": 1,
@@ -167,52 +152,44 @@ Example invalid channel response:
 
 ### `GET /api/v1/notifications/{id}`
 
-Returns a single visible notification for the signed-in user.
-
-Authentication:
-
-- requires `Authorization: Bearer <token>`
+Returns one visible notification for the signed-in user.
 
 Success response:
 
 ```json
 {
   "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001",
-  "type": "club",
-  "message": "ADA Entrepreneurship Club: Startup Weekend registration closes this Friday at 18:00 Baku time.",
+  "type": "New Event Alert",
+  "message": "AI Career Fair",
   "channel": "Push",
-  "createdAt": "2026-04-22T10:00:00Z"
+  "recipientUserId": "00000000-0000-0000-0000-000000000001",
+  "createdAt": "2026-04-30T09:30:00Z"
 }
 ```
 
 Status codes:
 
-- `200 OK` when found
-- `401 Unauthorized` when the bearer token is missing or invalid
-- `404 Not Found` when no notification exists for the id
+- `200 OK`
+- `401 Unauthorized`
+- `404 Not Found`
 
 ### `DELETE /api/v1/notifications/{id}`
 
-Deletes a stored notification owned by the signed-in user.
-
-Authentication:
-
-- requires `Authorization: Bearer <token>`
+Deletes one owned notification.
 
 Status codes:
 
-- `204 No Content` when deleted
-- `401 Unauthorized` when the bearer token is missing or invalid
-- `404 Not Found` when no notification exists for the id
+- `204 No Content`
+- `401 Unauthorized`
+- `404 Not Found`
 
 Important delete rule:
 
-- this delete route only deletes notifications whose `recipientUserId` matches the current user
-- legacy notifications with `recipientUserId = null` are readable but not deletable through this user route
+- legacy notifications with `recipientUserId = null` are readable but not deletable through this route
 
 ### `POST /api/v1/notifications/email`
 
-Sends a plain-text email through SMTP and also stores a notification record with channel `Email`.
+Sends a plain-text email through SMTP and stores a notification with channel `Email`.
 
 Request body:
 
@@ -230,17 +207,18 @@ Request fields:
 
 - `type` (`string`, optional)
 - `recipientUserId` (`Guid`, optional)
-- `toEmail` (`string`, required, must be a valid email address)
-- `subject` (`string`, required, max length `200`)
-- `message` (`string`, required, max length `4000`)
+- `toEmail` (`string`, required, valid email)
+- `subject` (`string`, required, max `200`)
+- `message` (`string`, required, max `4000`)
 
 Behavior:
 
-- leading and trailing whitespace is trimmed from `toEmail`, `subject`, and `message`
-- if `type` is missing or blank, stored notification type becomes `Direct Email`
-- if `recipientUserId` is supplied, the stored notification is owned by that user
-- if `recipientUserId` is omitted and the request is authenticated, the stored notification falls back to the authenticated user id
-- email body is sent as plain text, not HTML
+- `toEmail`, `subject`, and `message` are trimmed
+- if `type` is missing or blank, stored type becomes `Direct Email`
+- if `recipientUserId` is provided, that user owns the stored notification
+- if `recipientUserId` is omitted and the request is authenticated, ownership falls back to the authenticated user
+- if `recipientUserId` is omitted and the request is unauthenticated, ownership is stored as `null`
+- the outgoing email body is plain text
 
 Success response:
 
@@ -252,41 +230,39 @@ Success response:
 
 Common error cases:
 
-- `400 Bad Request` for invalid model shape, invalid email format, or oversized fields
-- validation errors from `[ApiController]` use the standard ASP.NET Core validation response shape
-- `400 Bad Request` with a custom error object when required fields become empty after trimming
-- `502 Bad Gateway` if SMTP configuration is invalid
-- `502 Bad Gateway` if the SMTP server rejects authentication or sender details
+- `400 Bad Request` for invalid payloads, invalid email format, or empty trimmed fields
+- `502 Bad Gateway` when SMTP configuration is invalid
+- `502 Bad Gateway` when the SMTP server rejects the message
 
-## Internal Queue-Based Notifications
+## Queue-Based Notifications
 
-The service also runs a hosted RabbitMQ consumer for internal notifications.
+The service runs a RabbitMQ background consumer for internal backend notifications.
 
 Queue details:
 
 - queue name: `notification-queue`
-- host config key: `RabbitMQ:Host`
+- config key: `RabbitMQ:Host`
 
 Primary message contract:
 
 ```json
 {
-  "type": "club.event_created",
-  "message": "New event is now open for registration.",
-  "channel": "Email",
-  "source": "ClubManagementService",
-  "action": "Created",
-  "entityType": "Event",
+  "type": "New Event Alert",
+  "message": "AI Career Fair",
+  "channel": "Push",
+  "source": "club-management",
+  "action": "event.created_alert",
+  "entityType": "event",
   "entityId": "123",
   "actorUserId": "11111111-1111-1111-1111-111111111111",
   "recipientUserId": "22222222-2222-2222-2222-222222222222",
   "recipientEmail": "student@example.com",
-  "emailSubject": "New event available",
-  "occurredAtUtc": "2026-04-24T09:00:00Z"
+  "emailSubject": "New Event Alert",
+  "occurredAtUtc": "2026-04-30T09:30:00Z"
 }
 ```
 
-Message contract fields:
+Supported fields:
 
 - `type`
 - `message`
@@ -303,44 +279,63 @@ Message contract fields:
 
 Queue resolution rules:
 
-- if `channel` is a valid enum value, that channel is used
-- otherwise, if `recipientEmail` is present, the notification resolves to `Email`
-- otherwise, the notification resolves to `Push`
+- if `channel` parses to a valid enum, that channel is used
+- otherwise, if `recipientEmail` exists, channel resolves to `Email`
+- otherwise, channel resolves to `Push`
 
 Queue processing behavior:
 
-- every supported queue message is first persisted to the `Notifications` table
-- persisted notifications use `recipientUserId = recipientUserId ?? actorUserId`
-- if the resolved channel is `Email`, the service then attempts SMTP delivery
-- if SMTP delivery fails, the notification stays persisted and the failure is only logged
-- if an `Email` notification has no `recipientEmail`, the notification is persisted and email sending is skipped
-- unsupported payloads are acknowledged and logged as warnings
+- the notification is persisted first
+- persisted `recipientUserId` is exactly `queueMessage.recipientUserId`
+- there is no fallback to `actorUserId`
+- if resolved channel is `Email` and `recipientEmail` exists, SMTP delivery is attempted
+- if email sending fails, the stored notification remains in the database and the failure is only logged
+- if an email notification has no `recipientEmail`, it is still persisted and email sending is skipped
 
 Legacy compatibility:
 
-- the consumer still supports `LostItemCreatedEvent`
-- legacy lost-and-found messages are converted to a `Push` notification with type `New Lost Item`
+- `LostItemCreatedEvent` is still supported
+- legacy lost-and-found events are stored as `Push` notifications with type `New Lost Item`
 
-## Current Service Integrations
+## Current Backend Producers
 
-Known integrations in this repo:
+Current backend integrations in this repo:
 
-- `AuthService` calls `POST /api/v1/notifications/email` for password reset email flows
-- `ClubManagementService` publishes `NotificationQueueMessage` payloads to RabbitMQ
+- `AuthService`
+  - uses `POST /api/v1/notifications/email` for password reset mail flows
+- `MyAdaSupportService`
+  - publishes queue notifications for task assignment, cancellation, and status changes
+- `LostFoundService`
+  - publishes queue notifications for owner alerts such as `Your Item is Found` and `You can Get your Item`
+- `ClubManagementService`
+  - publishes queue notifications for club, event, proposal, vacancy, reminder, logo, employee, and membership flows
+
+Examples of notification titles currently produced by backend services:
+
+- `New Task Assigned`
+- `Request Canceled`
+- `Your Item is Found`
+- `New Vacancy at {Club Name}`
+- `Your Club Proposal is approved`
+- `New Club Alert`
+- `Your Event Proposal is approved`
+- `All seats are taken for the event`
+- `Club Logo Change has been Approved`
+- `Club Logo Change has been Disapproved`
 
 ## Startup and Seeding
 
-On startup, Notification Service:
+On startup the service:
 
-- applies Entity Framework migrations automatically
-- seeds sample notifications if the `Notifications` table is empty
+- applies EF Core migrations automatically
+- seeds demo notifications if the table is empty
 
-The seed currently inserts demo notifications such as:
+The current seed creates sample notifications for:
 
-- club
-- academic
-- campus
-- system
+- `club`
+- `academic`
+- `campus`
+- `system`
 
 ## Runtime Configuration
 
@@ -348,6 +343,9 @@ Main configuration keys:
 
 - `ConnectionStrings:Develop`
 - `RabbitMQ:Host`
+- `Auth:JwksUrl`
+- `Auth:Issuer`
+- `Auth:Audience`
 - `Smtp:Host`
 - `Smtp:Port`
 - `Smtp:Username`
@@ -364,29 +362,49 @@ SMTP rules from the current implementation:
 - if `Smtp:UseDefaultCredentials=false`, both `Smtp:Username` and `Smtp:Password` are required
 - if `Smtp:FromEmail` is empty, the service falls back to `Smtp:Username`
 
-Docker compose mapping in this repo:
+Docker mapping in this repo:
 
-- host port `5004` -> container port `8080`
-- gateway prefix `/notification` -> Notification Service
+- host `5004` -> container `8080`
+- gateway route prefix `/notification` -> Notification Service
 
-SMTP deployment note:
+## Swagger
 
-- this repo's Docker stack expects SMTP values from environment variables such as `NOTIFICATION_SMTP_HOST`, `NOTIFICATION_SMTP_PORT`, `NOTIFICATION_SMTP_USERNAME`, `NOTIFICATION_SMTP_PASSWORD`, and `NOTIFICATION_SMTP_FROM_EMAIL`
-- for Gmail, `NOTIFICATION_SMTP_PASSWORD` must be an app password, not the normal mailbox password
+Swagger is enabled only when the Notification Service itself is running in `Development`.
+
+In this repo's local Docker compose:
+
+- `notificationservice` runs as `Development`
+- `apigateway` runs as `Production`
+
+Local swagger URLs:
+
+- `http://localhost:5004/swagger/index.html`
+- `http://localhost:5000/notification/swagger/index.html`
+
+For production, use the gateway API routes on `https://myada.site/notification/...`. If swagger is exposed through the deployment gateway, the expected path is:
+
+- `https://myada.site/notification/swagger/index.html`
 
 ## Quick Test Examples
 
-List notifications through gateway:
+List current user notifications through production gateway:
 
 ```bash
 curl "https://myada.site/notification/api/v1/notifications/me?page=1&limit=20" \
   -H "Authorization: Bearer <access-token>"
 ```
 
-Send email directly to the service:
+Filter by type and channel:
 
 ```bash
-curl -X POST "http://13.60.31.141:5004/api/v1/notifications/email" \
+curl "https://myada.site/notification/api/v1/notifications?type=club&channel=Push&page=1&limit=10" \
+  -H "Authorization: Bearer <access-token>"
+```
+
+Send email through production gateway:
+
+```bash
+curl -X POST "https://myada.site/notification/api/v1/notifications/email" \
   -H "Content-Type: application/json" \
   -d "{\"type\":\"manual.test\",\"toEmail\":\"student@example.com\",\"subject\":\"Test\",\"message\":\"Hello from Notification Service\"}"
 ```
