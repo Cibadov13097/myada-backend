@@ -1,16 +1,16 @@
 # LostFound API Documentation
 
-Last updated: 2026-04-26
+Last updated: 2026-04-29
 
 ## Base URLs
 
-- Through API Gateway: `http://13.60.31.141:500/lostfound`
+- Through API Gateway: `https://myada.site/lostfound`
 - Direct service: `http://13.60.31.141:5002`
 
 Examples below use the gateway form, so `/api/lost-and-found/items` becomes:
 
 ```text
-http://13.60.31.141:500/lostfound/api/lost-and-found/items
+https://myada.site/lostfound/api/lost-and-found/items
 ```
 
 ## Authentication
@@ -188,7 +188,7 @@ Query params:
 Example:
 
 ```http
-GET /lostfound/api/lost-and-found/items?type=found&status=pending&page=1&limit=10
+GET https://myada.site/lostfound/api/lost-and-found/items?type=found&status=pending&page=1&limit=10
 ```
 
 Response:
@@ -322,7 +322,7 @@ Rules:
 Recommended multipart example:
 
 ```bash
-curl -X POST "http://13.60.31.141:500/lostfound/api/lost-and-found/reports/found" \
+curl -X POST "https://myada.site/lostfound/api/lost-and-found/reports/found" \
   -F "itemName=AirPods Pro Case" \
   -F "categoryId=3" \
   -F "description=White charging case with small scratches" \
@@ -516,7 +516,7 @@ After success, the item has `adminStatus` **`received`** and public `status` **`
 Example:
 
 ```bash
-curl -X POST "http://13.60.31.141:500/lostfound/api/lost-and-found/items/25/confirm-receipt" \
+curl -X POST "https://myada.site/lostfound/api/lost-and-found/items/25/confirm-receipt" \
   -H "Authorization: Bearer <jwt>" \
   -F "storageBinId=B-12" \
   -F "condition=good" \

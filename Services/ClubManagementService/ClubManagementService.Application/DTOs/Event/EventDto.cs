@@ -12,6 +12,8 @@ public class EventDto
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Location { get; set; } = null!;
+    public int? BuildingId { get; set; }
+    public int? RoomId { get; set; }
     public int SeatLimit { get; set; }
     public string Requirements { get; set; } = null!;
     public string Prerequisites { get; set; } = null!;
@@ -29,6 +31,8 @@ public class CreateEventDto
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Location { get; set; } = null!;
+    public int? BuildingId { get; set; }
+    public int? RoomId { get; set; }
     public int SeatLimit { get; set; }
     public string Requirements { get; set; } = null!;
     public string Prerequisites { get; set; } = null!;
@@ -44,6 +48,8 @@ public class UpdateEventDto
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Location { get; set; } = null!;
+    public int? BuildingId { get; set; }
+    public int? RoomId { get; set; }
     public int SeatLimit { get; set; }
     public string Requirements { get; set; } = null!;
     public string Prerequisites { get; set; } = null!;

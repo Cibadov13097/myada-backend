@@ -1,6 +1,6 @@
 # LostFound API Documentation (Gateway First)
 
-Last updated: 2026-04-26
+Last updated: 2026-04-29
 
 This document covers only the LostFound service (`Services/LostFoundService`) and is aligned with:
 - `Services/LostFoundService/LostFoundService.API/Controllers/LostAndFoundController.cs`
@@ -12,21 +12,21 @@ This document covers only the LostFound service (`Services/LostFoundService`) an
 
 ## Base URLs
 
-- Gateway (recommended): `http://13.60.31.141:5000`
+- Gateway (recommended): `https://myada.site`
 - Gateway prefix for LostFound: `/lostfound`
-- Effective gateway base: `http://13.60.31.141:5000/lostfound`
+- Effective gateway base: `https://myada.site/lostfound`
 
 Direct service (diagnostics only):
 - Production direct: `http://13.60.31.141:5002`
 - Local direct: `http://localhost:5002`
 
 Swagger:
-- Gateway: `http://13.60.31.141:5000/lostfound/swagger/index.html`
+- Gateway: `https://myada.site/lostfound/swagger/index.html`
 - Direct: `http://13.60.31.141:5002/swagger/index.html`
 
 Important gateway rule:
-- Correct: `http://13.60.31.141:5000/lostfound/api/lost-and-found/items`
-- Wrong: `http://13.60.31.141:5000/api/lost-and-found/items` (gateway 404)
+- Correct: `https://myada.site/lostfound/api/lost-and-found/items`
+- Wrong: `https://myada.site/api/lost-and-found/items` (gateway 404)
 
 ## Authentication and Roles
 
@@ -62,7 +62,7 @@ Legacy APIs:
 ## 1) Modern API: `/api/lost-and-found`
 
 Gateway prefix for all paths in this section:
-- `http://13.60.31.141:5000/lostfound`
+- `https://myada.site/lostfound`
 
 ### 1.1 Endpoint Matrix
 

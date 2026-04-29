@@ -22,6 +22,8 @@ public class EventsControllerTests
         eventService.Setup(x => x.CreateAsync(It.Is<CreateEventDto>(dto =>
                 dto.ClubId == 3
                 && dto.Name == "Hackathon"
+                && dto.BuildingId == 5
+                && dto.RoomId == 502
                 && dto.ImageUrl == "https://bucket.example/events/3/poster.png")))
             .ReturnsAsync(new EventDto
             {
@@ -33,6 +35,8 @@ public class EventsControllerTests
                 StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
                 EndTime = new DateTime(2026, 4, 30, 18, 0, 0, DateTimeKind.Utc),
                 Location = "Main Hall",
+                BuildingId = 5,
+                RoomId = 502,
                 SeatLimit = 120,
                 Requirements = "Laptop",
                 Prerequisites = "None",
@@ -68,6 +72,8 @@ public class EventsControllerTests
             StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
             EndTime = new DateTime(2026, 4, 30, 18, 0, 0, DateTimeKind.Utc),
             Location = "Main Hall",
+            BuildingId = 5,
+            RoomId = 502,
             SeatLimit = 120,
             Requirements = "Laptop",
             Prerequisites = "None",
@@ -77,6 +83,8 @@ public class EventsControllerTests
         var created = result.Should().BeOfType<CreatedAtActionResult>().Subject;
         var body = created.Value.Should().BeAssignableTo<EventDto>().Subject;
         body.ImageUrl.Should().Be("https://bucket.example/events/3/poster.png");
+        body.BuildingId.Should().Be(5);
+        body.RoomId.Should().Be(502);
         eventService.VerifyAll();
         storage.VerifyAll();
     }
@@ -127,6 +135,8 @@ public class EventsControllerTests
             StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
             EndTime = new DateTime(2026, 4, 30, 18, 0, 0, DateTimeKind.Utc),
             Location = "Main Hall",
+            BuildingId = 5,
+            RoomId = 502,
             SeatLimit = 120,
             Requirements = "Laptop",
             Prerequisites = "None",
@@ -139,6 +149,8 @@ public class EventsControllerTests
         eventService.Setup(x => x.GetByIdAsync(15)).ReturnsAsync(existingEvent);
         eventService.Setup(x => x.UpdateAsync(15, It.Is<UpdateEventDto>(dto =>
                 dto.ImageUrl == "https://bucket.example/events/3/existing.png"
+                && dto.BuildingId == 5
+                && dto.RoomId == 502
                 && dto.Status == ClubStatus.Approved)))
             .ReturnsAsync(new EventDto
             {
@@ -150,6 +162,8 @@ public class EventsControllerTests
                 StartTime = existingEvent.StartTime,
                 EndTime = existingEvent.EndTime,
                 Location = "Main Hall",
+                BuildingId = 5,
+                RoomId = 502,
                 SeatLimit = 120,
                 Requirements = "Laptop",
                 Prerequisites = "None",
@@ -171,6 +185,8 @@ public class EventsControllerTests
             StartTime = existingEvent.StartTime,
             EndTime = existingEvent.EndTime,
             Location = "Main Hall",
+            BuildingId = 5,
+            RoomId = 502,
             SeatLimit = 120,
             Requirements = "Laptop",
             Prerequisites = "None",

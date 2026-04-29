@@ -12,6 +12,8 @@ public sealed class EventProposal
 
     public string BodyJson { get; set; } = "{}";
     public string? ImageUrl { get; set; }
+    public int? BuildingId { get; set; }
+    public int? RoomId { get; set; }
 
     public string Status { get; set; } = "pending_review";
     public DateTimeOffset SubmittedAt { get; set; }

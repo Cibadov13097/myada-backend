@@ -31,6 +31,8 @@ internal static class EventProposalRequestParser
             Duration = form["duration"],
             Attendance = form["attendance"],
             Venue = form["venue"],
+            BuildingId = ParseNullableInt(FirstNonEmpty(form["buildingId"])),
+            RoomId = ParseNullableInt(FirstNonEmpty(form["roomId"])),
             Description = form["description"],
             Objectives = form["objectives"],
             ImageUrl = FirstNonEmpty(form["imageUrl"], form["posterUrl"]),
@@ -69,5 +71,16 @@ internal static class EventProposalRequestParser
         }
 
         return null;
+    }
+
+    private static int? ParseNullableInt(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+
+        if (int.TryParse(value.Trim(), out var parsed))
+            return parsed;
+
+        throw new JsonException("Location ids must be integers.");
     }
 }

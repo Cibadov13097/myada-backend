@@ -34,6 +34,8 @@ public class EventServiceTests
             StartTime = DateTime.UtcNow,
             EndTime = DateTime.UtcNow.AddHours(4),
             Location = "Hall A",
+            BuildingId = 2,
+            RoomId = 204,
             SeatLimit = 100,
             Requirements = "Laptop",
             Prerequisites = "None",
@@ -47,6 +49,30 @@ public class EventServiceTests
 
         result.Id.Should().Be(11);
         result.Status.Should().Be(ClubStatus.Pending);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WhenOnlyOneLocationIdIsProvided_ShouldThrowArgumentException()
+    {
+        var request = new CreateEventDto
+        {
+            ClubId = 1,
+            Name = "Hackathon",
+            Description = "24 hours",
+            StartTime = DateTime.UtcNow,
+            EndTime = DateTime.UtcNow.AddHours(4),
+            Location = "Hall A",
+            BuildingId = 2,
+            SeatLimit = 100,
+            Requirements = "Laptop",
+            Prerequisites = "None",
+            Notes = "Bring ID",
+            ApprovedBy = Guid.NewGuid()
+        };
+
+        Func<Task> action = async () => await _service.CreateAsync(request);
+
+        await action.Should().ThrowAsync<ArgumentException>().WithMessage("buildingId and roomId must be provided together.");
     }
 
     [Fact]

@@ -131,6 +131,8 @@ public sealed class ClubAdminEventAdminDto
     public DateTime StartTime { get; init; }
     public DateTime EndTime { get; init; }
     public string Location { get; init; } = string.Empty;
+    public int? BuildingId { get; init; }
+    public int? RoomId { get; init; }
     public int SeatLimit { get; init; }
     public string Status { get; init; } = string.Empty;
 }

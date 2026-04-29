@@ -72,6 +72,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ApprovedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("BackgroundImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
@@ -92,9 +95,6 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BackgroundImageUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("FocusAreasJson")
@@ -308,6 +308,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ApprovedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("BuildingId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ClubId")
                         .HasColumnType("integer");
 
@@ -362,6 +365,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SeatLimit")
                         .HasColumnType("integer");
 
@@ -391,6 +397,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("BuildingId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ClubName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -409,6 +418,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("LastApproveAssignmentsJson")
                         .HasColumnType("text");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Status")
                         .IsRequired()

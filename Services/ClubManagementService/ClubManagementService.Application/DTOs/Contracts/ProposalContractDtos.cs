@@ -44,6 +44,8 @@ public sealed class EventProposalSubmitDto
     public string Duration { get; set; } = string.Empty;
     public string Attendance { get; set; } = string.Empty;
     public string Venue { get; set; } = string.Empty;
+    public int? BuildingId { get; set; }
+    public int? RoomId { get; set; }
     public string Description { get; set; } = string.Empty;
     public string Objectives { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }

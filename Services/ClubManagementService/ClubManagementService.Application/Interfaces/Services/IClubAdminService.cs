@@ -113,6 +113,8 @@ public sealed class EventProposalResultDto
     public string Status { get; init; } = "pending_review";
     public string ClubId { get; init; } = string.Empty;
     public string? ImageUrl { get; init; }
+    public int? BuildingId { get; init; }
+    public int? RoomId { get; init; }
 }
 
 public sealed class ProfilePatchResultDto

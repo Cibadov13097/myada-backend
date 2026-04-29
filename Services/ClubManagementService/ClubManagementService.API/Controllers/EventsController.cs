@@ -421,6 +421,8 @@ public class EventsController : ControllerBase
                 StartTime = StartTime,
                 EndTime = EndTime,
                 Location = Location,
+                BuildingId = BuildingId,
+                RoomId = RoomId,
                 SeatLimit = SeatLimit,
                 Requirements = Requirements,
                 Prerequisites = Prerequisites,
@@ -444,6 +446,8 @@ public class EventsController : ControllerBase
                 StartTime = StartTime,
                 EndTime = EndTime,
                 Location = Location,
+                BuildingId = BuildingId,
+                RoomId = RoomId,
                 SeatLimit = SeatLimit,
                 Requirements = Requirements,
                 Prerequisites = Prerequisites,
@@ -460,6 +464,8 @@ public class EventsController : ControllerBase
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Location { get; set; } = string.Empty;
+        public int? BuildingId { get; set; }
+        public int? RoomId { get; set; }
         public int SeatLimit { get; set; }
         public string Requirements { get; set; } = string.Empty;
         public string Prerequisites { get; set; } = string.Empty;

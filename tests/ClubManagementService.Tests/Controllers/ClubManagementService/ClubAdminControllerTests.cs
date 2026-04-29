@@ -24,6 +24,8 @@ public class ClubAdminControllerTests
                 "1",
                 It.Is<EventProposalSubmitDto>(dto =>
                     dto.Name == "Launch Day"
+                    && dto.BuildingId == 7
+                    && dto.RoomId == 301
                     && dto.ImageUrl == "https://bucket.example/clubs/1/event-proposals/poster.png"),
                 It.IsAny<Guid>(),
                 It.IsAny<CancellationToken>()))
@@ -55,6 +57,8 @@ public class ClubAdminControllerTests
             ["duration"] = "2",
             ["attendance"] = "120",
             ["venue"] = "Main Hall",
+            ["buildingId"] = "7",
+            ["roomId"] = "301",
             ["description"] = "Event description",
             ["objectives"] = "Event objectives"
         }, new FormFileCollection
@@ -83,6 +87,8 @@ public class ClubAdminControllerTests
                 "1",
                 It.Is<EventProposalSubmitDto>(dto =>
                     dto.Name == "Launch Day"
+                    && dto.BuildingId == 7
+                    && dto.RoomId == 301
                     && dto.ImageUrl == "https://bucket.example/poster.png"),
                 It.IsAny<Guid>(),
                 It.IsAny<CancellationToken>()))
@@ -104,6 +110,8 @@ public class ClubAdminControllerTests
             ["duration"] = "2",
             ["attendance"] = "120",
             ["venue"] = "Main Hall",
+            ["buildingId"] = "7",
+            ["roomId"] = "301",
             ["description"] = "Event description",
             ["objectives"] = "Event objectives",
             ["imageUrl"] = "https://bucket.example/poster.png"
@@ -130,6 +138,8 @@ public class ClubAdminControllerTests
                 It.Is<EventProposalSubmitDto>(dto =>
                     dto.Name == "Launch Day"
                     && dto.DateTime == "2026-04-26T14:30:00"
+                    && dto.BuildingId == 7
+                    && dto.RoomId == 301
                     && dto.ImageUrl == "https://bucket.example/poster.png"),
                 It.IsAny<Guid>(),
                 It.IsAny<CancellationToken>()))
@@ -145,7 +155,7 @@ public class ClubAdminControllerTests
         var controller = new ClubAdminController(clubAdmin.Object, Mock.Of<IImageStorageService>());
         var httpContext = new DefaultHttpContext();
         httpContext.Request.ContentType = "application/json";
-        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("{\"name\":\"Launch Day\",\"dateTime\":\"2026-04-26T14:30:00\",\"duration\":\"2\",\"attendance\":\"120\",\"venue\":\"Main Hall\",\"description\":\"Event description\",\"objectives\":\"Event objectives\",\"imageUrl\":\"https://bucket.example/poster.png\"}"));
+        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("{\"name\":\"Launch Day\",\"dateTime\":\"2026-04-26T14:30:00\",\"duration\":\"2\",\"attendance\":\"120\",\"venue\":\"Main Hall\",\"buildingId\":7,\"roomId\":301,\"description\":\"Event description\",\"objectives\":\"Event objectives\",\"imageUrl\":\"https://bucket.example/poster.png\"}"));
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
         var result = await controller.EventProposal("1", CancellationToken.None);
@@ -154,6 +164,28 @@ public class ClubAdminControllerTests
         var body = ok.Value.Should().BeAssignableTo<EventProposalResultDto>().Subject;
         body.ImageUrl.Should().Be("https://bucket.example/poster.png");
         clubAdmin.VerifyAll();
+    }
+
+    [Fact]
+    public async Task EventProposal_ShouldReturnBadRequestWhenOnlyOneLocationIdIsProvided()
+    {
+        var clubAdmin = new Mock<IClubAdminService>();
+        clubAdmin.Setup(x => x.CreateEventProposalAsync(
+                "1",
+                It.IsAny<EventProposalSubmitDto>(),
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ArgumentException("buildingId and roomId must be provided together."));
+
+        var controller = new ClubAdminController(clubAdmin.Object, Mock.Of<IImageStorageService>());
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "application/json";
+        httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("{\"name\":\"Launch Day\",\"dateTime\":\"2026-04-26T14:30:00\",\"buildingId\":7}"));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.EventProposal("1", CancellationToken.None);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
     }
 
     [Fact]

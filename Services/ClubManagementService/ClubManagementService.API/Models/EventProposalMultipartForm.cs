@@ -13,6 +13,8 @@ public sealed class EventProposalMultipartForm
     public string? Duration { get; set; }
     public string? Attendance { get; set; }
     public string? Venue { get; set; }
+    public int? BuildingId { get; set; }
+    public int? RoomId { get; set; }
     public string? Description { get; set; }
     public string? Objectives { get; set; }
     public string? ImageUrl { get; set; }
@@ -29,6 +31,8 @@ public sealed class EventProposalMultipartForm
             Duration = Duration?.Trim() ?? string.Empty,
             Attendance = Attendance?.Trim() ?? string.Empty,
             Venue = Venue?.Trim() ?? string.Empty,
+            BuildingId = BuildingId,
+            RoomId = RoomId,
             Description = Description?.Trim() ?? string.Empty,
             Objectives = Objectives?.Trim() ?? string.Empty,
             ImageUrl = string.IsNullOrWhiteSpace(ImageUrl) ? null : ImageUrl.Trim(),

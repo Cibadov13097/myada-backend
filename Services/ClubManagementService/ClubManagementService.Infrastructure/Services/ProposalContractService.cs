@@ -300,6 +300,8 @@ public sealed class ProposalContractService : IProposalContractService
             ClubRouteKey = null,
             ClubName = body.SubmittedByOrganization ?? "Student Services",
             ImageUrl = body.ImageUrl,
+            BuildingId = body.BuildingId,
+            RoomId = body.RoomId,
             BodyJson = JsonSerializer.Serialize(body, ProposalJson.Options),
             Status = "pending_review",
             SubmittedAt = now,
@@ -324,7 +326,9 @@ public sealed class ProposalContractService : IProposalContractService
                 ["status"] = "pending_review",
                 ["clubId"] = record.ClubRouteKey,
                 ["imageUrl"] = record.ImageUrl,
-                ["posterUrl"] = record.ImageUrl
+                ["posterUrl"] = record.ImageUrl,
+                ["buildingId"] = record.BuildingId,
+                ["roomId"] = record.RoomId
             }
         };
     }
@@ -378,6 +382,8 @@ public sealed class ProposalContractService : IProposalContractService
             ClubRouteKey = clubRouteKey.Trim(),
             ClubName = club.Name,
             ImageUrl = body.ImageUrl,
+            BuildingId = body.BuildingId,
+            RoomId = body.RoomId,
             BodyJson = JsonSerializer.Serialize(body, ProposalJson.Options),
             Status = "pending_review",
             SubmittedAt = now,
@@ -508,6 +514,8 @@ public sealed class ProposalContractService : IProposalContractService
             StartTime = start,
             EndTime = end,
             Location = proposalBody.Venue,
+            BuildingId = proposalBody.BuildingId,
+            RoomId = proposalBody.RoomId,
             SeatLimit = seat,
             Requirements = requirements,
             Prerequisites = string.Empty,
@@ -666,8 +674,10 @@ public sealed class ProposalContractService : IProposalContractService
             attendanceNote = (string?)null,
             venue = b.Venue,
             venueRoom = (string?)null,
-            requestedBuildingId = (string?)null,
-            requestedRoomId = (string?)null,
+            requestedBuildingId = b.BuildingId ?? r.BuildingId,
+            requestedRoomId = b.RoomId ?? r.RoomId,
+            buildingId = b.BuildingId ?? r.BuildingId,
+            roomId = b.RoomId ?? r.RoomId,
             description = b.Description,
             objectives = b.Objectives,
             imageUrl,
@@ -698,6 +708,10 @@ public sealed class ProposalContractService : IProposalContractService
             return "Event name is required.";
         if (string.IsNullOrWhiteSpace(body.DateTime))
             return "dateTime is required.";
+        if (body.BuildingId.HasValue != body.RoomId.HasValue)
+            return "buildingId and roomId must be provided together.";
+        if (body.BuildingId is <= 0 || body.RoomId is <= 0)
+            return "buildingId and roomId must be positive integers.";
         return null;
     }
 

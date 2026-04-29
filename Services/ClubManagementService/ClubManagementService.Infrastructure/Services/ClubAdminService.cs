@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.Json;
 using ClubManagementService.Application.ClubAdmin;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.ClubAdmin;
@@ -1017,6 +1018,8 @@ public sealed class ClubAdminService : IClubAdminService
                 StartTime = e.StartTime,
                 EndTime = e.EndTime,
                 Location = e.Location,
+                BuildingId = e.BuildingId,
+                RoomId = e.RoomId,
                 SeatLimit = e.SeatLimit,
                 Status = e.Status.ToString()
             })
@@ -1050,6 +1053,8 @@ public sealed class ClubAdminService : IClubAdminService
             StartTime = updated.StartTime,
             EndTime = updated.EndTime,
             Location = updated.Location,
+            BuildingId = updated.BuildingId,
+            RoomId = updated.RoomId,
             SeatLimit = updated.SeatLimit,
             Status = updated.Status.ToString()
         };
@@ -1081,7 +1086,9 @@ public sealed class ClubAdminService : IClubAdminService
             Id = id?.ToString() ?? pid?.ToString() ?? string.Empty,
             Status = st?.ToString() ?? "pending_review",
             ClubId = cid?.ToString() ?? ctx.Key,
-            ImageUrl = img?.ToString()
+            ImageUrl = img?.ToString(),
+            BuildingId = TryReadNullableInt(d, "buildingId"),
+            RoomId = TryReadNullableInt(d, "roomId")
         };
     }
 
@@ -1594,6 +1601,22 @@ public sealed class ClubAdminService : IClubAdminService
         string.IsNullOrWhiteSpace(title) ? null : title.Trim();
 
     private static string AttendeeBucketKey(int clubId, int eventId) => $"{clubId.ToString(CultureInfo.InvariantCulture)}:{eventId.ToString(CultureInfo.InvariantCulture)}";
+
+    private static int? TryReadNullableInt(IReadOnlyDictionary<string, object?> payload, string key)
+    {
+        if (!payload.TryGetValue(key, out var value) || value == null)
+            return null;
+
+        return value switch
+        {
+            int number => number,
+            long number => checked((int)number),
+            JsonElement { ValueKind: JsonValueKind.Number } element when element.TryGetInt32(out var parsed) => parsed,
+            JsonElement { ValueKind: JsonValueKind.String } element when int.TryParse(element.GetString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed) => parsed,
+            _ when int.TryParse(value.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed) => parsed,
+            _ => null
+        };
+    }
 
     private IReadOnlyList<ClubAdminApplicationNoteDto> SnapshotNotesForClub(int clubId, string applicationId)
     {

@@ -40,6 +40,7 @@ public class EventService : IEventService
 
     public async Task<EventDto> CreateAsync(CreateEventDto dto)
     {
+        ValidateLocationIds(dto.BuildingId, dto.RoomId);
         var entity = _mapper.Map<Event>(dto);
         entity.Status = Domain.Enums.ClubStatus.Pending;
         await _repository.AddAsync(entity);
@@ -59,6 +60,7 @@ public class EventService : IEventService
 
     public async Task<EventDto> UpdateAsync(int id, UpdateEventDto dto)
     {
+        ValidateLocationIds(dto.BuildingId, dto.RoomId);
         var entity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Event {id} not found.");
         _mapper.Map(dto, entity);
         await _repository.UpdateAsync(entity);
@@ -90,5 +92,13 @@ public class EventService : IEventService
             EntityType = "event",
             EntityId = id.ToString()
         });
+    }
+
+    private static void ValidateLocationIds(int? buildingId, int? roomId)
+    {
+        if (buildingId.HasValue != roomId.HasValue)
+            throw new ArgumentException("buildingId and roomId must be provided together.");
+        if (buildingId is <= 0 || roomId is <= 0)
+            throw new ArgumentException("buildingId and roomId must be positive integers.");
     }
 }
