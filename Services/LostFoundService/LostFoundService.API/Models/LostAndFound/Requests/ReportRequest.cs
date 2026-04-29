@@ -6,8 +6,6 @@ public sealed class ReportRequest
     public string? ItemName { get; set; }
     public int? CategoryId { get; set; }
     public string? Description { get; set; }
-    public string? ImageUrl { get; set; }
-    public List<string>? ImageUrls { get; set; }
     public string? Location { get; set; }
     public string? LocationType { get; set; }
     public string? BuildingCode { get; set; }

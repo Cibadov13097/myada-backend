@@ -52,6 +52,85 @@ public class LostAndFoundController : ControllerBase
         "files[]"
     };
 
+    private static readonly HashSet<string> FoundReportJsonFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "type",
+        "itemName",
+        "categoryId",
+        "description",
+        "location",
+        "locationType",
+        "buildingCode",
+        "isRoom",
+        "roomOrArea",
+        "campusLocation",
+        "building",
+        "floor",
+        "roomArea",
+        "lastKnownLocation",
+        "dateLost",
+        "timeLost",
+        "contactName",
+        "contactPhone",
+        "collectionPlace",
+        "status",
+        "adminStatus",
+        "storageBinId",
+        "condition",
+        "adminNotes",
+        "reportedColor",
+        "confirmAccuracy",
+        "claimantName",
+        "claimantStudentId",
+        "studentIdVerified"
+    };
+
+    private static readonly HashSet<string> FoundReportFormFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "type",
+        "itemName",
+        "categoryId",
+        "description",
+        "location",
+        "customLocation",
+        "locationType",
+        "buildingCode",
+        "isRoom",
+        "roomOrArea",
+        "campusLocation",
+        "building",
+        "floor",
+        "roomArea",
+        "lastKnownLocation",
+        "dateLost",
+        "timeLost",
+        "contactName",
+        "contactPhone",
+        "collectionPlace",
+        "status",
+        "adminStatus",
+        "storageBinId",
+        "condition",
+        "adminNotes",
+        "reportedColor",
+        "confirmAccuracy",
+        "claimantName",
+        "claimantStudentId",
+        "studentIdVerified",
+        "files",
+        "files[]"
+    };
+
+    private static readonly HashSet<string> FoundReportFileFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "files",
+        "files[]",
+        "intakePhoto",
+        "intakePhotoFile",
+        "handoverProof",
+        "handoverProofFile"
+    };
+
     private static readonly HashSet<string> ManualCreateJsonFields = new(StringComparer.OrdinalIgnoreCase)
     {
         "type",
@@ -270,7 +349,12 @@ public class LostAndFoundController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ReportCreatedResponse>> CreateFoundReport()
     {
-        var model = await ReadReportRequestAsync();
+        var (model, readError) = await ReadFoundReportRequestAsync();
+        if (readError != null)
+        {
+            return BadRequest(readError);
+        }
+
         if (model == null)
         {
             return BadRequest(Error("VALIDATION_ERROR", "Invalid request payload."));
@@ -756,18 +840,37 @@ public class LostAndFoundController : ControllerBase
         }
     }
 
-    private async Task<ReportRequest?> ReadReportRequestAsync()
+    private async Task<(ReportRequest? Model, ErrorResponse? Error)> ReadFoundReportRequestAsync()
     {
         if (Request.HasFormContentType)
         {
             var form = await Request.ReadFormAsync();
+            var unsupportedFields = form.Keys
+                .Where(key => !FoundReportFormFields.Contains(key))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var unsupportedFileFields = form.Files
+                .Select(file => file.Name)
+                .Where(name => !FoundReportFileFields.Contains(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            unsupportedFields.AddRange(
+                unsupportedFileFields.Where(name =>
+                    !unsupportedFields.Contains(name, StringComparer.OrdinalIgnoreCase)));
+
+            if (unsupportedFields.Count > 0)
+            {
+                return (null, UnsupportedFoundReportFieldsError(unsupportedFields));
+            }
+
             var model = new ReportRequest
             {
                 Type = GetForm(form, "type"),
                 ItemName = GetForm(form, "itemName"),
                 CategoryId = GetFormInt(form, "categoryId"),
                 Description = GetForm(form, "description"),
-                ImageUrl = GetForm(form, "imageUrl"),
                 Location = GetForm(form, "location") ?? GetForm(form, "customLocation"),
                 LocationType = GetForm(form, "locationType"),
                 BuildingCode = GetForm(form, "buildingCode"),
@@ -823,25 +926,39 @@ public class LostAndFoundController : ControllerBase
                 }
             }
 
-            var imageUrls = ExtractImageUrlsFromForm(form);
-            if (imageUrls.Count > 0)
-            {
-                model.ImageUrls = imageUrls;
-            }
-
-            return model;
+            return (model, null);
         }
 
         try
         {
-            return await JsonSerializer.DeserializeAsync<ReportRequest>(Request.Body, new JsonSerializerOptions
+            using var document = await JsonDocument.ParseAsync(Request.Body, cancellationToken: HttpContext.RequestAborted);
+            if (document.RootElement.ValueKind != JsonValueKind.Object)
+            {
+                return (null, Error("VALIDATION_ERROR", "Invalid request payload."));
+            }
+
+            var unsupportedFields = document.RootElement
+                .EnumerateObject()
+                .Select(property => property.Name)
+                .Where(name => !FoundReportJsonFields.Contains(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (unsupportedFields.Count > 0)
+            {
+                return (null, UnsupportedFoundReportFieldsError(unsupportedFields));
+            }
+
+            var model = document.RootElement.Deserialize<ReportRequest>(new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
+
+            return (model, null);
         }
         catch
         {
-            return null;
+            return (null, Error("VALIDATION_ERROR", "Invalid request payload."));
         }
     }
 
@@ -873,14 +990,6 @@ public class LostAndFoundController : ControllerBase
         CreateLostFoundItemCommand command,
         ReportRequest request)
     {
-        var providedImageUrls = CollectImageUrls(request);
-        if (providedImageUrls.Count > 0)
-        {
-            return Error(
-                "VALIDATION_ERROR",
-                "Attach image files using multipart/form-data. imageUrl and imageUrls are not supported for lost-and-found items.");
-        }
-
         var imageUploadError = await PopulateCreateCommandFilesAsync(command, request.Files);
         if (imageUploadError != null)
         {
@@ -1029,6 +1138,23 @@ public class LostAndFoundController : ControllerBase
             });
     }
 
+    private static ErrorResponse UnsupportedFoundReportFieldsError(IEnumerable<string> fields)
+    {
+        var values = fields
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(field => field, StringComparer.OrdinalIgnoreCase)
+            .Select(field => $"'{field}' is not supported on the found report endpoint. Attach image files using multipart/form-data file fields.")
+            .ToList();
+
+        return Error(
+            "VALIDATION_ERROR",
+            "Found reports accept image attachments as files, not body URL fields.",
+            new Dictionary<string, List<string>>
+            {
+                ["unsupportedFields"] = values
+            });
+    }
+
     private static bool? TryParseBool(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return null;
@@ -1044,99 +1170,6 @@ public class LostAndFoundController : ControllerBase
     {
         var value = GetForm(form, key);
         return int.TryParse(value, out var parsed) ? parsed : null;
-    }
-
-    private static List<string> ExtractImageUrlsFromForm(IFormCollection form)
-    {
-        var urls = new List<string>();
-        var keys = new[]
-        {
-            "imageUrl",
-            "imageUrls",
-            "imageUrls[]",
-            "images",
-            "images[]",
-            "photoUrls",
-            "photoUrls[]",
-            "photos",
-            "photos[]"
-        };
-
-        foreach (var key in keys)
-        {
-            if (!form.TryGetValue(key, out var values))
-            {
-                continue;
-            }
-
-            foreach (var value in values)
-            {
-                AppendImageUrlTokens(urls, value);
-            }
-        }
-
-        return NormalizeDistinctImageUrls(urls);
-    }
-
-    private static List<string> CollectImageUrls(ReportRequest request)
-    {
-        var imageUrls = new List<string>();
-
-        if (!string.IsNullOrWhiteSpace(request.ImageUrl))
-        {
-            AppendImageUrlTokens(imageUrls, request.ImageUrl);
-        }
-
-        if (request.ImageUrls != null)
-        {
-            foreach (var imageUrl in request.ImageUrls)
-            {
-                AppendImageUrlTokens(imageUrls, imageUrl);
-            }
-        }
-
-        return NormalizeDistinctImageUrls(imageUrls);
-    }
-
-    private static void AppendImageUrlTokens(List<string> target, string? rawValue)
-    {
-        if (string.IsNullOrWhiteSpace(rawValue))
-        {
-            return;
-        }
-
-        var trimmed = rawValue.Trim();
-        if (trimmed.Length == 0)
-        {
-            return;
-        }
-
-        if (trimmed.StartsWith("[", StringComparison.Ordinal))
-        {
-            try
-            {
-                var parsed = JsonSerializer.Deserialize<List<string>>(trimmed, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                if (parsed != null)
-                {
-                    foreach (var value in parsed)
-                    {
-                        AppendImageUrlTokens(target, value);
-                    }
-
-                    return;
-                }
-            }
-            catch
-            {
-                // Fall back to storing the raw value below.
-            }
-        }
-
-        target.Add(trimmed);
     }
 
     private static List<string> NormalizeDistinctImageUrls(IEnumerable<string> imageUrls)

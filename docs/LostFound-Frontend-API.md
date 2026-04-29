@@ -365,10 +365,8 @@ Image inputs supported in modern create:
   - reserved file names:
     - `intakePhoto`, `intakePhotoFile`
     - `handoverProof`, `handoverProofFile`
-- Pre-uploaded URL fields:
-  - `imageUrl` (single)
-  - `imageUrls` (array)
-  - form aliases: `imageUrls[]`, `images`, `images[]`, `photos`, `photos[]`, `photoUrls`, `photoUrls[]`
+- URL body fields are rejected on modern create/report endpoints.
+- Use attached files on the request itself, or upload first with `/api/lost-and-found/upload` and store that returned URL only in your own client state.
 
 Location rule:
 - `location` is nullable.
@@ -528,7 +526,6 @@ Image storage implementation:
 
 Persistence behavior for modern create:
 - uploaded image files are sent to S3 and resulting URLs are stored
-- pre-uploaded image URLs (`imageUrl` / `imageUrls`) are also stored
 - first image becomes `PrimaryImageUrl`
 - all images are written into `LostFoundItemImages`
 
@@ -563,28 +560,23 @@ Legacy endpoints may return service-specific exception shapes.
 
 ## 10) Quick Examples
 
-Create found report with pre-uploaded S3 URL:
+Create found report with attached image:
 
 ```http
 POST /lostfound/api/lost-and-found/reports/found
-Content-Type: application/json
+Content-Type: multipart/form-data
 ```
 
-```json
-{
-  "itemName": "Black Wallet",
-  "categoryId": 5,
-  "description": "Found near cafeteria.",
-  "locationType": "other",
-  "location": "Main cafeteria entrance",
-  "collectionPlace": "Security Desk A",
-  "imageUrls": [
-    "https://my-bucket.s3.eu-north-1.amazonaws.com/lost-and-found/items/abc123.jpg"
-  ]
-}
-```
+Form fields:
+- `itemName`: `Black Wallet`
+- `categoryId`: `5`
+- `description`: `Found near cafeteria.`
+- `locationType`: `other`
+- `location`: `Main cafeteria entrance`
+- `collectionPlace`: `Security Desk A`
+- `files`: `<binary>`
 
-Upload one image then use returned URL:
+Upload one image separately:
 
 ```http
 POST /lostfound/api/lost-and-found/upload
