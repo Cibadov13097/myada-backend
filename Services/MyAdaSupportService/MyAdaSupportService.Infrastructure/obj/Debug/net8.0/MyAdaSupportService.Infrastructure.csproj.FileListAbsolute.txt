@@ -38,3 +38,5 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyA
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Infrastructure\obj\Debug\net8.0\MyAdaSupportService.Infrastructure.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Infrastructure\obj\Debug\net8.0\MyAdaSupportService.Infrastructure.genruntimeconfig.cache
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Infrastructure\obj\Debug\net8.0\ref\MyAdaSupportService.Infrastructure.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Infrastructure\bin\Debug\net8.0\Shared.Contracts.pdb

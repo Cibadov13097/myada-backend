@@ -3,11 +3,13 @@ using ClubManagementService.Application.DTOs.EventRegistration;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
+using ClubManagementService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Contracts.Events.Notifications;
+using System.Globalization;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -18,19 +20,22 @@ public class EventRegistrationService : IEventRegistrationService
     private readonly IMapper _mapper;
     private readonly IClubNotificationService _notificationService;
     private readonly ITicketJwtService _ticketJwt;
+    private readonly ClubManagementDbContext _dbContext;
 
     public EventRegistrationService(
         IEventRegistrationRepository repository,
         IEventRepository eventRepository,
         IMapper mapper,
         IClubNotificationService notificationService,
-        ITicketJwtService ticketJwt)
+        ITicketJwtService ticketJwt,
+        ClubManagementDbContext dbContext)
     {
         _repository = repository;
         _eventRepository = eventRepository;
         _mapper = mapper;
         _notificationService = notificationService;
         _ticketJwt = ticketJwt;
+        _dbContext = dbContext;
     }
 
     public async Task<EventRegistrationDto?> GetByIdAsync(int id)
@@ -210,6 +215,9 @@ public class EventRegistrationService : IEventRegistrationService
             ActorUserId = entity.UserId
         });
 
+        if (evt.SeatLimit > 0 && current + 1 >= evt.SeatLimit)
+            await PublishEventCapacityFullNotificationAsync(evt, cancellationToken).ConfigureAwait(false);
+
         return _mapper.Map<EventRegistrationDto>(entity);
     }
 
@@ -273,5 +281,31 @@ public class EventRegistrationService : IEventRegistrationService
 
         await _repository.SaveChangesAsync();
         return new CheckInResult(true, "checked_in", "Entry allowed", reg.TicketId, attendeeId, eventId, reg.CheckedInAt);
+    }
+
+    private async Task PublishEventCapacityFullNotificationAsync(Event evt, CancellationToken cancellationToken)
+    {
+        var clubAdminUserIds = await _dbContext.ClubEmployees
+            .AsNoTracking()
+            .Where(e => e.ClubId == evt.ClubId)
+            .Select(e => e.UserId)
+            .Distinct()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        foreach (var recipientUserId in clubAdminUserIds.Where(id => id != Guid.Empty))
+        {
+            await _notificationService.PublishAsync(new NotificationQueueMessage
+            {
+                Type = "All seats are taken for the event",
+                Message = evt.Name,
+                Channel = "Push",
+                Source = "club-management",
+                Action = "event.capacity_full",
+                EntityType = "event",
+                EntityId = evt.Id.ToString(CultureInfo.InvariantCulture),
+                RecipientUserId = recipientUserId
+            }).ConfigureAwait(false);
+        }
     }
 }

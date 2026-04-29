@@ -1053,3 +1053,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.pdb
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\MyAdaSupportService.UnitTests.genruntimeconfig.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\obj\Debug\net8.0\ref\MyAdaSupportService.UnitTests.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\bin\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\tests\MyAdaSupportService.UnitTests\bin\Debug\net8.0\Shared.Contracts.pdb

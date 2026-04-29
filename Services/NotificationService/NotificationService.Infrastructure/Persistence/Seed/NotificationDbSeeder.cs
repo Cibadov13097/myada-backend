@@ -7,6 +7,8 @@ namespace NotificationService.Infrastructure.Persistence.Seed;
 /// <summary>Sample in-app notifications for ADA University demo tenants.</summary>
 public static class NotificationDbSeeder
 {
+    private static readonly Guid DemoUserId = new("00000000-0000-0000-0000-000000000001");
+
     public static async Task SeedAsync(NotificationDbContext db, CancellationToken cancellationToken = default)
     {
         if (await db.Notifications.AnyAsync(cancellationToken).ConfigureAwait(false))
@@ -23,6 +25,7 @@ public static class NotificationDbSeeder
                 Message =
                     "ADA Entrepreneurship Club: Startup Weekend registration closes this Friday at 18:00 Baku time.",
                 CreatedAt = now.AddDays(-2),
+                RecipientUserId = DemoUserId,
                 NotificationType = NotificationType.Push
             },
             new Notification
@@ -32,6 +35,7 @@ public static class NotificationDbSeeder
                 Message =
                     "Spring exam schedule updates are published on the ADA student portal — please review your room assignments.",
                 CreatedAt = now.AddDays(-1),
+                RecipientUserId = DemoUserId,
                 NotificationType = NotificationType.Email
             },
             new Notification
@@ -41,6 +45,7 @@ public static class NotificationDbSeeder
                 Message =
                     "Shuttle service to the Shamakhi residential campus: extra departures added for Novruz break week.",
                 CreatedAt = now.AddHours(-8),
+                RecipientUserId = DemoUserId,
                 NotificationType = NotificationType.Push
             },
             new Notification
@@ -49,6 +54,7 @@ public static class NotificationDbSeeder
                 Type = "system",
                 Message = "MyADA: your profile photo was updated successfully.",
                 CreatedAt = now.AddHours(-2),
+                RecipientUserId = DemoUserId,
                 NotificationType = NotificationType.Push
             }
         };

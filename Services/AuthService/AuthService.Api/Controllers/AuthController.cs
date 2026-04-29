@@ -412,6 +412,7 @@ namespace AuthService.API.Controllers
                     recipientEmail!,
                     subject,
                     body,
+                    Guid.TryParse(user.Id, out var notificationRecipientUserId) ? notificationRecipientUserId : null,
                     HttpContext.RequestAborted);
 
                 if (!sent)

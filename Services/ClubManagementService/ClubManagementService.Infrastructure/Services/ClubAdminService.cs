@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using ClubManagementService.Infrastructure.Persistence.Context;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -33,6 +34,7 @@ public sealed class ClubAdminService : IClubAdminService
     private readonly IClubMembershipRepository _clubMembershipRepository;
     private readonly ClubManagementDbContext _db;
     private readonly IAuthUserLookupService _authUserLookup;
+    private readonly IClubNotificationService _notificationService;
     private readonly ILogger<ClubAdminService> _logger;
 
     public ClubAdminService(
@@ -47,6 +49,7 @@ public sealed class ClubAdminService : IClubAdminService
         IClubMembershipRepository clubMembershipRepository,
         ClubManagementDbContext db,
         IAuthUserLookupService authUserLookup,
+        IClubNotificationService notificationService,
         ILogger<ClubAdminService> logger)
     {
         _clubService = clubService;
@@ -60,6 +63,7 @@ public sealed class ClubAdminService : IClubAdminService
         _clubMembershipRepository = clubMembershipRepository;
         _db = db;
         _authUserLookup = authUserLookup;
+        _notificationService = notificationService;
         _logger = logger;
     }
 
@@ -235,8 +239,24 @@ public sealed class ClubAdminService : IClubAdminService
         {
             if (!await JobApplicationBelongsToClubAsync(jobId, clubId).ConfigureAwait(false))
                 return null;
+
+            var existingJobApplication = await _jobApplicationService.GetByIdAsync(jobId).ConfigureAwait(false);
+            if (existingJobApplication == null)
+                return null;
+
+            var vacancy = await _jobVacancyService.GetByIdAsync(existingJobApplication.JobVacancyId).ConfigureAwait(false);
+            if (vacancy == null)
+                return null;
+
             await _jobApplicationService.UpdateStatusAsync(jobId, new UpdateJobApplicationStatusDto
                 { Status = JobApplicationStatus.Approved }).ConfigureAwait(false);
+            await PublishNotificationAsync(
+                existingJobApplication.ApplicantId,
+                $"You are Hired by {vacancy.ClubName ?? await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false)}",
+                BuildVacancyDisplayName(vacancy),
+                "job_application.approved",
+                "job_application",
+                applicationId).ConfigureAwait(false);
             return new ClubAdminApplicationActionResultDto
                 { ApplicationId = applicationId, Status = "Approved" };
         }
@@ -263,6 +283,13 @@ public sealed class ClubAdminService : IClubAdminService
         }
 
         row.Status = "Approved";
+        await PublishNotificationAsync(
+            applicantGuid,
+            $"You are now member of the {await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false)}",
+            GetLatestApplicationNoteText(clubId, applicationId) ?? string.Empty,
+            "membership_application.approved",
+            "membership_application",
+            applicationId).ConfigureAwait(false);
         return new ClubAdminApplicationActionResultDto { ApplicationId = applicationId, Status = "Approved" };
     }
 
@@ -281,8 +308,24 @@ public sealed class ClubAdminService : IClubAdminService
         {
             if (!await JobApplicationBelongsToClubAsync(jobId, clubId).ConfigureAwait(false))
                 return null;
+
+            var existingJobApplication = await _jobApplicationService.GetByIdAsync(jobId).ConfigureAwait(false);
+            if (existingJobApplication == null)
+                return null;
+
+            var vacancy = await _jobVacancyService.GetByIdAsync(existingJobApplication.JobVacancyId).ConfigureAwait(false);
+            if (vacancy == null)
+                return null;
+
             await _jobApplicationService.UpdateStatusAsync(jobId, new UpdateJobApplicationStatusDto
                 { Status = JobApplicationStatus.Rejected }).ConfigureAwait(false);
+            await PublishNotificationAsync(
+                existingJobApplication.ApplicantId,
+                $"Your Application to {vacancy.ClubName ?? await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false)} has been Denied",
+                BuildVacancyDisplayName(vacancy),
+                "job_application.rejected",
+                "job_application",
+                applicationId).ConfigureAwait(false);
             return new ClubAdminApplicationActionResultDto
                 { ApplicationId = applicationId, Status = "Rejected" };
         }
@@ -291,6 +334,16 @@ public sealed class ClubAdminService : IClubAdminService
         if (!ws.MembershipApplications.TryGetValue(membershipId, out var row))
             return null;
         row.Status = "Rejected";
+        if (Guid.TryParse(row.ApplicantUserId, out var applicantGuid) && applicantGuid != Guid.Empty)
+        {
+            await PublishNotificationAsync(
+                applicantGuid,
+                $"Your Application to be {await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false)} member has been Denied",
+                string.IsNullOrWhiteSpace(reason) ? string.Empty : reason.Trim(),
+                "membership_application.rejected",
+                "membership_application",
+                applicationId).ConfigureAwait(false);
+        }
         return new ClubAdminApplicationActionResultDto { ApplicationId = applicationId, Status = "Rejected" };
     }
 
@@ -345,6 +398,18 @@ public sealed class ClubAdminService : IClubAdminService
         await _jobApplicationService
             .UpdateStatusAsync(jobId, new UpdateJobApplicationStatusDto { Status = JobApplicationStatus.InterviewInvited })
             .ConfigureAwait(false);
+
+        var vacancy = await _jobVacancyService.GetByIdAsync(dto.JobVacancyId).ConfigureAwait(false);
+        if (vacancy != null)
+        {
+            await PublishNotificationAsync(
+                dto.ApplicantId,
+                $"You are Called for Interview by {vacancy.ClubName ?? await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false)}",
+                "Choose an interview Spot",
+                "job_application.interview_invited",
+                "job_application",
+                applicationId).ConfigureAwait(false);
+        }
 
         return new ClubAdminApplicationActionResultDto
         {
@@ -628,6 +693,13 @@ public sealed class ClubAdminService : IClubAdminService
         }
 
         var created = await _jobVacancyService.CreateAsync(dto).ConfigureAwait(false);
+        await PublishNotificationsAsync(
+            await GetClubMemberUserIdsAsync(clubId, cancellationToken).ConfigureAwait(false),
+            $"New Vacancy at {await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false)}",
+            BuildVacancyDisplayName(created),
+            "vacancy.announced",
+            "vacancy",
+            created.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
         return MapVacancyAdminDto(created, key);
     }
 
@@ -853,6 +925,13 @@ public sealed class ClubAdminService : IClubAdminService
 
         row.IsDeleted = true;
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await PublishNotificationAsync(
+            userId,
+            await GetClubNameAsync(ctx.ClubId, cancellationToken).ConfigureAwait(false),
+            "You are Expeled",
+            "club_member.expelled",
+            "club_membership",
+            memberId).ConfigureAwait(false);
         return true;
     }
 
@@ -927,6 +1006,14 @@ public sealed class ClubAdminService : IClubAdminService
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         var userNames = await TryGetUserNamesAsync(new[] { userId }, ctx.Key, cancellationToken).ConfigureAwait(false);
+        var clubName = await GetClubNameAsync(ctx.ClubId, cancellationToken).ConfigureAwait(false);
+        await PublishNotificationAsync(
+            userId,
+            $"You are employeed at {clubName}",
+            positionTitle ?? string.Empty,
+            "club_employee.created",
+            "club_employee",
+            existing.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
 
         return new ClubAdminEmployeeDto
         {
@@ -966,7 +1053,16 @@ public sealed class ClubAdminService : IClubAdminService
                 .FirstOrDefaultAsync(e => e.Id == eid && e.ClubId == ctx.ClubId, cancellationToken)
                 .ConfigureAwait(false);
             if (row != null)
+            {
                 row.PositionId = pidOrNull;
+                await PublishNotificationAsync(
+                    row.UserId,
+                    await GetClubNameAsync(ctx.ClubId, cancellationToken).ConfigureAwait(false),
+                    $"Your Position is Updated to {await ResolvePositionTitleAsync(ctx.ClubId, pidOrNull, cancellationToken).ConfigureAwait(false)}",
+                    "club_employee.position_updated",
+                    "club_employee",
+                    row.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+            }
         }
 
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -1478,6 +1574,13 @@ public sealed class ClubAdminService : IClubAdminService
         var id = Guid.NewGuid().ToString("D");
         var row = new AnnouncementRow { Id = id, Title = title, Message = message, CreatedAt = DateTimeOffset.UtcNow };
         ws.Announcements[id] = row;
+        await PublishNotificationsAsync(
+            await GetClubMemberUserIdsAsync(ctx.ClubId, cancellationToken).ConfigureAwait(false),
+            title,
+            message,
+            "club_announcement.created",
+            "club_announcement",
+            id).ConfigureAwait(false);
         return new ClubAdminAnnouncementDto
         {
             Id = row.Id,
@@ -1643,6 +1746,94 @@ public sealed class ClubAdminService : IClubAdminService
 
     private static ClubAdminPagedResult<T> EmptyPage<T>(int page, int limit) =>
         new() { Items = Array.Empty<T>(), Page = Math.Max(page, 1), Limit = Math.Max(limit, 1), Total = 0 };
+
+    private async Task PublishNotificationAsync(
+        Guid recipientUserId,
+        string title,
+        string message,
+        string action,
+        string entityType,
+        string entityId)
+    {
+        if (recipientUserId == Guid.Empty)
+            return;
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = title,
+            Message = message,
+            Channel = "Push",
+            Source = "club-management",
+            Action = action,
+            EntityType = entityType,
+            EntityId = entityId,
+            RecipientUserId = recipientUserId
+        }).ConfigureAwait(false);
+    }
+
+    private async Task PublishNotificationsAsync(
+        IEnumerable<Guid> recipientUserIds,
+        string title,
+        string message,
+        string action,
+        string entityType,
+        string entityId)
+    {
+        foreach (var recipientUserId in recipientUserIds.Where(id => id != Guid.Empty).Distinct())
+        {
+            await PublishNotificationAsync(recipientUserId, title, message, action, entityType, entityId).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<List<Guid>> GetClubMemberUserIdsAsync(int clubId, CancellationToken cancellationToken)
+    {
+        return await _db.ClubMemberships
+            .AsNoTracking()
+            .Where(m => m.ClubId == clubId)
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task<string> GetClubNameAsync(int clubId, CancellationToken cancellationToken)
+    {
+        return await _db.Clubs
+            .AsNoTracking()
+            .Where(c => c.Id == clubId)
+            .Select(c => c.Name)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false)
+            ?? $"Club {clubId.ToString(CultureInfo.InvariantCulture)}";
+    }
+
+    private async Task<string> ResolvePositionTitleAsync(int clubId, int? positionId, CancellationToken cancellationToken)
+    {
+        if (!positionId.HasValue)
+            return string.Empty;
+
+        return await _db.ClubPositions
+            .AsNoTracking()
+            .Where(p => p.ClubId == clubId && p.Id == positionId.Value)
+            .Select(p => p.Title)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false)
+            ?? string.Empty;
+    }
+
+    private static string BuildVacancyDisplayName(JobVacancyDto vacancy)
+    {
+        if (!string.IsNullOrWhiteSpace(vacancy.Title))
+            return vacancy.Title;
+
+        return $"Vacancy {vacancy.Id.ToString(CultureInfo.InvariantCulture)}";
+    }
+
+    private string? GetLatestApplicationNoteText(int clubId, string applicationId)
+    {
+        var notes = SnapshotNotesForClub(clubId, applicationId);
+        return notes.LastOrDefault()?.Text;
+    }
 
     private static bool TryBuildSlotSeries(GenerateInterviewSlotsInput input, out List<(DateTimeOffset Start, DateTimeOffset End)> slots)
     {

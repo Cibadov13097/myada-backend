@@ -1,12 +1,12 @@
 # Club Management API Documentation
 
-Last updated: 2026-04-26
+Last updated: 2026-04-29
 
 This document is based on the current source code and gateway configuration in this repository.
 
 Deployment note:
 
-- This document uses the deployment base URL shared in this thread: `http://13.60.31.141:5000`.
+- This document uses the deployment gateway base URL shared in this thread: `https://myada.site/club`.
 - Endpoint paths below are derived from the current controllers under `Services/ClubManagementService/ClubManagementService.API/Controllers`, then expressed against that base URL.
 - Club position categories are defined by `ClubPositionCategory` in `Services/ClubManagementService/ClubManagementService.Domain/Enums/ClubPositionCategory.cs`.
 
@@ -16,7 +16,7 @@ The Club Management service uses URL versioning. The main path format is:
 
 Use this base in frontend and integration code:
 
-`base = http://13.60.31.141:5000`
+`base = https://myada.site/club`
 
 ---
 
@@ -24,22 +24,22 @@ Use this base in frontend and integration code:
 
 | Environment | Base URL | Notes |
 |-------------|----------|-------|
-| Deployment base shared in this thread | `http://13.60.31.141:5000` | Use this as the full API host base. |
+| Deployment base shared in this thread | `https://myada.site/club` | Use this as the full API host base. |
 | Repo-local gateway | `http://localhost:5000` | From `docker-compose.yml` (`apigateway` maps `5000:8080`). |
 | Local service | `http://localhost:5003` | Local docker/service port. |
-| Swagger UI | `http://13.60.31.141:5000/swagger/index.html` | Exposed only when the club service runs in `Development`. |
-| OpenAPI JSON | `http://13.60.31.141:5000/swagger/v1/swagger.json` | Exposed only when the club service runs in `Development`. |
+| Swagger UI | `https://myada.site/club/swagger/index.html` | Exposed only when the club service runs in `Development`. |
+| OpenAPI JSON | `https://myada.site/club/swagger/v1/swagger.json` | Exposed only when the club service runs in `Development`. |
 
 Examples:
 
-- Categories: `http://13.60.31.141:5000/api/v1/categories`
-- Club detail: `http://13.60.31.141:5000/api/v1/clubs/1`
-- Swagger: `http://13.60.31.141:5000/swagger/index.html`
+- Categories: `https://myada.site/club/api/v1/categories`
+- Club detail: `https://myada.site/club/api/v1/clubs/1`
+- Swagger: `https://myada.site/club/swagger/index.html`
 
 Important gateway rule:
 
-- Correct: `http://13.60.31.141:5000/api/v1/categories`
-- Wrong: `http://13.60.31.141:5000/club/api/v1/categories`
+- Correct: `https://myada.site/club/api/v1/categories`
+- Wrong: `https://myada.site/api/v1/categories`
 
 Append `/api/v1/...` directly to the provided deployment base.
 
@@ -94,7 +94,7 @@ Do not assume the controller payload is returned raw.
 
 ## Current differences from older docs
 
-- This document now uses the deployment base URL `http://13.60.31.141:5000`.
+- This document now uses the deployment gateway base URL `https://myada.site/club`.
 - `POST /api/v1/club-proposals` is anonymous and supports both `application/json` and `multipart/form-data`; use `multipart/form-data` for direct file attachments and S3 upload flow.
 - Student-services proposal routes are:
   - `/api/v1/student-services/clubs/proposals/...`
@@ -213,8 +213,8 @@ Auth: Bearer required
 | `DELETE` | `/api/v1/events/{eventId}/registrations` | Cancel current user's registration. |
 | `GET` | `/api/v1/events/{eventId}/ticket` | Get current user's ticket payload. |
 | `POST` | `/api/v1/events/{eventId}/check-in` | Staff/admin only. Body: `{ "jwt": "..." }`. |
-| `POST` | `/api/v1/events` | `multipart/form-data` only. Fields: `clubId`, `name`, `description`, `startTime`, `endTime`, `location`, `seatLimit`, `requirements`, `prerequisites`, `notes`, optional `imageFile`. `approvedBy` is filled from JWT. |
-| `PATCH` | `/api/v1/events/{eventId}` | `multipart/form-data` only. Fields: `name`, `description`, `startTime`, `endTime`, `location`, `seatLimit`, `requirements`, `prerequisites`, `notes`, `status`, optional `imageFile`. |
+| `POST` | `/api/v1/events` | `multipart/form-data` only. Fields: `clubId`, `name`, `description`, `startTime`, `endTime`, `location`, `buildingId`, `roomId`, `seatLimit`, `requirements`, `prerequisites`, `notes`, optional `imageFile`. `approvedBy` is filled from JWT. |
+| `PATCH` | `/api/v1/events/{eventId}` | `multipart/form-data` only. Fields: `name`, `description`, `startTime`, `endTime`, `location`, `buildingId`, `roomId`, `seatLimit`, `requirements`, `prerequisites`, `notes`, `status`, optional `imageFile`. |
 | `DELETE` | `/api/v1/events/{eventId}` | Delete event. |
 
 Compatibility aliases also exposed by the same controller:
@@ -253,8 +253,10 @@ Registration response shape:
 Create/update notes:
 
 - Attach the event image with `imageFile`.
+- `buildingId` and `roomId` are optional, but they must be sent together.
+- If provided, both `buildingId` and `roomId` must be positive integers.
 - `imageUrl` and `imgUrl` are rejected on `POST /api/v1/events` and `PATCH /api/v1/events/{eventId}`.
-- Event responses still expose the persisted image as `imageUrl`.
+- Event responses still expose the persisted image as `imageUrl`, and now also include `buildingId` and `roomId` when present.
 
 ---
 
@@ -592,11 +594,14 @@ Event proposal create contract:
 
 - `application/json` body uses `EventProposalSubmitDto`.
 - `multipart/form-data` supports direct image upload from Swagger/Postman:
-  - scalar fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `description`, `objectives`, `submittedByOrganization`
+  - scalar fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `buildingId`, `roomId`, `description`, `objectives`, `submittedByOrganization`
   - optional image fields: `imageUrl`, `imageFile`
   - nested JSON string fields: `subEventsJson`, `logisticsJson`
 - If both `imageUrl` and `imageFile` are sent, the uploaded `imageFile` wins.
+- `buildingId` and `roomId` are optional, but they must be provided together.
+- If provided, both `buildingId` and `roomId` must be positive integers.
 - Proposal list/detail responses now expose the stored proposal image as `imageUrl` and legacy alias `posterUrl`.
+- Proposal list/detail responses also expose `requestedBuildingId`, `requestedRoomId`, `buildingId`, and `roomId`.
 - Approval copies that proposal image into the created event's `ImageUrl`.
 
 ### Club proposal requirements
@@ -747,7 +752,7 @@ Representative position response:
 |--------|------|-------|
 | `GET` | `/api/v1/club-admin/{clubId}/events` | Query: `status`, `search`, `page`, `limit`. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}` | Body: `UpdateEventDto`. |
-| `POST` | `/api/v1/club-admin/{clubId}/events/proposals` | Accepts `application/json` or `multipart/form-data`. Use `imageFile` for direct uploads, or `imageUrl` when the image is already hosted. |
+| `POST` | `/api/v1/club-admin/{clubId}/events/proposals` | Accepts `application/json` or `multipart/form-data`. Use `imageFile` for direct uploads, or `imageUrl` when the image is already hosted. Request body also supports optional `buildingId` and `roomId`. |
 | `GET` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees` | Query: `page`, `limit`. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Body: `{ "entered": bool }`. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Delete attendee. |
@@ -782,7 +787,7 @@ Profile patch field semantics:
 Representative curl example:
 
 ```bash
-curl -X PATCH "http://13.60.31.141:5000/api/v1/club-admin/7/profile" \
+curl -X PATCH "https://myada.site/club/api/v1/club-admin/7/profile" \
   -H "Authorization: Bearer <JWT>" \
   -H "Accept: application/json" \
   -F 'email=robotics@ada.edu.az' \
@@ -846,7 +851,7 @@ If you are building new frontend code, prefer the versioned `/api/v1/...` routes
 
 Use:
 
-`http://13.60.31.141:5000`
+`https://myada.site/club`
 
 Then append one of:
 
@@ -863,8 +868,8 @@ Then append one of:
 
 For exact live schemas and tags, use:
 
-- Swagger UI: `http://13.60.31.141:5000/swagger/index.html`
-- OpenAPI JSON: `http://13.60.31.141:5000/swagger/v1/swagger.json`
+- Swagger UI: `https://myada.site/club/swagger/index.html`
+- OpenAPI JSON: `https://myada.site/club/swagger/v1/swagger.json`
 
 Those Swagger routes are available only when the club service is running in `Development`. If they are unavailable in a deployment, use this markdown file plus the controller source as the source-backed reference.
 

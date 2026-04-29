@@ -190,6 +190,9 @@ services:
       ASPNETCORE_URLS: http://+:8080
       RabbitMQ__Host: rabbitmq
       ConnectionStrings__Develop: Host=myada;Port=5432;Database=NotificationDb;Username=postgres;Password=123
+      Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
+      Auth__Issuer: myada-auth
+      Auth__Audience: myada-api
       SMTP__Host: ${NOTIFICATION_SMTP_HOST:-smtp.gmail.com}
       SMTP__Port: ${NOTIFICATION_SMTP_PORT:-587}
       SMTP__Username: ${NOTIFICATION_SMTP_USERNAME:?NOTIFICATION_SMTP_USERNAME_REQUIRED}
@@ -200,6 +203,7 @@ services:
       SMTP__UseDefaultCredentials: ${NOTIFICATION_SMTP_USE_DEFAULT_CREDENTIALS:-false}
       MYADA_LOG_DIR: /app/logs
     depends_on:
+      - authservice
       - rabbitmq
       - myada
     restart: always

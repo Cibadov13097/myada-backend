@@ -8,20 +8,22 @@ using System.Threading.Tasks;
 
 namespace NotificationService.Infrastructure.Persistence
 {
-    public class NotificationDbContext:DbContext
+    public class NotificationDbContext : DbContext
     {
-
-        public NotificationDbContext(DbContextOptions options):base(options)
+        public NotificationDbContext(DbContextOptions options) : base(options)
         {
-            
-
         }
 
-
         public DbSet<Notification> Notifications { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasIndex(n => new { n.RecipientUserId, n.CreatedAt });
+            });
         }
     }
 }

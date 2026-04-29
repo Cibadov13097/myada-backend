@@ -2,6 +2,7 @@ using MyAda.Observability;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using AutoWrapper;
+using ClubManagementService.API.Background;
 using ClubManagementService.API.Filters;
 using ClubManagementService.API.Security;
 using ClubManagementService.API.Swagger;
@@ -149,6 +150,7 @@ builder.Services.AddSingleton<ProposalStateStore>();
 builder.Services.AddScoped<IAuthUserLookupService, AuthUserLookupService>();
 builder.Services.AddScoped<IProposalContractService, ProposalContractService>();
 builder.Services.AddScoped<IClubAdminService, ClubAdminService>();
+builder.Services.AddHostedService<ClubNotificationReminderHostedService>();
 
 // SPA CORS: explicit origins (required when combining with credentials; avoids invalid AllowAnyOrigin+WithOrigins).
 // OPTIONS preflight must succeed before JWT — UseCors is registered first in the pipeline below.

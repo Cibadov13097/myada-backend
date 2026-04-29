@@ -18,6 +18,7 @@ public class ClubAdminServiceTests : IDisposable
     private readonly Mock<IClubService> _clubService = new();
     private readonly Mock<IClubRepository> _clubRepository = new();
     private readonly Mock<IAuthUserLookupService> _authUserLookup = new();
+    private readonly Mock<IClubNotificationService> _notificationService = new();
     private readonly ClubManagementDbContext _dbContext;
     private readonly ClubAdminService _service;
 
@@ -27,6 +28,9 @@ public class ClubAdminServiceTests : IDisposable
             .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
             .Options;
         _dbContext = new ClubManagementDbContext(dbOptions);
+        _notificationService
+            .Setup(x => x.PublishAsync(It.IsAny<Shared.Contracts.Events.Notifications.NotificationQueueMessage>()))
+            .Returns(Task.CompletedTask);
 
         _service = new ClubAdminService(
             _clubService.Object,
@@ -40,6 +44,7 @@ public class ClubAdminServiceTests : IDisposable
             Mock.Of<IClubMembershipRepository>(),
             _dbContext,
             _authUserLookup.Object,
+            _notificationService.Object,
             Mock.Of<ILogger<ClubAdminService>>());
     }
 

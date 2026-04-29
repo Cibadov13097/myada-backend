@@ -375,6 +375,14 @@ public class StudentServicesController : ControllerBase
             ApprovedBy = GetCurrentUserIdOrDefault()
         });
 
+        await PublishNotificationsAsync(
+            await GetAllClubMemberUserIdsAsync(HttpContext.RequestAborted).ConfigureAwait(false),
+            "New Event Alert",
+            created.Name,
+            "event.created_by_student_services",
+            "event",
+            created.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+
         return Ok(created);
     }
 
@@ -386,16 +394,13 @@ public class StudentServicesController : ControllerBase
         try
         {
             var updated = await _eventService.UpdateAsync(eventId, body);
-            await _notificationService.PublishAsync(new NotificationQueueMessage
-            {
-                Type = "Event Patched",
-                Message = $"Event '{eventId}' was patched by student services.",
-                Source = "club-management",
-                Action = "event.patched",
-                EntityType = "event",
-                EntityId = eventId.ToString(),
-                ActorUserId = GetCurrentUserIdOrDefault()
-            });
+            await PublishNotificationsAsync(
+                await GetClubMemberUserIdsAsync(updated.ClubId, HttpContext.RequestAborted).ConfigureAwait(false),
+                "Event Modified by the Student Services",
+                updated.Name,
+                "event.updated_by_student_services",
+                "event",
+                eventId.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
             return Ok(updated);
         }
         catch (KeyNotFoundException)
@@ -437,6 +442,17 @@ public class StudentServicesController : ControllerBase
             Description = request.Description ?? existing.Description,
             Status = ParseClubStatus(request.Status ?? existing.Status.ToString())
         });
+
+        if (existing.Status != updated.Status && updated.Status == ClubStatus.Approved)
+        {
+            await PublishNotificationsAsync(
+                await GetAllClubMemberUserIdsAsync(HttpContext.RequestAborted).ConfigureAwait(false),
+                $"{updated.Name} Is Back Online",
+                string.Empty,
+                "club.status_back_online",
+                "club",
+                updated.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+        }
 
         return Ok(updated);
     }
@@ -497,14 +513,61 @@ public class StudentServicesController : ControllerBase
             Type = "Club Profile Image Approved",
             Message = $"Profile image for club '{clubId}' was approved.",
             Source = "club-management",
-            Action = "club.profile_image_approved",
+            Action = "club.profile_image_approved.audit",
             EntityType = "club",
             EntityId = clubId.ToString(),
             ActorUserId = GetCurrentUserIdOrDefault()
         });
 
+        await PublishNotificationsAsync(
+            await GetClubEmployeeUserIdsAsync(clubId, cancellationToken).ConfigureAwait(false),
+            "Club Logo Change has been Approved",
+            string.Empty,
+            "club.profile_image_approved",
+            "club",
+            clubId.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+
         var dto = await _clubService.GetByIdAsync(clubId).ConfigureAwait(false);
         return dto == null ? Ok(new { clubId, approved = true }) : Ok(dto);
+    }
+
+    [HttpPost("clubs/{clubId:int}/profile-image/reject")]
+    public async Task<IActionResult> RejectClubProfileImage(int clubId, CancellationToken cancellationToken)
+    {
+        var denied = EnsureStudentServices();
+        if (denied != null) return denied;
+
+        var club = await _db.Clubs.FirstOrDefaultAsync(c => c.Id == clubId, cancellationToken).ConfigureAwait(false);
+        if (club == null)
+            return NotFound();
+
+        if (!string.IsNullOrWhiteSpace(club.ProposedProfileImageUrl))
+        {
+            club.ProposedProfileImageUrl = null;
+            await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Club Profile Image Rejected",
+            Message = $"Profile image for club '{clubId}' was rejected.",
+            Source = "club-management",
+            Action = "club.profile_image_rejected.audit",
+            EntityType = "club",
+            EntityId = clubId.ToString(),
+            ActorUserId = GetCurrentUserIdOrDefault()
+        });
+
+        await PublishNotificationsAsync(
+            await GetClubEmployeeUserIdsAsync(clubId, cancellationToken).ConfigureAwait(false),
+            "Club Logo Change has been Disapproved",
+            string.Empty,
+            "club.profile_image_rejected",
+            "club",
+            clubId.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+
+        var dto = await _clubService.GetByIdAsync(clubId).ConfigureAwait(false);
+        return dto == null ? Ok(new { clubId, rejected = true }) : Ok(dto);
     }
 
     [HttpGet("clubs/{clubId:int}/members")]
@@ -539,16 +602,16 @@ public class StudentServicesController : ControllerBase
     {
         var denied = EnsureStudentServices();
         if (denied != null) return denied;
-        await _notificationService.PublishAsync(new NotificationQueueMessage
+        if (Guid.TryParse(memberId, out var recipientUserId) && recipientUserId != Guid.Empty)
         {
-            Type = "Club Member Removed",
-            Message = $"Member '{memberId}' was removed from club '{clubId}'.",
-            Source = "club-management",
-            Action = "member.deleted",
-            EntityType = "member",
-            EntityId = memberId,
-            ActorUserId = GetCurrentUserIdOrDefault()
-        });
+            await PublishNotificationAsync(
+                recipientUserId,
+                await GetClubNameAsync(clubId, HttpContext.RequestAborted).ConfigureAwait(false),
+                "You are Expeled",
+                "club_member.expelled",
+                "club_membership",
+                memberId).ConfigureAwait(false);
+        }
 
         return NoContent();
     }
@@ -608,11 +671,19 @@ public class StudentServicesController : ControllerBase
             Type = "Club Employee Added",
             Message = $"A new employee was added to club '{clubId}'.",
             Source = "club-management",
-            Action = "employee.created",
+            Action = "employee.created.audit",
             EntityType = "club",
             EntityId = clubId.ToString(),
             ActorUserId = GetCurrentUserIdOrDefault()
         });
+
+        await PublishNotificationAsync(
+            existing.UserId,
+            $"You are employeed at {await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false)}",
+            positionTitle ?? string.Empty,
+            "club_employee.created",
+            "club_employee",
+            existing.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
 
         return Ok(new
         {
@@ -665,11 +736,19 @@ public class StudentServicesController : ControllerBase
             Type = "Club Employee Updated",
             Message = $"Employee '{employeeId}' was updated for club '{clubId}'.",
             Source = "club-management",
-            Action = "employee.updated",
+            Action = "employee.updated.audit",
             EntityType = "employee",
             EntityId = employeeId,
             ActorUserId = GetCurrentUserIdOrDefault()
         });
+
+        await PublishNotificationAsync(
+            existing.UserId,
+            await GetClubNameAsync(clubId, cancellationToken).ConfigureAwait(false),
+            $"Your Position is Updated to {positionTitle ?? string.Empty}",
+            "club_employee.position_updated",
+            "club_employee",
+            existing.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
 
         return Ok(new
         {
@@ -830,6 +909,87 @@ public class StudentServicesController : ControllerBase
             or IOException
             or InvalidOperationException
             or BadHttpRequestException;
+
+    private async Task PublishNotificationAsync(
+        Guid recipientUserId,
+        string title,
+        string message,
+        string action,
+        string entityType,
+        string entityId)
+    {
+        if (recipientUserId == Guid.Empty)
+            return;
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = title,
+            Message = message,
+            Channel = "Push",
+            Source = "club-management",
+            Action = action,
+            EntityType = entityType,
+            EntityId = entityId,
+            RecipientUserId = recipientUserId
+        }).ConfigureAwait(false);
+    }
+
+    private async Task PublishNotificationsAsync(
+        IEnumerable<Guid> recipientUserIds,
+        string title,
+        string message,
+        string action,
+        string entityType,
+        string entityId)
+    {
+        foreach (var recipientUserId in recipientUserIds.Where(id => id != Guid.Empty).Distinct())
+        {
+            await PublishNotificationAsync(recipientUserId, title, message, action, entityType, entityId).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<List<Guid>> GetClubMemberUserIdsAsync(int clubId, CancellationToken cancellationToken)
+    {
+        return await _db.ClubMemberships
+            .AsNoTracking()
+            .Where(m => m.ClubId == clubId)
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task<List<Guid>> GetAllClubMemberUserIdsAsync(CancellationToken cancellationToken)
+    {
+        return await _db.ClubMemberships
+            .AsNoTracking()
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task<List<Guid>> GetClubEmployeeUserIdsAsync(int clubId, CancellationToken cancellationToken)
+    {
+        return await _db.ClubEmployees
+            .AsNoTracking()
+            .Where(e => e.ClubId == clubId)
+            .Select(e => e.UserId)
+            .Distinct()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task<string> GetClubNameAsync(int clubId, CancellationToken cancellationToken)
+    {
+        return await _db.Clubs
+            .AsNoTracking()
+            .Where(c => c.Id == clubId)
+            .Select(c => c.Name)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false)
+            ?? $"Club {clubId.ToString(CultureInfo.InvariantCulture)}";
+    }
 
     private IActionResult? EnsureStudentServices()
     {

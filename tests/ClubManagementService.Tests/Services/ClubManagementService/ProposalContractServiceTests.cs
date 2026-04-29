@@ -76,6 +76,22 @@ public class ProposalContractServiceTests
                 [organizationId1] = additionalMember1,
                 [organizationId2] = additionalMember2
             });
+        authUserLookupService
+            .Setup(x => x.GetUserIdsByOrganizationalIdsAsync(
+                It.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "123456789" })),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Dictionary<string, Guid>
+            {
+                ["123456789"] = Guid.NewGuid()
+            });
+        authUserLookupService
+            .Setup(x => x.GetAllActiveUserIdsAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Guid>());
+
+        var notificationService = new Mock<IClubNotificationService>();
+        notificationService
+            .Setup(x => x.PublishAsync(It.IsAny<Shared.Contracts.Events.Notifications.NotificationQueueMessage>()))
+            .Returns(Task.CompletedTask);
 
         var dbOptions = new DbContextOptionsBuilder<ClubManagementDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
@@ -88,6 +104,7 @@ public class ProposalContractServiceTests
             Mock.Of<IEventService>(),
             membershipRepository.Object,
             authUserLookupService.Object,
+            notificationService.Object,
             dbContext);
 
         var result = await service.ApproveClubProposalAsync("PROP-2026-001", actorUserId, CancellationToken.None);
@@ -106,6 +123,10 @@ public class ProposalContractServiceTests
             .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
             .Options;
         await using var dbContext = new ClubManagementDbContext(dbOptions);
+        var notificationService = new Mock<IClubNotificationService>();
+        notificationService
+            .Setup(x => x.PublishAsync(It.IsAny<Shared.Contracts.Events.Notifications.NotificationQueueMessage>()))
+            .Returns(Task.CompletedTask);
 
         var service = new global::ClubManagementService.Infrastructure.Services.ProposalContractService(
             new global::ClubManagementService.Infrastructure.Services.ProposalStateStore(),
@@ -113,6 +134,7 @@ public class ProposalContractServiceTests
             Mock.Of<IEventService>(),
             Mock.Of<IClubMembershipRepository>(),
             Mock.Of<IAuthUserLookupService>(),
+            notificationService.Object,
             dbContext);
 
         var submission = new ClubProposalSubmissionDto

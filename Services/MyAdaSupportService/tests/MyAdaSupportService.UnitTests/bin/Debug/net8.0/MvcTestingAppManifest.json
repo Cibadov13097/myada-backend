@@ -8,5 +8,6 @@
   "MyAdaSupportService.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Application",
   "MyAdaSupportService.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Domain",
   "MyAdaSupportService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\MyAdaSupportService\\MyAdaSupportService.Infrastructure",
+  "Shared.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Shared\\Shared.Contracts",
   "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Shared\\Shared.Observability"
 }

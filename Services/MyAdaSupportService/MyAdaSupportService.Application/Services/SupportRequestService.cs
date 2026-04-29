@@ -7,6 +7,7 @@ using MyAdaSupportService.Application.ServicesInterfaces.CrudServiceInterface;
 using MyAdaSupportService.Application.Abstractions;
 using MyAdaSupportService.Domain.Entities.RequestAggregate;
 using MyAdaSupportService.Domain.Enums;
+using Shared.Contracts.Events.Notifications;
 
 namespace MyAdaSupportService.Application.Services;
 
@@ -22,13 +23,15 @@ public class SupportRequestService
     private readonly ILocationService _locationService;
     private readonly ISupportRealtimeNotifier _realtimeNotifier;
     private readonly IFileStorageService _fileStorageService;
+    private readonly ISupportNotificationPublisher _notificationPublisher;
 
     public SupportRequestService(
         IRequestRepository requestRepository,
         IMapper mapper,
         ILocationService locationService,
         ISupportRealtimeNotifier realtimeNotifier,
-        IFileStorageService fileStorageService)
+        IFileStorageService fileStorageService,
+        ISupportNotificationPublisher notificationPublisher)
         : base(requestRepository, mapper)
     {
         _requestRepository = requestRepository;
@@ -36,6 +39,7 @@ public class SupportRequestService
         _locationService = locationService;
         _realtimeNotifier = realtimeNotifier;
         _fileStorageService = fileStorageService;
+        _notificationPublisher = notificationPublisher;
     }
 
     public async Task<SupportRequestDetailDto> CreateRequestAsync(CreateSupportRequestDto dto, Guid memberId)
@@ -50,6 +54,9 @@ public class SupportRequestService
         var result = _mapper.Map<SupportRequestDetailDto>(created);
         result.Location = await ResolveLocationAsync(created);
         await _realtimeNotifier.NotifySupportRequestChangedAsync(created.Id, "created");
+
+        if (created.StaffId is Guid assignedStaffId && assignedStaffId != Guid.Empty)
+            await PublishTaskAssignedNotificationAsync(created, assignedStaffId, memberId);
 
         return result;
     }
@@ -117,7 +124,7 @@ public class SupportRequestService
 
     public async Task CancelRequestAsync(int requestId, Guid memberId, CancelRequestDto dto)
     {
-        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
 
         if (request == null)
             throw new Exception("Request not found");
@@ -131,11 +138,12 @@ public class SupportRequestService
 
         await _requestRepository.UpdateAsync(request);
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "cancelled");
+        await PublishCancellationNotificationsAsync(request);
     }
 
     public async Task AssignRequestAsync(int requestId, AssignRequestDto dto, Guid dispatcherId)
     {
-        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
 
         if (request == null)
             throw new Exception("Request not found");
@@ -152,11 +160,12 @@ public class SupportRequestService
 
         await _requestRepository.UpdateAsync(request);
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "assigned");
+        await PublishTaskAssignedNotificationAsync(request, dto.StaffId, dispatcherId);
     }
 
     public async Task ReassignRequestAsync(int requestId, AssignRequestDto dto, Guid dispatcherId)
     {
-        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
 
         if (request == null)
             throw new Exception("Request not found");
@@ -173,6 +182,7 @@ public class SupportRequestService
 
         await _requestRepository.UpdateAsync(request);
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "reassigned");
+        await PublishTaskAssignedNotificationAsync(request, dto.StaffId, dispatcherId);
     }
 
     public async Task AddDispatcherInstructionsAsync(int requestId, DispatcherInstructionDto dto, Guid dispatcherId)
@@ -193,7 +203,7 @@ public class SupportRequestService
 
     public async Task MarkAsStartedAsync(int requestId, Guid staffId)
     {
-        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
 
         if (request == null)
             throw new Exception("Request not found");
@@ -205,11 +215,12 @@ public class SupportRequestService
         request.StartedAt = DateTime.UtcNow;
         await _requestRepository.UpdateAsync(request);
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "started");
+        await PublishStatusChangedNotificationAsync(request, staffId);
     }
 
     public async Task MarkAsInProgressAsync(int requestId, Guid staffId)
     {
-        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
 
         if (request == null)
             throw new Exception("Request not found");
@@ -221,11 +232,12 @@ public class SupportRequestService
         request.StartedAt ??= DateTime.UtcNow;
         await _requestRepository.UpdateAsync(request);
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "in-progress");
+        await PublishStatusChangedNotificationAsync(request, staffId);
     }
 
     public async Task MarkAsCompletedAsync(int requestId, Guid staffId)
     {
-        var request = await _requestRepository.GetByIdOrDefaultAsync(requestId);
+        var request = await _requestRepository.GetByIdWithDetailsOrDefaultAsync(requestId);
 
         if (request == null)
             throw new Exception("Request not found");
@@ -237,6 +249,7 @@ public class SupportRequestService
         request.CompletedAt = DateTime.UtcNow;
         await _requestRepository.UpdateAsync(request);
         await _realtimeNotifier.NotifySupportRequestChangedAsync(request.Id, "completed");
+        await PublishStatusChangedNotificationAsync(request, staffId);
     }
 
     private async Task<List<SupportRequestListItemDto>> MapListDtosWithLocationAsync(List<Request> requests)
@@ -382,4 +395,88 @@ public class SupportRequestService
             .ToList()
             ?? new List<string>();
     }
+
+    private async Task PublishTaskAssignedNotificationAsync(Request request, Guid assignedStaffId, Guid actorUserId)
+    {
+        if (assignedStaffId == Guid.Empty)
+            return;
+
+        await _notificationPublisher.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "New Task Assigned",
+            Message = BuildRequestDisplayName(request),
+            Channel = "Push",
+            Source = "myada-support-service",
+            Action = "support.request.assigned",
+            EntityType = "support_request",
+            EntityId = request.Id.ToString(),
+            ActorUserId = actorUserId,
+            RecipientUserId = assignedStaffId
+        });
+    }
+
+    private async Task PublishCancellationNotificationsAsync(Request request)
+    {
+        var requestName = BuildRequestDisplayName(request);
+        var recipients = new HashSet<Guid>();
+
+        if (request.CreatedUserId != Guid.Empty)
+            recipients.Add(request.CreatedUserId);
+
+        if (request.StaffId.HasValue && request.StaffId.Value != Guid.Empty)
+            recipients.Add(request.StaffId.Value);
+
+        foreach (var recipient in recipients)
+        {
+            await _notificationPublisher.PublishAsync(new NotificationQueueMessage
+            {
+                Type = "Request Canceled",
+                Message = requestName,
+                Channel = "Push",
+                Source = "myada-support-service",
+                Action = "support.request.cancelled",
+                EntityType = "support_request",
+                EntityId = request.Id.ToString(),
+                ActorUserId = request.CreatedUserId,
+                RecipientUserId = recipient
+            });
+        }
+    }
+
+    private async Task PublishStatusChangedNotificationAsync(Request request, Guid actorUserId)
+    {
+        if (request.CreatedUserId == Guid.Empty)
+            return;
+
+        await _notificationPublisher.PublishAsync(new NotificationQueueMessage
+        {
+            Type = BuildRequestDisplayName(request),
+            Message = FormatRequestStatus(request.Status),
+            Channel = "Push",
+            Source = "myada-support-service",
+            Action = "support.request.status_changed",
+            EntityType = "support_request",
+            EntityId = request.Id.ToString(),
+            ActorUserId = actorUserId,
+            RecipientUserId = request.CreatedUserId
+        });
+    }
+
+    private static string BuildRequestDisplayName(Request request)
+    {
+        if (!string.IsNullOrWhiteSpace(request.Category?.Name))
+            return request.Category.Name.Trim();
+
+        return $"Request #{request.Id}";
+    }
+
+    private static string FormatRequestStatus(RequestStatus status) => status switch
+    {
+        RequestStatus.New => "New",
+        RequestStatus.Assigned => "Assigned",
+        RequestStatus.InProgress => "In Progress",
+        RequestStatus.Completed => "Completed",
+        RequestStatus.Cancelled => "Cancelled",
+        _ => status.ToString()
+    };
 }

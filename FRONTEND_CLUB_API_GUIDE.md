@@ -1,6 +1,6 @@
 # Club Management API — Frontend integration guide
 
-This document describes backend behavior and contracts **implemented in this project** for FrontWeb / SPA integration. Base URL is assumed to be `{CLUB_API_BASE}/api/v1` (no trailing slash on the base). For the deployment shared in this thread, use `http://13.60.31.141:5000/api/v1`. API versioning uses `v1` in the path.
+This document describes backend behavior and contracts **implemented in this project** for FrontWeb / SPA integration. Base URL is assumed to be `{CLUB_API_BASE}/api/v1` (no trailing slash on the base). For the deployment shared in this thread, use `https://myada.site/club/api/v1`. API versioning uses `v1` in the path.
 
 Unless noted otherwise, responses are wrapped by **AutoWrapper** as `{ "result": ... }` or `{ "data": ... }` (depending on configuration). Your `unwrapApiResponse` should read **`result`** or **`data`**.
 
@@ -215,8 +215,10 @@ List/detail items include a **superset** of fields aligned with your UI mapper (
 - `POST /api/v1/club-admin/{clubId}/events/proposals`
 - Accepts `application/json` or `multipart/form-data`.
 - JSON uses the shared `EventProposalSubmitDto` shape and can send `imageUrl` when the image is already hosted.
-- Multipart fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `description`, `objectives`, `submittedByOrganization?`, `imageUrl?`, `imageFile?`, `subEventsJson?`, `logisticsJson?`
+- Multipart fields: `name`, `dateTime`, `duration`, `attendance`, `venue`, `buildingId?`, `roomId?`, `description`, `objectives`, `submittedByOrganization?`, `imageUrl?`, `imageFile?`, `subEventsJson?`, `logisticsJson?`
 - When both `imageUrl` and `imageFile` are sent, the uploaded `imageFile` wins.
+- `buildingId` and `roomId` are optional, but they must be provided together.
+- If provided, both must be positive integers.
 - Swagger now shows both JSON and multipart request body options for this route.
 
 **Success (`result`)**
@@ -260,6 +262,8 @@ Shared shape (`EventProposalSubmitDto`):
 | `duration` | string | Hours as string, e.g. `"3"` |
 | `attendance` | string | Parsed to seat limit; minimum 1 if invalid |
 | `venue` | string | |
+| `buildingId` | number? | Optional. Must be sent together with `roomId`. |
+| `roomId` | number? | Optional. Must be sent together with `buildingId`. |
 | `description` | string | |
 | `objectives` | string | |
 | `imageUrl` | string? | Existing uploaded image URL/reference. Also returned on proposal reads. |
@@ -273,6 +277,7 @@ Shared shape (`EventProposalSubmitDto`):
 - Club-admin create rejects `imageUrl`; attach the image file instead.
 - `subEventsJson` must be a JSON array string.
 - `logisticsJson` must be a JSON object string.
+- `buildingId` and `roomId` must either both be omitted or both be valid positive integers.
 - On the student-services create route, if both `imageUrl` and `imageFile` are sent, the uploaded file wins and its stored URL becomes the proposal image.
 
 **Persistence**
@@ -281,6 +286,7 @@ Shared shape (`EventProposalSubmitDto`):
 - Proposing an event (club admin or staff) **does not** create an `club.Events` row.
 - Only Student Services **approval** creates the actual event in `club.Events`.
 - Proposal list/detail payloads expose the proposal image as both `imageUrl` and legacy alias `posterUrl`.
+- Proposal list/detail payloads also expose `requestedBuildingId`, `requestedRoomId`, `buildingId`, and `roomId`.
 - When Student Services approves the proposal, that same image URL is copied into the created event's `ImageUrl`.
 
 **Approve body (`EventProposalApproveDto`)**
@@ -427,6 +433,8 @@ type EventProposalSubmitDto = {
   duration: string
   attendance: string
   venue: string
+  buildingId?: number
+  roomId?: number
   description: string
   objectives: string
   imageUrl?: string

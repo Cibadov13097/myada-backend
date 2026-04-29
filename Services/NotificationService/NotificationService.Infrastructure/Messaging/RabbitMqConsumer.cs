@@ -149,7 +149,8 @@ public class RabbitMqConsumer : BackgroundService
                         Type = fallbackType,
                         Message = string.IsNullOrWhiteSpace(queueMessage.Message) ? "Notification received." : queueMessage.Message,
                         NotificationType = notificationType,
-                        CreatedAt = createdAt
+                        CreatedAt = createdAt,
+                        RecipientUserId = queueMessage.RecipientUserId
                     },
                     RecipientEmail = queueMessage.RecipientEmail,
                     Subject = string.IsNullOrWhiteSpace(queueMessage.EmailSubject)
@@ -175,7 +176,8 @@ public class RabbitMqConsumer : BackgroundService
                         Type = "New Lost Item",
                         Message = $"{lostFoundEvent.Name} at {lostFoundEvent.Location}",
                         NotificationType = NotificationType.Push,
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = DateTime.UtcNow,
+                        RecipientUserId = null
                     },
                     Subject = "New Lost Item"
                 };

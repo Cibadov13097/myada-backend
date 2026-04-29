@@ -322,3 +322,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Api\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Api\bin\Debug\net8.0\Shared.Observability.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Api\bin\Debug\net8.0\Shared.Observability.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Api\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Api\bin\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Api\bin\Debug\net8.0\Shared.Contracts.pdb

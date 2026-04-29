@@ -2,28 +2,42 @@ using global::ClubManagementService.Application.DTOs.EventRegistration;
 using global::ClubManagementService.Application.Interfaces.Repositories;
 using global::ClubManagementService.Application.Interfaces.Services;
 using global::ClubManagementService.Domain.Entities;
+using global::ClubManagementService.Infrastructure.Persistence.Context;
+using global::ClubManagementService.Infrastructure.Services;
 using FluentAssertions;
-using Moq;
 using ClubManagementService.Tests.Common;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.Tests.Services;
 
-public class EventRegistrationServiceTests
+public class EventRegistrationServiceTests : IDisposable
 {
     private readonly Mock<IEventRegistrationRepository> _repositoryMock = new();
     private readonly Mock<IEventRepository> _eventRepositoryMock = new();
     private readonly Mock<IClubNotificationService> _notificationServiceMock = new();
     private readonly Mock<ITicketJwtService> _ticketJwtServiceMock = new();
-    private readonly global::ClubManagementService.Infrastructure.Services.EventRegistrationService _service;
+    private readonly ClubManagementDbContext _dbContext;
+    private readonly EventRegistrationService _service;
 
     public EventRegistrationServiceTests()
     {
-        _service = new global::ClubManagementService.Infrastructure.Services.EventRegistrationService(
+        var dbOptions = new DbContextOptionsBuilder<ClubManagementDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
+            .Options;
+        _dbContext = new ClubManagementDbContext(dbOptions);
+        _notificationServiceMock
+            .Setup(x => x.PublishAsync(It.IsAny<NotificationQueueMessage>()))
+            .Returns(Task.CompletedTask);
+
+        _service = new EventRegistrationService(
             _repositoryMock.Object,
             _eventRepositoryMock.Object,
             ClubManagementMapperFactory.Create(),
             _notificationServiceMock.Object,
-            _ticketJwtServiceMock.Object);
+            _ticketJwtServiceMock.Object,
+            _dbContext);
     }
 
     [Fact]
@@ -49,5 +63,10 @@ public class EventRegistrationServiceTests
         Func<Task> action = async () => await _service.DeleteAsync(15);
 
         await action.Should().ThrowAsync<KeyNotFoundException>().WithMessage("EventRegistration 15 not found.");
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 }

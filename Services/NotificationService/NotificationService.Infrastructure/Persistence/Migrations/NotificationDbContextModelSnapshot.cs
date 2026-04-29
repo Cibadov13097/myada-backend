@@ -38,11 +38,16 @@ namespace NotificationService.Infrastructure.Persistence.Migrations
                     b.Property<int>("NotificationType")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("RecipientUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RecipientUserId", "CreatedAt");
 
                     b.ToTable("Notifications");
                 });

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyAdaSupportService.Domain\MyAdaSupportService.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
 

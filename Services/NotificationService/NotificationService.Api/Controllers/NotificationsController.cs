@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NotificationService.Application.Interfaces;
@@ -29,16 +30,23 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("me")]
+    [Authorize]
     public async Task<IActionResult> GetAll(
         [FromQuery] string type = "all",
         [FromQuery] string channel = "all",
+        [FromQuery] Guid? recipientUserId = null,
         [FromQuery] int page = 1,
         [FromQuery] int limit = 20)
     {
+        var userId = GetCurrentUserIdOrDefault();
+        if (userId == Guid.Empty)
+            return Unauthorized();
+
         page = Math.Max(page, 1);
         limit = Math.Clamp(limit, 1, 100);
 
-        var query = _dbContext.Notifications.AsNoTracking().AsQueryable();
+        var query = ApplyVisibleNotificationsScope(userId);
 
         if (!string.Equals(type, "all", StringComparison.OrdinalIgnoreCase))
         {
@@ -58,6 +66,11 @@ public class NotificationsController : ControllerBase
             query = query.Where(n => n.NotificationType == parsedChannel);
         }
 
+        if (recipientUserId.HasValue && recipientUserId.Value != Guid.Empty)
+        {
+            query = query.Where(n => n.RecipientUserId == recipientUserId.Value);
+        }
+
         var total = await query.CountAsync();
         var items = await query
             .OrderByDescending(n => n.CreatedAt)
@@ -69,6 +82,7 @@ public class NotificationsController : ControllerBase
                 Type = n.Type,
                 Message = n.Message,
                 Channel = n.NotificationType.ToString(),
+                RecipientUserId = n.RecipientUserId,
                 CreatedAt = n.CreatedAt
             })
             .ToListAsync();
@@ -83,10 +97,14 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var notification = await _dbContext.Notifications
-            .AsNoTracking()
+        var userId = GetCurrentUserIdOrDefault();
+        if (userId == Guid.Empty)
+            return Unauthorized();
+
+        var notification = await ApplyVisibleNotificationsScope(userId)
             .Where(n => n.Id == id)
             .Select(n => new NotificationItemDto
             {
@@ -94,6 +112,7 @@ public class NotificationsController : ControllerBase
                 Type = n.Type,
                 Message = n.Message,
                 Channel = n.NotificationType.ToString(),
+                RecipientUserId = n.RecipientUserId,
                 CreatedAt = n.CreatedAt
             })
             .FirstOrDefaultAsync();
@@ -105,9 +124,15 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var notification = await _dbContext.Notifications.FirstOrDefaultAsync(n => n.Id == id);
+        var userId = GetCurrentUserIdOrDefault();
+        if (userId == Guid.Empty)
+            return Unauthorized();
+
+        var notification = await _dbContext.Notifications
+            .FirstOrDefaultAsync(n => n.Id == id && n.RecipientUserId == userId);
         if (notification is null)
             return NotFound();
 
@@ -171,7 +196,8 @@ public class NotificationsController : ControllerBase
             Type = string.IsNullOrWhiteSpace(request.Type) ? "Direct Email" : request.Type.Trim(),
             Message = message,
             NotificationType = NotificationType.Email,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            RecipientUserId = request.RecipientUserId ?? GetCurrentUserIdOrNull()
         });
         await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -187,12 +213,14 @@ public class NotificationsController : ControllerBase
         public string Type { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public string Channel { get; set; } = string.Empty;
+        public Guid? RecipientUserId { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 
     public sealed class SendEmailNotificationRequest
     {
         public string? Type { get; set; }
+        public Guid? RecipientUserId { get; set; }
 
         [Required]
         [EmailAddress]
@@ -205,5 +233,24 @@ public class NotificationsController : ControllerBase
         [Required]
         [MaxLength(4000)]
         public string Message { get; set; } = string.Empty;
+    }
+
+    private IQueryable<Notification> ApplyVisibleNotificationsScope(Guid userId)
+    {
+        return _dbContext.Notifications
+            .AsNoTracking()
+            .Where(n => n.RecipientUserId == userId || n.RecipientUserId == null);
+    }
+
+    private Guid GetCurrentUserIdOrDefault()
+    {
+        var claim = User.FindFirst("sub")?.Value ?? User.FindFirst("user_id")?.Value;
+        return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
+    }
+
+    private Guid? GetCurrentUserIdOrNull()
+    {
+        var userId = GetCurrentUserIdOrDefault();
+        return userId == Guid.Empty ? null : userId;
     }
 }

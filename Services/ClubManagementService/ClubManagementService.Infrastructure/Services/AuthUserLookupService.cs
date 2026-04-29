@@ -102,6 +102,32 @@ public sealed class AuthUserLookupService : IAuthUserLookupService
         return results;
     }
 
+    public async Task<IReadOnlyList<Guid>> GetAllActiveUserIdsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var results = new List<Guid>();
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT "Id"
+            FROM "AspNetUsers"
+            WHERE NOT "IsDeleted"
+            """;
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var userIdText = reader.GetString(0);
+            if (Guid.TryParse(userIdText, out var userId) && userId != Guid.Empty)
+                results.Add(userId);
+        }
+
+        return results;
+    }
+
     private static string BuildAuthConnectionString(
         IConfiguration configuration,
         ILogger<AuthUserLookupService> logger)

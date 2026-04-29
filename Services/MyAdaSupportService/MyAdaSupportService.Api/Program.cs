@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyAdaSupportService.Api.Hubs;
+using MyAdaSupportService.Api.Notifications;
 using MyAdaSupportService.Api.Realtime;
 using MyAdaSupportService.Api.Security;
 using MyAdaSupportService.Application.Abstractions;
@@ -125,6 +126,7 @@ public partial class Program
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
         builder.Services.AddSignalR();
         builder.Services.AddSingleton<ISupportRealtimeNotifier, SupportRealtimeNotifier>();
+        builder.Services.AddSingleton<ISupportNotificationPublisher, SupportNotificationPublisher>();
 
         builder.AddMyAdaOpenTelemetry("myada-support-service");
 

@@ -12,9 +12,11 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "AutoWrapper.Core": "4.5.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
-          "Microsoft.EntityFrameworkCore.Design": "8.0.26",
+          "Microsoft.EntityFrameworkCore.Design": "8.0.24",
           "MyAdaSupportService.Application": "1.0.0",
           "MyAdaSupportService.Infrastructure": "1.0.0",
+          "RabbitMQ.Client": "6.8.1",
+          "Shared.Contracts": "1.0.0",
           "Shared.Observability": "1.0.0",
           "Swashbuckle.AspNetCore": "6.6.2"
         },
@@ -310,51 +312,51 @@
           }
         }
       },
-      "Microsoft.EntityFrameworkCore/8.0.26": {
+      "Microsoft.EntityFrameworkCore/8.0.24": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.26",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.24",
           "Microsoft.Extensions.Caching.Memory": "8.0.1",
           "Microsoft.Extensions.Logging": "9.0.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.dll": {
-            "assemblyVersion": "8.0.26.0",
-            "fileVersion": "8.0.2626.16905"
+            "assemblyVersion": "8.0.24.0",
+            "fileVersion": "8.0.2426.7202"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Abstractions/8.0.26": {
+      "Microsoft.EntityFrameworkCore.Abstractions/8.0.24": {
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.Abstractions.dll": {
-            "assemblyVersion": "8.0.26.0",
-            "fileVersion": "8.0.2626.16905"
+            "assemblyVersion": "8.0.24.0",
+            "fileVersion": "8.0.2426.7202"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Design/8.0.26": {
+      "Microsoft.EntityFrameworkCore.Design/8.0.24": {
         "dependencies": {
           "Humanizer.Core": "2.14.1",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.5.0",
-          "Microsoft.EntityFrameworkCore.Relational": "8.0.26",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.24",
           "Microsoft.Extensions.DependencyModel": "8.0.2",
           "Mono.TextTemplating": "2.2.1"
         },
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.Design.dll": {
-            "assemblyVersion": "8.0.26.0",
-            "fileVersion": "8.0.2626.16905"
+            "assemblyVersion": "8.0.24.0",
+            "fileVersion": "8.0.2426.7202"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Relational/8.0.26": {
+      "Microsoft.EntityFrameworkCore.Relational/8.0.24": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.26",
+          "Microsoft.EntityFrameworkCore": "8.0.24",
           "Microsoft.Extensions.Configuration.Abstractions": "9.0.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.Relational.dll": {
-            "assemblyVersion": "8.0.26.0",
-            "fileVersion": "8.0.2626.16905"
+            "assemblyVersion": "8.0.24.0",
+            "fileVersion": "8.0.2426.7202"
           }
         }
       },
@@ -655,9 +657,9 @@
       },
       "Npgsql.EntityFrameworkCore.PostgreSQL/8.0.0": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.26",
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.26",
-          "Microsoft.EntityFrameworkCore.Relational": "8.0.26",
+          "Microsoft.EntityFrameworkCore": "8.0.24",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.24",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.24",
           "Npgsql": "8.0.0"
         },
         "runtime": {
@@ -758,6 +760,14 @@
           "lib/net8.0/OpenTelemetry.Instrumentation.Runtime.dll": {
             "assemblyVersion": "1.10.0.257",
             "fileVersion": "1.10.0.257"
+          }
+        }
+      },
+      "RabbitMQ.Client/6.8.1": {
+        "runtime": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.8.1.0"
           }
         }
       },
@@ -999,7 +1009,8 @@
       "MyAdaSupportService.Application/1.0.0": {
         "dependencies": {
           "AutoMapper": "12.0.1",
-          "MyAdaSupportService.Domain": "1.0.0"
+          "MyAdaSupportService.Domain": "1.0.0",
+          "Shared.Contracts": "1.0.0"
         },
         "runtime": {
           "MyAdaSupportService.Application.dll": {
@@ -1019,7 +1030,7 @@
       "MyAdaSupportService.Infrastructure/1.0.0": {
         "dependencies": {
           "AWSSDK.S3": "3.7.406",
-          "Microsoft.EntityFrameworkCore": "8.0.26",
+          "Microsoft.EntityFrameworkCore": "8.0.24",
           "Microsoft.Extensions.Configuration.Abstractions": "9.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.0",
@@ -1029,6 +1040,14 @@
         },
         "runtime": {
           "MyAdaSupportService.Infrastructure.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Shared.Contracts/1.0.0": {
+        "runtime": {
+          "Shared.Contracts.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1144,33 +1163,33 @@
       "path": "microsoft.codeanalysis.workspaces.common/4.5.0",
       "hashPath": "microsoft.codeanalysis.workspaces.common.4.5.0.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore/8.0.26": {
+    "Microsoft.EntityFrameworkCore/8.0.24": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-lOBe7qWbtS4UBPZCDjwbDqDgJFgnPHA5duKEae0RrW67q3EyX3mnE3vPdJ3pFWtTFPcCX0V/7wFX/xE4SkJ2og==",
-      "path": "microsoft.entityframeworkcore/8.0.26",
-      "hashPath": "microsoft.entityframeworkcore.8.0.26.nupkg.sha512"
+      "sha512": "sha512-Jf82MqfFU3Nte4Cpmtq5HXhQfXHYhJawFawWuy281uiibg/Ch9z9D/gMnORFhjmGSxzSA4CmRaHwDm2lU9H/ZA==",
+      "path": "microsoft.entityframeworkcore/8.0.24",
+      "hashPath": "microsoft.entityframeworkcore.8.0.24.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Abstractions/8.0.26": {
+    "Microsoft.EntityFrameworkCore.Abstractions/8.0.24": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-UVXlDz6os+VLpCjEcCjxexXyrxlq7vM3OD2KnyQlnzM9Q8WCsKNI+1PJiR2B6Em+yDCROSHy1jPNXaqxrzrCPQ==",
-      "path": "microsoft.entityframeworkcore.abstractions/8.0.26",
-      "hashPath": "microsoft.entityframeworkcore.abstractions.8.0.26.nupkg.sha512"
+      "sha512": "sha512-epzWc4RnG6aQS+MfIK1gg1XbL8ZTYgKtW8L1lDVHG4C3nilLd6tX8moX6Sv8sXQkH/tMhWhT2e4Nm811kYeoxg==",
+      "path": "microsoft.entityframeworkcore.abstractions/8.0.24",
+      "hashPath": "microsoft.entityframeworkcore.abstractions.8.0.24.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Design/8.0.26": {
+    "Microsoft.EntityFrameworkCore.Design/8.0.24": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-XSH+wJmfNBO5eJJdqRGYhHxILGiq1Fl3xkXa3RT+jk/vLIh7Rs5aPwrajoq//TivEyrSUwGg1BfsI2IDVRtp7A==",
-      "path": "microsoft.entityframeworkcore.design/8.0.26",
-      "hashPath": "microsoft.entityframeworkcore.design.8.0.26.nupkg.sha512"
+      "sha512": "sha512-C/4u0K68tnv7+gci1aB8x6MMS/U+00SS/2/u2tyaF9S5azIrELc3c8qf7UGB2GT7/sXHP0fhT/od2dg4gU0sSg==",
+      "path": "microsoft.entityframeworkcore.design/8.0.24",
+      "hashPath": "microsoft.entityframeworkcore.design.8.0.24.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Relational/8.0.26": {
+    "Microsoft.EntityFrameworkCore.Relational/8.0.24": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-u9+JYECGPFyEtfsym+e8inVb9e0vnp+Nn80aTOmUj/AxdJ7GqM9lvO/CSgDs7BtDtMFwjK+r8h977zsXbSzT+Q==",
-      "path": "microsoft.entityframeworkcore.relational/8.0.26",
-      "hashPath": "microsoft.entityframeworkcore.relational.8.0.26.nupkg.sha512"
+      "sha512": "sha512-QMGORS3ltx2RWHBCUcBjadS0eNYGkTGXsOdZf3oSM6pZuNBBl16z6gThA3a+BF8T5HY3jThxVDFKaPHxmpueXA==",
+      "path": "microsoft.entityframeworkcore.relational/8.0.24",
+      "hashPath": "microsoft.entityframeworkcore.relational.8.0.24.nupkg.sha512"
     },
     "Microsoft.Extensions.Caching.Memory/8.0.1": {
       "type": "package",
@@ -1417,6 +1436,13 @@
       "path": "opentelemetry.instrumentation.runtime/1.10.0",
       "hashPath": "opentelemetry.instrumentation.runtime.1.10.0.nupkg.sha512"
     },
+    "RabbitMQ.Client/6.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jNsmGgmCNw2S/NzskeN2ijtGywtH4Sk/G6jWUTD5sY9SrC27Xz6BsLIiB8hdsfjeyWCa4j4GvCIGkpE8wrjU1Q==",
+      "path": "rabbitmq.client/6.8.1",
+      "hashPath": "rabbitmq.client.6.8.1.nupkg.sha512"
+    },
     "Serilog/4.0.0": {
       "type": "package",
       "serviceable": true,
@@ -1582,6 +1608,11 @@
       "sha512": ""
     },
     "MyAdaSupportService.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Shared.Contracts/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -22,6 +22,7 @@ public sealed class NotificationEmailClient
         string toEmail,
         string subject,
         string message,
+        Guid? recipientUserId = null,
         CancellationToken cancellationToken = default)
     {
         var endpoint = _configuration["NotificationService:SendEmailPath"];
@@ -35,6 +36,7 @@ public sealed class NotificationEmailClient
                 new
                 {
                     type = "auth.password_reset",
+                    recipientUserId,
                     toEmail,
                     subject,
                     message

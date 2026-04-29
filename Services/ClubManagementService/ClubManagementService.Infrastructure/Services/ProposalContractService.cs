@@ -11,6 +11,7 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Entities;
 using ClubManagementService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Shared.Contracts.Events.Notifications;
 
 namespace ClubManagementService.Infrastructure.Services;
 
@@ -23,6 +24,7 @@ public sealed class ProposalContractService : IProposalContractService
     private readonly IEventService _eventService;
     private readonly IClubMembershipRepository _clubMembershipRepository;
     private readonly IAuthUserLookupService _authUserLookupService;
+    private readonly IClubNotificationService _notificationService;
     private readonly ClubManagementDbContext _db;
 
     public ProposalContractService(
@@ -31,6 +33,7 @@ public sealed class ProposalContractService : IProposalContractService
         IEventService eventService,
         IClubMembershipRepository clubMembershipRepository,
         IAuthUserLookupService authUserLookupService,
+        IClubNotificationService notificationService,
         ClubManagementDbContext db)
     {
         _store = store;
@@ -38,6 +41,7 @@ public sealed class ProposalContractService : IProposalContractService
         _eventService = eventService;
         _clubMembershipRepository = clubMembershipRepository;
         _authUserLookupService = authUserLookupService;
+        _notificationService = notificationService;
         _db = db;
     }
 
@@ -237,6 +241,32 @@ public sealed class ProposalContractService : IProposalContractService
         r.Status = "approved";
         r.ApprovedClubId = created.Id;
 
+        if (!string.IsNullOrWhiteSpace(r.SubmittedByOrganizationId))
+        {
+            var proposerIds = await _authUserLookupService
+                .GetUserIdsByOrganizationalIdsAsync(new[] { r.SubmittedByOrganizationId }, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (proposerIds.TryGetValue(r.SubmittedByOrganizationId, out var proposerUserId))
+            {
+                await PublishNotificationAsync(
+                    proposerUserId,
+                    "Your Club Proposal is approved",
+                    "Click to launch club Dashboard",
+                    "club_proposal.approved",
+                    "club_proposal",
+                    r.ProposalId).ConfigureAwait(false);
+            }
+        }
+
+        await PublishNotificationsAsync(
+            await _authUserLookupService.GetAllActiveUserIdsAsync(cancellationToken).ConfigureAwait(false),
+            "New Club Alert",
+            r.Name,
+            "club.created_alert",
+            "club",
+            created.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+
         return new
         {
             clubId = created.Id.ToString(CultureInfo.InvariantCulture),
@@ -253,8 +283,13 @@ public sealed class ProposalContractService : IProposalContractService
         if (r == null)
             return Task.FromResult<object?>(null);
         r.Status = "rejected";
-        _ = reason;
-        return Task.FromResult<object?>(new { status = "rejected" });
+        return PublishClubProposalDecisionAsync(
+            r,
+            "Your Club Proposal is Disapproved",
+            string.IsNullOrWhiteSpace(reason) ? string.Empty : reason.Trim(),
+            "club_proposal.rejected",
+            cancellationToken,
+            new { status = "rejected" });
     }
 
     public Task<object?> RequestClubProposalRevisionAsync(string proposalIdOrInternalId, string changes, Guid actorUserId, CancellationToken cancellationToken = default)
@@ -266,7 +301,13 @@ public sealed class ProposalContractService : IProposalContractService
         if (r == null)
             return Task.FromResult<object?>(null);
         r.Status = "under_revision";
-        return Task.FromResult<object?>(new { status = "under_revision" });
+        return PublishClubProposalDecisionAsync(
+            r,
+            "There is a need for Changes in your Club Proposal",
+            "Go to Announcements on Web to see comments and modify",
+            "club_proposal.revision_requested",
+            cancellationToken,
+            new { status = "under_revision" });
     }
 
     public ClubProposalRequirementsDto GetClubProposalRequirements() => _store.GetRequirements();
@@ -529,6 +570,25 @@ public sealed class ProposalContractService : IProposalContractService
         r.ArchivedAt = DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
+        await PublishNotificationAsync(
+            r.SubmittedByUserId,
+            "Your Event Proposal is approved",
+            proposalBody.Name,
+            "event_proposal.approved",
+            "event_proposal",
+            r.ProposalId).ConfigureAwait(false);
+
+        if (r.ClubNumericId.HasValue)
+        {
+            await PublishNotificationsAsync(
+                await GetClubMemberUserIdsAsync(r.ClubNumericId.Value, cancellationToken).ConfigureAwait(false),
+                "New Event Alert",
+                proposalBody.Name,
+                "event.created_alert",
+                "event",
+                created.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+        }
+
         return new
         {
             eventId = created.Id.ToString(CultureInfo.InvariantCulture),
@@ -554,6 +614,13 @@ public sealed class ProposalContractService : IProposalContractService
             return null;
         r.Status = "rejected";
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await PublishNotificationAsync(
+            r.SubmittedByUserId,
+            "Your Event Proposal is Disapproved",
+            string.IsNullOrWhiteSpace(reason) ? string.Empty : reason.Trim(),
+            "event_proposal.rejected",
+            "event_proposal",
+            r.ProposalId).ConfigureAwait(false);
         return new { status = "rejected" };
     }
 
@@ -574,6 +641,13 @@ public sealed class ProposalContractService : IProposalContractService
             return null;
         r.Status = "under_revision";
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await PublishNotificationAsync(
+            r.SubmittedByUserId,
+            "There is a need for Changes in your Club Proposal",
+            "Go to Dashboard to see comments and modify",
+            "event_proposal.revision_requested",
+            "event_proposal",
+            r.ProposalId).ConfigureAwait(false);
         return new { status = "under_revision" };
     }
 
@@ -645,6 +719,84 @@ public sealed class ProposalContractService : IProposalContractService
 
         if (toInsert.Count > 0)
             await _clubMembershipRepository.SaveChangesAsync().ConfigureAwait(false);
+    }
+
+    private async Task<object?> PublishClubProposalDecisionAsync(
+        ClubProposalRecord proposal,
+        string title,
+        string message,
+        string action,
+        CancellationToken cancellationToken,
+        object payload)
+    {
+        if (!string.IsNullOrWhiteSpace(proposal.SubmittedByOrganizationId))
+        {
+            var proposerIds = await _authUserLookupService
+                .GetUserIdsByOrganizationalIdsAsync(new[] { proposal.SubmittedByOrganizationId }, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (proposerIds.TryGetValue(proposal.SubmittedByOrganizationId, out var proposerUserId))
+            {
+                await PublishNotificationAsync(
+                    proposerUserId,
+                    title,
+                    message,
+                    action,
+                    "club_proposal",
+                    proposal.ProposalId).ConfigureAwait(false);
+            }
+        }
+
+        return payload;
+    }
+
+    private async Task PublishNotificationAsync(
+        Guid recipientUserId,
+        string title,
+        string message,
+        string action,
+        string entityType,
+        string entityId)
+    {
+        if (recipientUserId == Guid.Empty)
+            return;
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = title,
+            Message = message,
+            Channel = "Push",
+            Source = "club-management",
+            Action = action,
+            EntityType = entityType,
+            EntityId = entityId,
+            RecipientUserId = recipientUserId
+        }).ConfigureAwait(false);
+    }
+
+    private async Task PublishNotificationsAsync(
+        IEnumerable<Guid> recipientUserIds,
+        string title,
+        string message,
+        string action,
+        string entityType,
+        string entityId)
+    {
+        foreach (var recipientUserId in recipientUserIds.Where(id => id != Guid.Empty).Distinct())
+        {
+            await PublishNotificationAsync(recipientUserId, title, message, action, entityType, entityId).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<List<Guid>> GetClubMemberUserIdsAsync(int clubId, CancellationToken cancellationToken)
+    {
+        return await _db.ClubMemberships
+            .AsNoTracking()
+            .Where(m => m.ClubId == clubId)
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private static object MapEventProposal(EventProposal r)

@@ -4,16 +4,21 @@ using LostFoundService.Application.Interfaces.Services;
 using LostFoundService.Domain.Entities;
 using LostFoundService.Domain.Enums;
 using LostFoundService.Domain.Exceptions;
+using Shared.Contracts.Events.Notifications;
+using Shared.Contracts.Messaging;
+using Shared.Shared.Infrastructure;
 
 namespace LostFoundService.Application.Services;
 
 public class LostAndFoundService : ILostAndFoundService
 {
     private readonly ILostAndFoundRepository _repository;
+    private readonly IRabbitMqPublisher _rabbitMqPublisher;
 
-    public LostAndFoundService(ILostAndFoundRepository repository)
+    public LostAndFoundService(ILostAndFoundRepository repository, IRabbitMqPublisher rabbitMqPublisher)
     {
         _repository = repository;
+        _rabbitMqPublisher = rabbitMqPublisher;
     }
 
     public async Task<LostFoundItemListResult> GetItemsAsync(LostFoundItemSearchQuery query)
@@ -302,6 +307,21 @@ public class LostAndFoundService : ILostAndFoundService
         item.ModifiedByUserId = command.ModifiedByUserId;
 
         await _repository.SaveChangesAsync();
+
+        if (TryParseUserId(item.PostedByUserId, out var recipientUserId))
+        {
+            await _rabbitMqPublisher.PublishAsync(QueueNames.Notification, new NotificationQueueMessage
+            {
+                Type = item.Title,
+                Message = "You can Get your Item",
+                Channel = "Push",
+                Source = "lost-found-service",
+                Action = "lost_found.owner_notified",
+                EntityType = "lost_found_item",
+                EntityId = item.Id.ToString(),
+                RecipientUserId = recipientUserId
+            });
+        }
     }
 
     public async Task<LostFoundItemClaim> CreateClaimAsync(int id, CreateLostFoundClaimCommand command)
@@ -365,6 +385,22 @@ public class LostAndFoundService : ILostAndFoundService
         item.ModifiedByUserId = command.ModifiedByUserId;
 
         await _repository.SaveChangesAsync();
+
+        if (item.Type == LostFoundItemType.Lost && TryParseUserId(item.PostedByUserId, out var recipientUserId))
+        {
+            await _rabbitMqPublisher.PublishAsync(QueueNames.Notification, new NotificationQueueMessage
+            {
+                Type = "Your Item is Found",
+                Message = "Wait for the notification to get it from Office",
+                Channel = "Push",
+                Source = "lost-found-service",
+                Action = "lost_found.item_found",
+                EntityType = "lost_found_item",
+                EntityId = item.Id.ToString(),
+                RecipientUserId = recipientUserId
+            });
+        }
+
         return await _repository.GetItemByIdAsync(id, asNoTracking: true, includeImages: true) ?? item;
     }
 
@@ -642,5 +678,13 @@ public class LostAndFoundService : ILostAndFoundService
         Dictionary<string, List<string>>? details = null)
     {
         return new BadRequestException(errorCode, message, details);
+    }
+
+    private static bool TryParseUserId(string? value, out Guid userId)
+    {
+        userId = Guid.Empty;
+        return !string.IsNullOrWhiteSpace(value)
+               && Guid.TryParse(value, out userId)
+               && userId != Guid.Empty;
     }
 }

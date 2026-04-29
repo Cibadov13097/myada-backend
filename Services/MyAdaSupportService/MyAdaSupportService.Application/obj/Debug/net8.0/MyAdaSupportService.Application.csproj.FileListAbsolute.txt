@@ -30,3 +30,5 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyA
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\refint\MyAdaSupportService.Application.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\MyAdaSupportService.Application.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\obj\Debug\net8.0\ref\MyAdaSupportService.Application.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Debug\net8.0\Shared.Contracts.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\MyAdaSupportService\MyAdaSupportService.Application\bin\Debug\net8.0\Shared.Contracts.pdb

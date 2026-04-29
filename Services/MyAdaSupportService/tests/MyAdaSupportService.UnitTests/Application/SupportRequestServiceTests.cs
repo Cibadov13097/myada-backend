@@ -6,6 +6,7 @@ using MyAdaSupportService.Application.DTOs.Request;
 using MyAdaSupportService.Application.Services;
 using MyAdaSupportService.Domain.Entities.RequestAggregate;
 using MyAdaSupportService.Domain.Enums;
+using Shared.Contracts.Events.Notifications;
 
 namespace MyAdaSupportService.UnitTests.Application;
 
@@ -19,6 +20,7 @@ public class SupportRequestServiceTests
         var loc = location ?? new Mock<ILocationService>();
         fileStorage ??= new Mock<IFileStorageService>();
         var realtime = new Mock<ISupportRealtimeNotifier>();
+        var notificationPublisher = CreateNotificationPublisherMock();
         realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
         fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(true);
@@ -29,7 +31,13 @@ public class SupportRequestServiceTests
                 It.IsAny<int?>(),
                 It.IsAny<string?>()))
             .ReturnsAsync("Resolved");
-        return new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
+        return new SupportRequestService(
+            repo.Object,
+            TestMapperFactory.Create(),
+            loc.Object,
+            realtime.Object,
+            fileStorage.Object,
+            notificationPublisher.Object);
     }
 
     private static Request RequestWithCategory(int id, Guid createdUserId, Guid? staffId = null) => new()
@@ -60,7 +68,13 @@ public class SupportRequestServiceTests
             .Returns(Task.CompletedTask);
         var fileStorage = new Mock<IFileStorageService>();
         fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(true);
-        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
+        var sut = new SupportRequestService(
+            repo.Object,
+            TestMapperFactory.Create(),
+            loc.Object,
+            realtime.Object,
+            fileStorage.Object,
+            CreateNotificationPublisherMock().Object);
         var dto = new CreateSupportRequestDto
         {
             CategoryId = 1,
@@ -76,6 +90,55 @@ public class SupportRequestServiceTests
         Assert.Equal(3, result.Id);
         Assert.Equal("Here", result.Location);
         repo.Verify(r => r.AddAsync(It.Is<Request>(x => x.CreatedUserId == memberId && x.Status == RequestStatus.New)), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateRequestAsync_publishes_assignment_notification_when_request_is_created_with_staff()
+    {
+        var repo = new Mock<IRequestRepository>();
+        var loc = new Mock<ILocationService>();
+        var realtime = new Mock<ISupportRealtimeNotifier>();
+        var fileStorage = new Mock<IFileStorageService>();
+        var notificationPublisher = CreateNotificationPublisherMock();
+        var assignedStaffId = Guid.NewGuid();
+
+        loc.Setup(l => l.ResolveLocationAsync(false, null, false, null, null)).ReturnsAsync("Here");
+        realtime.Setup(r => r.NotifySupportRequestChangedAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
+        fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(true);
+        repo.Setup(r => r.AddAsync(It.IsAny<Request>()))
+            .ReturnsAsync((Request r) =>
+            {
+                r.Id = 4;
+                r.StaffId = assignedStaffId;
+                r.Category = new Category { Name = "Cat", Module = SupportArea.IT };
+                return r;
+            });
+
+        var sut = new SupportRequestService(
+            repo.Object,
+            TestMapperFactory.Create(),
+            loc.Object,
+            realtime.Object,
+            fileStorage.Object,
+            notificationPublisher.Object);
+
+        await sut.CreateRequestAsync(new CreateSupportRequestDto
+        {
+            CategoryId = 1,
+            Description = "Help",
+            Area = "it",
+            LocationType = "campus",
+            Urgency = "standard"
+        }, Guid.NewGuid());
+
+        notificationPublisher.Verify(x => x.PublishAsync(
+            It.Is<NotificationQueueMessage>(n =>
+                n.Type == "New Task Assigned" &&
+                n.Message == "Cat" &&
+                n.RecipientUserId == assignedStaffId &&
+                n.Action == "support.request.assigned"),
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -98,7 +161,13 @@ public class SupportRequestServiceTests
                 return r;
             });
 
-        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
+        var sut = new SupportRequestService(
+            repo.Object,
+            TestMapperFactory.Create(),
+            loc.Object,
+            realtime.Object,
+            fileStorage.Object,
+            CreateNotificationPublisherMock().Object);
         var dto = new CreateSupportRequestDto
         {
             CategoryId = 1,
@@ -134,7 +203,13 @@ public class SupportRequestServiceTests
             .Returns(Task.CompletedTask);
         fileStorage.Setup(s => s.IsManagedImageUrl(It.IsAny<string?>())).Returns(false);
 
-        var sut = new SupportRequestService(repo.Object, TestMapperFactory.Create(), loc.Object, realtime.Object, fileStorage.Object);
+        var sut = new SupportRequestService(
+            repo.Object,
+            TestMapperFactory.Create(),
+            loc.Object,
+            realtime.Object,
+            fileStorage.Object,
+            CreateNotificationPublisherMock().Object);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             sut.CreateRequestAsync(new CreateSupportRequestDto
@@ -223,7 +298,7 @@ public class SupportRequestServiceTests
         var repo = new Mock<IRequestRepository>();
         var memberId = Guid.NewGuid();
         var req = RequestWithCategory(1, memberId);
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
@@ -237,7 +312,7 @@ public class SupportRequestServiceTests
     public async Task CancelRequestAsync_throws_when_wrong_member()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, Guid.NewGuid()));
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, Guid.NewGuid()));
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() =>
@@ -248,7 +323,7 @@ public class SupportRequestServiceTests
     public async Task CancelRequestAsync_throws_when_request_missing()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(2)).ReturnsAsync((Request?)null);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(2)).ReturnsAsync((Request?)null);
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() =>
@@ -260,7 +335,7 @@ public class SupportRequestServiceTests
     {
         var repo = new Mock<IRequestRepository>();
         var req = RequestWithCategory(1, Guid.NewGuid());
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
@@ -275,7 +350,7 @@ public class SupportRequestServiceTests
     public async Task AssignRequestAsync_throws_when_request_missing()
     {
         var repo = new Mock<IRequestRepository>();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(9)).ReturnsAsync((Request?)null);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(9)).ReturnsAsync((Request?)null);
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() =>
@@ -288,7 +363,7 @@ public class SupportRequestServiceTests
         var repo = new Mock<IRequestRepository>();
         var originalStaffId = Guid.NewGuid();
         var req = RequestWithCategory(1, Guid.NewGuid(), staffId: originalStaffId);
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
@@ -318,7 +393,7 @@ public class SupportRequestServiceTests
         var repo = new Mock<IRequestRepository>();
         var assignedStaffId = Guid.NewGuid();
         var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(req);
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() => sut.MarkAsStartedAsync(1, staffId: Guid.NewGuid()));
@@ -330,7 +405,7 @@ public class SupportRequestServiceTests
         var repo = new Mock<IRequestRepository>();
         var assignedStaffId = Guid.NewGuid();
         var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
@@ -344,7 +419,7 @@ public class SupportRequestServiceTests
     {
         var repo = new Mock<IRequestRepository>();
         var assignedStaffId = Guid.NewGuid();
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId));
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId));
         var sut = CreateSut(repo);
 
         await Assert.ThrowsAsync<Exception>(() => sut.MarkAsInProgressAsync(1, staffId: Guid.NewGuid()));
@@ -356,7 +431,7 @@ public class SupportRequestServiceTests
         var repo = new Mock<IRequestRepository>();
         var assignedStaffId = Guid.NewGuid();
         var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
@@ -371,12 +446,23 @@ public class SupportRequestServiceTests
         var repo = new Mock<IRequestRepository>();
         var assignedStaffId = Guid.NewGuid();
         var req = RequestWithCategory(1, Guid.NewGuid(), staffId: assignedStaffId);
-        repo.Setup(r => r.GetByIdOrDefaultAsync(1)).ReturnsAsync(req);
+        repo.Setup(r => r.GetByIdWithDetailsOrDefaultAsync(1)).ReturnsAsync(req);
         repo.Setup(r => r.UpdateAsync(It.IsAny<Request>())).ReturnsAsync((Request r) => r);
         var sut = CreateSut(repo);
 
         await sut.MarkAsCompletedAsync(1, staffId: assignedStaffId);
 
         Assert.Equal(RequestStatus.Completed, req.Status);
+    }
+
+    private static Mock<ISupportNotificationPublisher> CreateNotificationPublisherMock()
+    {
+        var notificationPublisher = new Mock<ISupportNotificationPublisher>();
+        notificationPublisher
+            .Setup(x => x.PublishAsync(
+                It.IsAny<NotificationQueueMessage>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        return notificationPublisher;
     }
 }
