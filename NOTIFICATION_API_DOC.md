@@ -13,6 +13,7 @@ Current responsibilities:
 - delete one owned notification
 - send direct email notifications
 - consume queued notification events from RabbitMQ and persist them
+- push realtime notification events over SignalR to the recipient user
 
 Supported channels:
 
@@ -25,6 +26,7 @@ Important current behavior:
 - public/backend access should use the API Gateway route on `myada.site`
 - read and delete endpoints require JWT bearer auth
 - direct email sending is exposed through HTTP
+- realtime notification delivery is exposed through SignalR on a dedicated hub
 - queue-based notifications are used by backend services for most in-app notifications
 - queued notifications are now stored for `recipientUserId` only; there is no fallback to `actorUserId`
 
@@ -45,6 +47,7 @@ Production examples:
 - list notifications: `GET https://myada.site/notification/api/v1/notifications`
 - current user notifications: `GET https://myada.site/notification/api/v1/notifications/me`
 - send email: `POST https://myada.site/notification/api/v1/notifications/email`
+- realtime hub: `wss://myada.site/notification/hubs/notifications`
 
 ## Authentication
 
@@ -54,6 +57,7 @@ These endpoints require `Authorization: Bearer <access-token>`:
 - `GET /api/v1/notifications/me`
 - `GET /api/v1/notifications/{id}`
 - `DELETE /api/v1/notifications/{id}`
+- `GET /hubs/notifications`
 
 Behavior:
 
@@ -66,6 +70,12 @@ This endpoint does not require bearer auth:
 - `POST /api/v1/notifications/email`
 
 If `POST /email` is called without auth and without `recipientUserId`, the stored notification is created with `recipientUserId = null`.
+
+SignalR auth behavior:
+
+- the hub requires bearer auth
+- JavaScript / mobile SignalR clients can provide the access token through `accessTokenFactory`
+- websocket connections are resolved to a SignalR user id from the JWT `sub` claim
 
 ## Notification Shape
 
@@ -248,6 +258,43 @@ Common error cases:
 - `400 Bad Request` for invalid payloads, invalid email format, or empty trimmed fields
 - `502 Bad Gateway` when SMTP configuration is invalid
 - `502 Bad Gateway` when the SMTP server rejects the message
+
+## Realtime Hub
+
+Hub endpoint:
+
+- direct service: `ws://localhost:5004/hubs/notifications`
+- gateway: `ws://localhost:5000/notification/hubs/notifications`
+- production: `wss://myada.site/notification/hubs/notifications`
+
+Authorization:
+
+- the hub requires the same bearer token used for notification read endpoints
+- for browser SignalR clients, send the token with `accessTokenFactory`
+
+Current server event:
+
+- `notificationCreated`
+
+Event payload shape:
+
+```json
+{
+  "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001",
+  "type": "New Event Alert",
+  "message": "AI Career Fair",
+  "channel": "Push",
+  "recipientUserId": "00000000-0000-0000-0000-000000000001",
+  "createdAt": "2026-04-30T09:30:00Z"
+}
+```
+
+Delivery rules:
+
+- the event is sent only to the notification recipient user
+- SignalR user targeting uses the JWT `sub` claim
+- notifications without `recipientUserId` are persisted but not broadcast in realtime
+- the realtime broadcast is best-effort; failed broadcasts are logged and do not roll back the stored notification
 
 ## Queue-Based Notifications
 

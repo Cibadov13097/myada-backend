@@ -17,15 +17,18 @@ public class NotificationsController : ControllerBase
 {
     private readonly NotificationDbContext _dbContext;
     private readonly INotificationService _notificationService;
+    private readonly INotificationRealtimeNotifier _realtimeNotifier;
     private readonly ILogger<NotificationsController> _logger;
 
     public NotificationsController(
         NotificationDbContext dbContext,
         INotificationService notificationService,
+        INotificationRealtimeNotifier realtimeNotifier,
         ILogger<NotificationsController> logger)
     {
         _dbContext = dbContext;
         _notificationService = notificationService;
+        _realtimeNotifier = realtimeNotifier;
         _logger = logger;
     }
 
@@ -211,15 +214,28 @@ public class NotificationsController : ControllerBase
                 statusCode: StatusCodes.Status502BadGateway);
         }
 
-        _dbContext.Notifications.Add(new Notification
+        var notification = new Notification
         {
             Type = string.IsNullOrWhiteSpace(request.Type) ? "Direct Email" : request.Type.Trim(),
             Message = message,
             NotificationType = NotificationType.Email,
             CreatedAt = DateTime.UtcNow,
             RecipientUserId = request.RecipientUserId ?? GetCurrentUserIdOrNull()
-        });
+        };
+        _dbContext.Notifications.Add(notification);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await _realtimeNotifier.NotifyNotificationCreatedAsync(notification, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Failed to broadcast realtime notification {NotificationId}. Notification was still persisted.",
+                notification.Id);
+        }
 
         return Ok(new
         {

@@ -91,9 +91,11 @@ public class NotificationsControllerTests
         NotificationDbContext dbContext,
         INotificationService notificationService)
     {
+        var realtimeNotifier = new Mock<INotificationRealtimeNotifier>();
         return new NotificationsController(
             dbContext,
             notificationService,
+            realtimeNotifier.Object,
             NullLogger<NotificationsController>.Instance);
     }
 }

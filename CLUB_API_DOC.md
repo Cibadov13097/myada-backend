@@ -822,7 +822,7 @@ Notes:
 | `PATCH` | `/api/v1/club-admin/{clubId}/files/{fileId}` | `multipart/form-data`. Fields: `title` optional, `file` optional. At least one must be provided. Replacing the file uploads a new object and removes the previous stored object when cleanup succeeds. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/files/{fileId}` | Removes the file item from `ResourcesJson` and attempts to delete the stored object. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/profile` | `multipart/form-data`. Fields: `socialLinks`, `focusAreasJson`, `email`, `resourcesJson`, `logoFile`, `backgroundFile`. Uploaded `logoFile` is persisted into the club's `ProfileImageUrl`, so later club `GET` endpoints return it. |
-| `POST` | `/api/v1/club-admin/{clubId}/announcements` | Body: `{ "title": string, "message": string }`. |
+| `POST` | `/api/v1/club-admin/{clubId}/announcements` | Body: `{ "title": string, "message": string }`. Persists to `club.ClubAnnouncements` and sends notifications to club members. |
 
 Current file-management notes:
 

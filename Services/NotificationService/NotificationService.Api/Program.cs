@@ -1,22 +1,28 @@
 using MyAda.Observability;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NotificationService.Api.Security;
+using NotificationService.Api.Hubs;
+using NotificationService.Api.Realtime;
 using NotificationService.Application.Interfaces;
 using NotificationService.Infrastructure.Email;
 using NotificationService.Infrastructure.Messaging;
 using NotificationService.Infrastructure.Persistence;
 using NotificationService.Infrastructure.Persistence.Seed;
 using NotificationAppService = NotificationService.Application.Services.NotificationService;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddMyAdaSerilog("notification-service");
 
 var isDevelopment = builder.Environment.IsDevelopment();
 var jwksUrl = builder.Configuration["Auth:JwksUrl"];
+var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
+var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
 
 var authBuilder = builder.Services.AddAuthentication(options =>
 {
@@ -48,16 +54,12 @@ if (!string.IsNullOrWhiteSpace(jwksUrl))
 
     if (jwksLastError is null)
     {
-        var validIssuer = builder.Configuration["Auth:Issuer"] ?? "myada-auth";
-        var validAudience = builder.Configuration["Auth:Audience"] ?? "myada-api";
-
         builder.Services.AddHostedService<JwksRefreshHostedService>();
 
         authBuilder.AddJwtBearer("Bearer", options =>
         {
             options.RequireHttpsMetadata = false;
             options.MapInboundClaims = false;
-
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -69,6 +71,7 @@ if (!string.IsNullOrWhiteSpace(jwksUrl))
                 ClockSkew = TimeSpan.Zero,
                 IssuerSigningKeyResolver = (_, _, _, _) => JwksProvider.GetKeys()
             };
+            options.Events = CreateSignalRJwtEvents();
         });
     }
     else if (isDevelopment)
@@ -100,6 +103,8 @@ else
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
+builder.Services.AddSingleton<IUserIdProvider, SubClaimUserIdProvider>();
+builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -144,6 +149,7 @@ builder.Services.AddCors(options =>
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<INotificationService, NotificationAppService>();
+builder.Services.AddSingleton<INotificationRealtimeNotifier, NotificationRealtimeNotifier>();
 builder.Services.AddHostedService<RabbitMqConsumer>();
 builder.Services.AddDbContext<NotificationDbContext>(options =>
 {
@@ -189,5 +195,42 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
 
 app.Run();
+
+static JwtBearerEvents CreateSignalRJwtEvents()
+{
+    return new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrWhiteSpace(accessToken) &&
+                path.StartsWithSegments("/hubs/notifications"))
+            {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            if (context.Principal?.Identity is not ClaimsIdentity identity)
+                return Task.CompletedTask;
+
+            var sub = identity.FindFirst("sub")?.Value;
+            if (!string.IsNullOrWhiteSpace(sub) &&
+                !identity.HasClaim(claim =>
+                    claim.Type == ClaimTypes.NameIdentifier &&
+                    string.Equals(claim.Value, sub, StringComparison.Ordinal)))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, sub));
+            }
+
+            return Task.CompletedTask;
+        }
+    };
+}

@@ -58,6 +58,23 @@ public class ClubServiceTests
     }
 
     [Fact]
+    public async Task GetAllAsync_ShouldReturnMappedCategoryNamesFromCategoryTable()
+    {
+        _repositoryMock.Setup(x => x.GetAllWithCategoryAsync()).ReturnsAsync(new List<Club>
+        {
+            new() { Id = 1, Name = "Robotics", Description = "Desc", CategoryId = 3, Category = new Category { Id = 3, Name = "Technology" } }
+        });
+
+        var result = await _service.GetAllAsync();
+
+        result.Should().ContainSingle();
+        result[0].CategoryId.Should().Be(3);
+        result[0].CategoryName.Should().Be("Technology");
+        _repositoryMock.Verify(x => x.GetAllWithCategoryAsync(), Times.Once);
+        _repositoryMock.Verify(x => x.GetAllAsync(), Times.Never);
+    }
+
+    [Fact]
     public async Task DeleteAsync_WhenClubDoesNotExist_ShouldThrowKeyNotFoundException()
     {
         _repositoryMock.Setup(x => x.GetByIdAsync(40)).ReturnsAsync((Club?)null);

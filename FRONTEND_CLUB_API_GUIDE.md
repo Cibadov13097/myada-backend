@@ -327,7 +327,7 @@ Shared shape (`EventProposalSubmitDto`):
 | `resources`, `documents` | Same array when present; **`null`** when there are no downloadable links. Each item is `{ "url", "title?", "id?" }` after normalization (see `ClubResourcesJson`). |
 | `about` | Club description |
 | `officers` | Array sourced from DB table `club.ClubEmployees`, ordered by insertion. Each item is `{ "id", "userId", "positionId" }` where `positionId` may be `null`. |
-| Other fields | `memberProfiles`, `announcements` are still empty placeholders |
+| Other fields | `memberProfiles` is still an empty placeholder. `announcements` now returns persisted DB rows ordered newest-first as `{ "id", "title", "message", "createdAt" }`. |
 
 **Legacy `focusAreas` entries**
 

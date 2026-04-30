@@ -137,6 +137,19 @@ public class RabbitMqConsumer : BackgroundService
         dbContext.Notifications.Add(envelope.Notification);
         await dbContext.SaveChangesAsync(cancellationToken);
 
+        var realtimeNotifier = scope.ServiceProvider.GetRequiredService<INotificationRealtimeNotifier>();
+        try
+        {
+            await realtimeNotifier.NotifyNotificationCreatedAsync(envelope.Notification, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Failed to broadcast realtime notification {NotificationId}. Continuing with notification processing.",
+                envelope.Notification.Id);
+        }
+
         if (envelope.Notification.NotificationType != NotificationType.Email)
             return;
 

@@ -33,9 +33,11 @@ public sealed class NotificationsControllerLayerTests
         NotificationDbContext db,
         INotificationService notificationService)
     {
+        var realtimeNotifier = new Mock<INotificationRealtimeNotifier>();
         var controller = new NotificationsController(
             db,
             notificationService,
+            realtimeNotifier.Object,
             NullLogger<NotificationsController>.Instance);
 
         controller.ControllerContext = new ControllerContext
@@ -191,6 +193,49 @@ public sealed class NotificationsControllerLayerTests
 
         result.Should().BeOfType<OkObjectResult>();
         (await db.Notifications.CountAsync()).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task SendEmail_with_current_user_broadcasts_realtime_notification()
+    {
+        await using var db = CreateDbContext();
+        var notificationService = new Mock<INotificationService>();
+        notificationService
+            .Setup(s => s.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var realtimeNotifier = new Mock<INotificationRealtimeNotifier>();
+        var controller = new NotificationsController(
+            db,
+            notificationService.Object,
+            realtimeNotifier.Object,
+            NullLogger<NotificationsController>.Instance)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(
+                        new ClaimsIdentity(
+                        [
+                            new Claim("sub", CurrentUserId.ToString())
+                        ],
+                        authenticationType: "TestAuth"))
+                }
+            }
+        };
+
+        await controller.SendEmail(new NotificationsController.SendEmailNotificationRequest
+        {
+            ToEmail = "user@example.com",
+            Subject = "Hello",
+            Message = "Body"
+        }, CancellationToken.None);
+
+        realtimeNotifier.Verify(
+            notifier => notifier.NotifyNotificationCreatedAsync(
+                It.Is<Notification>(n => n.RecipientUserId == CurrentUserId && n.NotificationType == NotificationType.Email),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]

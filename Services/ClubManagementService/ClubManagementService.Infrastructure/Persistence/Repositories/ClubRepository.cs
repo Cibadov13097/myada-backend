@@ -14,6 +14,13 @@ public class ClubRepository : GenericRepository<Club>, IClubRepository
         _context = dbContext;
     }
 
+    public async Task<List<Club>> GetAllWithCategoryAsync()
+    {
+        return await _context.Clubs
+            .Include(c => c.Category)
+            .ToListAsync();
+    }
+
     public async Task<Club?> GetByIdWithCategoryAsync(int id)
     {
         return await _context.Clubs
