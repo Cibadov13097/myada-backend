@@ -160,7 +160,22 @@ public class NotificationsController : ControllerBase
             return NotFound();
 
         _dbContext.Notifications.Remove(notification);
-        await _dbContext.SaveChangesAsync();
+
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Notification {NotificationId} for user {UserId} was already deleted before the request completed.",
+                id,
+                userId);
+
+            return NoContent();
+        }
+
         return NoContent();
     }
 

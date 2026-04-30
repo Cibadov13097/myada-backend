@@ -19,6 +19,26 @@ public sealed class NotificationsControllerLayerTests
 {
     private static readonly Guid CurrentUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
 
+    private sealed class ConcurrencyFailingNotificationDbContext : NotificationDbContext
+    {
+        public ConcurrencyFailingNotificationDbContext(DbContextOptions options)
+            : base(options)
+        {
+        }
+
+        public bool ThrowOnSaveChanges { get; set; }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            if (ThrowOnSaveChanges)
+            {
+                throw new DbUpdateConcurrencyException("Simulated concurrent delete.");
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+    }
+
     private static NotificationDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<NotificationDbContext>()
@@ -173,6 +193,38 @@ public sealed class NotificationsControllerLayerTests
 
         result.Should().BeOfType<NoContentResult>();
         (await db.Notifications.AnyAsync(n => n.Id == id)).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Delete_returns_no_content_when_row_was_deleted_concurrently()
+    {
+        var options = new DbContextOptionsBuilder<NotificationDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var db = new ConcurrencyFailingNotificationDbContext(options);
+        db.Database.EnsureCreated();
+
+        var id = Guid.NewGuid();
+        db.Notifications.Add(new Notification
+        {
+            Id = id,
+            Type = "t",
+            Message = "m",
+            CreatedAt = DateTime.UtcNow,
+            RecipientUserId = CurrentUserId,
+            NotificationType = NotificationType.Email
+        });
+        await db.SaveChangesAsync();
+
+        db.ThrowOnSaveChanges = true;
+
+        var mock = new Mock<INotificationService>();
+        var controller = CreateController(db, mock.Object);
+
+        var result = await controller.Delete(id);
+
+        result.Should().BeOfType<NoContentResult>();
     }
 
     [Fact]
