@@ -18,6 +18,9 @@ namespace NotificationService.Infrastructure.Messaging;
 
 public class RabbitMqConsumer : BackgroundService
 {
+    private const string DefaultHost = "rabbitmq";
+    private const string DefaultUser = "myada";
+    private const string DefaultPass = "myada-password";
     private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<RabbitMqConsumer> _logger;
@@ -36,9 +39,9 @@ public class RabbitMqConsumer : BackgroundService
         var password = configuration["RabbitMQ:Password"];
         _factory = new ConnectionFactory
         {
-            HostName = string.IsNullOrWhiteSpace(hostName) ? "rabbitmq" : hostName,
-            UserName = string.IsNullOrWhiteSpace(userName) ? ConnectionFactory.DefaultUser : userName,
-            Password = string.IsNullOrWhiteSpace(password) ? ConnectionFactory.DefaultPass : password
+            HostName = string.IsNullOrWhiteSpace(hostName) ? DefaultHost : hostName,
+            UserName = string.IsNullOrWhiteSpace(userName) ? DefaultUser : userName,
+            Password = string.IsNullOrWhiteSpace(password) ? DefaultPass : password
         };
     }
 

@@ -2437,6 +2437,7 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "LostFoundService.Application": "1.0.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
           "RabbitMQ.Client": "6.8.1",
           "Shared.Contracts": "1.0.0"
         },

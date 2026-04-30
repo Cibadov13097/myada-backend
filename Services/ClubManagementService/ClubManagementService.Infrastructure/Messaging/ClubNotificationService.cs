@@ -11,6 +11,9 @@ namespace ClubManagementService.Infrastructure.Messaging;
 
 public class ClubNotificationService : IClubNotificationService
 {
+    private const string DefaultHost = "rabbitmq";
+    private const string DefaultUser = "myada";
+    private const string DefaultPass = "myada-password";
     private readonly ConnectionFactory _factory;
     private readonly ILogger<ClubNotificationService> _logger;
 
@@ -22,9 +25,9 @@ public class ClubNotificationService : IClubNotificationService
         var password = configuration["RabbitMQ:Password"];
         _factory = new ConnectionFactory
         {
-            HostName = string.IsNullOrWhiteSpace(hostName) ? "rabbitmq" : hostName,
-            UserName = string.IsNullOrWhiteSpace(userName) ? ConnectionFactory.DefaultUser : userName,
-            Password = string.IsNullOrWhiteSpace(password) ? ConnectionFactory.DefaultPass : password
+            HostName = string.IsNullOrWhiteSpace(hostName) ? DefaultHost : hostName,
+            UserName = string.IsNullOrWhiteSpace(userName) ? DefaultUser : userName,
+            Password = string.IsNullOrWhiteSpace(password) ? DefaultPass : password
         };
     }
 
