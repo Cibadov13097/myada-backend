@@ -88,7 +88,7 @@ Gateway prefix for all paths in this section:
 For the unified API, **admin workflow** uses `adminStatus`: `pending` → `received` (intake) → `delivered` (handover).
 
 - **Callers without `admin` or `lost_found_leader`** (no token, or a token without those roles):  
-  - `GET /api/lost-and-found/items` omits items whose `adminStatus` is **`delivered`**.  
+  - `GET /api/lost-and-found/items` includes items across all public and admin workflow states unless the caller explicitly filters by `status` or `adminStatus`.  
   - `GET /api/lost-and-found/items/{id}` and `GET /api/lost-and-found/items/{id}/timeline` return **404** for delivered items.  
   - `POST /api/lost-and-found/items/{id}/claims` returns **404** for delivered items.
 - **`admin` / `lost_found_leader`**: list, detail, and timeline include **all** items, including `received` and `delivered`.
@@ -110,6 +110,7 @@ Query params:
 
 Response:
 - `{ items: [...], total: number }`
+- By default, the list includes items across all statuses. Use `status` or `adminStatus` query params only when you want to narrow the result set.
 
 Each item includes a public `status` string; see **§7 Enums and Accepted Values** for response values. Admin-only fields on list responses stay omitted unless noted otherwise (list uses the public projection).
 
