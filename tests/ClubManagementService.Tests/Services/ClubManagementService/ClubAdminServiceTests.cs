@@ -184,6 +184,49 @@ public class ClubAdminServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task CreateAnnouncementAsync_ShouldPersistAnnouncementAndNotifyMembers()
+    {
+        var club = CreateClub();
+        SetupClub(club);
+
+        var firstMemberId = Guid.NewGuid();
+        var secondMemberId = Guid.NewGuid();
+        _dbContext.ClubMemberships.AddRange(
+            new ClubMembership { ClubId = club.Id, UserId = firstMemberId },
+            new ClubMembership { ClubId = club.Id, UserId = secondMemberId });
+        await _dbContext.SaveChangesAsync();
+
+        var created = await _service.CreateAnnouncementAsync("1", "  Important Update  ", "  Meeting starts at 6 PM.  ");
+
+        created.Title.Should().Be("Important Update");
+        created.Message.Should().Be("Meeting starts at 6 PM.");
+
+        var stored = await _dbContext.ClubAnnouncements.SingleAsync();
+        stored.ClubId.Should().Be(club.Id);
+        stored.Title.Should().Be("Important Update");
+        stored.Message.Should().Be("Meeting starts at 6 PM.");
+
+        _notificationService.Verify(x => x.PublishAsync(
+                It.Is<Shared.Contracts.Events.Notifications.NotificationQueueMessage>(m =>
+                    m.RecipientUserId == firstMemberId &&
+                    m.Type == "Important Update" &&
+                    m.Message == "Meeting starts at 6 PM." &&
+                    m.Action == "club_announcement.created" &&
+                    m.EntityType == "club_announcement" &&
+                    m.EntityId == stored.Id.ToString())),
+            Times.Once);
+        _notificationService.Verify(x => x.PublishAsync(
+                It.Is<Shared.Contracts.Events.Notifications.NotificationQueueMessage>(m =>
+                    m.RecipientUserId == secondMemberId &&
+                    m.Type == "Important Update" &&
+                    m.Message == "Meeting starts at 6 PM." &&
+                    m.Action == "club_announcement.created" &&
+                    m.EntityType == "club_announcement" &&
+                    m.EntityId == stored.Id.ToString())),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task GetEmployeesAsync_ShouldReturnEmployees_WhenAuthLookupFails()
     {
         var club = CreateClub();
@@ -229,6 +272,12 @@ public class ClubAdminServiceTests : IDisposable
 
     private void SetupClub(Club club)
     {
+        if (!_dbContext.Clubs.Any(x => x.Id == club.Id))
+        {
+            _dbContext.Clubs.Add(club);
+            _dbContext.SaveChanges();
+        }
+
         _clubService.Setup(x => x.GetByIdAsync(club.Id)).ReturnsAsync(new ClubDto
         {
             Id = club.Id,

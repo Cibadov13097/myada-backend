@@ -19,6 +19,7 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
         public DbSet<InterviewSlot> InterviewSlots => Set<InterviewSlot>();
         public DbSet<Subevent> Subevents => Set<Subevent>();
         public DbSet<ClubMembership> ClubMemberships => Set<ClubMembership>();
+        public DbSet<ClubAnnouncement> ClubAnnouncements => Set<ClubAnnouncement>();
         public DbSet<ClubEmployee> ClubEmployees => Set<ClubEmployee>();
         public DbSet<ClubPosition> ClubPositions => Set<ClubPosition>();
         public DbSet<ClubPositionRequirement> ClubPositionRequirements => Set<ClubPositionRequirement>();
@@ -68,6 +69,18 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
             modelBuilder.Entity<ClubMembership>()
                 .HasIndex(m => new { m.ClubId, m.UserId })
                 .IsUnique();
+
+            modelBuilder.Entity<ClubAnnouncement>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            modelBuilder.Entity<ClubAnnouncement>()
+                .HasOne(a => a.Club)
+                .WithMany()
+                .HasForeignKey(a => a.ClubId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ClubAnnouncement>()
+                .HasIndex(a => new { a.ClubId, a.CreatedAt });
 
             modelBuilder.Entity<ClubEmployee>()
                 .HasQueryFilter(x => !x.IsDeleted && x.Club != null && !x.Club.IsDeleted);

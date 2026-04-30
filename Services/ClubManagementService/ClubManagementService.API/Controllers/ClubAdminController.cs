@@ -582,8 +582,21 @@ public class ClubAdminController : ControllerBase
     [HttpPost("announcements")]
     public async Task<IActionResult> AddAnnouncement(string clubId, [FromBody] AnnouncementRequest request, CancellationToken cancellationToken)
     {
-        var created = await _clubAdmin.CreateAnnouncementAsync(clubId, request.Title, request.Message, cancellationToken).ConfigureAwait(false);
-        return Ok(created);
+        if (string.IsNullOrWhiteSpace(request.Title))
+            return BadRequest(new { message = "Title is required." });
+
+        if (string.IsNullOrWhiteSpace(request.Message))
+            return BadRequest(new { message = "Message is required." });
+
+        try
+        {
+            var created = await _clubAdmin.CreateAnnouncementAsync(clubId, request.Title, request.Message, cancellationToken).ConfigureAwait(false);
+            return Ok(created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     private Guid GetCurrentUserIdOrDefault()

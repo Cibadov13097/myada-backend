@@ -413,6 +413,51 @@ public class ClubAdminControllerTests
     }
 
     [Fact]
+    public async Task AddAnnouncement_ShouldReturnBadRequest_WhenTitleIsMissing()
+    {
+        var controller = new ClubAdminController(Mock.Of<IClubAdminService>(), Mock.Of<IImageStorageService>());
+
+        var result = await controller.AddAnnouncement("1", new ClubAdminController.AnnouncementRequest
+        {
+            Title = "   ",
+            Message = "New message"
+        }, CancellationToken.None);
+
+        var badRequest = result.Should().BeOfType<BadRequestObjectResult>().Subject;
+        using var doc = JsonDocument.Parse(JsonSerializer.Serialize(badRequest.Value));
+        doc.RootElement.GetProperty("message").GetString().Should().Be("Title is required.");
+    }
+
+    [Fact]
+    public async Task AddAnnouncement_ShouldReturnCreatedAnnouncement()
+    {
+        var clubAdmin = new Mock<IClubAdminService>();
+        clubAdmin.Setup(x => x.CreateAnnouncementAsync("1", "Important Update", "Meeting starts at 6 PM.", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ClubAdminAnnouncementDto
+            {
+                Id = "12",
+                Title = "Important Update",
+                Message = "Meeting starts at 6 PM.",
+                CreatedAt = "2026-04-30T12:00:00.0000000Z"
+            });
+
+        var controller = new ClubAdminController(clubAdmin.Object, Mock.Of<IImageStorageService>());
+
+        var result = await controller.AddAnnouncement("1", new ClubAdminController.AnnouncementRequest
+        {
+            Title = "Important Update",
+            Message = "Meeting starts at 6 PM."
+        }, CancellationToken.None);
+
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        var body = ok.Value.Should().BeAssignableTo<ClubAdminAnnouncementDto>().Subject;
+        body.Id.Should().Be("12");
+        body.Title.Should().Be("Important Update");
+        body.Message.Should().Be("Meeting starts at 6 PM.");
+        clubAdmin.VerifyAll();
+    }
+
+    [Fact]
     public async Task PatchProfile_ShouldReturnSeparateImageFields()
     {
         var clubAdmin = new Mock<IClubAdminService>();

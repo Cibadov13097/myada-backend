@@ -1578,23 +1578,37 @@ public sealed class ClubAdminService : IClubAdminService
         var ctx = await TryResolveClubAsync(clubRouteKey, cancellationToken).ConfigureAwait(false)
                   ?? throw new InvalidOperationException("Club not found.");
 
-        var ws = _workspace.GetOrCreate(ctx.ClubId);
-        var id = Guid.NewGuid().ToString("D");
-        var row = new AnnouncementRow { Id = id, Title = title, Message = message, CreatedAt = DateTimeOffset.UtcNow };
-        ws.Announcements[id] = row;
+        var normalizedTitle = string.IsNullOrWhiteSpace(title)
+            ? throw new ArgumentException("Title is required.")
+            : title.Trim();
+        var normalizedMessage = string.IsNullOrWhiteSpace(message)
+            ? throw new ArgumentException("Message is required.")
+            : message.Trim();
+
+        var entity = new ClubAnnouncement
+        {
+            ClubId = ctx.ClubId,
+            Title = normalizedTitle,
+            Message = normalizedMessage
+        };
+
+        await _db.ClubAnnouncements.AddAsync(entity, cancellationToken).ConfigureAwait(false);
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
         await PublishNotificationsAsync(
             await GetClubMemberUserIdsAsync(ctx.ClubId, cancellationToken).ConfigureAwait(false),
-            title,
-            message,
+            entity.Title,
+            entity.Message,
             "club_announcement.created",
             "club_announcement",
-            id).ConfigureAwait(false);
+            entity.Id.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+
         return new ClubAdminAnnouncementDto
         {
-            Id = row.Id,
-            Title = row.Title,
-            Message = row.Message,
-            CreatedAt = row.CreatedAt.ToString("O")
+            Id = entity.Id.ToString(CultureInfo.InvariantCulture),
+            Title = entity.Title,
+            Message = entity.Message,
+            CreatedAt = entity.CreatedAt.ToString("O")
         };
     }
 
