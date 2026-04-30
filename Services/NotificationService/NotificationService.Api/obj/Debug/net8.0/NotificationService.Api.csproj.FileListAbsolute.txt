@@ -307,3 +307,4 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\NotificationService\NotificationService.Api\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\NotificationService\NotificationService.Api\bin\Debug\net8.0\Shared.Observability.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\NotificationService\NotificationService.Api\bin\Debug\net8.0\Shared.Observability.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\NotificationService\NotificationService.Api\obj\Debug\net8.0\swae.build.ex.cache
