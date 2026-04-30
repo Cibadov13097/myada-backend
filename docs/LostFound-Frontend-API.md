@@ -373,6 +373,57 @@ Location rule:
 - If `locationType=other`, send `location` as string.
 - For multipart forms, backend also checks `customLocation` fallback.
 
+### 1.17 Admin Page Endpoint Usage
+
+Use the **modern** `/api/lost-and-found/*` endpoints for all new admin pages. Only use the legacy admin endpoints in §5-§6 if you are intentionally keeping old screens alive during migration.
+
+Recommended admin page mapping:
+
+| Admin page / UI surface | Endpoint(s) it should use | Notes |
+|---|---|---|
+| Admin dashboard summary cards | `GET /api/lost-and-found/items?adminStatus=pending`, `GET /api/lost-and-found/items?adminStatus=received`, `GET /api/lost-and-found/items?adminStatus=delivered` | Use `total` from each filtered list for true admin workflow counts. Do **not** rely on `/stats` for received/delivered counts because `/stats` follows public-board visibility rules. |
+| Admin dashboard activity feed / recent queue | `GET /api/lost-and-found/items?page=1&limit=...&adminStatus=pending` | Add `type`, `q`, or `categoryId` filters if the dashboard supports them. |
+| Admin items list page | `GET /api/lost-and-found/items` | This is the main admin table endpoint. Wire filters for `q`, `type`, `categoryId`, `status`, `adminStatus`, `page`, and `limit`. |
+| Admin item detail page | `GET /api/lost-and-found/items/{id}`, `GET /api/lost-and-found/items/{id}/timeline`, `GET /api/lost-and-found/items/{id}/claims` | Detail page should load the item, timeline, and claims together. Claims endpoint is admin-only and belongs on the admin detail/claims tab. |
+| Admin create item page | `POST /api/lost-and-found/items`, optionally `POST /api/lost-and-found/upload` | Use manual admin create for staff-entered lost/found items. Use `/upload` only if your UI uploads files ahead of final submit. |
+| Admin edit item form | `PATCH /api/lost-and-found/items/{id}` | Use for title/description/status/adminStatus/storage bin/condition/admin notes/reported color edits. |
+| Admin notify owner modal/action | `POST /api/lost-and-found/items/{id}/notify` | This should be a dedicated admin action on the item detail or row action menu. |
+| Admin confirm receipt / intake page or modal | `POST /api/lost-and-found/items/{id}/confirm-receipt` | Use multipart form with `storageBinId`, `condition`, optional `intakePhotoFile`, `confirmAccuracy`, and `adminNotes`. |
+| Admin complete delivery / handover page or modal | `POST /api/lost-and-found/items/{id}/complete-delivery` | Use multipart form with claimant fields and optional handover proof file. |
+| Admin category management page | `GET /api/v1/categories`, `GET /api/v1/categories/{id}`, `POST /api/v1/categories`, `PUT /api/v1/categories/{id}`, `DELETE /api/v1/categories/{id}` | Categories are still managed through the legacy categories API. This is the correct place to use those endpoints. |
+
+### 1.18 Admin Workflow Rules
+
+To make sure the admin pages actually cover the full workflow, wire them like this:
+
+1. Admin list page:
+- Must use `GET /api/lost-and-found/items`.
+- Should expose `adminStatus` filters for `pending`, `received`, and `delivered`.
+- Should expose pagination using `page` and `limit`.
+
+2. Admin detail page:
+- Must use `GET /api/lost-and-found/items/{id}` for the core record.
+- Must use `GET /api/lost-and-found/items/{id}/timeline` for workflow history.
+- Must use `GET /api/lost-and-found/items/{id}/claims` if claims are shown or reviewed by admins.
+
+3. Admin actions:
+- `Notify owner` button -> `POST /api/lost-and-found/items/{id}/notify`
+- `Confirm receipt` button -> `POST /api/lost-and-found/items/{id}/confirm-receipt`
+- `Complete delivery` button -> `POST /api/lost-and-found/items/{id}/complete-delivery`
+- Inline edit or edit form save -> `PATCH /api/lost-and-found/items/{id}`
+
+4. Admin create flow:
+- If the form uploads images immediately, call `POST /api/lost-and-found/upload` first.
+- If the form submits everything together, call `POST /api/lost-and-found/items` with multipart form data and skip the separate upload endpoint.
+
+5. Dashboard caveat:
+- `GET /api/lost-and-found/stats` is useful for the public-facing board summary.
+- It is **not** a complete admin dashboard summary because it excludes admin `received` and `delivered` items from the counts.
+
+6. Legacy compatibility:
+- If there are still separate legacy admin lost-item and found-item pages, those pages may keep using `/api/v1/admin/lost-items/*` and `/api/v1/admin/found-items/*`.
+- Do not mix legacy admin endpoints into new unified admin pages unless the page is explicitly a migration shim.
+
 ---
 
 ## 2) Legacy User API: Lost Items

@@ -78,6 +78,8 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
                 ["duration"] = StringSchema("Duration in hours."),
                 ["attendance"] = StringSchema("Expected attendance."),
                 ["venue"] = StringSchema(),
+                ["buildingId"] = IntegerSchema("Optional building id. Must be sent together with roomId."),
+                ["roomId"] = IntegerSchema("Optional room id. Must be sent together with buildingId."),
                 ["description"] = StringSchema(),
                 ["objectives"] = StringSchema(),
                 ["imageUrl"] = StringSchema("Already-uploaded proposal image URL."),
@@ -122,10 +124,12 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
             ["duration"] = StringSchema("Duration in hours."),
             ["attendance"] = StringSchema("Expected attendance."),
             ["venue"] = StringSchema(),
+            ["buildingId"] = IntegerSchema("Optional building id. Must be sent together with roomId."),
+            ["roomId"] = IntegerSchema("Optional room id. Must be sent together with buildingId."),
             ["description"] = StringSchema(),
             ["objectives"] = StringSchema(),
             ["imageUrl"] = StringSchema("Optional existing proposal image URL. Leave empty when uploading a new file on imageFile."),
-            ["imageFile"] = BinarySchema("Attach the proposal image file here for multipart requests."),
+            ["imageFile"] = BinarySchema("Attach the proposal image file here for multipart requests. Older clients may also send image or posterFile."),
             ["submittedByOrganization"] = StringSchema(),
             ["subEventsJson"] = StringSchema("JSON array of sub-events."),
             ["logisticsJson"] = StringSchema("JSON object for logistics settings.")
@@ -161,6 +165,13 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
     {
         Type = "string",
         Format = "binary",
+        Description = description
+    };
+
+    private static OpenApiSchema IntegerSchema(string? description = null) => new()
+    {
+        Type = "integer",
+        Format = "int32",
         Description = description
     };
 }
