@@ -259,7 +259,7 @@ public class NotificationsController : ControllerBase
     {
         return _dbContext.Notifications
             .AsNoTracking()
-            .Where(n => n.RecipientUserId == userId || n.RecipientUserId == null);
+            .Where(n => n.RecipientUserId == userId);
     }
 
     private Guid GetCurrentUserIdOrDefault()

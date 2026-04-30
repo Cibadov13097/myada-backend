@@ -17,6 +17,8 @@ namespace NotificationService.Tests.Layers.Api;
 /// <summary>Small service — presentation / API layer guideline ~5–10 tests.</summary>
 public sealed class NotificationsControllerLayerTests
 {
+    private static readonly Guid CurrentUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+
     private static NotificationDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<NotificationDbContext>()
@@ -36,7 +38,6 @@ public sealed class NotificationsControllerLayerTests
             notificationService,
             NullLogger<NotificationsController>.Instance);
 
-        var userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
         controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext
@@ -44,7 +45,7 @@ public sealed class NotificationsControllerLayerTests
                 User = new ClaimsPrincipal(
                     new ClaimsIdentity(
                     [
-                        new Claim("sub", userId.ToString())
+                        new Claim("sub", CurrentUserId.ToString())
                     ],
                     authenticationType: "TestAuth"))
             }
@@ -64,6 +65,51 @@ public sealed class NotificationsControllerLayerTests
 
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
         ok.Value.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetAll_only_returns_notifications_for_current_user()
+    {
+        await using var db = CreateDbContext();
+        db.Notifications.AddRange(
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                Type = "mine",
+                Message = "visible",
+                CreatedAt = DateTime.UtcNow,
+                RecipientUserId = CurrentUserId,
+                NotificationType = NotificationType.Push
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                Type = "other",
+                Message = "hidden",
+                CreatedAt = DateTime.UtcNow,
+                RecipientUserId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                NotificationType = NotificationType.Push
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                Type = "legacy-null",
+                Message = "hidden",
+                CreatedAt = DateTime.UtcNow,
+                RecipientUserId = null,
+                NotificationType = NotificationType.Push
+            });
+        await db.SaveChangesAsync();
+
+        var mock = new Mock<INotificationService>();
+        var controller = CreateController(db, mock.Object);
+
+        var result = await controller.GetAll();
+
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        var items = ok.Value!.GetType().GetProperty("items")!.GetValue(ok.Value) as System.Collections.IEnumerable;
+        items.Should().NotBeNull();
+        items!.Cast<object>().Should().HaveCount(1);
     }
 
     [Fact]
@@ -113,7 +159,7 @@ public sealed class NotificationsControllerLayerTests
             Type = "t",
             Message = "m",
             CreatedAt = DateTime.UtcNow,
-            RecipientUserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            RecipientUserId = CurrentUserId,
             NotificationType = NotificationType.Email
         });
         await db.SaveChangesAsync();
