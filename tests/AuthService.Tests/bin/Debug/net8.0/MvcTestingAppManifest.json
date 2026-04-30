@@ -1,8 +1,8 @@
 {
-  "AuthService.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Api",
-  "AuthService.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Application",
-  "AuthService.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Domain",
-  "AuthService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure",
-  "MyAda.Testing.Integration.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure",
-  "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability"
+  "AuthService.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api",
+  "AuthService.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Application",
+  "AuthService.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain",
+  "AuthService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure",
+  "MyAda.Testing.Integration.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\tests\\MyAda.Testing.Integration.Infrastructure",
+  "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Shared\\Shared.Observability"
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PYRkottICt0=",
+  "dgSpecHash": "upjV7LXdA9w=",
   "success": true,
-  "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
+  "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cavid\\.nuget\\packages\\automapper\\15.1.0\\automapper.15.1.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\awssdk.core\\3.7.401.10\\awssdk.core.3.7.401.10.nupkg.sha512",
@@ -110,30 +110,29 @@
     "C:\\Users\\cavid\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\system.threading.channels\\7.0.0\\system.threading.channels.7.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.22\\microsoft.netcore.app.ref.8.0.22.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.22\\microsoft.windowsdesktop.app.ref.8.0.22.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.22\\microsoft.aspnetcore.app.ref.8.0.22.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.22\\microsoft.netcore.app.host.win-x64.8.0.22.nupkg.sha512"
+    "C:\\Users\\cavid\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
   "logs": [
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "message": "Unable to load the service index for source https://api.nuget.org/v3/index.json.",
-      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
-      "targetGraphs": []
-    },
     {
       "code": "NU1603",
       "level": "Warning",
       "message": "LostFoundService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. AWSSDK.S3 3.7.414 was resolved instead.",
-      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
+      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
+      "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
       "libraryId": "AWSSDK.S3",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'AutoMapper' 15.1.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-rvv3-g6hj-g44x",
+      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+      "libraryId": "AutoMapper",
       "targetGraphs": [
         "net8.0"
       ]

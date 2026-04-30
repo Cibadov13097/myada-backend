@@ -608,8 +608,6 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFo
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\ref\LostFoundService.Api.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\AWSSDK.Core.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\AWSSDK.S3.dll
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\swae.build.ex.cache
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\LostFoun.39D31D4B.Up2Date
 c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\AWSSDK.Core.dll
 c:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\AWSSDK.S3.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\LostFoun.447C50F2.Up2Date
@@ -682,3 +680,5 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Shared.Observability.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\bin\Debug\net8.0\Shared.Observability.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\LostFoundService\LostFoundService.API\obj\Debug\net8.0\LostFoun.447C50F2.Up2Date

@@ -264,10 +264,14 @@ public class NotificationsController : ControllerBase
 
     private Guid GetCurrentUserIdOrDefault()
     {
-        var claim = User.FindFirst("sub")?.Value
-                    ?? User.FindFirst("user_id")?.Value
-                    ?? User.FindFirst("nameid")?.Value
-                    ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var user = HttpContext?.User;
+        if (user is null)
+            return Guid.Empty;
+
+        var claim = user.FindFirst("sub")?.Value
+                    ?? user.FindFirst("user_id")?.Value
+                    ?? user.FindFirst("nameid")?.Value
+                    ?? user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         return Guid.TryParse(claim, out var value) ? value : Guid.Empty;
     }
 

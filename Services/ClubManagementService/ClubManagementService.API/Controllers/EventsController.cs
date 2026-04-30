@@ -8,7 +8,6 @@ using ClubManagementService.Application.Interfaces.Services;
 using ClubManagementService.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Events.Notifications;
 using System.IO;
 
 namespace ClubManagementService.API.Controllers;
@@ -24,20 +23,17 @@ public class EventsController : ControllerBase
     private readonly IEventService _eventService;
     private readonly IEventRegistrationService _registrationService;
     private readonly IClubMembershipRepository _clubMembershipRepository;
-    private readonly IClubNotificationService _notificationService;
     private readonly IImageStorageService _imageStorageService;
 
     public EventsController(
         IEventService eventService,
         IEventRegistrationService registrationService,
         IClubMembershipRepository clubMembershipRepository,
-        IClubNotificationService notificationService,
         IImageStorageService imageStorageService)
     {
         _eventService = eventService;
         _registrationService = registrationService;
         _clubMembershipRepository = clubMembershipRepository;
-        _notificationService = notificationService;
         _imageStorageService = imageStorageService;
     }
 
@@ -152,17 +148,6 @@ public class EventsController : ControllerBase
         {
             return NotFound();
         }
-
-        await _notificationService.PublishAsync(new NotificationQueueMessage
-        {
-            Type = "Event Registration Cancelled",
-            Message = $"A registration for event '{eventId}' was cancelled.",
-            Source = "club-management",
-            Action = "event.registration.cancelled",
-            EntityType = "event",
-            EntityId = eventId.ToString(),
-            ActorUserId = userId
-        });
 
         return NoContent();
     }

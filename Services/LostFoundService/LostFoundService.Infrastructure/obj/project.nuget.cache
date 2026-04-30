@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ATPY0N5jiKg=",
+  "dgSpecHash": "I5VRJjjdgMo=",
   "success": true,
   "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -79,21 +79,9 @@
     "C:\\Users\\cavid\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\system.threading.channels\\7.0.0\\system.threading.channels.7.0.0.nupkg.sha512",
     "C:\\Users\\cavid\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.22\\microsoft.netcore.app.ref.8.0.22.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.22\\microsoft.windowsdesktop.app.ref.8.0.22.nupkg.sha512",
-    "C:\\Users\\cavid\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.22\\microsoft.aspnetcore.app.ref.8.0.22.nupkg.sha512"
+    "C:\\Users\\cavid\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
   "logs": [
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "message": "Unable to load the service index for source https://api.nuget.org/v3/index.json.",
-      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\LostFoundService.Infrastructure.csproj",
-      "targetGraphs": []
-    },
     {
       "code": "NU1603",
       "level": "Warning",

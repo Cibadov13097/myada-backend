@@ -2292,7 +2292,7 @@
         },
         "runtime": {
           "AuthService.Api.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         },
@@ -2306,7 +2306,7 @@
         },
         "runtime": {
           "AuthService.Application.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         },
@@ -2317,7 +2317,7 @@
       "AuthService.Domain/1.0.0": {
         "runtime": {
           "AuthService.Domain.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         },
@@ -2338,7 +2338,7 @@
         },
         "runtime": {
           "AuthService.Infrastructure.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         },
@@ -2357,7 +2357,7 @@
         },
         "runtime": {
           "MyAda.Testing.Integration.Infrastructure.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         },
@@ -2378,7 +2378,7 @@
         },
         "runtime": {
           "Shared.Observability.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         },

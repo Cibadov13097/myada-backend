@@ -206,7 +206,6 @@ public class EventsControllerTests
             eventService,
             Mock.Of<IEventRegistrationService>(),
             Mock.Of<IClubMembershipRepository>(),
-            Mock.Of<IClubNotificationService>(),
             imageStorageService);
     }
 

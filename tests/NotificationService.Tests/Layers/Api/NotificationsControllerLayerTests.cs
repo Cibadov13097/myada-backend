@@ -9,6 +9,7 @@ using NotificationService.Application.Interfaces;
 using NotificationService.Domain.Entities;
 using NotificationService.Domain.Enums;
 using NotificationService.Infrastructure.Persistence;
+using System.Security.Claims;
 using Xunit;
 
 namespace NotificationService.Tests.Layers.Api;
@@ -28,8 +29,29 @@ public sealed class NotificationsControllerLayerTests
 
     private static NotificationsController CreateController(
         NotificationDbContext db,
-        INotificationService notificationService) =>
-        new(db, notificationService, NullLogger<NotificationsController>.Instance);
+        INotificationService notificationService)
+    {
+        var controller = new NotificationsController(
+            db,
+            notificationService,
+            NullLogger<NotificationsController>.Instance);
+
+        var userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(
+                    [
+                        new Claim("sub", userId.ToString())
+                    ],
+                    authenticationType: "TestAuth"))
+            }
+        };
+
+        return controller;
+    }
 
     [Fact]
     public async Task GetAll_returns_empty_page()
@@ -91,6 +113,7 @@ public sealed class NotificationsControllerLayerTests
             Type = "t",
             Message = "m",
             CreatedAt = DateTime.UtcNow,
+            RecipientUserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             NotificationType = NotificationType.Email
         });
         await db.SaveChangesAsync();

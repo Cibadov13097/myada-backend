@@ -5616,9 +5616,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
-      "projectName": "LostFoundService.API",
-      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.API.csproj",
+      "projectUniqueName": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
+      "projectName": "LostFoundService.Api",
+      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj",
       "packagesPath": "C:\\Users\\cavid\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\obj\\",
       "projectStyle": "PackageReference",
@@ -5665,11 +5665,11 @@
         ]
       },
       "restoreAuditProperties": {
-        "enableAudit": "false",
+        "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
@@ -5717,24 +5717,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.22, 8.0.22]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[8.0.22, 8.0.22]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.22, 8.0.22]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.22, 8.0.22]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -5743,23 +5725,27 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
   "logs": [
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Unable to load the service index for source https://api.nuget.org/v3/index.json."
-    },
     {
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
       "message": "LostFoundService.Infrastructure depends on AWSSDK.S3 (>= 3.7.413.6) but AWSSDK.S3 3.7.413.6 was not found. AWSSDK.S3 3.7.414 was resolved instead.",
       "libraryId": "AWSSDK.S3",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'AutoMapper' 15.1.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-rvv3-g6hj-g44x",
+      "libraryId": "AutoMapper",
       "targetGraphs": [
         "net8.0"
       ]

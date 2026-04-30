@@ -11,3 +11,16 @@ C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\MyAda.Testing.JwksStub\obj
 C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\refint\MyAda.Testing.JwksStub.dll
 C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.pdb
 C:\Users\User\Desktop\SDP\Backend\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\ref\MyAda.Testing.JwksStub.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\bin\Debug\net8.0\MyAda.Testing.JwksStub.deps.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\bin\Debug\net8.0\MyAda.Testing.JwksStub.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\bin\Debug\net8.0\MyAda.Testing.JwksStub.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.csproj.AssemblyReference.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.AssemblyInfoInputs.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.AssemblyInfo.cs
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.csproj.CoreCompileInputs.cache
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.sourcelink.json
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\refint\MyAda.Testing.JwksStub.dll
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\MyAda.Testing.JwksStub.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\tests\MyAda.Testing.JwksStub\obj\Debug\net8.0\ref\MyAda.Testing.JwksStub.dll

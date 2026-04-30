@@ -64,22 +64,9 @@ public class EventRegistrationService : IEventRegistrationService
 
     public async Task<EventRegistrationDto> CreateAsync(CreateEventRegistrationDto dto)
     {
-        // Legacy endpoint support: keep behavior but populate ticket fields & snapshot.
-        var created = await RegisterAsync(dto.EventId, dto.UserId);
-        var entity = await _repository.GetByIdAsync(created.Id)
-            ?? throw new InvalidOperationException("Registration was not persisted.");
-
-        await _notificationService.PublishAsync(new NotificationQueueMessage
-        {
-            Type = "Event Registration",
-            Message = $"A user registered for event '{entity.EventId}'.",
-            Source = "club-management",
-            Action = "event.registration.created",
-            EntityType = "event_registration",
-            EntityId = entity.Id.ToString(),
-            ActorUserId = entity.UserId
-        });
-        return created;
+        // Legacy endpoint support: reuse the main registration flow so ticketing,
+        // seat checks, and notification behavior stay consistent.
+        return await RegisterAsync(dto.EventId, dto.UserId);
     }
 
     public async Task<EventRegistrationDto> UpdateAsync(int id, UpdateEventRegistrationDto dto)
@@ -113,11 +100,13 @@ public class EventRegistrationService : IEventRegistrationService
         {
             Type = "Event Registration Updated",
             Message = $"Registration '{entity.Id}' was updated to event '{entity.EventId}'.",
+            Channel = "Push",
             Source = "club-management",
             Action = "event.registration.updated",
             EntityType = "event_registration",
             EntityId = entity.Id.ToString(),
-            ActorUserId = entity.UserId
+            ActorUserId = entity.UserId,
+            RecipientUserId = entity.UserId
         });
 
         return _mapper.Map<EventRegistrationDto>(entity);
@@ -132,11 +121,13 @@ public class EventRegistrationService : IEventRegistrationService
         {
             Type = "Event Registration Cancelled",
             Message = $"A registration for event '{entity.EventId}' was cancelled.",
+            Channel = "Push",
             Source = "club-management",
             Action = "event.registration.deleted",
             EntityType = "event_registration",
             EntityId = id.ToString(),
-            ActorUserId = entity.UserId
+            ActorUserId = entity.UserId,
+            RecipientUserId = entity.UserId
         });
     }
 
@@ -147,6 +138,19 @@ public class EventRegistrationService : IEventRegistrationService
             throw new KeyNotFoundException($"No registration for event {eventId} and user.");
         await _repository.DeleteAsync(entity);
         await _repository.SaveChangesAsync();
+
+        await _notificationService.PublishAsync(new NotificationQueueMessage
+        {
+            Type = "Event Registration Cancelled",
+            Message = $"A registration for event '{entity.EventId}' was cancelled.",
+            Channel = "Push",
+            Source = "club-management",
+            Action = "event.registration.cancelled",
+            EntityType = "event_registration",
+            EntityId = entity.Id.ToString(),
+            ActorUserId = userId,
+            RecipientUserId = userId
+        });
     }
 
     public async Task<EventRegistrationDto> RegisterAsync(int eventId, Guid userId, CancellationToken cancellationToken = default)
@@ -207,12 +211,14 @@ public class EventRegistrationService : IEventRegistrationService
         await _notificationService.PublishAsync(new NotificationQueueMessage
         {
             Type = "Event Registration",
-            Message = $"A user registered for event '{entity.EventId}'.",
+            Message = $"You registered for event '{evt.Name}'.",
+            Channel = "Push",
             Source = "club-management",
             Action = "event.registration.created",
             EntityType = "event_registration",
             EntityId = entity.Id.ToString(),
-            ActorUserId = entity.UserId
+            ActorUserId = entity.UserId,
+            RecipientUserId = entity.UserId
         });
 
         if (evt.SeatLimit > 0 && current + 1 >= evt.SeatLimit)

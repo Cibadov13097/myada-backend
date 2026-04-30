@@ -38,7 +38,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Shared\Shared.Observability\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Shared\Shared.Observability\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Shared\Shared.Observability\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Shared\Shared.Observability\obj\Debug\net8.0\swae.build.ex.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Shared\Shared.Observability\obj\Debug\net8.0\Shared.Observability.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Shared\Shared.Observability\obj\Debug\net8.0\refint\Shared.Observability.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Shared\Shared.Observability\obj\Debug\net8.0\Shared.Observability.pdb

@@ -973,7 +973,7 @@
         },
         "runtime": {
           "LostFoundService.Application.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -981,7 +981,7 @@
       "LostFoundService.Domain/1.0.0": {
         "runtime": {
           "LostFoundService.Domain.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -989,7 +989,7 @@
       "Shared.Contracts/1.0.0": {
         "runtime": {
           "Shared.Contracts.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }

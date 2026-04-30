@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LocationService.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+615a89aabc78d5243b4b201f79044041b1d9c0fb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a5fada15d3bad0aba7cfd07d453187e3cd4f46fa")]
 [assembly: System.Reflection.AssemblyProductAttribute("LocationService.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LocationService.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

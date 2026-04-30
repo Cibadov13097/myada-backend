@@ -20,9 +20,13 @@ public sealed class SupportNotificationPublisher : ISupportNotificationPublisher
     {
         _logger = logger;
         var hostName = configuration["RabbitMQ:Host"];
+        var userName = configuration["RabbitMQ:Username"];
+        var password = configuration["RabbitMQ:Password"];
         _factory = new ConnectionFactory
         {
-            HostName = string.IsNullOrWhiteSpace(hostName) ? "rabbitmq" : hostName
+            HostName = string.IsNullOrWhiteSpace(hostName) ? "rabbitmq" : hostName,
+            UserName = string.IsNullOrWhiteSpace(userName) ? ConnectionFactory.DefaultUser : userName,
+            Password = string.IsNullOrWhiteSpace(password) ? ConnectionFactory.DefaultPass : password
         };
     }
 

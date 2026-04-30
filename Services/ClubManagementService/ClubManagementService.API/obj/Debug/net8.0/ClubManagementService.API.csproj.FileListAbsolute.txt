@@ -264,7 +264,6 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\RabbitMQ.Client.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Contracts.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Contracts.pdb
-C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\swae.build.ex.cache
 C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\appsettings.Development.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\appsettings.json
 C:\Users\cavid\OneDrive\Documents\DeskBottom\codex-build-output-2\Debug\net8.0\bin\Debug\net8.0\appsettings.Development.json
@@ -360,3 +359,4 @@ C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\S
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Observability.dll
 C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\bin\Debug\net8.0\Shared.Observability.pdb
+C:\Users\cavid\OneDrive\Documents\DeskBottom\BackendProjects\SDP\myada-backend\Services\ClubManagementService\ClubManagementService.API\obj\Debug\net8.0\swae.build.ex.cache
