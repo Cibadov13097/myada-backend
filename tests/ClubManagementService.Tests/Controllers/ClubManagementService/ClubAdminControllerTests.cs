@@ -80,6 +80,65 @@ public class ClubAdminControllerTests
     }
 
     [Fact]
+    public async Task EventProposal_ShouldUploadImageAttachedAsImageUrl()
+    {
+        var clubAdmin = new Mock<IClubAdminService>();
+        clubAdmin.Setup(x => x.CreateEventProposalAsync(
+                "1",
+                It.Is<EventProposalSubmitDto>(dto =>
+                    dto.Name == "Launch Day"
+                    && dto.ImageUrl == "https://bucket.example/clubs/1/event-proposals/poster.png"),
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new EventProposalResultDto
+            {
+                ProposalId = "1",
+                Id = "1",
+                Status = "pending_review",
+                ClubId = "1",
+                ImageUrl = "https://bucket.example/clubs/1/event-proposals/poster.png"
+            });
+
+        var storage = new Mock<IImageStorageService>();
+        storage.Setup(x => x.IsSupportedImage("poster.png")).Returns(true);
+        storage.Setup(x => x.UploadImageAsync(
+                It.IsAny<Stream>(),
+                "poster.png",
+                "image/png",
+                "clubs/1/event-proposals",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync("https://bucket.example/clubs/1/event-proposals/poster.png");
+
+        var controller = new ClubAdminController(clubAdmin.Object, storage.Object);
+        var httpContext = new DefaultHttpContext();
+        var form = new FormCollection(new Dictionary<string, StringValues>
+        {
+            ["name"] = "Launch Day",
+            ["dateTime"] = "2026-04-26T14:30:00",
+            ["duration"] = "2",
+            ["attendance"] = "120",
+            ["venue"] = "Main Hall",
+            ["description"] = "Event description",
+            ["objectives"] = "Event objectives"
+        }, new FormFileCollection
+        {
+            CreateFormFile("imageUrl", "poster.png", "image/png")
+        });
+
+        httpContext.Request.ContentType = "multipart/form-data; boundary=test";
+        httpContext.Features.Set<IFormFeature>(new TestFormFeature(form));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.EventProposal("1", CancellationToken.None);
+
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        var body = ok.Value.Should().BeAssignableTo<EventProposalResultDto>().Subject;
+        body.ImageUrl.Should().Be("https://bucket.example/clubs/1/event-proposals/poster.png");
+        clubAdmin.VerifyAll();
+        storage.VerifyAll();
+    }
+
+    [Fact]
     public async Task EventProposal_ShouldAcceptMultipartImageUrlWhenNoFileIsAttached()
     {
         var clubAdmin = new Mock<IClubAdminService>();

@@ -23,7 +23,7 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
             operation.RequestBody = new OpenApiRequestBody
             {
                 Required = true,
-                Description = "Use application/json when imageUrl already exists, or multipart/form-data to upload imageFile directly. For multipart requests, send subEventsJson as a JSON array string and logisticsJson as a JSON object string.",
+                Description = "Use application/json when imageUrl already exists, or multipart/form-data to attach the image on imageUrl directly. For multipart requests, send subEventsJson as a JSON array string and logisticsJson as a JSON object string.",
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
                     ["application/json"] = new()
@@ -42,7 +42,7 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
         operation.RequestBody = new OpenApiRequestBody
         {
             Required = true,
-            Description = "Use application/json when imageUrl already exists, or multipart/form-data to upload imageFile directly. For multipart requests, send subEventsJson as a JSON array string and logisticsJson as a JSON object string.",
+            Description = "Use application/json when imageUrl already exists, or multipart/form-data to attach the image on imageUrl directly. For multipart requests, send subEventsJson as a JSON array string and logisticsJson as a JSON object string.",
             Content = new Dictionary<string, OpenApiMediaType>
             {
                 ["application/json"] = new()
@@ -124,14 +124,15 @@ public sealed class EventProposalCreateRequestBodyOperationFilter : IOperationFi
             ["venue"] = StringSchema(),
             ["description"] = StringSchema(),
             ["objectives"] = StringSchema(),
-            ["imageFile"] = BinarySchema(),
+            ["imageUrl"] = BinarySchema("Attach the proposal image file here for multipart requests. JSON requests can still send imageUrl as an already-uploaded URL."),
+            ["imageFile"] = BinarySchema("Legacy file field; imageUrl is preferred for multipart uploads."),
             ["submittedByOrganization"] = StringSchema(),
             ["subEventsJson"] = StringSchema("JSON array of sub-events."),
             ["logisticsJson"] = StringSchema("JSON object for logistics settings.")
         };
 
-        if (includeImageUrl)
-            properties["imageUrl"] = StringSchema("Optional existing image URL. If imageFile is also provided, the uploaded file wins.");
+        if (!includeImageUrl)
+            properties.Remove("imageUrl");
 
         return new OpenApiSchema
         {
