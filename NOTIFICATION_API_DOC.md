@@ -209,7 +209,7 @@ Status codes:
 
 Important delete rule:
 
-- legacy notifications with `recipientUserId = null` are readable but not deletable through this route
+- notifications with `recipientUserId = null` are not returned by authenticated read endpoints and cannot be deleted through this route
 
 ### `POST /api/v1/notifications/email`
 

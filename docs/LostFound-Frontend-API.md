@@ -88,11 +88,11 @@ Gateway prefix for all paths in this section:
 For the unified API, **admin workflow** uses `adminStatus`: `pending` → `received` (intake) → `delivered` (handover).
 
 - **Callers without `admin` or `lost_found_leader`** (no token, or a token without those roles):  
-  - `GET /api/lost-and-found/items` omits items whose `adminStatus` is **`received`** or **`delivered`**.  
-  - `GET /api/lost-and-found/items/{id}` and `GET /api/lost-and-found/items/{id}/timeline` return **404** for those items.  
-  - `POST /api/lost-and-found/items/{id}/claims` returns **404** for those items (claims are not accepted once intake/delivery is recorded this way).
+  - `GET /api/lost-and-found/items` omits items whose `adminStatus` is **`delivered`**.  
+  - `GET /api/lost-and-found/items/{id}` and `GET /api/lost-and-found/items/{id}/timeline` return **404** for delivered items.  
+  - `POST /api/lost-and-found/items/{id}/claims` returns **404** for delivered items.
 - **`admin` / `lost_found_leader`**: list, detail, and timeline include **all** items, including `received` and `delivered`.
-- **`GET /api/lost-and-found/stats`**: `total`, `active`, and `pendingVerification` count only items **not** in admin `received` or `delivered` (same notion as the public board), regardless of caller role.
+- **`GET /api/lost-and-found/stats`**: `total`, `active`, and `pendingVerification` count only items **not** in admin `delivered` (same notion as the public board), regardless of caller role.
 
 ### 1.3 List Items
 
@@ -121,7 +121,7 @@ Response:
 - Item object with public fields.
 - Admin-only fields (`adminStatus`, `storageBinId`, `condition`, etc.) are included only on **admin write** responses (manual create, patch, confirm receipt, complete delivery), not on this public GET—even for admins. Use an admin write response or a future admin-read endpoint if you need those fields on read by id.
 
-For non-admin callers, terminal items (`adminStatus` `received` / `delivered`) return **404**.
+For non-admin callers, delivered items return **404**.
 
 ### 1.5 Stats
 
@@ -312,7 +312,7 @@ On success, `adminStatus` becomes **`delivered`**; the item stays out of the pub
 
 `GET /api/lost-and-found/items/{id}/timeline`
 
-Non-admin callers receive **404** for items in admin `received` or `delivered` (same as get-by-id).
+Non-admin callers receive **404** for delivered items (same as get-by-id).
 
 Response:
 
@@ -418,7 +418,7 @@ To make sure the admin pages actually cover the full workflow, wire them like th
 
 5. Dashboard caveat:
 - `GET /api/lost-and-found/stats` is useful for the public-facing board summary.
-- It is **not** a complete admin dashboard summary because it excludes admin `received` and `delivered` items from the counts.
+- It is **not** a complete admin dashboard summary because it excludes admin `delivered` items from the counts.
 
 6. Legacy compatibility:
 - If there are still separate legacy admin lost-item and found-item pages, those pages may keep using `/api/v1/admin/lost-items/*` and `/api/v1/admin/found-items/*`.

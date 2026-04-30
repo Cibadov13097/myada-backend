@@ -23,7 +23,7 @@ public interface ILostAndFoundRepository
     Task<int> CountItemsByStatusAsync(LostFoundPublicStatus status);
 
     /// <summary>
-    /// Counts items shown on the public catalog (excludes Received/Delivered admin states).
+    /// Counts items shown on the public catalog (excludes Delivered admin state).
     /// When <paramref name="publicStatus"/> is null, counts all such items.
     /// </summary>
     Task<int> CountCatalogItemsExcludingTerminalAsync(LostFoundPublicStatus? publicStatus);

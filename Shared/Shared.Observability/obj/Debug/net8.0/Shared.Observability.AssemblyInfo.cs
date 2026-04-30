@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Shared.Observability")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b9062ecc1c316d487ed7cb8fb5dd50ccd01f919c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1edeecbcf9d4c831ab4864cd25c01d34ff6de97b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Shared.Observability")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Shared.Observability")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

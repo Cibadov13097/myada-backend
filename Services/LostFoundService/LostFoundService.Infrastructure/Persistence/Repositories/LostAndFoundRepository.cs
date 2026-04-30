@@ -143,8 +143,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
     {
         return query.Where(x =>
             x.AdminStatus == null ||
-            (x.AdminStatus != LostFoundAdminStatus.Received &&
-             x.AdminStatus != LostFoundAdminStatus.Delivered));
+            x.AdminStatus != LostFoundAdminStatus.Delivered);
     }
 
     public Task<bool> CategoryExistsAsync(int categoryId)

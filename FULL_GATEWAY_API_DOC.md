@@ -1,6 +1,6 @@
 # MyAda Full Gateway API Documentation
 
-Last updated: 2026-04-26
+Last updated: 2026-04-30
 
 ## Base URL
 
@@ -14,7 +14,7 @@ Last updated: 2026-04-26
 | Auth Service | /api/auth (primary), /auth (alias) | http://13.60.31.141:500/auth/swagger/index.html |
 | Attendance Service | /attendance | http://13.60.31.141:500/attendance/swagger/index.html |
 | Lost&Found Service | /lostfound | http://13.60.31.141:500/lostfound/swagger/index.html |
-| Club Management Service | /club | http://13.60.31.141:500/club/swagger/index.html |
+| Club Management Service | /club | https://myada.site/club/swagger/index.html |
 | Location Service | /location | http://13.60.31.141:500/location/swagger/index.html |
 | Support Service | /support | http://13.60.31.141:500/support/swagger/index.html |
 | Notification Service | /notification | http://13.60.31.141:500/notification/swagger/index.html |
@@ -73,147 +73,151 @@ SignalR hub + WebRTC ICE configuration endpoint.
 
 ### Club Management Service
 
+Current public club gateway base:
+
+- `https://myada.site/club`
+
 Most routes are under /api/v1/*.
 
 | Method | URL |
 |---|---|
-| GET | http://13.60.31.141:500/club/api/events |
-| POST | http://13.60.31.141:500/club/api/events |
-| DELETE | http://13.60.31.141:500/club/api/events/{eventId:int} |
-| GET | http://13.60.31.141:500/club/api/events/{eventId:int} |
-| PATCH | http://13.60.31.141:500/club/api/events/{eventId:int} |
-| POST | http://13.60.31.141:500/club/api/events/{eventId:int}/check-in |
-| DELETE | http://13.60.31.141:500/club/api/events/{eventId:int}/registrations |
-| POST | http://13.60.31.141:500/club/api/events/{eventId:int}/registrations |
-| GET | http://13.60.31.141:500/club/api/events/{eventId:int}/ticket |
-| GET | http://13.60.31.141:500/club/api/users/me/event-registrations |
-| POST | http://13.60.31.141:500/club/api/v1/applications/{applicationId}/interview-slot |
-| GET | http://13.60.31.141:500/club/api/v1/applications/{applicationId}/interview-slots |
-| GET | http://13.60.31.141:500/club/api/v1/categories |
-| POST | http://13.60.31.141:500/club/api/v1/categories |
-| DELETE | http://13.60.31.141:500/club/api/v1/categories/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/categories/{id:int} |
-| PUT | http://13.60.31.141:500/club/api/v1/categories/{id:int} |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/announcements |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/{applicationId} |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/{applicationId}/approve |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/{applicationId}/notes |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/{applicationId}/reject |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/{applicationId}/request-changes |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/applications/bulk-decision |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/dashboard |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files/{fileId} |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files/{fileId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/files/{fileId} |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/employees |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/employees |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/employees/{employeeId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/employees/positions |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/events |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/events/{eventId} |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/events/{eventId}/attendees |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId} |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/events/proposals |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/interview-slots |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/interview-slots/{slotId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/interview-slots/{slotId} |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/interview-slots/generate |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/members |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/members/{memberId} |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/positions |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/positions |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/positions/{positionId} |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/positions/{positionId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/positions/{positionId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/profile |
-| GET | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/vacancies |
-| POST | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/vacancies |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/vacancies/{vacancyId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/club-admin/{clubId}/vacancies/{vacancyId}/status |
-| GET | http://13.60.31.141:500/club/api/v1/club-memberships |
-| POST | http://13.60.31.141:500/club/api/v1/club-memberships |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-memberships/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/club-memberships/{id:int} |
-| PUT | http://13.60.31.141:500/club/api/v1/club-memberships/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/club-position-requirements |
-| POST | http://13.60.31.141:500/club/api/v1/club-position-requirements |
-| DELETE | http://13.60.31.141:500/club/api/v1/club-position-requirements/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/club-position-requirements/{id:int} |
-| PUT | http://13.60.31.141:500/club/api/v1/club-position-requirements/{id:int} |
-| POST | http://13.60.31.141:500/club/api/v1/club-proposals |
-| GET | http://13.60.31.141:500/club/api/v1/clubs |
-| POST | http://13.60.31.141:500/club/api/v1/clubs |
-| DELETE | http://13.60.31.141:500/club/api/v1/clubs/{clubId:int} |
-| GET | http://13.60.31.141:500/club/api/v1/clubs/{clubId:int} |
-| PATCH | http://13.60.31.141:500/club/api/v1/clubs/{clubId:int} |
-| POST | http://13.60.31.141:500/club/api/v1/clubs/{clubId:int}/join-applications |
-| GET | http://13.60.31.141:500/club/api/v1/clubs/{clubId:int}/members |
-| GET | http://13.60.31.141:500/club/api/v1/event-registrations |
-| POST | http://13.60.31.141:500/club/api/v1/event-registrations |
-| DELETE | http://13.60.31.141:500/club/api/v1/event-registrations/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/event-registrations/{id:int} |
-| PUT | http://13.60.31.141:500/club/api/v1/event-registrations/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/event-registrations/by-event/{eventId:int} |
-| GET | http://13.60.31.141:500/club/api/v1/job-applications |
-| POST | http://13.60.31.141:500/club/api/v1/job-applications |
-| DELETE | http://13.60.31.141:500/club/api/v1/job-applications/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/job-applications/{id:int} |
-| PATCH | http://13.60.31.141:500/club/api/v1/job-applications/{id:int}/status |
-| GET | http://13.60.31.141:500/club/api/v1/job-applications/by-vacancy/{jobVacancyId:int} |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/club-proposal-requirements |
-| PUT | http://13.60.31.141:500/club/api/v1/student-services/club-proposal-requirements |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/clubs |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int} |
-| PATCH | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int} |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/employees |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/employees |
-| DELETE | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/employees/{employeeId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/employees/{employeeId} |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/members |
-| DELETE | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/members/{memberId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/members/{memberId} |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/profile-image |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/clubs/{clubId:int}/profile-image/approve |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/clubs/proposals |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/clubs/proposals/{proposalId} |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/clubs/proposals/{proposalId}/approve |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/clubs/proposals/{proposalId}/reject |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/clubs/proposals/{proposalId}/request-revision |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/dashboard |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/events |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/events |
-| DELETE | http://13.60.31.141:500/club/api/v1/student-services/events/{eventId:int} |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/events/{eventId:int} |
-| PATCH | http://13.60.31.141:500/club/api/v1/student-services/events/{eventId:int} |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/events/proposals |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/events/proposals |
-| GET | http://13.60.31.141:500/club/api/v1/student-services/events/proposals/{proposalId} |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/events/proposals/{proposalId}/approve |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/events/proposals/{proposalId}/reject |
-| POST | http://13.60.31.141:500/club/api/v1/student-services/events/proposals/{proposalId}/request-revision |
-| GET | http://13.60.31.141:500/club/api/v1/subevents |
-| POST | http://13.60.31.141:500/club/api/v1/subevents |
-| DELETE | http://13.60.31.141:500/club/api/v1/subevents/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/subevents/{id:int} |
-| PUT | http://13.60.31.141:500/club/api/v1/subevents/{id:int} |
-| GET | http://13.60.31.141:500/club/api/v1/subevents/by-event/{mainEventId:int} |
-| GET | http://13.60.31.141:500/club/api/v1/users/{userId:guid}/club-memberships |
-| GET | http://13.60.31.141:500/club/api/v1/users/{userId:guid}/club-notifications |
-| PATCH | http://13.60.31.141:500/club/api/v1/users/{userId:guid}/club-notifications/{notificationId}/read |
-| GET | http://13.60.31.141:500/club/api/v1/users/{userId:guid}/event-registrations |
-| GET | http://13.60.31.141:500/club/api/v1/users/{userId:guid}/membership-applications |
-| GET | http://13.60.31.141:500/club/api/v1/users/{userId:guid}/vacancy-applications |
-| GET | http://13.60.31.141:500/club/api/v1/vacancies |
-| POST | http://13.60.31.141:500/club/api/v1/vacancies |
-| DELETE | http://13.60.31.141:500/club/api/v1/vacancies/{vacancyId} |
-| GET | http://13.60.31.141:500/club/api/v1/vacancies/{vacancyId} |
-| PATCH | http://13.60.31.141:500/club/api/v1/vacancies/{vacancyId} |
-| POST | http://13.60.31.141:500/club/api/v1/vacancies/{vacancyId}/applications |
-| GET | http://13.60.31.141:500/club/api/v1/vacancies/by-club/{clubId:int} |
+| GET | https://myada.site/club/api/events |
+| POST | https://myada.site/club/api/events |
+| DELETE | https://myada.site/club/api/events/{eventId:int} |
+| GET | https://myada.site/club/api/events/{eventId:int} |
+| PATCH | https://myada.site/club/api/events/{eventId:int} |
+| POST | https://myada.site/club/api/events/{eventId:int}/check-in |
+| DELETE | https://myada.site/club/api/events/{eventId:int}/registrations |
+| POST | https://myada.site/club/api/events/{eventId:int}/registrations |
+| GET | https://myada.site/club/api/events/{eventId:int}/ticket |
+| GET | https://myada.site/club/api/users/me/event-registrations |
+| POST | https://myada.site/club/api/v1/applications/{applicationId}/interview-slot |
+| GET | https://myada.site/club/api/v1/applications/{applicationId}/interview-slots |
+| GET | https://myada.site/club/api/v1/categories |
+| POST | https://myada.site/club/api/v1/categories |
+| DELETE | https://myada.site/club/api/v1/categories/{id:int} |
+| GET | https://myada.site/club/api/v1/categories/{id:int} |
+| PUT | https://myada.site/club/api/v1/categories/{id:int} |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/announcements |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/applications |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/applications/{applicationId} |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/applications/{applicationId}/approve |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/applications/{applicationId}/notes |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/applications/{applicationId}/reject |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/applications/{applicationId}/request-changes |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/applications/bulk-decision |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/dashboard |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/files |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/files |
+| DELETE | https://myada.site/club/api/v1/club-admin/{clubId}/files/{fileId} |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/files/{fileId} |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/files/{fileId} |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/employees |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/employees |
+| DELETE | https://myada.site/club/api/v1/club-admin/{clubId}/employees/{employeeId} |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/employees/positions |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/events |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/events/{eventId} |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/events/{eventId}/attendees |
+| DELETE | https://myada.site/club/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId} |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId} |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/events/proposals |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/interview-slots |
+| DELETE | https://myada.site/club/api/v1/club-admin/{clubId}/interview-slots/{slotId} |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/interview-slots/{slotId} |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/interview-slots/generate |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/members |
+| DELETE | https://myada.site/club/api/v1/club-admin/{clubId}/members/{memberId} |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/positions |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/positions |
+| DELETE | https://myada.site/club/api/v1/club-admin/{clubId}/positions/{positionId} |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/positions/{positionId} |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/positions/{positionId} |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/profile |
+| GET | https://myada.site/club/api/v1/club-admin/{clubId}/vacancies |
+| POST | https://myada.site/club/api/v1/club-admin/{clubId}/vacancies |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/vacancies/{vacancyId} |
+| PATCH | https://myada.site/club/api/v1/club-admin/{clubId}/vacancies/{vacancyId}/status |
+| GET | https://myada.site/club/api/v1/club-memberships |
+| POST | https://myada.site/club/api/v1/club-memberships |
+| DELETE | https://myada.site/club/api/v1/club-memberships/{id:int} |
+| GET | https://myada.site/club/api/v1/club-memberships/{id:int} |
+| PUT | https://myada.site/club/api/v1/club-memberships/{id:int} |
+| GET | https://myada.site/club/api/v1/club-position-requirements |
+| POST | https://myada.site/club/api/v1/club-position-requirements |
+| DELETE | https://myada.site/club/api/v1/club-position-requirements/{id:int} |
+| GET | https://myada.site/club/api/v1/club-position-requirements/{id:int} |
+| PUT | https://myada.site/club/api/v1/club-position-requirements/{id:int} |
+| POST | https://myada.site/club/api/v1/club-proposals |
+| GET | https://myada.site/club/api/v1/clubs |
+| POST | https://myada.site/club/api/v1/clubs |
+| DELETE | https://myada.site/club/api/v1/clubs/{clubId:int} |
+| GET | https://myada.site/club/api/v1/clubs/{clubId:int} |
+| PATCH | https://myada.site/club/api/v1/clubs/{clubId:int} |
+| POST | https://myada.site/club/api/v1/clubs/{clubId:int}/join-applications |
+| GET | https://myada.site/club/api/v1/clubs/{clubId:int}/members |
+| GET | https://myada.site/club/api/v1/event-registrations |
+| POST | https://myada.site/club/api/v1/event-registrations |
+| DELETE | https://myada.site/club/api/v1/event-registrations/{id:int} |
+| GET | https://myada.site/club/api/v1/event-registrations/{id:int} |
+| PUT | https://myada.site/club/api/v1/event-registrations/{id:int} |
+| GET | https://myada.site/club/api/v1/event-registrations/by-event/{eventId:int} |
+| GET | https://myada.site/club/api/v1/job-applications |
+| POST | https://myada.site/club/api/v1/job-applications |
+| DELETE | https://myada.site/club/api/v1/job-applications/{id:int} |
+| GET | https://myada.site/club/api/v1/job-applications/{id:int} |
+| PATCH | https://myada.site/club/api/v1/job-applications/{id:int}/status |
+| GET | https://myada.site/club/api/v1/job-applications/by-vacancy/{jobVacancyId:int} |
+| GET | https://myada.site/club/api/v1/student-services/club-proposal-requirements |
+| PUT | https://myada.site/club/api/v1/student-services/club-proposal-requirements |
+| GET | https://myada.site/club/api/v1/student-services/clubs |
+| GET | https://myada.site/club/api/v1/student-services/clubs/{clubId:int} |
+| PATCH | https://myada.site/club/api/v1/student-services/clubs/{clubId:int} |
+| GET | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/employees |
+| POST | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/employees |
+| DELETE | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/employees/{employeeId} |
+| PATCH | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/employees/{employeeId} |
+| GET | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/members |
+| DELETE | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/members/{memberId} |
+| PATCH | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/members/{memberId} |
+| POST | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/profile-image |
+| POST | https://myada.site/club/api/v1/student-services/clubs/{clubId:int}/profile-image/approve |
+| GET | https://myada.site/club/api/v1/student-services/clubs/proposals |
+| GET | https://myada.site/club/api/v1/student-services/clubs/proposals/{proposalId} |
+| POST | https://myada.site/club/api/v1/student-services/clubs/proposals/{proposalId}/approve |
+| POST | https://myada.site/club/api/v1/student-services/clubs/proposals/{proposalId}/reject |
+| POST | https://myada.site/club/api/v1/student-services/clubs/proposals/{proposalId}/request-revision |
+| GET | https://myada.site/club/api/v1/student-services/dashboard |
+| GET | https://myada.site/club/api/v1/student-services/events |
+| POST | https://myada.site/club/api/v1/student-services/events |
+| DELETE | https://myada.site/club/api/v1/student-services/events/{eventId:int} |
+| GET | https://myada.site/club/api/v1/student-services/events/{eventId:int} |
+| PATCH | https://myada.site/club/api/v1/student-services/events/{eventId:int} |
+| GET | https://myada.site/club/api/v1/student-services/events/proposals |
+| POST | https://myada.site/club/api/v1/student-services/events/proposals |
+| GET | https://myada.site/club/api/v1/student-services/events/proposals/{proposalId} |
+| POST | https://myada.site/club/api/v1/student-services/events/proposals/{proposalId}/approve |
+| POST | https://myada.site/club/api/v1/student-services/events/proposals/{proposalId}/reject |
+| POST | https://myada.site/club/api/v1/student-services/events/proposals/{proposalId}/request-revision |
+| GET | https://myada.site/club/api/v1/subevents |
+| POST | https://myada.site/club/api/v1/subevents |
+| DELETE | https://myada.site/club/api/v1/subevents/{id:int} |
+| GET | https://myada.site/club/api/v1/subevents/{id:int} |
+| PUT | https://myada.site/club/api/v1/subevents/{id:int} |
+| GET | https://myada.site/club/api/v1/subevents/by-event/{mainEventId:int} |
+| GET | https://myada.site/club/api/v1/users/{userId:guid}/club-memberships |
+| GET | https://myada.site/club/api/v1/users/{userId:guid}/club-notifications |
+| PATCH | https://myada.site/club/api/v1/users/{userId:guid}/club-notifications/{notificationId}/read |
+| GET | https://myada.site/club/api/v1/users/{userId:guid}/event-registrations |
+| GET | https://myada.site/club/api/v1/users/{userId:guid}/membership-applications |
+| GET | https://myada.site/club/api/v1/users/{userId:guid}/vacancy-applications |
+| GET | https://myada.site/club/api/v1/vacancies |
+| POST | https://myada.site/club/api/v1/vacancies |
+| DELETE | https://myada.site/club/api/v1/vacancies/{vacancyId} |
+| GET | https://myada.site/club/api/v1/vacancies/{vacancyId} |
+| PATCH | https://myada.site/club/api/v1/vacancies/{vacancyId} |
+| POST | https://myada.site/club/api/v1/vacancies/{vacancyId}/applications |
+| GET | https://myada.site/club/api/v1/vacancies/by-club/{clubId:int} |
 
 ### Location Service
 
@@ -371,14 +375,77 @@ Support requests and support staff workflows.
 
 ### Notification Service
 
-Notification list/detail/delete + direct email send.
+Current public notification gateway base:
 
-| Method | URL |
-|---|---|
-| GET | http://13.60.31.141:500/notification/api/v1/notifications |
-| GET | http://13.60.31.141:500/notification/api/v1/notifications/me |
-| DELETE | http://13.60.31.141:500/notification/api/v1/notifications/{id:guid} |
-| GET | http://13.60.31.141:500/notification/api/v1/notifications/{id:guid} |
-| POST | http://13.60.31.141:500/notification/api/v1/notifications/email |
+- `https://myada.site/notification`
+
+Auth rules:
+
+- bearer token required for `GET /api/v1/notifications`
+- bearer token required for `GET /api/v1/notifications/me`
+- bearer token required for `GET /api/v1/notifications/{id}`
+- bearer token required for `DELETE /api/v1/notifications/{id}`
+- bearer token optional for `POST /api/v1/notifications/email`
+
+| Method | URL | Request body |
+|---|---|---|
+| GET | https://myada.site/notification/api/v1/notifications | none |
+| GET | https://myada.site/notification/api/v1/notifications/me | none |
+| GET | https://myada.site/notification/api/v1/notifications/{id:guid} | none |
+| DELETE | https://myada.site/notification/api/v1/notifications/{id:guid} | none |
+| POST | https://myada.site/notification/api/v1/notifications/email | JSON body required |
+
+Common query parameters for list endpoints:
+
+- `type` (`string`, optional, default `all`)
+- `channel` (`string`, optional, default `all`, allowed `all | Email | Push | Sms`)
+- `page` (`int`, optional, default `1`)
+- `limit` (`int`, optional, default `20`, clamped to `1..100`)
+- `recipientUserId` (`Guid`, optional) is supported only on `GET /api/v1/notifications`
+
+Example list response:
+
+```json
+{
+  "items": [
+    {
+      "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001",
+      "type": "New Event Alert",
+      "message": "AI Career Fair",
+      "channel": "Push",
+      "recipientUserId": "00000000-0000-0000-0000-000000000001",
+      "createdAt": "2026-04-30T09:30:00Z"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 20
+}
+```
+
+`POST /api/v1/notifications/email` request body:
+
+```json
+{
+  "type": "auth.password_reset",
+  "recipientUserId": "22222222-2222-2222-2222-222222222222",
+  "toEmail": "student@example.com",
+  "subject": "Reset your password",
+  "message": "Use the link in the app to reset your password."
+}
+```
+
+`POST /api/v1/notifications/email` success response:
+
+```json
+{
+  "message": "Email notification sent successfully."
+}
+```
+
+Realtime hub:
+
+- `wss://myada.site/notification/hubs/notifications`
+
 
 
