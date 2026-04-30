@@ -70,6 +70,9 @@ namespace ClubManagementService.Infrastructure.Persistence.Context
                 .IsUnique();
 
             modelBuilder.Entity<ClubEmployee>()
+                .HasQueryFilter(x => !x.IsDeleted && x.Club != null && !x.Club.IsDeleted);
+
+            modelBuilder.Entity<ClubEmployee>()
                 .HasIndex(e => new { e.ClubId, e.UserId })
                 .IsUnique();
 
