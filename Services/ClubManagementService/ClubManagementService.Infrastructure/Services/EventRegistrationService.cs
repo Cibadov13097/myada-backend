@@ -15,6 +15,8 @@ namespace ClubManagementService.Infrastructure.Services;
 
 public class EventRegistrationService : IEventRegistrationService
 {
+    private static readonly TimeSpan AttendanceTokenLifetime = TimeSpan.FromSeconds(5);
+
     private readonly IEventRegistrationRepository _repository;
     private readonly IEventRepository _eventRepository;
     private readonly IMapper _mapper;
@@ -168,7 +170,7 @@ public class EventRegistrationService : IEventRegistrationService
 
         var ticketId = $"TCK-{Guid.NewGuid():N}"[..16].ToUpperInvariant();
         var now = DateTimeOffset.UtcNow;
-        var expiresAt = now.AddDays(180);
+        var expiresAt = now.Add(AttendanceTokenLifetime);
         var jwt = _ticketJwt.CreateTicketJwt(userId, eventId, ticketId, now, expiresAt);
 
         var entity = new EventRegistration

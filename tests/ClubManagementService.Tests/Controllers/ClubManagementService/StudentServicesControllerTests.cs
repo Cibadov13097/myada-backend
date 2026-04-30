@@ -1,7 +1,10 @@
 using System.Security.Claims;
 using ClubManagementService.API.Controllers;
+using ClubManagementService.API.Models;
+using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.Interfaces.Services;
+using ClubManagementService.Domain.Enums;
 using ClubManagementService.Infrastructure.Persistence.Context;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +18,84 @@ namespace ClubManagementService.Tests.Controllers;
 
 public class StudentServicesControllerTests
 {
+    [Fact]
+    public async Task CreateEvent_ShouldUploadAttachedImageAndPassStoredUrlToService()
+    {
+        var eventService = new Mock<IEventService>();
+        eventService.Setup(x => x.CreateAsync(It.Is<CreateEventDto>(dto =>
+                dto.ClubId == 4
+                && dto.Name == "Campus Fair"
+                && dto.ImageUrl == "https://bucket.example/events/4/poster.png")))
+            .ReturnsAsync(new EventDto
+            {
+                Id = 7,
+                ClubId = 4,
+                Name = "Campus Fair",
+                Description = "Event description",
+                ImageUrl = "https://bucket.example/events/4/poster.png",
+                StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
+                EndTime = new DateTime(2026, 4, 30, 12, 0, 0, DateTimeKind.Utc),
+                Location = "Auditorium",
+                SeatLimit = 150,
+                Requirements = "Registration",
+                Prerequisites = "None",
+                Notes = "Bring ID",
+                ApprovedBy = Guid.Empty,
+                Status = ClubStatus.Pending
+            });
+
+        var storage = new Mock<IImageStorageService>();
+        storage.Setup(x => x.IsSupportedImage("poster.png")).Returns(true);
+        storage.Setup(x => x.UploadImageAsync(
+                It.IsAny<Stream>(),
+                "poster.png",
+                "image/png",
+                "events/4",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync("https://bucket.example/events/4/poster.png");
+
+        var dbOptions = new DbContextOptionsBuilder<ClubManagementDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
+            .Options;
+        await using var dbContext = new ClubManagementDbContext(dbOptions);
+
+        var controller = new StudentServicesController(
+            Mock.Of<IClubService>(),
+            eventService.Object,
+            Mock.Of<IClubNotificationService>(),
+            Mock.Of<IProposalContractService>(),
+            storage.Object,
+            dbContext);
+
+        var httpContext = CreateAdminHttpContext();
+        var form = new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection
+        {
+            CreateFormFile("imageFile", "poster.png", "image/png")
+        });
+
+        httpContext.Request.ContentType = "multipart/form-data; boundary=test";
+        httpContext.Features.Set<IFormFeature>(new TestFormFeature(form));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.CreateEvent(new CreateEventFormRequest
+        {
+            ClubId = 4,
+            Name = "Campus Fair",
+            Description = "Event description",
+            StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
+            EndTime = new DateTime(2026, 4, 30, 12, 0, 0, DateTimeKind.Utc),
+            Location = "Auditorium",
+            SeatLimit = 150,
+            Requirements = "Registration",
+            Prerequisites = "None",
+            Notes = "Bring ID"
+        }, CancellationToken.None);
+
+        result.Should().BeOfType<OkObjectResult>();
+        eventService.VerifyAll();
+        storage.VerifyAll();
+    }
+
     [Fact]
     public async Task CreateStaffEventProposal_ShouldUploadAttachedImageFromImageAlias()
     {
@@ -60,15 +141,7 @@ public class StudentServicesControllerTests
             storage.Object,
             dbContext);
 
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(
-            new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString("D")),
-                new Claim("sub", Guid.NewGuid().ToString("D")),
-                new Claim(ClaimTypes.Role, "admin")
-            },
-            authenticationType: "TestAuth"));
+        var httpContext = CreateAdminHttpContext();
 
         var form = new FormCollection(new Dictionary<string, StringValues>
         {
@@ -112,5 +185,20 @@ public class StudentServicesControllerTests
         public IFormCollection? Form { get; set; } = form;
         public IFormCollection ReadForm() => Form ?? new FormCollection(new Dictionary<string, StringValues>());
         public Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken) => Task.FromResult(ReadForm());
+    }
+
+    private static DefaultHttpContext CreateAdminHttpContext()
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(
+            new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString("D")),
+                new Claim("sub", Guid.NewGuid().ToString("D")),
+                new Claim(ClaimTypes.Role, "admin")
+            },
+            authenticationType: "TestAuth"));
+
+        return httpContext;
     }
 }

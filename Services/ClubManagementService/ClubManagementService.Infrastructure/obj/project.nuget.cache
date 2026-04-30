@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "FgtlO7MlOTk=",
+  "dgSpecHash": "EuocEUhbALc=",
   "success": true,
   "projectFilePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -75,6 +75,18 @@
       "warningLevel": 1,
       "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj",
       "libraryId": "AWSSDK.S3",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'AutoMapper' 12.0.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-rvv3-g6hj-g44x",
+      "projectPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj",
+      "libraryId": "AutoMapper",
       "targetGraphs": [
         "net8.0"
       ]

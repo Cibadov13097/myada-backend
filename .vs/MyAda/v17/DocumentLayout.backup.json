@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{F4FAD8FE-2332-4D53-8E86-565F69B23D4A}|Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.infrastructure\\services\\eventregistrationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4FAD8FE-2332-4D53-8E86-565F69B23D4A}|Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.infrastructure\\services\\eventregistrationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\notificationservice\\notificationservice.api\\notificationservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|solutionrelative:services\\notificationservice\\notificationservice.api\\notificationservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -174,6 +178,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "EventRegistrationService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAmwGIAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-29T22:36:17.811Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "NotificationService.Api",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj",
@@ -186,7 +203,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "20260430000100_AddRecipientUserIdToNotifications.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Persistence\\Migrations\\20260430000100_AddRecipientUserIdToNotifications.cs",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Persistence\\Migrations\\20260430000100_AddRecipientUserIdToNotifications.cs",
@@ -199,7 +216,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "AdminUsersController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\AdminUsersController.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\AdminUsersController.cs",
@@ -212,7 +229,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "LostFoundDbContext.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
@@ -225,7 +242,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "LostFoundItem.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostFoundItem.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostFoundItem.cs",
@@ -238,7 +255,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
@@ -251,7 +268,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "InstructorUserSeeder.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\InstructorUserSeeder.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\InstructorUserSeeder.cs",
@@ -264,7 +281,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "ProposalContractDtos.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Contracts\\ProposalContractDtos.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Contracts\\ProposalContractDtos.cs",
@@ -277,7 +294,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "ClubProposalsController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubProposalsController.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubProposalsController.cs",
@@ -290,7 +307,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "ClubDto.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Club\\ClubDto.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Club\\ClubDto.cs",
@@ -303,7 +320,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "ClubAdminService.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\ClubAdminService.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\ClubAdminService.cs",
@@ -316,7 +333,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "ClubAdminDtos.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\ClubAdmin\\ClubAdminDtos.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\ClubAdmin\\ClubAdminDtos.cs",
@@ -329,7 +346,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "ClubMembership.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\ClubMembership.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\ClubMembership.cs",
@@ -342,7 +359,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "StudentUserSeeder.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\StudentUserSeeder.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\StudentUserSeeder.cs",
@@ -355,7 +372,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\Entities\\User.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Domain\\Entities\\User.cs",
@@ -368,7 +385,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "IdentityUserSeeder.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\IdentityUserSeeder.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\IdentityUserSeeder.cs",
@@ -381,7 +398,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "LostAndFoundController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostAndFoundController.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostAndFoundController.cs",
@@ -394,7 +411,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\appsettings.json",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\appsettings.json",
@@ -407,7 +424,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\appsettings.Development.json",
@@ -420,7 +437,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "AuthService.Api.csproj",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
@@ -433,7 +450,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Program.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Program.cs",
@@ -446,7 +463,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\appsettings.json",
               "RelativeDocumentMoniker": "ApiGateway\\appsettings.json",
@@ -459,7 +476,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\Program.cs",
               "RelativeDocumentMoniker": "ApiGateway\\Program.cs",
@@ -472,7 +489,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "ClubManagementService.API.csproj",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
@@ -485,7 +502,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "ApplicationsController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ApplicationsController.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ApplicationsController.cs",
@@ -498,7 +515,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
@@ -511,7 +528,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "SmtpOptions.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
@@ -524,7 +541,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "Dockerfile",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\Dockerfile",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\Dockerfile",
@@ -537,7 +554,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "EmailSender.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
@@ -550,7 +567,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 32,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\appsettings.json",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\appsettings.json",
@@ -563,7 +580,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 33,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
@@ -576,7 +593,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 34,
               "Title": "ClubMembershipsController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
@@ -589,7 +606,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Microsoft.NET.Sdk.DefaultItems.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
@@ -602,7 +619,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 35,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\appsettings.Development.json",
@@ -615,20 +632,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "docker-compose.yml",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
               "RelativeDocumentMoniker": "docker-compose.yml",
               "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
               "RelativeToolTip": "docker-compose.yml",
-              "ViewState": "AgIAALcAAAAAAAAAAAAAAB0BAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAALsAAAAAAAAAAAAAACYBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
               "WhenOpened": "2026-04-21T16:42:08.334Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "Dockerfile",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
@@ -641,7 +658,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "S3ImageStorageService.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
@@ -654,7 +671,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",

@@ -155,6 +155,57 @@ public class EventRegistrationServiceTests : IDisposable
             Times.Once);
     }
 
+    [Fact]
+    public async Task RegisterAsync_ShouldCreateAttendanceTokenThatExpiresInFiveSeconds()
+    {
+        var userId = Guid.NewGuid();
+        const int eventId = 88;
+        DateTimeOffset capturedNow = default;
+        DateTimeOffset capturedExpiresAt = default;
+        var evt = new Event
+        {
+            Id = eventId,
+            Name = "Quick Check-In Event",
+            StartTime = DateTime.UtcNow.AddDays(1),
+            EndTime = DateTime.UtcNow.AddDays(1).AddHours(1),
+            Location = "Hall A",
+            SeatLimit = 30
+        };
+
+        _eventRepositoryMock.Setup(x => x.GetByIdAsync(eventId)).ReturnsAsync(evt);
+        _repositoryMock.Setup(x => x.GetByEventAndUserAsync(eventId, userId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((EventRegistration?)null);
+        _repositoryMock.Setup(x => x.GetByEventIdAsync(eventId)).ReturnsAsync(new List<EventRegistration>());
+        _repositoryMock.Setup(x => x.AddAsync(It.IsAny<EventRegistration>()))
+            .Callback<EventRegistration>(registration => registration.Id = 300)
+            .Returns(Task.CompletedTask);
+        _repositoryMock.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
+        _ticketJwtServiceMock.Setup(x => x.CreateTicketJwt(
+                userId,
+                eventId,
+                It.IsAny<string>(),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<DateTimeOffset>()))
+            .Callback<Guid, int, string, DateTimeOffset, DateTimeOffset>((_, _, _, now, expiresAt) =>
+            {
+                capturedNow = now;
+                capturedExpiresAt = expiresAt;
+            })
+            .Returns("ticket-jwt");
+
+        var result = await _service.RegisterAsync(eventId, userId);
+
+        result.EventId.Should().Be(eventId);
+        (capturedExpiresAt - capturedNow).Should().BeCloseTo(TimeSpan.FromSeconds(5), TimeSpan.FromMilliseconds(100));
+        _ticketJwtServiceMock.Verify(x => x.CreateTicketJwt(
+                userId,
+                eventId,
+                It.IsAny<string>(),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<DateTimeOffset>()),
+            Times.Once);
+    }
+
     public void Dispose()
     {
         _dbContext.Dispose();

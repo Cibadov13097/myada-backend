@@ -1111,12 +1111,16 @@ public sealed class ClubAdminService : IClubAdminService
                 ClubId = key,
                 Name = e.Name,
                 Description = e.Description,
+                ImageUrl = e.ImageUrl,
                 StartTime = e.StartTime,
                 EndTime = e.EndTime,
                 Location = e.Location,
                 BuildingId = e.BuildingId,
                 RoomId = e.RoomId,
                 SeatLimit = e.SeatLimit,
+                Requirements = e.Requirements,
+                Prerequisites = e.Prerequisites,
+                Notes = e.Notes,
                 Status = e.Status.ToString()
             })
             .ToList();
@@ -1146,12 +1150,16 @@ public sealed class ClubAdminService : IClubAdminService
             ClubId = key,
             Name = updated.Name,
             Description = updated.Description,
+            ImageUrl = updated.ImageUrl,
             StartTime = updated.StartTime,
             EndTime = updated.EndTime,
             Location = updated.Location,
             BuildingId = updated.BuildingId,
             RoomId = updated.RoomId,
             SeatLimit = updated.SeatLimit,
+            Requirements = updated.Requirements,
+            Prerequisites = updated.Prerequisites,
+            Notes = updated.Notes,
             Status = updated.Status.ToString()
         };
     }

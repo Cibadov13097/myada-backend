@@ -47,7 +47,7 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "false",
+          "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
         },
@@ -132,7 +132,7 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "false",
+          "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
         },
@@ -218,7 +218,7 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "false",
+          "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
         },
@@ -341,7 +341,7 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "false",
+          "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
         },

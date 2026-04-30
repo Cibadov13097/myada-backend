@@ -1,8 +1,11 @@
 using ClubManagementService.API.Controllers;
+using ClubManagementService.API.Models;
 using ClubManagementService.Application.DTOs.Contracts;
 using ClubManagementService.Application.DTOs.Club;
 using ClubManagementService.Application.DTOs.ClubAdmin;
+using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.Interfaces.Services;
+using ClubManagementService.Domain.Enums;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -491,6 +494,96 @@ public class ClubAdminControllerTests
         }, CancellationToken.None);
 
         result.Should().BeOfType<BadRequestObjectResult>();
+        storage.VerifyAll();
+    }
+
+    [Fact]
+    public async Task PatchEvent_ShouldUploadAttachedImageAndPassStoredUrlToService()
+    {
+        var clubAdmin = new Mock<IClubAdminService>();
+        clubAdmin.Setup(x => x.PatchEventAsync(
+                "1",
+                "9",
+                It.Is<UpdateEventDto>(dto =>
+                    dto.Name == "Launch Day"
+                    && dto.ImageUrl == "https://bucket.example/events/1/poster.png"
+                    && dto.Requirements == "Laptop"
+                    && dto.Status == ClubStatus.Approved),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ClubAdminEventAdminDto
+            {
+                Id = "9",
+                ClubId = "1",
+                Name = "Launch Day",
+                Description = "Event description",
+                ImageUrl = "https://bucket.example/events/1/poster.png",
+                StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
+                EndTime = new DateTime(2026, 4, 30, 12, 0, 0, DateTimeKind.Utc),
+                Location = "Main Hall",
+                SeatLimit = 120,
+                Requirements = "Laptop",
+                Prerequisites = "None",
+                Notes = "Bring ID",
+                Status = ClubStatus.Approved.ToString()
+            });
+
+        var eventService = new Mock<IEventService>();
+        eventService.Setup(x => x.GetByIdAsync(9)).ReturnsAsync(new EventDto
+        {
+            Id = 9,
+            ClubId = 1,
+            Name = "Launch Day",
+            Description = "Event description",
+            ImageUrl = "https://bucket.example/events/1/existing.png",
+            StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
+            EndTime = new DateTime(2026, 4, 30, 12, 0, 0, DateTimeKind.Utc),
+            Location = "Main Hall",
+            SeatLimit = 120,
+            Requirements = "Laptop",
+            Prerequisites = "None",
+            Notes = "Bring ID",
+            ApprovedBy = Guid.NewGuid(),
+            Status = ClubStatus.Pending
+        });
+
+        var storage = new Mock<IImageStorageService>();
+        storage.Setup(x => x.IsSupportedImage("poster.png")).Returns(true);
+        storage.Setup(x => x.UploadImageAsync(
+                It.IsAny<Stream>(),
+                "poster.png",
+                "image/png",
+                "events/1",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync("https://bucket.example/events/1/poster.png");
+        storage.Setup(x => x.DeleteFileAsync("https://bucket.example/events/1/existing.png", It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var controller = new ClubAdminController(clubAdmin.Object, storage.Object, eventService.Object);
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "multipart/form-data; boundary=test";
+        httpContext.Features.Set<IFormFeature>(new TestFormFeature(new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection
+        {
+            CreateFormFile("imageFile", "poster.png", "image/png")
+        })));
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.PatchEvent("1", "9", new UpdateEventFormRequest
+        {
+            Name = "Launch Day",
+            Description = "Event description",
+            StartTime = new DateTime(2026, 4, 30, 10, 0, 0, DateTimeKind.Utc),
+            EndTime = new DateTime(2026, 4, 30, 12, 0, 0, DateTimeKind.Utc),
+            Location = "Main Hall",
+            SeatLimit = 120,
+            Requirements = "Laptop",
+            Prerequisites = "None",
+            Notes = "Bring ID",
+            Status = ClubStatus.Approved
+        }, CancellationToken.None);
+
+        result.Should().BeOfType<OkObjectResult>();
+        clubAdmin.VerifyAll();
+        eventService.VerifyAll();
         storage.VerifyAll();
     }
 
