@@ -18,6 +18,7 @@ namespace NotificationService.Infrastructure.Messaging;
 
 public class RabbitMqConsumer : BackgroundService
 {
+    private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<RabbitMqConsumer> _logger;
     private readonly ConnectionFactory _factory;
@@ -43,73 +44,85 @@ public class RabbitMqConsumer : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            using var connection = _factory.CreateConnection();
-            using var channel = connection.CreateModel();
-
-            channel.QueueDeclare(
-                queue: QueueNames.Notification,
-                durable: true,
-                exclusive: false,
-                autoDelete: false);
-
-            _logger.LogInformation(
-                "RabbitMQ notification consumer connected to host '{HostName}' and is listening on queue '{QueueName}'.",
-                _factory.HostName,
-                QueueNames.Notification);
-
-            var consumer = new EventingBasicConsumer(channel);
-
-            consumer.Received += async (_, ea) =>
+            try
             {
+                using var connection = _factory.CreateConnection();
+                using var channel = connection.CreateModel();
+
+                channel.QueueDeclare(
+                    queue: QueueNames.Notification,
+                    durable: true,
+                    exclusive: false,
+                    autoDelete: false);
+
+                _logger.LogInformation(
+                    "RabbitMQ notification consumer connected to host '{HostName}' and is listening on queue '{QueueName}'.",
+                    _factory.HostName,
+                    QueueNames.Notification);
+
+                var consumer = new EventingBasicConsumer(channel);
+
+                consumer.Received += async (_, ea) =>
+                {
+                    try
+                    {
+                        var rawMessage = Encoding.UTF8.GetString(ea.Body.ToArray());
+                        var envelope = BuildNotification(rawMessage);
+
+                        if (envelope is null)
+                        {
+                            _logger.LogWarning("Unsupported notification payload received from queue.");
+                            channel.BasicAck(ea.DeliveryTag, false);
+                            return;
+                        }
+
+                        await PersistAndDispatchAsync(envelope, stoppingToken);
+                        channel.BasicAck(ea.DeliveryTag, false);
+                    }
+                    catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                    {
+                        channel.BasicNack(ea.DeliveryTag, false, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to process notification queue message.");
+                        channel.BasicNack(ea.DeliveryTag, false, true);
+                    }
+                };
+
+                channel.BasicConsume(
+                    queue: QueueNames.Notification,
+                    autoAck: false,
+                    consumer: consumer);
+
                 try
                 {
-                    var rawMessage = Encoding.UTF8.GetString(ea.Body.ToArray());
-                    var envelope = BuildNotification(rawMessage);
+                    await Task.Delay(Timeout.Infinite, stoppingToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    _logger.LogInformation("RabbitMQ notification consumer is stopping.");
+                }
+            }
+            catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "RabbitMQ notification consumer could not connect to host '{HostName}'. Retrying in {RetryDelaySeconds} seconds.",
+                    _factory.HostName,
+                    RetryDelay.TotalSeconds);
 
-                    if (envelope is null)
-                    {
-                        _logger.LogWarning("Unsupported notification payload received from queue.");
-                        channel.BasicAck(ea.DeliveryTag, false);
-                        return;
-                    }
-
-                    await PersistAndDispatchAsync(envelope, stoppingToken);
-                    channel.BasicAck(ea.DeliveryTag, false);
+                try
+                {
+                    await Task.Delay(RetryDelay, stoppingToken);
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                 {
-                    channel.BasicNack(ea.DeliveryTag, false, true);
+                    break;
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to process notification queue message.");
-                    channel.BasicNack(ea.DeliveryTag, false, true);
-                }
-            };
-
-            channel.BasicConsume(
-                queue: QueueNames.Notification,
-                autoAck: false,
-                consumer: consumer);
-
-            try
-            {
-                await Task.Delay(Timeout.Infinite, stoppingToken);
             }
-            catch (TaskCanceledException)
-            {
-                _logger.LogInformation("RabbitMQ notification consumer is stopping.");
-            }
-        }
-        catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
-        {
-            _logger.LogError(
-                ex,
-                "RabbitMQ notification consumer could not connect to host '{HostName}'.",
-                _factory.HostName);
-            throw;
         }
     }
 

@@ -376,6 +376,7 @@ Notification list/detail/delete + direct email send.
 | Method | URL |
 |---|---|
 | GET | http://13.60.31.141:500/notification/api/v1/notifications |
+| GET | http://13.60.31.141:500/notification/api/v1/notifications/me |
 | DELETE | http://13.60.31.141:500/notification/api/v1/notifications/{id:guid} |
 | GET | http://13.60.31.141:500/notification/api/v1/notifications/{id:guid} |
 | POST | http://13.60.31.141:500/notification/api/v1/notifications/email |

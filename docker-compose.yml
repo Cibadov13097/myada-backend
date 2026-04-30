@@ -21,6 +21,12 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-myada}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-myada-password}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
     restart: always
 
   myada-redis:
@@ -133,9 +139,12 @@ services:
       S3__AutoCreateBucket: ${LOSTFOUND_S3_AUTO_CREATE_BUCKET:-false}
       MYADA_LOG_DIR: /app/logs
     depends_on:
-      - authservice
-      - myada
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      authservice:
+        condition: service_started
+      myada:
+        condition: service_started
     restart: always
 
   clubmanagementservice:
@@ -174,9 +183,12 @@ services:
       Tickets__Audience: myada-scanner
       MYADA_LOG_DIR: /app/logs
     depends_on:
-      - authservice
-      - myada
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      authservice:
+        condition: service_started
+      myada:
+        condition: service_started
     restart: always
 
   notificationservice:
@@ -208,9 +220,12 @@ services:
       SMTP__UseDefaultCredentials: ${NOTIFICATION_SMTP_USE_DEFAULT_CREDENTIALS:-false}
       MYADA_LOG_DIR: /app/logs
     depends_on:
-      - authservice
-      - rabbitmq
-      - myada
+      rabbitmq:
+        condition: service_healthy
+      authservice:
+        condition: service_started
+      myada:
+        condition: service_started
     restart: always
 
   callservice:
@@ -264,8 +279,10 @@ services:
       Auth__JwksUrl: http://authservice:8080/.well-known/jwks.json
       MYADA_LOG_DIR: /app/logs
     depends_on:
-      - myada
-      - authservice
+      myada:
+        condition: service_started
+      authservice:
+        condition: service_started
     restart: always
 
   myadasupportservice:
@@ -301,8 +318,12 @@ services:
       S3__AutoCreateBucket: ${SUPPORT_S3_AUTO_CREATE_BUCKET:-false}
       MYADA_LOG_DIR: /app/logs
     depends_on:
-      - myada
-      - authservice
+      rabbitmq:
+        condition: service_healthy
+      myada:
+        condition: service_started
+      authservice:
+        condition: service_started
     restart: always
 
   myadaattendanceservice:

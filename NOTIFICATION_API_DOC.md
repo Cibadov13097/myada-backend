@@ -59,7 +59,6 @@ Behavior:
 
 - notification reads are always scoped to the signed-in user
 - visible records are notifications where `recipientUserId == currentUserId`
-- legacy records with `recipientUserId = null` are also visible
 - delete only works for records where `recipientUserId == currentUserId`
 
 This endpoint does not require bearer auth:
@@ -234,6 +233,7 @@ Behavior:
 - if `recipientUserId` is omitted and the request is authenticated, ownership falls back to the authenticated user
 - if `recipientUserId` is omitted and the request is unauthenticated, ownership is stored as `null`
 - the outgoing email body is plain text
+- notifications created with `recipientUserId = null` are not returned from authenticated read endpoints
 
 Success response:
 
