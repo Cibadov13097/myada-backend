@@ -28,6 +28,12 @@ namespace LostFoundService.Infrastructure.Persistence.Context
             modelBuilder.Entity<LostFoundItem>()
                 .HasQueryFilter(x => !x.IsDeleted);
 
+            modelBuilder.Entity<LostFoundItemClaim>()
+                .HasQueryFilter(x => !x.IsDeleted && !x.LostFoundItem.IsDeleted);
+
+            modelBuilder.Entity<LostFoundItemImage>()
+                .HasQueryFilter(x => !x.LostFoundItem.IsDeleted);
+
             modelBuilder.HasDefaultSchema("lostfound");
             base.OnModelCreating(modelBuilder);
         }

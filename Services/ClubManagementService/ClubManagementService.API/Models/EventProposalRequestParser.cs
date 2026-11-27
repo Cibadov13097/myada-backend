@@ -36,7 +36,10 @@ internal static class EventProposalRequestParser
             Description = form["description"],
             Objectives = form["objectives"],
             ImageUrl = FirstNonEmpty(form["imageUrl"], form["posterUrl"]),
-            ImageFile = form.Files.GetFile("imageUrl") ?? form.Files.GetFile("imageFile") ?? form.Files.GetFile("posterFile"),
+            ImageFile = form.Files.GetFile("imageFile")
+                ?? form.Files.GetFile("image")
+                ?? form.Files.GetFile("posterFile")
+                ?? form.Files.GetFile("imageUrl"),
             SubEventsJson = FirstNonEmpty(form["subEventsJson"], form["subEvents"]),
             LogisticsJson = FirstNonEmpty(form["logisticsJson"], form["logistics"]),
             SubmittedByOrganization = form["submittedByOrganization"]

@@ -127,9 +127,10 @@ public sealed class ClubProposalCreateRequestBodyOperationFilter : IOperationFil
         Description = description
     };
 
-    private static OpenApiSchema BinarySchema() => new()
+    private static OpenApiSchema BinarySchema(string? description = null) => new()
     {
         Type = "string",
-        Format = "binary"
+        Format = "binary",
+        Description = description
     };
 }

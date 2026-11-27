@@ -15,7 +15,7 @@ public sealed class LostFoundItemSearchQuery
     public bool IncludeAdminFields { get; set; }
 
     /// <summary>
-    /// When true, items with admin workflow Received or Delivered are omitted (public / frontend catalog).
+    /// When true, items that have completed delivery are omitted from the public / frontend catalog.
     /// </summary>
     public bool ExcludeTerminalAdminItems { get; set; }
 }

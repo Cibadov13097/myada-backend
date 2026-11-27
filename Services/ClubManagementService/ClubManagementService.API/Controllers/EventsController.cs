@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ClubManagementService.API.Extensions;
+using ClubManagementService.API.Models;
 using ClubManagementService.API.Security;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.DTOs.EventRegistration;
@@ -297,9 +298,11 @@ public class EventsController : ControllerBase
     }
 
     [HttpDelete("{eventId:int}")]
-    public async Task<IActionResult> Delete(int eventId)
+    public async Task<IActionResult> Delete(int eventId, CancellationToken cancellationToken)
     {
+        var existing = await _eventService.GetByIdAsync(eventId).ConfigureAwait(false);
         await _eventService.DeleteAsync(eventId);
+        await TryDeleteStoredFileAsync(existing?.ImageUrl, cancellationToken).ConfigureAwait(false);
         return NoContent();
     }
 
@@ -389,77 +392,5 @@ public class EventsController : ControllerBase
     public sealed class CheckInRequest
     {
         public string Jwt { get; set; } = string.Empty;
-    }
-
-    public sealed class CreateEventFormRequest : EventFormRequestBase
-    {
-        public int ClubId { get; set; }
-
-        public CreateEventDto ToCreateDto(Guid approvedBy, string? imageUrl)
-        {
-            return new CreateEventDto
-            {
-                ClubId = ClubId,
-                Name = Name,
-                Description = Description,
-                ImageUrl = NormalizeOptionalText(imageUrl),
-                StartTime = StartTime,
-                EndTime = EndTime,
-                Location = Location,
-                BuildingId = BuildingId,
-                RoomId = RoomId,
-                SeatLimit = SeatLimit,
-                Requirements = Requirements,
-                Prerequisites = Prerequisites,
-                Notes = Notes,
-                ApprovedBy = approvedBy
-            };
-        }
-    }
-
-    public sealed class UpdateEventFormRequest : EventFormRequestBase
-    {
-        public ClubStatus Status { get; set; }
-
-        public UpdateEventDto ToUpdateDto(string? imageUrl)
-        {
-            return new UpdateEventDto
-            {
-                Name = Name,
-                Description = Description,
-                ImageUrl = NormalizeOptionalText(imageUrl),
-                StartTime = StartTime,
-                EndTime = EndTime,
-                Location = Location,
-                BuildingId = BuildingId,
-                RoomId = RoomId,
-                SeatLimit = SeatLimit,
-                Requirements = Requirements,
-                Prerequisites = Prerequisites,
-                Notes = Notes,
-                Status = Status
-            };
-        }
-    }
-
-    public abstract class EventFormRequestBase
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public string Location { get; set; } = string.Empty;
-        public int? BuildingId { get; set; }
-        public int? RoomId { get; set; }
-        public int SeatLimit { get; set; }
-        public string Requirements { get; set; } = string.Empty;
-        public string Prerequisites { get; set; } = string.Empty;
-        public string Notes { get; set; } = string.Empty;
-        public IFormFile? ImageFile { get; set; }
-
-        protected static string? NormalizeOptionalText(string? value)
-        {
-            return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-        }
     }
 }

@@ -453,7 +453,7 @@ public class LostAndFoundService : ILostAndFoundService
     }
 
     private static bool IsTerminalAdminStatus(LostFoundAdminStatus? adminStatus) =>
-        adminStatus is LostFoundAdminStatus.Received or LostFoundAdminStatus.Delivered;
+        adminStatus is LostFoundAdminStatus.Delivered;
 
     private static void ValidateCreateCommand(CreateLostFoundItemCommand command, LostFoundItemType type)
     {

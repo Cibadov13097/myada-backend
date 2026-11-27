@@ -18,6 +18,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
 
     private IQueryable<LostFoundItem> ItemsWithRelations(bool asNoTracking, bool includeImages = true, string? currentUserId = null)
     {
+        var includeCurrentUserClaims = !string.IsNullOrWhiteSpace(currentUserId);
         IQueryable<LostFoundItem> query = _context.LostFoundItems
             .Include(x => x.Category);
 
@@ -26,9 +27,14 @@ public class LostAndFoundRepository : ILostAndFoundRepository
             query = query.Include(x => x.Images);
         }
 
-        if (!string.IsNullOrWhiteSpace(currentUserId))
+        if (includeCurrentUserClaims)
         {
             query = query.Include(x => x.Claims.Where(c => c.UserId == currentUserId));
+        }
+
+        if (includeImages && includeCurrentUserClaims)
+        {
+            query = query.AsSplitQuery();
         }
 
         return asNoTracking ? query.AsNoTracking() : query;
@@ -137,8 +143,7 @@ public class LostAndFoundRepository : ILostAndFoundRepository
     {
         return query.Where(x =>
             x.AdminStatus == null ||
-            (x.AdminStatus != LostFoundAdminStatus.Received &&
-             x.AdminStatus != LostFoundAdminStatus.Delivered));
+            x.AdminStatus != LostFoundAdminStatus.Delivered);
     }
 
     public Task<bool> CategoryExistsAsync(int categoryId)

@@ -242,7 +242,7 @@ public class LostAndFoundController : ControllerBase
                 Limit = limit,
                 CurrentUserId = TryGetUserId(),
                 IncludeAdminFields = false,
-                ExcludeTerminalAdminItems = !IsAdmin()
+                ExcludeTerminalAdminItems = false
             });
 
             return Ok(new ItemListResponse

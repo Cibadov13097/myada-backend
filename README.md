@@ -90,7 +90,7 @@ Swagger UI is enabled when a service runs with `ASPNETCORE_ENVIRONMENT=Developme
 
 ## Prerequisites
 
-- [.NET SDK 8](https://dotnet.microsoft.com/download/dotnet/8.0) (`global.json` pins `8.0.100` and rolls forward to the latest 8.x feature band)
+- [.NET SDK 8](https://dotnet.microsoft.com/download/dotnet/8.0) (`global.json` pins `8.0.420` and rolls forward to the latest installed major)
 - Docker Desktop (or Docker Engine + Compose v2)
 - An SMTP account if you start the notification service (Compose requires the variables below)
 - Optional: MinIO or another S3-compatible store on `localhost:9000` for photo and attachment uploads

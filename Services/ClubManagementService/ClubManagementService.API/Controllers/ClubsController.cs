@@ -105,10 +105,25 @@ public class ClubsController : ControllerBase
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        return Ok(ToPublicClubDetail(dto, employees));
+        var announcements = await _db.ClubAnnouncements
+            .AsNoTracking()
+            .Where(a => a.ClubId == clubId)
+            .OrderByDescending(a => a.CreatedAt)
+            .ThenByDescending(a => a.Id)
+            .Select(a => new
+            {
+                id = a.Id.ToString(),
+                title = a.Title,
+                message = a.Message,
+                createdAt = a.CreatedAt.ToString("O")
+            })
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        return Ok(ToPublicClubDetail(dto, employees, announcements.Cast<object>().ToList()));
     }
 
-    private static object ToPublicClubDetail(ClubDto dto, IReadOnlyList<object> officers)
+    private static object ToPublicClubDetail(ClubDto dto, IReadOnlyList<object> officers, IReadOnlyList<object> announcements)
     {
         var links = dto.SocialLinks;
         var resources = dto.Resources ?? new List<ClubResourceItemDto>();
@@ -135,7 +150,7 @@ public class ClubsController : ControllerBase
             focusAreas = dto.FocusAreas,
             officers,
             memberProfiles = Array.Empty<object>(),
-            announcements = Array.Empty<object>(),
+            announcements,
             email = dto.Email,
             website = string.IsNullOrWhiteSpace(links?.Website) ? null : links.Website,
             instagram = string.IsNullOrWhiteSpace(links?.Instagram) ? null : links.Instagram,

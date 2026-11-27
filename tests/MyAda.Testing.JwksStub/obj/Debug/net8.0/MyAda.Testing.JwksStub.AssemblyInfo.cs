@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyAda.Testing.JwksStub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a5fada15d3bad0aba7cfd07d453187e3cd4f46fa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5936ab35450c561823ab8e30b553c5c949bd9bc2")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyAda.Testing.JwksStub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyAda.Testing.JwksStub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

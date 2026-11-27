@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using ClubManagementService.API.Controllers;
+using ClubManagementService.API.Models;
 using ClubManagementService.Application.DTOs.Event;
 using ClubManagementService.Application.Interfaces.Repositories;
 using ClubManagementService.Application.Interfaces.Services;
@@ -64,7 +65,7 @@ public class EventsControllerTests
 
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
-        var result = await controller.Create(new EventsController.CreateEventFormRequest
+        var result = await controller.Create(new CreateEventFormRequest
         {
             ClubId = 3,
             Name = "Hackathon",
@@ -104,7 +105,7 @@ public class EventsControllerTests
 
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
-        var result = await controller.Create(new EventsController.CreateEventFormRequest
+        var result = await controller.Create(new CreateEventFormRequest
         {
             ClubId = 3,
             Name = "Hackathon",
@@ -178,7 +179,7 @@ public class EventsControllerTests
             HttpContext = BuildMultipartHttpContext(new FormCollection(new Dictionary<string, StringValues>()))
         };
 
-        var result = await controller.Update(15, new EventsController.UpdateEventFormRequest
+        var result = await controller.Update(15, new UpdateEventFormRequest
         {
             Name = "Hackathon",
             Description = "Updated description",

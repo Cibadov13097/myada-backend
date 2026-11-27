@@ -1,6 +1,13 @@
-# Club Management API — Frontend integration guide
+# Club Management API - Frontend integration guide
 
-This document describes backend behavior and contracts **implemented in this project** for FrontWeb / SPA integration. Base URL is assumed to be `{CLUB_API_BASE}/api/v1` (no trailing slash on the base). For the deployment shared in this thread, use `https://myada.site/club/api/v1`. API versioning uses `v1` in the path.
+This document describes backend behavior and contracts **implemented in this project** for FrontWeb / SPA integration. Use `https://myada.site/club` as the public service base and `https://myada.site/club/api/v1` as the versioned API base, with no trailing slash. API versioning uses `v1` in the path.
+
+Recommended frontend constants:
+
+```ts
+const CLUB_API_BASE = "https://myada.site/club";
+const CLUB_API_V1 = `${CLUB_API_BASE}/api/v1`;
+```
 
 Unless noted otherwise, responses are wrapped by **AutoWrapper** as `{ "result": ... }` or `{ "data": ... }` (depending on configuration). Your `unwrapApiResponse` should read **`result`** or **`data`**.
 
@@ -78,7 +85,7 @@ vision=vision text
 **Example multipart cURL**
 
 ```bash
-curl -X POST "{CLUB_API_BASE}/api/v1/club-proposals" \
+curl -X POST "https://myada.site/club/api/v1/club-proposals" \
   -F "organizationId=123456789" \
   -F "name=Club Propose" \
   -F "description=Good to go" \
@@ -327,7 +334,7 @@ Shared shape (`EventProposalSubmitDto`):
 | `resources`, `documents` | Same array when present; **`null`** when there are no downloadable links. Each item is `{ "url", "title?", "id?" }` after normalization (see `ClubResourcesJson`). |
 | `about` | Club description |
 | `officers` | Array sourced from DB table `club.ClubEmployees`, ordered by insertion. Each item is `{ "id", "userId", "positionId" }` where `positionId` may be `null`. |
-| Other fields | `memberProfiles`, `announcements` are still empty placeholders |
+| Other fields | `memberProfiles` is still an empty placeholder. `announcements` now returns persisted DB rows ordered newest-first as `{ "id", "title", "message", "createdAt" }`. |
 
 **Legacy `focusAreas` entries**
 

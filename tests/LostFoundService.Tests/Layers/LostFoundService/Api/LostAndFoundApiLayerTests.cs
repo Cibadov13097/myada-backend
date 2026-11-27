@@ -19,6 +19,39 @@ namespace LostFoundService.Tests.Layers.Api;
 public sealed class LostAndFoundApiLayerTests
 {
     [Fact]
+    public async Task GetItems_does_not_exclude_any_status_for_regular_users()
+    {
+        var lostAndFoundService = new Mock<ILostAndFoundService>();
+        LostFoundItemSearchQuery? capturedQuery = null;
+
+        lostAndFoundService
+            .Setup(service => service.GetItemsAsync(It.IsAny<LostFoundItemSearchQuery>()))
+            .Callback<LostFoundItemSearchQuery>(query => capturedQuery = query)
+            .ReturnsAsync(new LostFoundItemListResult
+            {
+                Items = new List<LostFoundItem>(),
+                Total = 0
+            });
+
+        var controller = BuildController(lostAndFoundService: lostAndFoundService.Object);
+
+        var result = await controller.GetItems(
+            q: null,
+            search: null,
+            type: null,
+            postedBy: null,
+            categoryId: null,
+            status: null,
+            adminStatus: null,
+            page: 1,
+            limit: 10);
+
+        result.Result.Should().BeOfType<OkObjectResult>();
+        capturedQuery.Should().NotBeNull();
+        capturedQuery!.ExcludeTerminalAdminItems.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task CreateFoundReport_returns_bad_request_when_json_uses_image_url_field()
     {
         var controller = BuildController();

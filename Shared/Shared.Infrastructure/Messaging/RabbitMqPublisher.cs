@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
@@ -7,13 +8,22 @@ namespace Shared.Shared.Infrastructure;
 
 public class RabbitMqPublisher : IRabbitMqPublisher
 {
+    private const string DefaultHost = "rabbitmq";
+    private const string DefaultUser = "myada";
+    private const string DefaultPass = "myada-password";
     private readonly ConnectionFactory _factory;
 
-    public RabbitMqPublisher()
+    public RabbitMqPublisher(IConfiguration configuration)
     {
+        var hostName = configuration["RabbitMQ:Host"];
+        var userName = configuration["RabbitMQ:Username"];
+        var password = configuration["RabbitMQ:Password"];
+
         _factory = new ConnectionFactory()
         {
-            HostName = "rabbitmq"
+            HostName = string.IsNullOrWhiteSpace(hostName) ? DefaultHost : hostName,
+            UserName = string.IsNullOrWhiteSpace(userName) ? DefaultUser : userName,
+            Password = string.IsNullOrWhiteSpace(password) ? DefaultPass : password
         };
     }
 

@@ -128,12 +128,16 @@ public sealed class ClubAdminEventAdminDto
     public string ClubId { get; init; } = string.Empty;
     public string Name { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
+    public string? ImageUrl { get; init; }
     public DateTime StartTime { get; init; }
     public DateTime EndTime { get; init; }
     public string Location { get; init; } = string.Empty;
     public int? BuildingId { get; init; }
     public int? RoomId { get; init; }
     public int SeatLimit { get; init; }
+    public string Requirements { get; init; } = string.Empty;
+    public string Prerequisites { get; init; } = string.Empty;
+    public string Notes { get; init; } = string.Empty;
     public string Status { get; init; } = string.Empty;
 }
 

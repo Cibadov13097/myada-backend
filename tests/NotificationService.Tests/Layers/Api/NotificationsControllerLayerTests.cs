@@ -19,6 +19,26 @@ public sealed class NotificationsControllerLayerTests
 {
     private static readonly Guid CurrentUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
 
+    private sealed class ConcurrencyFailingNotificationDbContext : NotificationDbContext
+    {
+        public ConcurrencyFailingNotificationDbContext(DbContextOptions options)
+            : base(options)
+        {
+        }
+
+        public bool ThrowOnSaveChanges { get; set; }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            if (ThrowOnSaveChanges)
+            {
+                throw new DbUpdateConcurrencyException("Simulated concurrent delete.");
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+    }
+
     private static NotificationDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<NotificationDbContext>()
@@ -33,9 +53,11 @@ public sealed class NotificationsControllerLayerTests
         NotificationDbContext db,
         INotificationService notificationService)
     {
+        var realtimeNotifier = new Mock<INotificationRealtimeNotifier>();
         var controller = new NotificationsController(
             db,
             notificationService,
+            realtimeNotifier.Object,
             NullLogger<NotificationsController>.Instance);
 
         controller.ControllerContext = new ControllerContext
@@ -174,6 +196,38 @@ public sealed class NotificationsControllerLayerTests
     }
 
     [Fact]
+    public async Task Delete_returns_no_content_when_row_was_deleted_concurrently()
+    {
+        var options = new DbContextOptionsBuilder<NotificationDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var db = new ConcurrencyFailingNotificationDbContext(options);
+        db.Database.EnsureCreated();
+
+        var id = Guid.NewGuid();
+        db.Notifications.Add(new Notification
+        {
+            Id = id,
+            Type = "t",
+            Message = "m",
+            CreatedAt = DateTime.UtcNow,
+            RecipientUserId = CurrentUserId,
+            NotificationType = NotificationType.Email
+        });
+        await db.SaveChangesAsync();
+
+        db.ThrowOnSaveChanges = true;
+
+        var mock = new Mock<INotificationService>();
+        var controller = CreateController(db, mock.Object);
+
+        var result = await controller.Delete(id);
+
+        result.Should().BeOfType<NoContentResult>();
+    }
+
+    [Fact]
     public async Task SendEmail_success_persists_row()
     {
         await using var db = CreateDbContext();
@@ -191,6 +245,49 @@ public sealed class NotificationsControllerLayerTests
 
         result.Should().BeOfType<OkObjectResult>();
         (await db.Notifications.CountAsync()).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task SendEmail_with_current_user_broadcasts_realtime_notification()
+    {
+        await using var db = CreateDbContext();
+        var notificationService = new Mock<INotificationService>();
+        notificationService
+            .Setup(s => s.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var realtimeNotifier = new Mock<INotificationRealtimeNotifier>();
+        var controller = new NotificationsController(
+            db,
+            notificationService.Object,
+            realtimeNotifier.Object,
+            NullLogger<NotificationsController>.Instance)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(
+                        new ClaimsIdentity(
+                        [
+                            new Claim("sub", CurrentUserId.ToString())
+                        ],
+                        authenticationType: "TestAuth"))
+                }
+            }
+        };
+
+        await controller.SendEmail(new NotificationsController.SendEmailNotificationRequest
+        {
+            ToEmail = "user@example.com",
+            Subject = "Hello",
+            Message = "Body"
+        }, CancellationToken.None);
+
+        realtimeNotifier.Verify(
+            notifier => notifier.NotifyNotificationCreatedAsync(
+                It.Is<Notification>(n => n.RecipientUserId == CurrentUserId && n.NotificationType == NotificationType.Email),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]

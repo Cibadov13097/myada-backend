@@ -1,6 +1,6 @@
 # Club Management API Documentation
 
-Last updated: 2026-04-29
+Last updated: 2026-04-30
 
 This document is based on the current source code and gateway configuration in this repository.
 
@@ -14,9 +14,10 @@ The Club Management service uses URL versioning. The main path format is:
 
 `/api/v1/...`
 
-Use this base in frontend and integration code:
+Use these bases in frontend and integration code:
 
-`base = https://myada.site/club`
+- Public gateway base: `https://myada.site/club`
+- Versioned API base: `https://myada.site/club/api/v1`
 
 ---
 
@@ -24,7 +25,8 @@ Use this base in frontend and integration code:
 
 | Environment | Base URL | Notes |
 |-------------|----------|-------|
-| Deployment base shared in this thread | `https://myada.site/club` | Use this as the full API host base. |
+| Deployment base shared in this thread | `https://myada.site/club` | Public gateway base for the Club service. |
+| Deployment versioned API base | `https://myada.site/club/api/v1` | Recommended base for frontend and integration calls. |
 | Repo-local gateway | `http://localhost:5000` | From `docker-compose.yml` (`apigateway` maps `5000:8080`). |
 | Local service | `http://localhost:5003` | Local docker/service port. |
 | Swagger UI | `https://myada.site/club/swagger/index.html` | Exposed only when the club service runs in `Development`. |
@@ -42,6 +44,34 @@ Important gateway rule:
 - Wrong: `https://myada.site/api/v1/categories`
 
 Append `/api/v1/...` directly to the provided deployment base.
+
+---
+
+## Quick route index
+
+Use `https://myada.site/club/api/v1` as the base for the groups below.
+
+- `/categories` - category CRUD
+- `/clubs` - club listing, detail, join applications
+- `/events` - event listing, registration, tickets, check-in
+- `/event-registrations` - event registration CRUD
+- `/club-memberships` - club membership CRUD
+- `/subevents` - subevent CRUD
+- `/vacancies` - vacancy listing and vacancy applications
+- `/job-applications` - submitted job application records
+- `/club-proposals` - new club proposal submission
+- `/applications`, `/interviews`, `/slots` - interview scheduling flows
+- `/users/{userId}` and `/users/me` - user-specific club data
+- `/student-services` - student services moderation and approvals
+- `/club-admin/{clubId}` - club admin workspace routes
+- `/club-position-requirements` - club position requirement CRUD
+
+Representative full URLs:
+
+- `https://myada.site/club/api/v1/clubs`
+- `https://myada.site/club/api/v1/events`
+- `https://myada.site/club/api/v1/club-proposals`
+- `https://myada.site/club/api/v1/student-services/dashboard`
 
 ---
 
@@ -583,7 +613,7 @@ Most routes in this controller also require the caller to be a MyAda administrat
 
 | Method | Path | Notes |
 |--------|------|-------|
-| `POST` | `/api/v1/student-services/events/proposals` | Admin-only. Accepts `application/json` or `multipart/form-data`. |
+| `POST` | `/api/v1/student-services/events/proposals` | Admin-only. Accepts `application/json` or `multipart/form-data`. Use `imageFile` for direct uploads, or `imageUrl` when the image is already hosted. |
 | `GET` | `/api/v1/student-services/events/proposals` | Admin-only. Query: `search`, `status`, `page`, `limit`. |
 | `GET` | `/api/v1/student-services/events/proposals/{proposalId}` | Admin-only. |
 | `POST` | `/api/v1/student-services/events/proposals/{proposalId}/approve` | Admin-only. Body: optional `EventProposalApproveDto`. |
@@ -757,6 +787,31 @@ Representative position response:
 | `PATCH` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Body: `{ "entered": bool }`. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/events/{eventId}/attendees/{attendeeId}` | Delete attendee. |
 
+`POST /api/v1/club-admin/{clubId}/events/proposals` multipart example:
+
+```bash
+curl -X POST "https://myada.site/club/api/v1/club-admin/1/events/proposals" \
+  -H "Authorization: Bearer <JWT>" \
+  -F "name=Spring Robotics Showcase" \
+  -F "dateTime=2026-05-10T14:00:00Z" \
+  -F "duration=3 hours" \
+  -F "attendance=120" \
+  -F "venue=Main Auditorium" \
+  -F "description=Club-wide demo event" \
+  -F "objectives=Showcase projects and recruit members" \
+  -F "buildingId=2" \
+  -F "roomId=14" \
+  -F "subEventsJson=[{\"title\":\"Demo Booths\",\"capacity\":\"80\",\"start\":\"14:00\",\"end\":\"16:00\",\"date\":\"2026-05-10\"}]" \
+  -F "logisticsJson={\"avSetup\":true,\"security\":false,\"catering\":false,\"cleaning\":true,\"otherNeeds\":\"Two projectors\"}" \
+  -F "imageFile=@C:/path/to/poster.png;type=image/png"
+```
+
+Notes:
+
+- Attach the poster on `imageFile`.
+- Use `imageUrl` only when you already have a hosted image URL and do not want to upload a file.
+- The backend still accepts older aliases such as `posterFile`, but `imageFile` is the supported field to use moving forward.
+
 ### Profile, files, and announcements
 
 | Method | Path | Notes |
@@ -767,7 +822,7 @@ Representative position response:
 | `PATCH` | `/api/v1/club-admin/{clubId}/files/{fileId}` | `multipart/form-data`. Fields: `title` optional, `file` optional. At least one must be provided. Replacing the file uploads a new object and removes the previous stored object when cleanup succeeds. |
 | `DELETE` | `/api/v1/club-admin/{clubId}/files/{fileId}` | Removes the file item from `ResourcesJson` and attempts to delete the stored object. |
 | `PATCH` | `/api/v1/club-admin/{clubId}/profile` | `multipart/form-data`. Fields: `socialLinks`, `focusAreasJson`, `email`, `resourcesJson`, `logoFile`, `backgroundFile`. Uploaded `logoFile` is persisted into the club's `ProfileImageUrl`, so later club `GET` endpoints return it. |
-| `POST` | `/api/v1/club-admin/{clubId}/announcements` | Body: `{ "title": string, "message": string }`. |
+| `POST` | `/api/v1/club-admin/{clubId}/announcements` | Body: `{ "title": string, "message": string }`. Persists to `club.ClubAnnouncements` and sends notifications to club members. |
 
 Current file-management notes:
 

@@ -3,6 +3,42 @@
   "WorkspaceRootPath": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.application\\services\\lostandfoundservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{436DC1F6-9107-4C0A-B111-734540A817A3}|Services\\LostFoundService\\LostFoundService.Application\\LostFoundService.Application.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.application\\services\\lostandfoundservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostandfoundcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostandfoundcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{886F0CBB-679A-432C-ACB9-6EB79D7C7C90}|Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.domain\\entities\\eventproposal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{886F0CBB-679A-432C-ACB9-6EB79D7C7C90}|Services\\ClubManagementService\\ClubManagementService.Domain\\ClubManagementService.Domain.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.domain\\entities\\eventproposal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4FAD8FE-2332-4D53-8E86-565F69B23D4A}|Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.infrastructure\\services\\eventservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4FAD8FE-2332-4D53-8E86-565F69B23D4A}|Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.infrastructure\\services\\eventservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\eventregistrationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\eventregistrationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubproposalscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubproposalscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4FAD8FE-2332-4D53-8E86-565F69B23D4A}|Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.infrastructure\\services\\eventregistrationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4FAD8FE-2332-4D53-8E86-565F69B23D4A}|Services\\ClubManagementService\\ClubManagementService.Infrastructure\\ClubManagementService.Infrastructure.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.infrastructure\\services\\eventregistrationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\notificationservice\\notificationservice.api\\notificationservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{9908EA8F-BE1D-4318-806D-5BA251A7C158}|Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj|solutionrelative:services\\notificationservice\\notificationservice.api\\notificationservice.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -46,10 +82,6 @@
       "RelativeMoniker": "D:0:0:{B7950EC9-FF76-4FC2-AE22-F0FA2359B84C}|Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.application\\dtos\\contracts\\proposalcontractdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubproposalscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DA100A2F-806D-4244-8F5C-71D2CF7772AC}|Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.api\\controllers\\clubproposalscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{B7950EC9-FF76-4FC2-AE22-F0FA2359B84C}|Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\clubmanagementservice\\clubmanagementservice.application\\dtos\\club\\clubdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B7950EC9-FF76-4FC2-AE22-F0FA2359B84C}|Services\\ClubManagementService\\ClubManagementService.Application\\ClubManagementService.Application.csproj|solutionrelative:services\\clubmanagementservice\\clubmanagementservice.application\\dtos\\club\\clubdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -72,10 +104,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.infrastructure\\persistence\\seeders\\identityuserseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C8AAD290-335B-4284-AC6F-C9D10A942EED}|Services\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj|solutionrelative:services\\authservice\\authservice.infrastructure\\persistence\\seeders\\identityuserseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostandfoundcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A9832097-CA2F-4565-A6D8-1274591704B6}|Services\\LostFoundService\\LostFoundService.API\\LostFoundService.Api.csproj|solutionrelative:services\\lostfoundservice\\lostfoundservice.api\\controllers\\lostandfoundcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F0C68A60-B131-4E4D-A095-83774C77BF92}|Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj|c:\\users\\cavid\\onedrive\\documents\\deskbottom\\backendprojects\\sdp\\myada-backend\\services\\authservice\\authservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -161,7 +189,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -173,20 +201,106 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ClubsController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubsController.cs",
+              "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubsController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubsController.cs",
+              "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubsController.cs",
+              "ViewState": "AgIAAAcBAAAAAAAAAADwvx8BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-30T17:37:46.262Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LostAndFoundService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Services\\LostAndFoundService.cs",
+              "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Application\\Services\\LostAndFoundService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Application\\Services\\LostAndFoundService.cs",
+              "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Application\\Services\\LostAndFoundService.cs",
+              "ViewState": "AgIAAJcCAAAAAAAAAAAcwLICAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-30T16:10:37.759Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "EventProposal.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\EventProposal.cs",
+              "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\EventProposal.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\EventProposal.cs",
+              "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\EventProposal.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAA5wBEAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-30T12:01:37.676Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "EventService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventService.cs",
+              "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventService.cs",
+              "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventService.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-30T11:55:04.404Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "NotificationService.Api",
+              "Title": "ClubAdminController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubAdminController.cs",
+              "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubAdminController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubAdminController.cs",
+              "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubAdminController.cs",
+              "ViewState": "AgIAAHADAAAAAAAAAAAowIYDAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-30T11:51:56.216Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "EventRegistrationsController.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\EventRegistrationsController.cs",
+              "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\EventRegistrationsController.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\EventRegistrationsController.cs",
+              "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\EventRegistrationsController.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAkwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-30T11:51:04.436Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "EventRegistrationService.cs",
+              "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\EventRegistrationService.cs",
+              "ViewState": "AgIAAFYAAAAAAAAAAAAmwGQAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-29T22:36:17.811Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "NotificationService.Api.csproj",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj",
               "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj",
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Api\\NotificationService.Api.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-04-29T22:22:10.331Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-29T22:22:10.331Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 11,
               "Title": "20260430000100_AddRecipientUserIdToNotifications.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Persistence\\Migrations\\20260430000100_AddRecipientUserIdToNotifications.cs",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Persistence\\Migrations\\20260430000100_AddRecipientUserIdToNotifications.cs",
@@ -194,12 +308,11 @@
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Infrastructure\\Persistence\\Migrations\\20260430000100_AddRecipientUserIdToNotifications.cs",
               "ViewState": "AgIAABkAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-29T22:15:17.589Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-29T22:15:17.589Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 14,
               "Title": "AdminUsersController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\AdminUsersController.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\AdminUsersController.cs",
@@ -207,12 +320,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Controllers\\AdminUsersController.cs",
               "ViewState": "AgIAACIAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-26T10:00:33.529Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T10:00:33.529Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 16,
               "Title": "LostFoundDbContext.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
@@ -220,12 +332,11 @@
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Persistence\\Context\\LostFoundDbContext.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAAAwAkAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-26T09:38:01.505Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T09:38:01.505Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 15,
               "Title": "LostFoundItem.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostFoundItem.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostFoundItem.cs",
@@ -233,12 +344,11 @@
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Domain\\Entities\\LostFoundItem.cs",
               "ViewState": "AgIAACgAAAAAAAAAAAA8wAUAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-26T09:05:55.304Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T09:05:55.304Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 13,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
@@ -246,12 +356,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Controllers\\AuthController.cs",
               "ViewState": "AgIAAD8AAAAAAAAAAAAAwLMAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-26T08:17:14.912Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T08:17:14.912Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 17,
               "Title": "InstructorUserSeeder.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\InstructorUserSeeder.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\InstructorUserSeeder.cs",
@@ -259,12 +368,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\InstructorUserSeeder.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T14:20:42.598Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T14:20:42.598Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 19,
               "Title": "ProposalContractDtos.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Contracts\\ProposalContractDtos.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Contracts\\ProposalContractDtos.cs",
@@ -272,25 +380,23 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Contracts\\ProposalContractDtos.cs",
               "ViewState": "AgIAACsAAAAAAAAAAAA1wAMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:37:31.126Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:37:31.126Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 7,
               "Title": "ClubProposalsController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubProposalsController.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubProposalsController.cs",
               "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubProposalsController.cs",
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubProposalsController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABEAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:37:18.934Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:37:18.934Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 20,
               "Title": "ClubDto.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Club\\ClubDto.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Club\\ClubDto.cs",
@@ -298,12 +404,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\Club\\ClubDto.cs",
               "ViewState": "AgIAACsAAAAAAAAAAAAzwAcAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:37:08.161Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:37:08.161Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 21,
               "Title": "ClubAdminService.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\ClubAdminService.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\ClubAdminService.cs",
@@ -311,12 +416,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Infrastructure\\Services\\ClubAdminService.cs",
               "ViewState": "AgIAAJgEAAAAAAAAAAASwKgEAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:35:10.213Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:35:10.213Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 22,
               "Title": "ClubAdminDtos.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\ClubAdmin\\ClubAdminDtos.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\ClubAdmin\\ClubAdminDtos.cs",
@@ -324,12 +428,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Application\\DTOs\\ClubAdmin\\ClubAdminDtos.cs",
               "ViewState": "AgIAAKQAAAAAAAAAAAA3wAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:34:42.518Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:34:42.518Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 23,
               "Title": "ClubMembership.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\ClubMembership.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\ClubMembership.cs",
@@ -337,12 +440,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.Domain\\Entities\\ClubMembership.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:32:03.027Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:32:03.027Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 18,
               "Title": "StudentUserSeeder.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\StudentUserSeeder.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\StudentUserSeeder.cs",
@@ -350,12 +452,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\StudentUserSeeder.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:16:33.841Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:16:33.841Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 24,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Domain\\Entities\\User.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Domain\\Entities\\User.cs",
@@ -363,12 +464,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Domain\\Entities\\User.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAIBJwBEAAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:03:24.945Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:03:24.945Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 25,
               "Title": "IdentityUserSeeder.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\IdentityUserSeeder.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\IdentityUserSeeder.cs",
@@ -376,25 +476,23 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Infrastructure\\Persistence\\Seeders\\IdentityUserSeeder.cs",
               "ViewState": "AgIAAEYAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:00:50.845Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-25T11:00:50.845Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 3,
               "Title": "LostAndFoundController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostAndFoundController.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostAndFoundController.cs",
               "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostAndFoundController.cs",
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Controllers\\LostAndFoundController.cs",
-              "ViewState": "AgIAAMECAAAAAAAAAAAqwBIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAI0EAAAAAAAAAAAUwKcEAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-24T19:07:27.858Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-24T19:07:27.858Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 26,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\appsettings.json",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\appsettings.json",
@@ -402,12 +500,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\appsettings.json",
               "ViewState": "AgIAAC4AAAAAAAAAAABRwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-23T20:43:01.64Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-23T20:43:01.64Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 27,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\appsettings.Development.json",
@@ -415,12 +512,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\appsettings.Development.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-23T20:42:56.887Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-23T20:42:56.887Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 28,
               "Title": "AuthService.Api.csproj",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
@@ -428,12 +524,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\AuthService.Api.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-04-22T22:41:12.705Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-22T22:41:12.705Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 29,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\AuthService\\AuthService.Api\\Program.cs",
               "RelativeDocumentMoniker": "Services\\AuthService\\AuthService.Api\\Program.cs",
@@ -441,12 +536,11 @@
               "RelativeToolTip": "Services\\AuthService\\AuthService.Api\\Program.cs",
               "ViewState": "AgIAAGAAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-22T20:10:18.077Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-22T20:10:18.077Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 30,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\appsettings.json",
               "RelativeDocumentMoniker": "ApiGateway\\appsettings.json",
@@ -454,12 +548,11 @@
               "RelativeToolTip": "ApiGateway\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-22T18:32:57.492Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-22T18:32:57.492Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 31,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\ApiGateway\\Program.cs",
               "RelativeDocumentMoniker": "ApiGateway\\Program.cs",
@@ -467,12 +560,11 @@
               "RelativeToolTip": "ApiGateway\\Program.cs",
               "ViewState": "AgIAAB4AAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-22T18:32:48.326Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-22T18:32:48.326Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 32,
               "Title": "ClubManagementService.API.csproj",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
@@ -480,12 +572,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\ClubManagementService.API.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-04-22T13:10:58.573Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-22T13:10:58.573Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 33,
               "Title": "ApplicationsController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ApplicationsController.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ApplicationsController.cs",
@@ -493,12 +584,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ApplicationsController.cs",
               "ViewState": "AgIAABMAAAAAAAAAAAAzwA8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-22T13:07:42.685Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-22T13:07:42.685Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 34,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
@@ -506,12 +596,11 @@
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-21T21:30:00.218Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T21:30:00.218Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 35,
               "Title": "SmtpOptions.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
@@ -519,12 +608,11 @@
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\SmtpOptions.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-21T21:19:17.6Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T21:19:17.6Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 37,
               "Title": "Dockerfile",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\Dockerfile",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\Dockerfile",
@@ -532,12 +620,11 @@
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Api\\Dockerfile",
               "ViewState": "AgIAAAwAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-04-21T21:19:13.007Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T21:19:13.007Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 36,
               "Title": "EmailSender.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
@@ -545,12 +632,11 @@
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Infrastructure\\Email\\EmailSender.cs",
               "ViewState": "AgIAAD4AAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-21T21:18:50.939Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T21:18:50.939Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 38,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\appsettings.json",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\appsettings.json",
@@ -558,12 +644,11 @@
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Api\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-21T21:13:32.387Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T21:13:32.387Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 39,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
@@ -571,12 +656,11 @@
               "RelativeToolTip": "Services\\NotificationService\\NotificationService.Api\\appsettings.Development.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-21T21:13:30.94Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T21:13:30.94Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 40,
               "Title": "ClubMembershipsController.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
@@ -584,12 +668,11 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\Controllers\\ClubMembershipsController.cs",
               "ViewState": "AgIAABQAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-21T20:07:55.942Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T20:07:55.942Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 10,
               "Title": "Microsoft.NET.Sdk.DefaultItems.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
@@ -597,12 +680,11 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.100\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "ViewState": "AgIAAH0AAAAAAAAAAAApwIgAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-04-21T17:31:50.309Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T17:31:50.309Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 41,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\ClubManagementService\\ClubManagementService.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\ClubManagementService\\ClubManagementService.API\\appsettings.Development.json",
@@ -610,25 +692,23 @@
               "RelativeToolTip": "Services\\ClubManagementService\\ClubManagementService.API\\appsettings.Development.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-21T17:31:15.864Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T17:31:15.864Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 12,
               "Title": "docker-compose.yml",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
               "RelativeDocumentMoniker": "docker-compose.yml",
               "ToolTip": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\docker-compose.yml",
               "RelativeToolTip": "docker-compose.yml",
-              "ViewState": "AgIAALcAAAAAAAAAAAAAAB0BAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAALsAAAAAAAAAAAAAACYBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
-              "WhenOpened": "2026-04-21T16:42:08.334Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T16:42:08.334Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 43,
               "Title": "Dockerfile",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
@@ -636,12 +716,11 @@
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\Dockerfile",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-04-21T16:42:00.875Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T16:42:00.875Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 44,
               "Title": "S3ImageStorageService.cs",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
@@ -649,12 +728,11 @@
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.Infrastructure\\Services\\S3ImageStorageService.cs",
               "ViewState": "AgIAAMUAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-21T15:43:26.953Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T15:43:26.953Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 42,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\cavid\\OneDrive\\Documents\\DeskBottom\\BackendProjects\\SDP\\myada-backend\\Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",
@@ -662,8 +740,7 @@
               "RelativeToolTip": "Services\\LostFoundService\\LostFoundService.API\\appsettings.Development.json",
               "ViewState": "AgIAAAwAAAAAAAAAAAAkwBcAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-21T15:39:50.904Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T15:39:50.904Z"
             }
           ]
         }

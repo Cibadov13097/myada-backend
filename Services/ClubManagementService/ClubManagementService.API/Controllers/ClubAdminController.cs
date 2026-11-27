@@ -23,12 +23,17 @@ namespace ClubManagementService.API.Controllers;
 public class ClubAdminController : ControllerBase
 {
     private readonly IClubAdminService _clubAdmin;
+    private readonly IEventService? _eventService;
     private readonly IImageStorageService _imageStorageService;
 
-    public ClubAdminController(IClubAdminService clubAdmin, IImageStorageService imageStorageService)
+    public ClubAdminController(
+        IClubAdminService clubAdmin,
+        IImageStorageService imageStorageService,
+        IEventService? eventService = null)
     {
         _clubAdmin = clubAdmin;
         _imageStorageService = imageStorageService;
+        _eventService = eventService;
     }
 
     [HttpGet("dashboard")]
@@ -289,10 +294,59 @@ public class ClubAdminController : ControllerBase
     }
 
     [HttpPatch("events/{eventId}")]
-    public async Task<IActionResult> PatchEvent(string clubId, string eventId, [FromBody] UpdateEventDto body, CancellationToken cancellationToken)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> PatchEvent(string clubId, string eventId, [FromForm] UpdateEventFormRequest body, CancellationToken cancellationToken)
     {
-        var updated = await _clubAdmin.PatchEventAsync(clubId, eventId, body, cancellationToken).ConfigureAwait(false);
-        return updated == null ? NotFound() : Ok(updated);
+        var (form, errorResult) = await TryReadEventMultipartFormAsync(cancellationToken).ConfigureAwait(false);
+        if (errorResult != null)
+            return errorResult;
+
+        if (ContainsDisallowedImageUrlFields(form!))
+        {
+            return BadRequest(new
+            {
+                message = "Attach the event image with imageFile. imageUrl and imgUrl are not accepted on this route."
+            });
+        }
+
+        if (!int.TryParse(eventId, out var parsedEventId))
+            return NotFound();
+
+        if (_eventService == null)
+            throw new InvalidOperationException("Event service is not configured.");
+
+        var existing = await _eventService.GetByIdAsync(parsedEventId).ConfigureAwait(false);
+        if (existing == null)
+            return NotFound();
+
+        var uploadedImageUrl = await UploadEventImageIfPresentAsync(existing.ClubId, form!, body.ImageFile, cancellationToken).ConfigureAwait(false);
+        if (uploadedImageUrl == string.Empty)
+            return BadRequest(new { message = "imageFile has an unsupported file type." });
+
+        var nextImageUrl = string.IsNullOrWhiteSpace(uploadedImageUrl) ? existing.ImageUrl : uploadedImageUrl;
+        try
+        {
+            var updated = await _clubAdmin.PatchEventAsync(clubId, eventId, body.ToUpdateDto(nextImageUrl), cancellationToken).ConfigureAwait(false);
+            if (updated == null)
+            {
+                await TryDeleteStoredFileAsync(uploadedImageUrl, cancellationToken).ConfigureAwait(false);
+                return NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(uploadedImageUrl)
+                && !string.IsNullOrWhiteSpace(existing.ImageUrl)
+                && !string.Equals(existing.ImageUrl, uploadedImageUrl, StringComparison.Ordinal))
+            {
+                await TryDeleteStoredFileAsync(existing.ImageUrl, cancellationToken).ConfigureAwait(false);
+            }
+
+            return Ok(updated);
+        }
+        catch
+        {
+            await TryDeleteStoredFileAsync(uploadedImageUrl, cancellationToken).ConfigureAwait(false);
+            throw;
+        }
     }
 
     [HttpPost("events/proposals")]
@@ -528,8 +582,21 @@ public class ClubAdminController : ControllerBase
     [HttpPost("announcements")]
     public async Task<IActionResult> AddAnnouncement(string clubId, [FromBody] AnnouncementRequest request, CancellationToken cancellationToken)
     {
-        var created = await _clubAdmin.CreateAnnouncementAsync(clubId, request.Title, request.Message, cancellationToken).ConfigureAwait(false);
-        return Ok(created);
+        if (string.IsNullOrWhiteSpace(request.Title))
+            return BadRequest(new { message = "Title is required." });
+
+        if (string.IsNullOrWhiteSpace(request.Message))
+            return BadRequest(new { message = "Message is required." });
+
+        try
+        {
+            var created = await _clubAdmin.CreateAnnouncementAsync(clubId, request.Title, request.Message, cancellationToken).ConfigureAwait(false);
+            return Ok(created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     private Guid GetCurrentUserIdOrDefault()
@@ -553,6 +620,66 @@ public class ClubAdminController : ControllerBase
             file.ContentType,
             directory,
             cancellationToken);
+    }
+
+    private async Task<(IFormCollection? Form, IActionResult? ErrorResult)> TryReadEventMultipartFormAsync(CancellationToken cancellationToken)
+    {
+        if (Request.ContentType?.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase) != true)
+        {
+            return (null, StatusCode(StatusCodes.Status415UnsupportedMediaType, new
+            {
+                message = "Unsupported content type. Use multipart/form-data and attach the image as imageFile."
+            }));
+        }
+
+        try
+        {
+            return (await Request.ReadFormAsync(cancellationToken).ConfigureAwait(false), null);
+        }
+        catch (InvalidDataException)
+        {
+            return (null, BadRequest(new
+            {
+                message = "Invalid multipart form data. Use multipart/form-data for file uploads and let the client set the boundary automatically."
+            }));
+        }
+    }
+
+    private async Task<string?> UploadEventImageIfPresentAsync(
+        int clubId,
+        IFormCollection form,
+        IFormFile? imageFile,
+        CancellationToken cancellationToken)
+    {
+        var file = ResolveEventImageFile(form, imageFile);
+        if (file == null || file.Length <= 0)
+            return null;
+
+        if (!_imageStorageService.IsSupportedImage(file.FileName))
+            return string.Empty;
+
+        await using var stream = file.OpenReadStream();
+        return await _imageStorageService.UploadImageAsync(
+            stream,
+            file.FileName,
+            file.ContentType,
+            $"events/{clubId}",
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private static IFormFile? ResolveEventImageFile(IFormCollection form, IFormFile? imageFile)
+    {
+        return imageFile
+            ?? form.Files.GetFile("imageFile")
+            ?? form.Files.GetFile("image")
+            ?? form.Files.GetFile("posterFile");
+    }
+
+    private static bool ContainsDisallowedImageUrlFields(IFormCollection form)
+    {
+        return form.Keys.Any(key =>
+            string.Equals(key, "imageUrl", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(key, "imgUrl", StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task<(EventProposalSubmitDto? Body, string? UploadedImageUrl, IActionResult? ErrorResult)> TryReadEventProposalBodyAsync(

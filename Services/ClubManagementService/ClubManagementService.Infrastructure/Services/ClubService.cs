@@ -28,7 +28,7 @@ public class ClubService : IClubService
 
     public async Task<List<ClubDto>> GetAllAsync()
     {
-        var list = await _repository.GetAllAsync();
+        var list = await _repository.GetAllWithCategoryAsync();
         return _mapper.Map<List<ClubDto>>(list);
     }
 

@@ -1,6 +1,6 @@
 # Frontend Gateway Routing Guide (Avoid 404)
 
-Last updated: 2026-04-25
+Last updated: 2026-04-30
 
 ## Why 404 happens
 
@@ -37,6 +37,60 @@ When host is `http://13.60.31.141:500`, use:
 - Location: `/location/...`
 - Call: `/call/...`
 - Support: `/support/...`
+
+## Club routes
+
+Current production club base:
+
+- `https://myada.site/club`
+- versioned API base: `https://myada.site/club/api/v1`
+- example: `GET https://myada.site/club/api/v1/categories`
+
+## Notification routes
+
+Current production notification base:
+
+- `https://myada.site/notification`
+
+HTTP endpoints:
+
+- `GET https://myada.site/notification/api/v1/notifications`
+- `GET https://myada.site/notification/api/v1/notifications/me`
+- `GET https://myada.site/notification/api/v1/notifications/{id}`
+- `DELETE https://myada.site/notification/api/v1/notifications/{id}`
+- `POST https://myada.site/notification/api/v1/notifications/email`
+
+Request body notes:
+
+- all `GET` routes use no request body
+- `DELETE /api/v1/notifications/{id}` uses no request body
+- `POST /api/v1/notifications/email` requires JSON
+
+`POST /api/v1/notifications/email` body example:
+
+```json
+{
+  "type": "auth.password_reset",
+  "recipientUserId": "22222222-2222-2222-2222-222222222222",
+  "toEmail": "student@example.com",
+  "subject": "Reset your password",
+  "message": "Use the link in the app to reset your password."
+}
+```
+
+Notification frontend helpers:
+
+```ts
+const notificationBase = "https://myada.site/notification";
+
+export const notificationEndpoints = {
+  list: `${notificationBase}/api/v1/notifications`,
+  mine: `${notificationBase}/api/v1/notifications/me`,
+  byId: (id: string) => `${notificationBase}/api/v1/notifications/${id}`,
+  sendEmail: `${notificationBase}/api/v1/notifications/email`,
+  hub: `${notificationBase}/hubs/notifications`
+};
+```
 
 ## Direct vs gateway examples
 
@@ -75,7 +129,7 @@ Wrong on gateway (missing service prefix):
 
 Correct on gateway:
 - `http://13.60.31.141:500/lostfound/api/v1/found-items` (if endpoint exists in service)
-- `http://13.60.31.141:500/club/api/v1/categories`
+- `https://myada.site/club/api/v1/categories`
 
 Direct service examples:
 - `http://13.60.31.141:5002/api/v1/found-items`
@@ -104,9 +158,9 @@ export const endpoints = {
   support: `${GATEWAY_BASE}/support/api`,
   callHub: `${GATEWAY_BASE}/call/hub`,
   lostfound: `${GATEWAY_BASE}/lostfound`,
-  club: `${GATEWAY_BASE}/club`,
+  club: `https://myada.site/club`,
   location: `${GATEWAY_BASE}/location`,
-  notification: `${GATEWAY_BASE}/notification`
+  notification: `https://myada.site/notification`
 };
 ```
 
