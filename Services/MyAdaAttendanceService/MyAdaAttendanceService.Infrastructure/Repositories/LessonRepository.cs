@@ -93,8 +93,8 @@ public class LessonRepository : EfCoreRepository<Lesson>, ILessonRepository
         AcademicSemester newSemester,
         int courseId,
         bool termChanged,
-        Guid instructorId,
-        int roomId,
+        Guid? instructorId,
+        int? roomId,
         int maxCapacity)
     {
         if (!termChanged)
@@ -153,10 +153,13 @@ public class LessonRepository : EfCoreRepository<Lesson>, ILessonRepository
         return CrnFormatter.Format(semester, next);
     }
 
-    public async Task<IReadOnlyList<LessonSchedulingRow>> GetLessonSchedulingRowsAsync()
+    public async Task<IReadOnlyList<LessonSchedulingRow>> GetLessonSchedulingRowsAsync(
+        int academicYear,
+        AcademicSemester semester)
     {
         return await _dbSet
             .AsNoTracking()
+            .Where(l => l.AcademicYear == academicYear && l.Semester == semester)
             .OrderBy(l => l.Id)
             .Select(l => new LessonSchedulingRow
             {

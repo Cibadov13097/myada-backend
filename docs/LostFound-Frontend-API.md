@@ -1,20 +1,20 @@
 # LostFound API Documentation (Gateway First)
 
-Last updated: 2026-04-29
+Last updated: 2026-05-01
 
 This document covers only the LostFound service (`Services/LostFoundService`) and is aligned with:
 - `Services/LostFoundService/LostFoundService.API/Controllers/LostAndFoundController.cs`
-- `Services/LostFoundService/LostFoundService.API/Controllers/LostItemController.cs`
-- `Services/LostFoundService/LostFoundService.API/Controllers/FoundItemController.cs`
 - `Services/LostFoundService/LostFoundService.API/Controllers/CategoryController.cs`
-- `Services/LostFoundService/LostFoundService.API/Controllers/Admin/AdminLostItemController.cs`
-- `Services/LostFoundService/LostFoundService.API/Controllers/Admin/AdminFoundItemController.cs`
 
 ## Base URLs
 
 - Gateway (recommended): `https://myada.site`
 - Gateway prefix for LostFound: `/lostfound`
 - Effective gateway base: `https://myada.site/lostfound`
+
+Local (docker-compose):
+- Gateway base: `http://localhost:5000/lostfound`
+- Direct service base: `http://localhost:5002`
 
 Direct service (diagnostics only):
 - Production direct: `http://13.60.31.141:5002`
@@ -42,20 +42,20 @@ Roles used by this service:
 
 Auth model:
 - Public: most modern read/report/upload endpoints under `/api/lost-and-found`
-- Auth required: claim submit and legacy `users/me` endpoints
-- Admin/lost_found_leader: modern admin workflow endpoints and most legacy admin endpoints
+- Auth required: claim submit endpoints
+- Admin/lost_found_leader: modern admin workflow endpoints
 
-## API Families
+JWT validation model:
+- This service validates access tokens using a **JWKS endpoint** (`Auth:JwksUrl`) and validates `issuer`/`audience`.
+- It does **not** load local public key files for token validation.
 
-Modern API:
-- `/api/lost-and-found/*`
+## API Surface
 
-Legacy APIs:
-- `/api/v1/lost-items/*`
-- `/api/v1/found-items/*`
-- `/api/v1/categories/*`
-- `/api/v1/admin/lost-items/*`
-- `/api/v1/admin/found-items/*`
+This repo currently exposes:
+- Modern LostFound API: `/api/lost-and-found/*`
+- Categories API: `/api/v1/categories/*`
+
+Legacy `/api/v1/lost-items`, `/api/v1/found-items`, `/api/v1/admin/*` routes are **not present** in this codebase.
 
 ---
 
@@ -375,75 +375,7 @@ Location rule:
 
 ---
 
-## 2) Legacy User API: Lost Items
-
-Base path:
-- `/api/v1/lost-items`
-
-### 2.1 Endpoint Matrix
-
-| Method | Path | Auth |
-|---|---|---|
-| `GET` | `/api/v1/lost-items` | Optional |
-| `GET` | `/api/v1/lost-items/{id}` | Optional |
-| `GET` | `/api/v1/lost-items/users/me` | Required |
-| `GET` | `/api/v1/lost-items/users/me/{id}` | Required |
-| `POST` | `/api/v1/lost-items` | Required |
-| `PUT` | `/api/v1/lost-items/{id}` | Required |
-| `DELETE` | `/api/v1/lost-items/{id}` | Required |
-
-### 2.2 Create/Update Payload (multipart)
-
-Form fields:
-- `title`
-- `description`
-- `buildingId` (optional)
-- `roomId` (optional)
-- `categoryId`
-- `imageFile` (required on create)
-
-Notes:
-- `buildingId` and `roomId` must be provided together when used.
-- File field aliases are accepted by controller fallback: `imageFile`, `image`, `photo`.
-
----
-
-## 3) Legacy User API: Found Items
-
-Base path:
-- `/api/v1/found-items`
-
-### 3.1 Endpoint Matrix
-
-| Method | Path | Auth |
-|---|---|---|
-| `GET` | `/api/v1/found-items` | Optional |
-| `GET` | `/api/v1/found-items/{id}` | Optional |
-| `GET` | `/api/v1/found-items/users/me` | Required |
-| `GET` | `/api/v1/found-items/users/me/{id}` | Required |
-| `POST` | `/api/v1/found-items` | Required |
-| `PUT` | `/api/v1/found-items/{id}` | Required |
-| `DELETE` | `/api/v1/found-items/{id}` | Required |
-
-### 3.2 Create/Update Payload (multipart)
-
-Form fields:
-- `description`
-- `location` (nullable)
-- `buildingId` (optional)
-- `roomId` (optional)
-- `status` (enum value)
-- `categoryId`
-- `imageFile` (required on create)
-
-Notes:
-- `buildingId` and `roomId` must be provided together when used.
-- `location` max length: 400.
-- File field aliases are accepted by controller fallback: `imageFile`, `image`, `photo`.
-
----
-
-## 4) Categories API
+## 2) Categories API
 
 Base path:
 - `/api/v1/categories`
@@ -463,44 +395,6 @@ Create/Update body:
   "name": "Electronics"
 }
 ```
-
----
-
-## 5) Legacy Admin API: Lost Items
-
-Base path:
-- `/api/v1/admin/lost-items`
-
-| Method | Path | Auth |
-|---|---|---|
-| `GET` | `/api/v1/admin/lost-items?includeDeleted=false` | `admin` or `lost_found_leader` |
-| `GET` | `/api/v1/admin/lost-items/{id}` | `admin` |
-| `POST` | `/api/v1/admin/lost-items` | `admin` or `lost_found_leader` |
-| `PUT` | `/api/v1/admin/lost-items/{id}` | `admin` or `lost_found_leader` |
-| `DELETE` | `/api/v1/admin/lost-items/{id}` | `admin` or `lost_found_leader` |
-| `DELETE` | `/api/v1/admin/lost-items/{id}/force` | `admin` |
-
-Create/update use multipart form payload similar to legacy user lost-item API, with image upload handled through S3 service.
-
----
-
-## 6) Legacy Admin API: Found Items
-
-Base path:
-- `/api/v1/admin/found-items`
-
-| Method | Path | Auth |
-|---|---|---|
-| `GET` | `/api/v1/admin/found-items?includeDeleted=false` | `admin` or `lost_found_leader` |
-| `GET` | `/api/v1/admin/found-items/{id}` | `admin` |
-| `POST` | `/api/v1/admin/found-items` | `admin` or `lost_found_leader` |
-| `PUT` | `/api/v1/admin/found-items/{id}` | `admin` or `lost_found_leader` |
-| `DELETE` | `/api/v1/admin/found-items/{id}` | `admin` or `lost_found_leader` |
-| `DELETE` | `/api/v1/admin/found-items/{id}/force` | currently no `[Authorize]` attribute in controller code |
-
-Create/update use multipart form payload similar to legacy user found-item API, with image upload handled through S3 service.
-
----
 
 ## 7) Enums and Accepted Values
 
@@ -540,6 +434,9 @@ Relevant runtime config keys:
 - `S3__KeyPrefix`
 - `S3__AutoCreateBucket`
 
+Local docker-compose note:
+- `docker-compose.yml` marks `LOSTFOUND_S3_ACCESS_KEY` and `LOSTFOUND_S3_SECRET_KEY` as **required** environment variables for the `lostfoundservice` container.
+
 ---
 
 ## 9) Common Error Shape (Modern API)
@@ -554,7 +451,7 @@ Relevant runtime config keys:
 }
 ```
 
-Legacy endpoints may return service-specific exception shapes.
+All endpoints documented here return the `ErrorResponse` shape shown in §9 on validation and domain errors.
 
 ---
 

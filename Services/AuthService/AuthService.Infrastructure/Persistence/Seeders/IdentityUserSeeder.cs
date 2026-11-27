@@ -1,6 +1,7 @@
 using AuthService.Domain.Enums;
 using AuthService.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.Infrastructure.Persistence.Seeders;
 
@@ -111,9 +112,20 @@ public static class IdentityUserSeeder
             var userId = userGuid.ToString();
             var userName = $"seed.user{i:00}";
             var email = $"{userName}@ada.edu.az";
+            var organizationalId = BuildSeedOrganizationalId(i);
 
             var existing = await userManager.FindByIdAsync(userId);
             if (existing is not null)
+            {
+                continue;
+            }
+
+            if (await userManager.FindByNameAsync(userName) is not null)
+            {
+                continue;
+            }
+
+            if (await userManager.Users.AnyAsync(u => u.OrganizationalId == organizationalId, cancellationToken))
             {
                 continue;
             }
@@ -132,7 +144,7 @@ public static class IdentityUserSeeder
                 EmailConfirmed = true,
                 FirstName = firstName,
                 LastName = lastName,
-                OrganizationalId = BuildSeedOrganizationalId(i),
+                OrganizationalId = organizationalId,
                 UserType = userType,
                 Status = Status.Active
             };

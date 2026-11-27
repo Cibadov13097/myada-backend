@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using MyAdaAttendanceService.Core;
-using MyAdaAttendanceService.Core.Validation;
 
 namespace MyAdaAttendanceService.Core.Entities;
 
@@ -8,11 +7,12 @@ public class Lesson
 {
     public int Id { get; set; }
 
-    [NonEmptyGuid]
-    public Guid InstructorId { get; set; }
+    /// <summary>Assigned instructor auth user id. Null when the lesson has no instructor yet.</summary>
+    public Guid? InstructorId { get; set; }
 
+    /// <summary>Assigned room id. Null when the lesson has no room yet.</summary>
     [Range(0, int.MaxValue)]
-    public int RoomId { get; set; }
+    public int? RoomId { get; set; }
 
     public int CourseId { get; set; }
 

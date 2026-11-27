@@ -1,6 +1,6 @@
 # MyAdaAttendanceService API Documentation
 
-Last updated: 2026-04-25
+Last updated: 2026-09-12
 
 This document describes the full MyAdaAttendanceService HTTP API exposed through your API Gateway.
 
@@ -60,6 +60,22 @@ Typical error body from controller-level handling:
 - `AttendanceMarkedSource`: `QR`, `Manual`
 - `DayOfWeek` for bulk session slots: `Sunday`..`Saturday` (or numeric enum values)
 
+### 5.3 List sorting, search, and filtering
+
+Every collection GET accepts optional:
+
+- `sortBy`: scalar field on the response item (camelCase or PascalCase). Omit to keep the default order.
+- `sortDir`: `asc` (default) or `desc`.
+
+Unknown `sortBy` or invalid `sortDir` returns `400`. Nested collections (for example `sessions` on lesson detail) are not sortable.
+
+Each collection also has dedicated routes:
+
+- `GET {list-path}/search?q={term}` — case-insensitive contains across all scalar fields (`search` is an alias of `q`)
+- `GET {list-path}/filter?{field}={value}` — AND of provided fields (strings: contains; numbers/bools/guids/enums: exact; `DateTime` with midnight time matches that date)
+
+Search and filter also accept `sortBy` / `sortDir`. Term-scoped lists (`by-term`, `scheduling`) still require `academicYear` and `semester`.
+
 ## 6. Endpoint Catalog
 
 All paths below are relative to `http://13.60.31.141:500/attendance`.
@@ -79,15 +95,19 @@ Sync users from Auth service by roles.
 
 Get locally synced users by role.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `ExternalUserDirectoryDto[]`
+- Also: `GET /api/admin/users/roles/{role}/search`, `GET /api/admin/users/roles/{role}/filter`
 
 ### 6.2 Admin: Courses
 
 #### GET `/api/admin/courses`
 
-List all courses ordered by department/code.
+List all courses ordered by department/code unless `sortBy` is set.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `CourseDto[]`
+- Also: `GET /api/admin/courses/search`, `GET /api/admin/courses/filter`
 
 #### GET `/api/admin/courses/{courseId}`
 
@@ -129,35 +149,69 @@ Delete course.
 
 List lessons under a course.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `LessonDto[]`
+- Also: `GET /api/admin/courses/{courseId}/lessons/search`, `GET /api/admin/courses/{courseId}/lessons/filter`
+
+#### POST `/api/admin/courses/{courseId}/lessons/generate/preview`
+
+Suggest lesson sections from student headcount, section count, and instructor slots. Does not persist.
+
+- Body: `GenerateLessonsRequestDto`
+  - `totalStudents` (>= 1)
+  - `academicYear` (2000..2100), `semester` (`Fall` / `Spring` / `Summer`)
+  - `sectionCount` (1..`totalStudents`, max 200)
+  - `instructorCount` (how many instructors teach the course this term, e.g. `3`)
+  - `instructors` (optional `guid?[]`): ids or `null` for later assignment; padded to `instructorCount`
+- Instructors are assigned round-robin. Seats are split evenly (`totalSeats` = `totalStudents`).
+- Response `200`: `GenerateLessonsPreviewDto`
+- Response `404`: course not found
+
+#### POST `/api/admin/courses/{courseId}/lessons/generate`
+
+Bulk-create the confirmed preview. Send the preview JSON back; `proposedLessons` may be edited first.
+
+- Body: `GenerateLessonsPreviewDto`
+- Response `201`: `BulkCreateLessonsResultDto`
+- Response `400`: invalid proposed rows (nothing is created)
+- Response `404`: course not found
 
 #### GET `/api/admin/instructors/{instructorId}/lessons`
 
 List lessons for a specific instructor.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `LessonDto[]`
+- Also: `GET /api/admin/instructors/{instructorId}/lessons/search`, `GET /api/admin/instructors/{instructorId}/lessons/filter`
 
 #### GET `/api/admin/lessons`
 
 List all lessons.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `LessonDto[]`
+- Also: `GET /api/admin/lessons/search`, `GET /api/admin/lessons/filter`
 
 #### GET `/api/admin/lessons/by-term?academicYear={year}&semester={semester}`
 
 Filter lessons by academic term.
 
 - Example: `/api/admin/lessons/by-term?academicYear=2026&semester=Spring`
+- Query: `academicYear`, `semester` required; optional `sortBy`, `sortDir`
 - Response `200`: `LessonDto[]`
+- Also: `GET /api/admin/lessons/by-term/search`, `GET /api/admin/lessons/by-term/filter`
 - Validation:
   - academicYear between 2000 and 2100
   - semester must be Fall/Spring/Summer
 
 #### GET `/api/admin/lessons/scheduling`
 
-Returns lesson scheduling rows for external scheduling logic.
+Returns lesson scheduling rows for external scheduling logic, filtered by academic term.
 
+- Query: `academicYear` (int, 2000..2100), `semester` (`Fall` / `Spring` / `Summer`), optional `sortBy`, `sortDir`
+- Example: `/api/admin/lessons/scheduling?academicYear=2026&semester=Spring`
 - Response `200`: `LessonSchedulingRow[]`
+- Also: `GET /api/admin/lessons/scheduling/search`, `GET /api/admin/lessons/scheduling/filter`
 
 #### GET `/api/admin/lessons/{lessonId}`
 
@@ -174,10 +228,29 @@ Create lesson.
 - Response `201`: `LessonDto`
 - Validation:
   - courseId > 0
-  - instructorId required
+  - instructorId optional (`null` = unassigned); empty GUID is rejected
+  - roomId optional (`null` = unassigned); negative values are rejected
   - academicYear between 2000..2100
   - semester valid
   - maxCapacity >= 0
+
+#### GET `/api/admin/lessons/bulk/template`
+
+Download the Excel template used to create lessons in bulk.
+
+- Response `200`: binary `.xlsx` (`lesson-bulk-create-template.xlsx`)
+- Not JSON and not AutoWrapper-wrapped
+- Full documentation: `LESSON_BULK_EXCEL.md`
+
+#### POST `/api/admin/lessons/bulk`
+
+Upload a filled template and create lessons.
+
+- `Content-Type`: `multipart/form-data`
+- Form field: `file` (`.xlsx`, max 5 MB)
+- Response `201`: `BulkCreateLessonsResultDto` when every row is valid
+- Response `400`: `BulkCreateLessonsResultDto` when any row fails (nothing is created), or `{ "message": "..." }` for file-level errors
+- Full documentation: `LESSON_BULK_EXCEL.md`
 
 #### PUT `/api/admin/lessons/{lessonId}`
 
@@ -185,6 +258,11 @@ Update lesson.
 
 - Body: `UpdateLessonDto`
 - Response `200`: `LessonDto`
+- Notes:
+  - `instructorId` may be `null` to clear the assignment
+  - `roomId` may be `null` to clear the assignment
+  - empty GUID is rejected
+  - when set, the user must exist in role `instructor`
 
 #### DELETE `/api/admin/lessons/{lessonId}`
 
@@ -198,7 +276,9 @@ Delete lesson.
 
 List enrollments for lesson.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `EnrollmentDto[]`
+- Also: `GET /api/admin/lessons/{lessonId}/enrollments/search`, `GET /api/admin/lessons/{lessonId}/enrollments/filter`
 
 #### POST `/api/admin/lessons/{lessonId}/enrollments`
 
@@ -216,7 +296,9 @@ Create enrollment.
 
 List lesson sessions with attendance rollups.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `SessionDto[]`
+- Also: `GET /api/admin/lessons/{lessonId}/sessions/search`, `GET /api/admin/lessons/{lessonId}/sessions/filter`
 
 #### POST `/api/admin/lessons/{lessonId}/sessions/generate`
 
@@ -237,7 +319,9 @@ Bulk-generate sessions by weekly pattern.
 
 Get attendance rows for a session.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `AttendanceDto[]`
+- Also: `GET /api/admin/sessions/{sessionId}/attendance/search`, `GET /api/admin/sessions/{sessionId}/attendance/filter`
 
 #### PATCH `/api/admin/sessions/{sessionId}/attendance/{attendanceId}`
 
@@ -260,7 +344,9 @@ Base: `/api/instructors/{instructorId}/lessons`
 
 #### GET `/api/instructors/{instructorId}/lessons`
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `LessonDto[]`
+- Also: `GET /api/instructors/{instructorId}/lessons/search`, `GET /api/instructors/{instructorId}/lessons/filter`
 
 #### GET `/api/instructors/{instructorId}/lessons/{lessonId}`
 
@@ -268,7 +354,9 @@ Base: `/api/instructors/{instructorId}/lessons`
 
 #### GET `/api/instructors/{instructorId}/lessons/{lessonId}/sessions`
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `SessionDto[]`
+- Also: `GET /api/instructors/{instructorId}/lessons/{lessonId}/sessions/search`, `GET /api/instructors/{instructorId}/lessons/{lessonId}/sessions/filter`
 
 #### GET `/api/instructors/{instructorId}/lessons/{lessonId}/sessions/{sessionId}`
 
@@ -335,7 +423,9 @@ Issue QR JWT for currently active round.
 
 Get session attendance roster.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `AttendanceDto[]`
+- Also: `GET /api/instructors/{instructorId}/sessions/{sessionId}/attendance/search`, `GET /api/instructors/{instructorId}/sessions/{sessionId}/attendance/filter`
 
 #### GET `/api/instructors/{instructorId}/sessions/{sessionId}/attendance/summary`
 
@@ -379,13 +469,17 @@ Base: `/api/students/{studentId}`
 
 Returns student lessons with aggregated attendance counts.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `StudentLessonDto[]`
+- Also: `GET /api/students/{studentId}/enrollments/search`, `GET /api/students/{studentId}/enrollments/filter`
 
 #### GET `/api/students/{studentId}/lessons/{lessonId}/attendance`
 
 Returns per-session attendance rows for the lesson.
 
+- Query: optional `sortBy`, `sortDir`
 - Response `200`: `StudentAttendanceDto[]`
+- Also: `GET /api/students/{studentId}/lessons/{lessonId}/attendance/search`, `GET /api/students/{studentId}/lessons/{lessonId}/attendance/filter`
 
 #### POST `/api/students/{studentId}/attendance/scan`
 
@@ -485,11 +579,26 @@ Computed status depends on whether round 2 was ever activated for the session:
 
 `CreateLessonDto`
 
+`instructorId` and `roomId` are optional. Omit them or send `null` to create a lesson without an assigned instructor and/or room. Empty GUID (`00000000-0000-0000-0000-000000000000`) is rejected for `instructorId`.
+
 ```json
 {
   "courseId": 12,
   "instructorId": "11111111-1111-1111-1111-111111111111",
   "roomId": 401,
+  "academicYear": 2026,
+  "semester": "Spring",
+  "maxCapacity": 35
+}
+```
+
+Unassigned instructor and room example:
+
+```json
+{
+  "courseId": 12,
+  "instructorId": null,
+  "roomId": null,
   "academicYear": 2026,
   "semester": "Spring",
   "maxCapacity": 35
@@ -506,13 +615,55 @@ Computed status depends on whether round 2 was ever activated for the session:
   "instructorId": "11111111-1111-1111-1111-111111111111",
   "instructorDisplayName": "Ada Instructor",
   "instructorEmail": "instructor@example.com",
+  "roomId": 401,
   "academicYear": 2026,
   "semester": "Spring",
   "crn": "20001",
   "maxCapacity": 35,
+  "timesPerWeek": 2,
   "sessions": []
 }
 ```
+
+When no instructor is assigned, `instructorId` is `null` and `instructorDisplayName` / `instructorEmail` are empty strings. When no room is assigned, `roomId` is `null`.
+
+`GenerateLessonsRequestDto` (section planner preview)
+
+```json
+{
+  "totalStudents": 100,
+  "academicYear": 2026,
+  "semester": "Spring",
+  "sectionCount": 3,
+  "instructorCount": 3,
+  "instructors": [
+    "11111111-1111-1111-1111-111111111111",
+    null,
+    "22222222-2222-2222-2222-222222222222"
+  ]
+}
+```
+
+Confirm create sends `GenerateLessonsPreviewDto` (the preview response, with optional edits to `proposedLessons`).
+
+`BulkCreateLessonsResultDto` (Excel bulk create; this example is a validation failure)
+
+```json
+{
+  "totalRows": 2,
+  "createdCount": 0,
+  "failedCount": 1,
+  "created": [],
+  "errors": [
+    {
+      "rowNumber": 3,
+      "message": "Course 99 was not found. Use an Id from the Courses sheet."
+    }
+  ]
+}
+```
+
+See `LESSON_BULK_EXCEL.md` for the download/upload flow.
 
 ### 8.3 Enrollment
 

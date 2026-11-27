@@ -27,9 +27,9 @@ public interface ILessonRepository : IRepository<Lesson>
         AcademicSemester newSemester,
         int courseId,
         bool termChanged,
-        Guid instructorId,
-        int roomId,
+        Guid? instructorId,
+        int? roomId,
         int maxCapacity);
 
-    Task<IReadOnlyList<LessonSchedulingRow>> GetLessonSchedulingRowsAsync();
+    Task<IReadOnlyList<LessonSchedulingRow>> GetLessonSchedulingRowsAsync(int academicYear, AcademicSemester semester);
 }

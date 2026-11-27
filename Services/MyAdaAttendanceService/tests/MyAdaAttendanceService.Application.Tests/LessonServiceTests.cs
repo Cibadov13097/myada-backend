@@ -1,5 +1,6 @@
 using Moq;
 using MyAdaAttendanceService.Application.DTOs;
+using MyAdaAttendanceService.Application.Excel;
 using MyAdaAttendanceService.Application.Services;
 using MyAdaAttendanceService.Application.Services.Interfaces;
 using MyAdaAttendanceService.Core;
@@ -136,7 +137,7 @@ public class LessonServiceTests
     }
 
     [Fact]
-    public async Task CreateLessonAsync_ThrowsWhenInstructorIdIsInvalid()
+    public async Task CreateLessonAsync_ThrowsWhenInstructorIdIsEmpty()
     {
         var lessonRepository = new Mock<ILessonRepository>();
         var courseRepository = new Mock<ICourseRepository>();
@@ -145,6 +146,119 @@ public class LessonServiceTests
         {
             CourseId = 1,
             InstructorId = Guid.Empty
+        };
+
+        await Assert.ThrowsAsync<ArgumentException>(() => service.CreateLessonAsync(dto));
+    }
+
+    [Fact]
+    public async Task CreateLessonAsync_AllowsNullInstructorId()
+    {
+        Lesson? passedToAdd = null;
+        var lessonRepository = new Mock<ILessonRepository>();
+        lessonRepository.Setup(x => x.AddWithGeneratedCrnAsync(It.IsAny<Lesson>()))
+            .Callback<Lesson>(l => passedToAdd = l)
+            .ReturnsAsync((Lesson l) =>
+            {
+                l.Id = 50;
+                l.CRN = "20050";
+                return l;
+            });
+
+        var courseRepository = new Mock<ICourseRepository>();
+        courseRepository.Setup(x => x.GetByIdAsync(7)).ReturnsAsync(new Course
+        {
+            Id = 7,
+            Name = "Discrete Math",
+            Department = "CS",
+            Code = "CSE120",
+            Credits = 3,
+            TimesPerWeek = 2
+        });
+
+        var userDirectory = new Mock<IExternalUserDirectoryService>();
+        userDirectory.Setup(x => x.EnsureUserExistsInRoleAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        userDirectory.Setup(x => x.GetUserByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ExternalUserDirectoryDto?)null);
+
+        var service = new LessonService(lessonRepository.Object, courseRepository.Object, userDirectory.Object);
+        var dto = new CreateLessonDto
+        {
+            CourseId = 7,
+            InstructorId = null,
+            RoomId = 1,
+            AcademicYear = 2026,
+            Semester = AcademicSemester.Spring,
+            MaxCapacity = 30
+        };
+
+        var created = await service.CreateLessonAsync(dto);
+
+        Assert.Null(passedToAdd!.InstructorId);
+        Assert.Null(created.InstructorId);
+        Assert.Equal(string.Empty, created.InstructorDisplayName);
+        userDirectory.Verify(
+            x => x.EnsureUserExistsInRoleAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateLessonAsync_AllowsNullRoomId()
+    {
+        Lesson? passedToAdd = null;
+        var lessonRepository = new Mock<ILessonRepository>();
+        lessonRepository.Setup(x => x.AddWithGeneratedCrnAsync(It.IsAny<Lesson>()))
+            .Callback<Lesson>(l => passedToAdd = l)
+            .ReturnsAsync((Lesson l) =>
+            {
+                l.Id = 51;
+                l.CRN = "20051";
+                return l;
+            });
+
+        var courseRepository = new Mock<ICourseRepository>();
+        courseRepository.Setup(x => x.GetByIdAsync(7)).ReturnsAsync(new Course
+        {
+            Id = 7,
+            Name = "Discrete Math",
+            Department = "CS",
+            Code = "CSE120",
+            Credits = 3,
+            TimesPerWeek = 2
+        });
+
+        var service = new LessonService(lessonRepository.Object, courseRepository.Object, DummyUserDirectoryService());
+        var dto = new CreateLessonDto
+        {
+            CourseId = 7,
+            InstructorId = null,
+            RoomId = null,
+            AcademicYear = 2026,
+            Semester = AcademicSemester.Spring,
+            MaxCapacity = 30
+        };
+
+        var created = await service.CreateLessonAsync(dto);
+
+        Assert.Null(passedToAdd!.RoomId);
+        Assert.Null(created.RoomId);
+    }
+
+    [Fact]
+    public async Task CreateLessonAsync_ThrowsWhenRoomIdIsNegative()
+    {
+        var service = new LessonService(
+            new Mock<ILessonRepository>().Object,
+            new Mock<ICourseRepository>().Object,
+            DummyUserDirectoryService());
+        var dto = new CreateLessonDto
+        {
+            CourseId = 1,
+            RoomId = -1,
+            AcademicYear = 2026,
+            Semester = AcademicSemester.Spring,
+            MaxCapacity = 30
         };
 
         await Assert.ThrowsAsync<ArgumentException>(() => service.CreateLessonAsync(dto));
@@ -206,6 +320,138 @@ public class LessonServiceTests
     }
 
     [Fact]
+    public async Task GenerateBulkCreateTemplateAsync_IncludesCoursesAndInstructors()
+    {
+        var courseRepository = new Mock<ICourseRepository>();
+        courseRepository.Setup(x => x.GetAllAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<Course, bool>>?>(),
+                It.IsAny<Func<IQueryable<Course>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Course, object>>?>(),
+                It.IsAny<Func<IQueryable<Course>, IOrderedQueryable<Course>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new List<Course>
+            {
+                new() { Id = 12, Code = "CSE201", Name = "Algorithms", Department = "CS", Credits = 3, TimesPerWeek = 2 }
+            });
+
+        var userDirectory = new Mock<IExternalUserDirectoryService>();
+        userDirectory.Setup(x => x.GetUsersByRoleAsync("instructor", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ExternalUserDirectoryDto>
+            {
+                new() { UserId = InstructorA, DisplayName = "Ada Instructor", Email = "a@example.com", UserName = "ada" }
+            });
+
+        var service = new LessonService(new Mock<ILessonRepository>().Object, courseRepository.Object, userDirectory.Object);
+        var bytes = await service.GenerateBulkCreateTemplateAsync();
+
+        Assert.True(bytes.Length > 0);
+        using var stream = new MemoryStream(bytes);
+        using var workbook = new ClosedXML.Excel.XLWorkbook(stream);
+        Assert.Equal(12, workbook.Worksheet("Courses").Cell(2, 1).GetValue<int>());
+        Assert.Equal(InstructorA.ToString(), workbook.Worksheet("Instructors").Cell(2, 1).GetString());
+    }
+
+    [Fact]
+    public async Task CreateLessonsFromExcelAsync_CreatesAllValidRows()
+    {
+        var createdLessons = new List<Lesson>();
+        var lessonRepository = new Mock<ILessonRepository>();
+        lessonRepository.Setup(x => x.AddWithGeneratedCrnAsync(It.IsAny<Lesson>()))
+            .ReturnsAsync((Lesson l) =>
+            {
+                l.Id = createdLessons.Count + 1;
+                l.CRN = $"2000{l.Id}";
+                createdLessons.Add(l);
+                return l;
+            });
+
+        var course = new Course { Id = 12, Name = "Algorithms", Department = "CS", Code = "CSE201", Credits = 3, TimesPerWeek = 2 };
+        var courseRepository = new Mock<ICourseRepository>();
+        courseRepository.Setup(x => x.GetAllAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<Course, bool>>?>(),
+                It.IsAny<Func<IQueryable<Course>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Course, object>>?>(),
+                It.IsAny<Func<IQueryable<Course>, IOrderedQueryable<Course>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new List<Course> { course });
+        courseRepository.Setup(x => x.GetByIdAsync(12)).ReturnsAsync(course);
+
+        var service = new LessonService(lessonRepository.Object, courseRepository.Object, DummyUserDirectoryService());
+        var excel = WriteLessonExcel([12, "", "", 2026, "Spring", 35]);
+
+        await using var stream = new MemoryStream(excel);
+        var result = await service.CreateLessonsFromExcelAsync(stream);
+
+        Assert.Equal(1, result.CreatedCount);
+        Assert.Equal(0, result.FailedCount);
+        Assert.Single(result.Created);
+        Assert.Null(result.Created[0].InstructorId);
+        Assert.Null(result.Created[0].RoomId);
+        Assert.Equal("20001", result.Created[0].CRN);
+        lessonRepository.Verify(x => x.AddWithGeneratedCrnAsync(It.IsAny<Lesson>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateLessonsFromExcelAsync_CreatesNothing_WhenAnyRowIsInvalid()
+    {
+        var lessonRepository = new Mock<ILessonRepository>();
+        var course = new Course { Id = 12, Name = "Algorithms", Department = "CS", Code = "CSE201", Credits = 3, TimesPerWeek = 2 };
+        var courseRepository = new Mock<ICourseRepository>();
+        courseRepository.Setup(x => x.GetAllAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<Course, bool>>?>(),
+                It.IsAny<Func<IQueryable<Course>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Course, object>>?>(),
+                It.IsAny<Func<IQueryable<Course>, IOrderedQueryable<Course>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new List<Course> { course });
+
+        var service = new LessonService(lessonRepository.Object, courseRepository.Object, DummyUserDirectoryService());
+        var excel = WriteLessonExcel(
+            [12, "", 401, 2026, "Spring", 35],
+            [99, "", 402, 2026, "Fall", 40]);
+
+        await using var stream = new MemoryStream(excel);
+        var result = await service.CreateLessonsFromExcelAsync(stream);
+
+        Assert.Equal(0, result.CreatedCount);
+        Assert.Equal(1, result.FailedCount);
+        Assert.Contains(result.Errors, e => e.RowNumber == 3 && e.Message.Contains("Course 99"));
+        lessonRepository.Verify(x => x.AddWithGeneratedCrnAsync(It.IsAny<Lesson>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateLessonsFromExcelAsync_Throws_WhenNoDataRows()
+    {
+        var service = new LessonService(
+            new Mock<ILessonRepository>().Object,
+            DummyCourseRepository(),
+            DummyUserDirectoryService());
+        var excel = LessonBulkExcelWorkbook.BuildTemplate(Array.Empty<Course>(), Array.Empty<ExternalUserDirectoryDto>());
+
+        await using var stream = new MemoryStream(excel);
+        await Assert.ThrowsAsync<ArgumentException>(() => service.CreateLessonsFromExcelAsync(stream));
+    }
+
+    private static byte[] WriteLessonExcel(params object?[][] rows)
+    {
+        var template = LessonBulkExcelWorkbook.BuildTemplate(Array.Empty<Course>(), Array.Empty<ExternalUserDirectoryDto>());
+        using var input = new MemoryStream(template);
+        using var workbook = new ClosedXML.Excel.XLWorkbook(input);
+        var sheet = workbook.Worksheet("Lessons");
+        for (var r = 0; r < rows.Length; r++)
+        {
+            for (var c = 0; c < rows[r].Length; c++)
+            {
+                var value = rows[r][c];
+                if (value is null)
+                    continue;
+                sheet.Cell(r + 2, c + 1).Value = value.ToString();
+            }
+        }
+
+        using var output = new MemoryStream();
+        workbook.SaveAs(output);
+        return output.ToArray();
+    }
+
+    [Fact]
     public async Task GetLessonsForSchedulingAsync_DelegatesToRepository()
     {
         var rows = new List<LessonSchedulingRow>
@@ -222,11 +468,113 @@ public class LessonServiceTests
             }
         };
         var lessonRepository = new Mock<ILessonRepository>();
-        lessonRepository.Setup(x => x.GetLessonSchedulingRowsAsync()).ReturnsAsync(rows);
+        lessonRepository
+            .Setup(x => x.GetLessonSchedulingRowsAsync(2026, AcademicSemester.Spring))
+            .ReturnsAsync(rows);
 
         var service = new LessonService(lessonRepository.Object, DummyCourseRepository(), DummyUserDirectoryService());
-        var result = await service.GetLessonsForSchedulingAsync();
+        var result = await service.GetLessonsForSchedulingAsync(2026, AcademicSemester.Spring);
 
         Assert.Same(rows, result);
+        lessonRepository.Verify(x => x.GetLessonSchedulingRowsAsync(2026, AcademicSemester.Spring), Times.Once);
+    }
+
+    [Fact]
+    public async Task PreviewGeneratedLessonsAsync_DistributesCapacityAndInstructors()
+    {
+        var courseRepository = new Mock<ICourseRepository>();
+        courseRepository.Setup(x => x.GetByIdAsync(7)).ReturnsAsync(new Course
+        {
+            Id = 7,
+            Name = "Algorithms",
+            Department = "CS",
+            Code = "CSE201",
+            Credits = 3,
+            TimesPerWeek = 2
+        });
+
+        var lessonRepository = new Mock<ILessonRepository>();
+        lessonRepository.Setup(x => x.GetByCourseIdAsync(7)).ReturnsAsync(new List<Lesson>
+        {
+            new() { Id = 9, CourseId = 7, AcademicYear = 2026, Semester = AcademicSemester.Spring }
+        });
+
+        var service = new LessonService(lessonRepository.Object, courseRepository.Object, DummyUserDirectoryService());
+        var preview = await service.PreviewGeneratedLessonsAsync(7, new GenerateLessonsRequestDto
+        {
+            TotalStudents = 100,
+            AcademicYear = 2026,
+            Semester = AcademicSemester.Spring,
+            SectionCount = 3,
+            InstructorCount = 3,
+            Instructors = [InstructorA, null, InstructorB]
+        });
+
+        Assert.Equal("CSE201", preview.CourseCode);
+        Assert.Equal(100, preview.TotalSeats);
+        Assert.Equal(1, preview.ExistingLessonCountForTerm);
+        Assert.Equal(3, preview.ProposedLessons.Count);
+        Assert.Equal(new[] { 34, 33, 33 }, preview.ProposedLessons.Select(x => x.MaxCapacity).ToArray());
+        Assert.Equal(new Guid?[] { InstructorA, null, InstructorB }, preview.ProposedLessons.Select(x => x.InstructorId).ToArray());
+        Assert.Equal("User", preview.ProposedLessons[0].InstructorDisplayName);
+        Assert.Equal(string.Empty, preview.ProposedLessons[1].InstructorDisplayName);
+    }
+
+    [Fact]
+    public async Task CreateGeneratedLessonsAsync_CreatesEachProposedSection()
+    {
+        var created = new List<Lesson>();
+        var lessonRepository = new Mock<ILessonRepository>();
+        lessonRepository.Setup(x => x.AddWithGeneratedCrnAsync(It.IsAny<Lesson>()))
+            .Callback<Lesson>(l => created.Add(l))
+            .ReturnsAsync((Lesson l) =>
+            {
+                l.Id = created.Count;
+                l.CRN = $"2000{created.Count}";
+                return l;
+            });
+
+        var courseRepository = new Mock<ICourseRepository>();
+        courseRepository.Setup(x => x.GetByIdAsync(7)).ReturnsAsync(new Course
+        {
+            Id = 7,
+            Name = "Algorithms",
+            Department = "CS",
+            Code = "CSE201",
+            Credits = 3,
+            TimesPerWeek = 2
+        });
+
+        var service = new LessonService(lessonRepository.Object, courseRepository.Object, DummyUserDirectoryService());
+        var result = await service.CreateGeneratedLessonsAsync(7, new GenerateLessonsPreviewDto
+        {
+            CourseId = 7,
+            ProposedLessons =
+            [
+                new() { SectionNumber = 1, CourseId = 7, AcademicYear = 2026, Semester = AcademicSemester.Spring, MaxCapacity = 34, InstructorId = InstructorA },
+                new() { SectionNumber = 2, CourseId = 7, AcademicYear = 2026, Semester = AcademicSemester.Spring, MaxCapacity = 33, InstructorId = null }
+            ]
+        });
+
+        Assert.Equal(2, result.CreatedCount);
+        Assert.Equal(2, created.Count);
+        Assert.Equal(InstructorA, created[0].InstructorId);
+        Assert.Null(created[1].InstructorId);
+        Assert.Equal(new[] { 34, 33 }, created.Select(x => x.MaxCapacity).ToArray());
+    }
+
+    [Fact]
+    public async Task CreateGeneratedLessonsAsync_ThrowsWhenPreviewCourseDoesNotMatch()
+    {
+        var service = new LessonService(
+            new Mock<ILessonRepository>().Object,
+            DummyCourseRepository(),
+            DummyUserDirectoryService());
+
+        await Assert.ThrowsAsync<ArgumentException>(() => service.CreateGeneratedLessonsAsync(7, new GenerateLessonsPreviewDto
+        {
+            CourseId = 99,
+            ProposedLessons = [new() { CourseId = 99, AcademicYear = 2026, Semester = AcademicSemester.Spring, MaxCapacity = 10 }]
+        }));
     }
 }

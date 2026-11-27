@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "j+vIt69mNcQ=",
+  "dgSpecHash": "rx7hVrQPdBg=",
   "success": true,
-  "projectFilePath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\User\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",

@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"k3NA/tBTU2TQt6UNWBJXK4r/uvgOljZI+cB8geGQTU0=","Source":"Shared.Observability","BasePath":"_content/Shared.Observability","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "LMrJshWqrWRINSOu4GtMWn20EBLpf38O7o0zpf28M8o=",
+  "Source": "Shared.Observability",
+  "BasePath": "_content/Shared.Observability",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

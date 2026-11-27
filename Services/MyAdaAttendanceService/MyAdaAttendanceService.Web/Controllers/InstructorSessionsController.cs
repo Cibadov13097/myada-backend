@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MyAdaAttendanceService.Application.DTOs;
+using MyAdaAttendanceService.Application.DTOs.Query;
+using MyAdaAttendanceService.Application.Query;
 using MyAdaAttendanceService.Application.Services.Interfaces;
 
 namespace MyAdaAttendanceService.Web.Controllers;
@@ -46,11 +48,31 @@ public class InstructorSessionsController : ApiControllerBase
         });
 
     [HttpGet("{sessionId:int}/attendance")]
-    public Task<IActionResult> GetAttendance(Guid instructorId, int sessionId) =>
+    public Task<IActionResult> GetAttendance(Guid instructorId, int sessionId, [FromQuery] ListQuery? query = null) =>
         HandleAsync(async () =>
         {
             EnsureRouteUserMatchesClaim(instructorId);
-            return await _attendanceService.GetSessionAttendanceAsync(instructorId, sessionId);
+            return ApplyListSort(await _attendanceService.GetSessionAttendanceAsync(instructorId, sessionId), query);
+        });
+
+    [HttpGet("{sessionId:int}/attendance/search")]
+    public Task<IActionResult> SearchAttendance(Guid instructorId, int sessionId, [FromQuery] ListQuery? query = null) =>
+        HandleAsync(async () =>
+        {
+            EnsureRouteUserMatchesClaim(instructorId);
+            return ApplyListSearch(await _attendanceService.GetSessionAttendanceAsync(instructorId, sessionId), query);
+        });
+
+    [HttpGet("{sessionId:int}/attendance/filter")]
+    public Task<IActionResult> FilterAttendance(
+        Guid instructorId,
+        int sessionId,
+        [FromQuery] AttendanceFilterDto filter,
+        [FromQuery] ListQuery? query = null) =>
+        HandleAsync(async () =>
+        {
+            EnsureRouteUserMatchesClaim(instructorId);
+            return ApplyListFilter(await _attendanceService.GetSessionAttendanceAsync(instructorId, sessionId), query, filter);
         });
 
     [HttpGet("{sessionId:int}/attendance/summary")]

@@ -1,11 +1,21 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using MyAdaAttendanceService.Application.Query;
 
 namespace MyAdaAttendanceService.Web.Controllers;
 
 [ApiController]
 public abstract class ApiControllerBase : ControllerBase
 {
+    protected static IReadOnlyList<T> ApplyListSort<T>(IEnumerable<T> items, ListQuery? query) =>
+        CollectionQuery.Apply(items, query?.SortBy, query?.SortDir);
+
+    protected static IReadOnlyList<T> ApplyListSearch<T>(IEnumerable<T> items, ListQuery? query) =>
+        CollectionQuery.Apply(items, query?.SortBy, query?.SortDir, query?.SearchTerm);
+
+    protected static IReadOnlyList<T> ApplyListFilter<T>(IEnumerable<T> items, ListQuery? query, object filter) =>
+        CollectionQuery.Apply(items, query?.SortBy, query?.SortDir, filter: filter);
+
     protected async Task<IActionResult> HandleAsync<T>(
         Func<Task<T?>> action,
         Func<T, IActionResult>? onSuccess = null,

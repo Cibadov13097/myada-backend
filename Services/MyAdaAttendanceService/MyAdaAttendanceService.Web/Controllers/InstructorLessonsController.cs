@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MyAdaAttendanceService.Application.DTOs;
+using MyAdaAttendanceService.Application.DTOs.Query;
+using MyAdaAttendanceService.Application.Query;
 using MyAdaAttendanceService.Application.Services.Interfaces;
 
 namespace MyAdaAttendanceService.Web.Controllers;
@@ -19,11 +21,30 @@ public class InstructorLessonsController : ApiControllerBase
     }
 
     [HttpGet]
-    public Task<IActionResult> GetMyLessons(Guid instructorId) =>
+    public Task<IActionResult> GetMyLessons(Guid instructorId, [FromQuery] ListQuery? query = null) =>
         HandleAsync(async () =>
         {
             EnsureRouteUserMatchesClaim(instructorId);
-            return await _lessonService.GetMyLessonsAsync(instructorId);
+            return ApplyListSort(await _lessonService.GetMyLessonsAsync(instructorId), query);
+        });
+
+    [HttpGet("search")]
+    public Task<IActionResult> SearchMyLessons(Guid instructorId, [FromQuery] ListQuery? query = null) =>
+        HandleAsync(async () =>
+        {
+            EnsureRouteUserMatchesClaim(instructorId);
+            return ApplyListSearch(await _lessonService.GetMyLessonsAsync(instructorId), query);
+        });
+
+    [HttpGet("filter")]
+    public Task<IActionResult> FilterMyLessons(
+        Guid instructorId,
+        [FromQuery] LessonFilterDto filter,
+        [FromQuery] ListQuery? query = null) =>
+        HandleAsync(async () =>
+        {
+            EnsureRouteUserMatchesClaim(instructorId);
+            return ApplyListFilter(await _lessonService.GetMyLessonsAsync(instructorId), query, filter);
         });
 
     [HttpGet("{lessonId:int}")]
@@ -35,11 +56,31 @@ public class InstructorLessonsController : ApiControllerBase
         });
 
     [HttpGet("{lessonId:int}/sessions")]
-    public Task<IActionResult> GetSessions(Guid instructorId, int lessonId) =>
+    public Task<IActionResult> GetSessions(Guid instructorId, int lessonId, [FromQuery] ListQuery? query = null) =>
         HandleAsync(async () =>
         {
             EnsureRouteUserMatchesClaim(instructorId);
-            return await _sessionService.GetSessionsByLessonAsync(instructorId, lessonId);
+            return ApplyListSort(await _sessionService.GetSessionsByLessonAsync(instructorId, lessonId), query);
+        });
+
+    [HttpGet("{lessonId:int}/sessions/search")]
+    public Task<IActionResult> SearchSessions(Guid instructorId, int lessonId, [FromQuery] ListQuery? query = null) =>
+        HandleAsync(async () =>
+        {
+            EnsureRouteUserMatchesClaim(instructorId);
+            return ApplyListSearch(await _sessionService.GetSessionsByLessonAsync(instructorId, lessonId), query);
+        });
+
+    [HttpGet("{lessonId:int}/sessions/filter")]
+    public Task<IActionResult> FilterSessions(
+        Guid instructorId,
+        int lessonId,
+        [FromQuery] SessionFilterDto filter,
+        [FromQuery] ListQuery? query = null) =>
+        HandleAsync(async () =>
+        {
+            EnsureRouteUserMatchesClaim(instructorId);
+            return ApplyListFilter(await _sessionService.GetSessionsByLessonAsync(instructorId, lessonId), query, filter);
         });
 
     [HttpGet("{lessonId:int}/sessions/{sessionId:int}")]

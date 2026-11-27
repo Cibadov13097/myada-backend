@@ -9,9 +9,13 @@ public class LessonDto
     /// <summary>Catalog title from the linked course (lessons do not store a separate name).</summary>
     public string Name { get; set; } = string.Empty;
     public string Code { get; set; } = string.Empty;
-    public Guid InstructorId { get; set; }
+    /// <summary>Assigned instructor auth user id, or null when unassigned.</summary>
+    public Guid? InstructorId { get; set; }
     public string InstructorDisplayName { get; set; } = string.Empty;
     public string InstructorEmail { get; set; } = string.Empty;
+
+    /// <summary>Assigned room id, or null when unassigned.</summary>
+    public int? RoomId { get; set; }
 
     public int AcademicYear { get; set; }
     public AcademicSemester Semester { get; set; }
@@ -21,6 +25,9 @@ public class LessonDto
 
     /// <summary>Maximum enrollments allowed for this lesson.</summary>
     public int MaxCapacity { get; set; }
+
+    /// <summary>Weekly meeting count from the linked course (used by scheduling integrations).</summary>
+    public int TimesPerWeek { get; set; }
 
     public ICollection<SessionShortDto>? Sessions { get; set; }
 }

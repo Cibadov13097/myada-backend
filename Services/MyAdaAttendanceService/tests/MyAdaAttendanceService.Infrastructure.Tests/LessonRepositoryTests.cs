@@ -207,7 +207,17 @@ public class LessonRepositoryTests
             RoomId = 2,
             MaxCapacity = 24
         };
-        context.Lessons.AddRange(lessonA, lessonB);
+        var lessonOtherTerm = new Lesson
+        {
+            InstructorId = InstructorA,
+            CourseId = courseA.Id,
+            AcademicYear = 2026,
+            Semester = AcademicSemester.Spring,
+            CRN = "20001",
+            RoomId = 3,
+            MaxCapacity = 50
+        };
+        context.Lessons.AddRange(lessonA, lessonB, lessonOtherTerm);
         await context.SaveChangesAsync();
 
         context.LessonEnrollments.AddRange(
@@ -217,7 +227,7 @@ public class LessonRepositoryTests
         await context.SaveChangesAsync();
 
         var repository = new LessonRepository(context);
-        var rows = (await repository.GetLessonSchedulingRowsAsync()).ToList();
+        var rows = (await repository.GetLessonSchedulingRowsAsync(2026, AcademicSemester.Fall)).ToList();
 
         Assert.Equal(2, rows.Count);
         Assert.True(rows[0].LessonId < rows[1].LessonId);
@@ -231,5 +241,6 @@ public class LessonRepositoryTests
         var rowB = rows.Single(r => r.LessonId == lessonB.Id);
         Assert.Equal(0, rowB.Enrollment);
         Assert.Equal(24, rowB.MaxCapacity);
+        Assert.DoesNotContain(rows, r => r.LessonId == lessonOtherTerm.Id);
     }
 }

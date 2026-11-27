@@ -35,11 +35,11 @@ public class EntityValidationTests
     }
 
     [Fact]
-    public void Lesson_FailsValidation_WhenInstructorIdIsEmpty()
+    public void Lesson_AllowsNullInstructorId()
     {
         var lesson = new Lesson
         {
-            InstructorId = Guid.Empty,
+            InstructorId = null,
             RoomId = 1,
             CourseId = 1,
             AcademicYear = 2026,
@@ -49,7 +49,25 @@ public class EntityValidationTests
 
         var results = Validate(lesson);
 
-        Assert.Contains(results, r => r.MemberNames.Contains(nameof(Lesson.InstructorId)));
+        Assert.DoesNotContain(results, r => r.MemberNames.Contains(nameof(Lesson.InstructorId)));
+    }
+
+    [Fact]
+    public void Lesson_AllowsNullRoomId()
+    {
+        var lesson = new Lesson
+        {
+            InstructorId = null,
+            RoomId = null,
+            CourseId = 1,
+            AcademicYear = 2026,
+            Semester = AcademicSemester.Spring,
+            CRN = "20001"
+        };
+
+        var results = Validate(lesson);
+
+        Assert.DoesNotContain(results, r => r.MemberNames.Contains(nameof(Lesson.RoomId)));
     }
 
     [Fact]

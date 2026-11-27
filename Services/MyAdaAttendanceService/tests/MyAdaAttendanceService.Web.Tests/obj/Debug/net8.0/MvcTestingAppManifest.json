@@ -1,0 +1,7 @@
+{
+  "MyAdaAttendanceService.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Application",
+  "MyAdaAttendanceService.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core",
+  "MyAdaAttendanceService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure",
+  "MyAdaAttendanceService.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Web",
+  "Shared.Observability, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Shared\\Shared.Observability"
+}

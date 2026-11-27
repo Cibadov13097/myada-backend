@@ -1,11 +1,15 @@
 # LostFound API Documentation
 
-Last updated: 2026-04-29
+Last updated: 2026-05-01
 
 ## Base URLs
 
 - Through API Gateway: `https://myada.site/lostfound`
 - Direct service: `http://13.60.31.141:5002`
+
+Local (docker-compose):
+- Gateway: `http://localhost:5000/lostfound`
+- Direct: `http://localhost:5002`
 
 Examples below use the gateway form, so `/api/lost-and-found/items` becomes:
 
@@ -23,7 +27,7 @@ https://myada.site/lostfound/api/lost-and-found/items
 
 - Use the unified LostFound API under `/api/lost-and-found`.
 - Category management is under `/api/v1/categories`.
-- Legacy endpoints under `/api/v1/found-items`, `/api/v1/lost-items`, `/api/v1/admin/*` still exist, but they are hidden from Swagger and should not be used for new client work.
+- Legacy endpoints under `/api/v1/found-items`, `/api/v1/lost-items`, `/api/v1/admin/*` are **not present** in this codebase.
 
 ## Common Values
 
@@ -659,3 +663,5 @@ Body:
 - Manual create is for staff/admin flows.
 - `postedBy=me` on item listing requires authentication.
 - `referenceNumber` is assigned by the backend after create.
+- JWT validation uses `Auth:JwksUrl` (JWKS), plus `Auth:Issuer` and `Auth:Audience`. Local public key files are not used by this service.
+- Local docker-compose requires `LOSTFOUND_S3_ACCESS_KEY` and `LOSTFOUND_S3_SECRET_KEY` for image upload/storage.

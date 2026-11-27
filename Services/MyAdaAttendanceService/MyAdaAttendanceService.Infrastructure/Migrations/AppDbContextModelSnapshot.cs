@@ -220,14 +220,14 @@ namespace MyAdaAttendanceService.Infrastructure.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("InstructorId")
+                    b.Property<Guid?>("InstructorId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("MaxCapacity")
                         .HasColumnType("integer")
                         .HasColumnName("Capacity");
 
-                    b.Property<int>("RoomId")
+                    b.Property<int?>("RoomId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Semester")

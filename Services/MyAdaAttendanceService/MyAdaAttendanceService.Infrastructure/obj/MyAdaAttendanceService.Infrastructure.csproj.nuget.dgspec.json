@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj": {}
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj": {}
   },
   "projects": {
-    "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj": {
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj",
         "projectName": "MyAdaAttendanceService.Core",
-        "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj",
+        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\obj\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -90,14 +90,14 @@
         }
       }
     },
-    "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj": {
+    "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj",
         "projectName": "MyAdaAttendanceService.Infrastructure",
-        "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\MyAdaAttendanceService.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -118,8 +118,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj": {
-                "projectPath": "c:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj"
+              "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj": {
+                "projectPath": "C:\\Users\\User\\Desktop\\SDP\\Backend\\myada-backend\\Services\\MyAdaAttendanceService\\MyAdaAttendanceService.Core\\MyAdaAttendanceService.Core.csproj"
               }
             }
           }

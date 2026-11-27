@@ -5,7 +5,8 @@ public sealed class LessonSchedulingRow
 {
     public int LessonId { get; init; }
 
-    public Guid InstructorUserId { get; init; }
+    /// <summary>Instructor auth user id, or null when the lesson has no instructor assigned.</summary>
+    public Guid? InstructorUserId { get; init; }
 
     /// <summary>Students enrolled in this service (<see cref="LessonEnrollment"/> rows). Zero until enrollments are imported or recorded.</summary>
     public int Enrollment { get; init; }

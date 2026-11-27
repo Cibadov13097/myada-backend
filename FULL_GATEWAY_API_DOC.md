@@ -290,40 +290,70 @@ Includes modern /api/lost-and-found and legacy /api/v1/* routes.
 
 Use gateway prefix /attendance for all attendance endpoints.
 
+Collection GET endpoints accept optional `sortBy` and `sortDir`. Each list also has `/search?q=` and `/filter?{field}=` sibling routes. See `ATTENDANCE_API_DOC.md`.
+
 | Method | URL |
 |---|---|
 | GET | http://13.60.31.141:500/attendance/api/admin/courses |
+| GET | http://13.60.31.141:500/attendance/api/admin/courses/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/courses/filter |
 | POST | http://13.60.31.141:500/attendance/api/admin/courses |
 | DELETE | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int} |
 | GET | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int} |
 | PUT | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int} |
 | GET | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int}/lessons |
+| GET | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int}/lessons/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int}/lessons/filter |
+| POST | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int}/lessons/generate/preview |
+| POST | http://13.60.31.141:500/attendance/api/admin/courses/{courseId:int}/lessons/generate |
 | GET | http://13.60.31.141:500/attendance/api/admin/instructors/{instructorId:guid}/lessons |
+| GET | http://13.60.31.141:500/attendance/api/admin/instructors/{instructorId:guid}/lessons/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/instructors/{instructorId:guid}/lessons/filter |
 | GET | http://13.60.31.141:500/attendance/api/admin/lessons |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/filter |
 | POST | http://13.60.31.141:500/attendance/api/admin/lessons |
 | DELETE | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int} |
 | GET | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int} |
 | PUT | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int} |
 | GET | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/enrollments |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/enrollments/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/enrollments/filter |
 | POST | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/enrollments |
 | GET | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/sessions |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/sessions/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/sessions/filter |
 | POST | http://13.60.31.141:500/attendance/api/admin/lessons/{lessonId:int}/sessions/generate |
 | GET | http://13.60.31.141:500/attendance/api/admin/lessons/by-term |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/by-term/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/by-term/filter |
 | GET | http://13.60.31.141:500/attendance/api/admin/lessons/scheduling |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/scheduling/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/lessons/scheduling/filter |
 | GET | http://13.60.31.141:500/attendance/api/admin/sessions/{sessionId:int}/attendance |
+| GET | http://13.60.31.141:500/attendance/api/admin/sessions/{sessionId:int}/attendance/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/sessions/{sessionId:int}/attendance/filter |
 | DELETE | http://13.60.31.141:500/attendance/api/admin/sessions/{sessionId:int}/attendance/{attendanceId:int} |
 | PATCH | http://13.60.31.141:500/attendance/api/admin/sessions/{sessionId:int}/attendance/{attendanceId:int} |
 | GET | http://13.60.31.141:500/attendance/api/admin/users/roles/{role} |
+| GET | http://13.60.31.141:500/attendance/api/admin/users/roles/{role}/search |
+| GET | http://13.60.31.141:500/attendance/api/admin/users/roles/{role}/filter |
 | POST | http://13.60.31.141:500/attendance/api/admin/users/sync |
 | GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons |
+| GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/search |
+| GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/filter |
 | GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int} |
 | GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions |
+| GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions/search |
+| GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions/filter |
 | POST | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions |
 | DELETE | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions/{sessionId:int} |
 | GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions/{sessionId:int} |
 | PATCH | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions/{sessionId:int} |
 | POST | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/lessons/{lessonId:int}/sessions/generate |
 | GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/sessions/{sessionId:int}/attendance |
+| GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/sessions/{sessionId:int}/attendance/search |
+| GET | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/sessions/{sessionId:int}/attendance/filter |
 | PATCH | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/sessions/{sessionId:int}/attendance/{studentId:guid} |
 | POST | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/sessions/{sessionId:int}/attendance/activate/{round:int} |
 | POST | http://13.60.31.141:500/attendance/api/instructors/{instructorId:guid}/sessions/{sessionId:int}/attendance/bulk-absent |
@@ -334,7 +364,11 @@ Use gateway prefix /attendance for all attendance endpoints.
 | POST | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/attendance/qr/scan |
 | POST | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/attendance/scan |
 | GET | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/enrollments |
+| GET | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/enrollments/search |
+| GET | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/enrollments/filter |
 | GET | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/lessons/{lessonId:int}/attendance |
+| GET | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/lessons/{lessonId:int}/attendance/search |
+| GET | http://13.60.31.141:500/attendance/api/students/{studentId:guid}/lessons/{lessonId:int}/attendance/filter |
 
 ### Support Service
 
